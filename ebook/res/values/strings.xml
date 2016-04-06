@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">ebook</string>
     <string name="main_title">电子书</string>
-
+    <string name="main_menu_txt">文本文档</string>
+    <string name="main_menu_daisy">Daisy 文档</string>
+    <string name="main_menu_word">WORD 文档</string>
 </resources>
