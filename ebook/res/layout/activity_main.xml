@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" 
-    android:background="@drawable/list_item_bg"
     >
     <TextView
         android:id="@+id/main_title"
@@ -12,6 +11,7 @@
         android:layout_height="@dimen/title_height"
         android:gravity="center"
         android:text="@string/main_title" 
+        android:background="@color/transparent"
         />
     <View
         android:id="@+id/line"
@@ -24,7 +24,7 @@
         android:id="@+id/menu_list"
         android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
-		android:background="@color/text_white"
+		android:background="@color/transparent"
 		android:cacheColorHint="@color/transparent"
 		android:listSelector="@android:color/transparent"
 		android:divider="@color/bottom_line" 

@@ -3,6 +3,8 @@ package com.sunteam.ebook.adapter;
 import java.util.ArrayList;
 
 import com.sunteam.ebook.R;
+import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * 主菜单列表类
@@ -25,28 +26,37 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 {
 	private Context mContext = null;
 	private ArrayList<String> gListData = null;
-	private int selectItem = 0;
+	private int selectItem = 0;	//当前选中的项，默认是第一项
 	
 	public MainMenuListAdapter( Context context, String[] list )
 	{
 		this.mContext = context;
 		this.gListData = new ArrayList<String>();
+		this.selectItem = 0;
 		
 		for( int i = 0; i < list.length; i++ )
 		{
 			gListData.add(list[i]);
 		}
+		
+		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 	}
 	
 	public MainMenuListAdapter( Context context, ArrayList<String> list )
 	{
 		this.mContext = context;
 		this.gListData = list;
+		this.selectItem = 0;
+		
+		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 	}
 
 	public void setSelectItem( int selectItem )
 	{
 		this.selectItem = selectItem;
+		
+		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		
 		this.notifyDataSetInvalidated();
 	}
 	
@@ -61,6 +71,8 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 		{
 			this.selectItem = gListData.size() - 1;
 		}
+		
+		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
 		this.notifyDataSetInvalidated();
 	}
@@ -77,11 +89,19 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 			this.selectItem = 0;
 		}
 		
+		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		
 		this.notifyDataSetInvalidated();
 	}
 	
 	//按了确定键
 	public void enter()
+	{
+		//进入到selectItem对应的界面
+	}
+	
+	//tts朗读selectItem内容
+	private void readSelectItemContent()
 	{
 		
 	}
@@ -147,13 +167,15 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
         	vh = (ViewHolder) convertView.getTag();
         }
         
-        if( selectItem == position )
+        int index = PublicUtils.getColorSchemeIndex();	//配色方案
+        
+        if( selectItem == position )	//选中
 		{
-        	convertView.setBackgroundResource(R.color.green);
+        	convertView.setBackgroundResource(EbookConstants.SelectBkColorID[index]);
 		}
 		else
 		{
-			convertView.setBackgroundResource(R.color.white);
+			convertView.setBackgroundResource(R.color.transparent);
 		}
 		
     	if( !TextUtils.isEmpty( gListData.get(position) ) )
@@ -164,6 +186,7 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
     	{
     		vh.tvMenu.setText( "" );
     	}
+    	vh.tvMenu.setTextColor(mContext.getResources().getColor(EbookConstants.FontColorID[index]));
                 
         return convertView;
 	}
@@ -172,7 +195,6 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 	public void onClick(View v) 
 	{
 		// TODO Auto-generated method stub
-		Intent intent = null;
 		int id = v.getId();
 		int position = 0;
 		
@@ -182,7 +204,14 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 		switch( id )
 		{
 			case R.id.menu:
-				setSelectItem( position );
+				if( this.selectItem != position )
+				{
+					setSelectItem( position );
+				}
+				else
+				{
+					enter();	//进入下一级界面
+				}
 				break;
 			default:
 				break;
