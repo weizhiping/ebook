@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,7 +15,7 @@ import com.sunteam.ebook.util.PublicUtils;
 /**
  * txt与word主界面
  * @author sylar
- *
+ *D:\Program Files\TortoiseGit\bin\TortoiseGitPlink.exe
  */
 public class TxtActivity extends Activity {
 	private ListView mLvMenu = null;

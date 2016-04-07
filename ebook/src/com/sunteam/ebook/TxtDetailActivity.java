@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sunteam.ebook.adapter.TxtDetailListAdapter;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 /**
@@ -20,9 +21,10 @@ import com.sunteam.ebook.util.PublicUtils;
 public class TxtDetailActivity extends Activity {
 	private ListView mLvMenu = null;
 	private TxtDetailListAdapter mAdapter = null;
-	private ArrayList<String> mMainMenuList = null;
+	private ArrayList<FileInfo> fileInfoList = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private int flag;//0为目录浏览，1为我的收藏，2为最近使用
+	private String rootPath;//查找文件根路径
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +50,9 @@ public class TxtDetailActivity extends Activity {
 	    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
 	    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
 	    	mLvMenu.setFocusable(false);	//不让控件获得焦点，让主界面进行按键分发
-	    	
-	    	mMainMenuList = new ArrayList<String>();
-	    	mMainMenuList.add( this.getString(R.string.app_name) );
-	    	mMainMenuList.add( this.getString(R.string.app_name) );
-	    	mMainMenuList.add( this.getString(R.string.app_name) );
-	    	
-	    	mAdapter = new TxtDetailListAdapter( this, mMainMenuList);
+	    	fileInfoList = new ArrayList<FileInfo>();
+	    	initFiles();
+	    	mAdapter = new TxtDetailListAdapter( this, fileInfoList);
 	    	mLvMenu.setAdapter(mAdapter);
 	    }
 	
@@ -77,4 +75,9 @@ public class TxtDetailActivity extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}   
+	//初始化显示文件
+	private void initFiles(){
+		
+	}
+	
 }

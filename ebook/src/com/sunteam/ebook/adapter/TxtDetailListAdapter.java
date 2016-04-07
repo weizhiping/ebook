@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.TxtDetailActivity;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 
@@ -25,22 +25,11 @@ import com.sunteam.ebook.util.PublicUtils;
  */
 public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
-	private ArrayList<String> gListData = null;
+	private ArrayList<FileInfo> gListData = null;
 	private int selectItem = 0; // 当前选中的项，默认是第一项
 
-	public TxtDetailListAdapter(Context context, String[] list) {
-		this.mContext = context;
-		this.gListData = new ArrayList<String>();
-		this.selectItem = 0;
 
-		for (int i = 0; i < list.length; i++) {
-			gListData.add(list[i]);
-		}
-
-		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
-	}
-
-	public TxtDetailListAdapter(Context context, ArrayList<String> list) {
+	public TxtDetailListAdapter(Context context, ArrayList<FileInfo> list) {
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
@@ -96,11 +85,11 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 
 	}
 
-	public ArrayList<String> getListData() {
+	public ArrayList<FileInfo> getListData() {
 		return gListData;
 	}
 
-	public void setListData(ArrayList<String> list) {
+	public void setListData(ArrayList<FileInfo> list) {
 		gListData = list;
 	}
 
@@ -155,12 +144,8 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 		} else {
 			convertView.setBackgroundResource(R.color.transparent);
 		}
-
-		if (!TextUtils.isEmpty(gListData.get(position))) {
-			vh.tvMenu.setText(gListData.get(position));
-		} else {
-			vh.tvMenu.setText("");
-		}
+		FileInfo fileInfo = gListData.get(position);
+		vh.tvMenu.setText(fileInfo.name);
 		vh.tvMenu.setTextColor(mContext.getResources().getColor(
 				EbookConstants.FontColorID[index]));
 
