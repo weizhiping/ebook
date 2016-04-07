@@ -54,4 +54,5 @@ public class EbookConstants
 		R.color.white,
 		R.color.red,
 	};	//选中背景色
+	
 }

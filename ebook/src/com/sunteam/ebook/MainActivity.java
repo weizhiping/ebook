@@ -2,16 +2,16 @@ package com.sunteam.ebook;
 
 import java.util.ArrayList;
 
-import com.sunteam.ebook.adapter.MainMenuListAdapter;
-import com.sunteam.ebook.util.EbookConstants;
-import com.sunteam.ebook.util.PublicUtils;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.sunteam.ebook.adapter.MainMenuListAdapter;
+import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 
 /**
  * 主界面
@@ -78,5 +78,5 @@ public class MainActivity extends Activity
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}    
+	}   
 }

@@ -2,12 +2,15 @@ package com.sunteam.ebook.adapter;
 
 import java.util.ArrayList;
 
+import com.sunteam.ebook.DaisyActivity;
 import com.sunteam.ebook.R;
+import com.sunteam.ebook.TxtActivity;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.sax.StartElementListener;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +101,17 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 	public void enter()
 	{
 		//进入到selectItem对应的界面
+		Intent intent;
+		if(selectItem == 0){
+			intent = new Intent(mContext,TxtActivity.class);
+			intent.putExtra("isTxt", true);
+		}else if(selectItem == 2){
+			intent = new Intent(mContext,TxtActivity.class);
+			intent.putExtra("isTxt", false);
+		}else{
+			intent = new Intent(mContext,DaisyActivity.class);
+		}
+		mContext.startActivity(intent);
 	}
 	
 	//tts朗读selectItem内容
