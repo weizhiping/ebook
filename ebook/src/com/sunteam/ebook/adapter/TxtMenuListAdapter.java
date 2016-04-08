@@ -85,8 +85,9 @@ public class TxtMenuListAdapter extends BaseAdapter implements OnClickListener {
 	// 按了确定键
 	public void enter() {
 		// 进入到selectItem对应的界面
-		
+		String name = gListData.get(selectItem);
 		Intent intent = new Intent(mContext,TxtDetailActivity.class);
+		intent.putExtra("name", name);
 		intent.putExtra("flag", selectItem);
 		mContext.startActivity(intent);
 	}

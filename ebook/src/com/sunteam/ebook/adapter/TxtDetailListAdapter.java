@@ -74,10 +74,16 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 	// 按了确定键
 	public void enter() {
 		// 进入到selectItem对应的界面
-		
-		Intent intent = new Intent(mContext,TxtDetailActivity.class);
-		intent.putExtra("tag", selectItem);
-		mContext.startActivity(intent);
+		FileInfo fileInfo = gListData.get(selectItem);
+		if(fileInfo.isFolder){
+			
+		}else{
+			
+		}
+//		
+//		Intent intent = new Intent(mContext,TxtDetailActivity.class);
+//		intent.putExtra("tag", selectItem);
+//		mContext.startActivity(intent);
 	}
 
 	// tts朗读selectItem内容
