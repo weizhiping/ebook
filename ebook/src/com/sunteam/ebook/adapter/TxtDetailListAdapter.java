@@ -12,10 +12,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.sunteam.ebook.R;
-import com.sunteam.ebook.TxtDetailActivity;
+import com.sunteam.ebook.ReadTxtActivity;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 文档详细列表类
@@ -78,17 +79,15 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 		if(fileInfo.isFolder){
 			
 		}else{
-			
+			Intent intent = new Intent(mContext,ReadTxtActivity.class);
+			intent.putExtra("path", fileInfo.path);
+			mContext.startActivity(intent);
 		}
-//		
-//		Intent intent = new Intent(mContext,TxtDetailActivity.class);
-//		intent.putExtra("tag", selectItem);
-//		mContext.startActivity(intent);
 	}
 
 	// tts朗读selectItem内容
 	private void readSelectItemContent() {
-
+	//	TTSUtils.getInstance().speak(gListData.get(selectItem));
 	}
 
 	public ArrayList<FileInfo> getListData() {

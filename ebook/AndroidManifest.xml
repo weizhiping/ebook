@@ -39,6 +39,10 @@
             android:name=".TxtDetailActivity"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".ReadTxtActivity"
+            android:screenOrientation="portrait" >
+        </activity>
          <activity
             android:name=".DaisyActivity"
             android:screenOrientation="portrait" >

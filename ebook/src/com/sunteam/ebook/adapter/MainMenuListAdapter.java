@@ -2,22 +2,22 @@ package com.sunteam.ebook.adapter;
 
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
 import com.sunteam.ebook.DaisyActivity;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.TxtActivity;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
-
-import android.content.Context;
-import android.content.Intent;
-import android.sax.StartElementListener;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 主菜单列表类
@@ -117,7 +117,7 @@ public class MainMenuListAdapter extends BaseAdapter implements OnClickListener
 	//tts朗读selectItem内容
 	private void readSelectItemContent()
 	{
-		
+		TTSUtils.getInstance().speak(gListData.get(selectItem));
 	}
 	
 	public ArrayList<String> getListData()

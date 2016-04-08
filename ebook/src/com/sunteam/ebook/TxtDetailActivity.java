@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
@@ -46,9 +45,9 @@ public class TxtDetailActivity extends Activity {
 	    	if(flag == 0 ){//0为目录浏览，1为我的收藏，2为最近使用
 	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
 	    	}else if(flag == 1){
-	    		
+	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
 	    	}else if(flag == 2){
-	    		
+	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
 	    	}else{
 	    		
 	    	}
@@ -70,7 +69,7 @@ public class TxtDetailActivity extends Activity {
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
 				mAdapter.up();
 				return	true;
-			case KeyEvent.KEYCODE_DPAD_DOWN:	//下
+			case KeyEvent.KEYCODE_DPAD_DOWN:	//下 
 				mAdapter.down();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定

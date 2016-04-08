@@ -16,6 +16,7 @@ import com.sunteam.ebook.R;
 import com.sunteam.ebook.TxtDetailActivity;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 文档列表类
@@ -94,7 +95,7 @@ public class TxtMenuListAdapter extends BaseAdapter implements OnClickListener {
 
 	// tts朗读selectItem内容
 	private void readSelectItemContent() {
-
+		TTSUtils.getInstance().speak(gListData.get(selectItem));
 	}
 
 	public ArrayList<String> getListData() {

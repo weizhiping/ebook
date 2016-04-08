@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sunteam.ebook.adapter.MainMenuListAdapter;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 主界面
@@ -39,6 +40,7 @@ public class MainActivity extends Activity
     
     private void initViews()
     {
+    	TTSUtils.getInstance().init(getApplicationContext());
     	//此处需要从系统配置文件中得到配色方案索引
     	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
     	
