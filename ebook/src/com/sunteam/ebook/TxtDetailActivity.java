@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sunteam.ebook.adapter.TxtDetailListAdapter;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -27,6 +28,7 @@ public class TxtDetailActivity extends Activity {
 	private ArrayList<FileInfo> fileInfoList = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private String rootPath;//查找文件根路径
+	private DatabaseManager manager;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +47,22 @@ public class TxtDetailActivity extends Activity {
 	    	TextView mTvTitle = (TextView)this.findViewById(R.id.txt_title);
 	    	mLvMenu = (ListView)this.findViewById(R.id.txt_list);
 	    	View mLine = (View)this.findViewById(R.id.line);
-	    	if(flag == 0 ){//0为目录浏览，1为我的收藏，2为最近使用
-	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
-	    	}else if(flag == 1){
-	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
-	    	}else if(flag == 2){
-	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
-	    	}else{
-	    		rootPath = intent.getStringExtra("path");
-	    	}
 	    	mTvTitle.setText(name);
 	    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
 	    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
 	    	mLvMenu.setFocusable(false);	//不让控件获得焦点，让主界面进行按键分发
 	    	fileInfoList = new ArrayList<FileInfo>();
-	    	initFiles();
+	    	
+	    	manager = new DatabaseManager(this);
+	    	if(flag == 0 ){//0为目录浏览，1为我的收藏，2为最近使用
+	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
+	    		initFiles();
+	    	}else if(flag == 1 || flag == 2){
+	    		initDataFiles(flag);
+	    	}else{
+	    		rootPath = intent.getStringExtra("path");
+	    		initFiles();
+	    	}
 	    	mAdapter = new TxtDetailListAdapter( this, fileInfoList);
 	    	mLvMenu.setAdapter(mAdapter);
 	    }
@@ -98,5 +101,10 @@ public class TxtDetailActivity extends Activity {
 				}
 			}
 		}
+	}
+	//初始化数据库文件
+	private void initDataFiles(int flag){
+		fileInfoList = manager.queryOrders(flag);
+		
 	}
 }

@@ -14,10 +14,10 @@ import android.widget.TextView;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.ReadTxtActivity;
 import com.sunteam.ebook.TxtDetailActivity;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
-import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 文档详细列表类
@@ -29,13 +29,13 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 	private Context mContext = null;
 	private ArrayList<FileInfo> gListData = null;
 	private int selectItem = 0; // 当前选中的项，默认是第一项
-
+	private DatabaseManager manager;
 
 	public TxtDetailListAdapter(Context context, ArrayList<FileInfo> list) {
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
-
+		manager = new DatabaseManager(mContext);
 		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
 	}
 
@@ -87,6 +87,7 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 			Intent intent = new Intent(mContext,ReadTxtActivity.class);
 			intent.putExtra("path", fileInfo.path);
 			mContext.startActivity(intent);
+			manager.insertBookToDb(fileInfo, 2);
 		}
 	}
 

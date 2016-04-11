@@ -28,24 +28,13 @@ public class TxtMenuListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
 	private ArrayList<String> gListData = null;
 	private int selectItem = 0; // 当前选中的项，默认是第一项
-
-	public TxtMenuListAdapter(Context context, String[] list) {
-		this.mContext = context;
-		this.gListData = new ArrayList<String>();
-		this.selectItem = 0;
-
-		for (int i = 0; i < list.length; i++) {
-			gListData.add(list[i]);
-		}
-
-		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
-	}
+//	private DatabaseManager manager;
 
 	public TxtMenuListAdapter(Context context, ArrayList<String> list) {
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
-
+//		manager = new DatabaseManager(mContext);
 		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
 	}
 

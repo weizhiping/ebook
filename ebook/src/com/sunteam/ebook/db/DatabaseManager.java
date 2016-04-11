@@ -25,7 +25,7 @@ public class DatabaseManager {
 	}
 
 	// 收藏和最近浏览数据库插入数据
-	public void insertOrderToDb(FileInfo file,int type) {
+	public void insertBookToDb(FileInfo file,int type) {
 		boolean hasOrder = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path);
 		if (!hasOrder) {
 			db = helper.getWritableDatabase();
@@ -40,13 +40,12 @@ public class DatabaseManager {
 	}
 
 	// 查询电子书数据
-	public ArrayList<FileInfo> queryOrders(int type, int pageId, int pageSize) {
+	public ArrayList<FileInfo> queryOrders(int type) {
 		db = helper.getWritableDatabase();
-		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type +
-			        " Limit "+String.valueOf(pageSize)+ " Offset " +String.valueOf(pageId*pageSize);  
+		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type;  
 		 Cursor cursor = db.rawQuery(sql, null);
 		ArrayList<FileInfo> orderList = null;
-		try {
+		try { 
 			if (null != cursor) {
 				if (cursor.getCount() > 0) {
 					orderList = new ArrayList<FileInfo>();
@@ -79,10 +78,10 @@ public class DatabaseManager {
 	}
 
 	// 查找数据库中是否已经存在某一条数据
-	private boolean hasDataInBase(String table, String id) {
+	private boolean hasDataInBase(String table, String path) {
 		Cursor cursor = null;
 		db = helper.getWritableDatabase();
-		cursor = db.query(table, null, "path=?", new String[] { id }, null,
+		cursor = db.query(table, null, "path=?", new String[] { path }, null,
 				null, null);
 		int count = 0;
 		if (null != cursor) {
