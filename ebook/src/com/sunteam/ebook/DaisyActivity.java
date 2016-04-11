@@ -13,7 +13,7 @@ import com.sunteam.ebook.adapter.TxtMenuListAdapter;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 /**
- * txt与word主界面
+ * Dausy主界面
  * @author sylar
  *
  */
@@ -33,6 +33,7 @@ public class DaisyActivity extends Activity {
 	    private void initViews()
 	    {
 	    	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
+	    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
 	    	TextView mTvTitle = (TextView)this.findViewById(R.id.txt_title);
 	    	mLvMenu = (ListView)this.findViewById(R.id.txt_list);
 	    	View mLine = (View)this.findViewById(R.id.line);

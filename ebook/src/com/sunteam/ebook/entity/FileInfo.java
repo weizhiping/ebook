@@ -9,6 +9,10 @@ public class FileInfo {
 	public String path;
 	public boolean isFolder;
 	
+	public FileInfo(){
+	
+	}
+	
 	public FileInfo(String name, String path,boolean isFolder) {
 		this.name = name;
 		this.path = path;

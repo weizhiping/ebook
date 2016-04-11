@@ -22,6 +22,7 @@ public class ReadTxtActivity extends Activity {
 		
 		//此处需要从系统配置文件中得到配色方案索引
     	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
+    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
 		String filePath = getIntent().getStringExtra("path");
 		TextReaderView textView = (TextReaderView) findViewById(R.id.read_txt_view);
 		textView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));

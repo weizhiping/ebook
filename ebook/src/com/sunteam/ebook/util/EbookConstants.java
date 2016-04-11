@@ -1,7 +1,5 @@
 package com.sunteam.ebook.util;
 
-import android.graphics.drawable.Drawable;
-
 import com.sunteam.ebook.R;
 
 /**
@@ -54,5 +52,11 @@ public class EbookConstants
 		R.color.white,
 		R.color.red,
 	};	//选中背景色
+	//数据库表字段
+	public static final String BOOKS_TABLE = "books";
+	public static final String BOOK_NAME = "name";
+	public static final String BOOK_PATH = "path";
+	public static final String BOOK_FOLDER = "folder";//0为文件，1为文件夹
+	public static final String BOOK_TYPE = "type";//0为收藏，1为最近浏览
 	
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,8 +38,10 @@ public class TxtDetailActivity extends Activity {
 	    private void initViews()
 	    {
 	    	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
-	    	String name = getIntent().getStringExtra("name");
-	    	int flag = getIntent().getIntExtra("flag", 0);
+	    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
+	    	Intent intent = getIntent();
+	    	String name = intent.getStringExtra("name");
+	    	int flag = intent.getIntExtra("flag", 0);
 	    	TextView mTvTitle = (TextView)this.findViewById(R.id.txt_title);
 	    	mLvMenu = (ListView)this.findViewById(R.id.txt_list);
 	    	View mLine = (View)this.findViewById(R.id.line);
@@ -49,7 +52,7 @@ public class TxtDetailActivity extends Activity {
 	    	}else if(flag == 2){
 	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
 	    	}else{
-	    		
+	    		rootPath = intent.getStringExtra("path");
 	    	}
 	    	mTvTitle.setText(name);
 	    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));

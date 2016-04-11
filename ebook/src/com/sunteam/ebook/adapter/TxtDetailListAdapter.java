@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.ReadTxtActivity;
+import com.sunteam.ebook.TxtDetailActivity;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
@@ -77,7 +78,11 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 		// 进入到selectItem对应的界面
 		FileInfo fileInfo = gListData.get(selectItem);
 		if(fileInfo.isFolder){
-			
+			Intent intent = new Intent(mContext,TxtDetailActivity.class);
+			intent.putExtra("path", fileInfo.path);
+			intent.putExtra("name", fileInfo.name);
+			intent.putExtra("flag", 10);
+			mContext.startActivity(intent);
 		}else{
 			Intent intent = new Intent(mContext,ReadTxtActivity.class);
 			intent.putExtra("path", fileInfo.path);
