@@ -1,14 +1,8 @@
 package com.sunteam.ebook.view;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Vector;
-
-import com.sunteam.ebook.util.IdentifyEncoding;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -34,7 +28,6 @@ import android.view.View;
  public class TextReaderView extends View implements OnGestureListener
  {	 
 	 private static final String TAG = "TextReaderView";
-	 private static final int BUFFER_SIZE = 0x100000;	//buffer的大小
 	 private static final int MARGIN_WIDTH = 10;		///左右与边缘的距离
 	 private static final int MARGIN_HEIGHT = 10;		//上下与边缘的距离
 	 private static final int FLING_MIN_DISTANCE = 100;	//滑动的距离
@@ -55,9 +48,8 @@ import android.view.View;
 	 private boolean mIsFirstPage = false;	//是否是第一屏
 	 private boolean mIsLastPage = false;	//是否是最后一屏
 	 private String mStrCharsetName = "GBK";//编码格式，默认为GBK
-	 private File mBookFile = null;
 	 private Vector<String> mLines = new Vector<String>();
-	 private MappedByteBuffer mMbBuf = null;//内存中的图书字符
+	 private byte[] mMbBuf = null;			//内存中的图书字符
 	 private int mMbBufBegin = 0;			//当前页起始位置
 	 private int mMbBufEnd = 0;				//当前页终点位置
 	 private int mMbBufLen = 0; 			//图书总长度
@@ -209,22 +201,20 @@ import android.view.View;
 	 
 	 /**
 	  * 
-	  * @param strFilePath
+	  * @param buffer
+	  * 			文本buffer
+	  * @param charsetName
+	  * 			编码
 	  * @param begin
 	  *            表示书签记录的位置，读取书签时，将begin值给m_mbBufEnd，在读取nextpage，及成功读取到了书签
 	  *            记录时将m_mbBufBegin开始位置作为书签记录
 	  * 
-	  * @throws IOException
 	  */
-	 @SuppressWarnings("resource")
-	 public void openBook(String strFilePath, int begin) throws IOException 
+	 public void openBook(byte[] buffer, String charsetName, int begin) 
 	 {
-		 IdentifyEncoding ie = new IdentifyEncoding();
-		 mStrCharsetName = ie.GetEncodingName( strFilePath );
-		 mBookFile = new File(strFilePath);
-		 long lLen = mBookFile.length();
-		 mMbBufLen = (int)lLen;
-		 mMbBuf = new RandomAccessFile( mBookFile, "r").getChannel().map(FileChannel.MapMode.READ_ONLY, 0, lLen);
+		 mMbBuf = buffer;
+		 mStrCharsetName = charsetName;
+		 mMbBufLen = (int)buffer.length;
 		 
 		 //设置已读进度
 		 if( begin >= 0 ) 
@@ -240,9 +230,9 @@ import android.view.View;
 	 private void calcPageCount()
 	 {
 		 long time1 = System.currentTimeMillis();
-		 byte[] buffer = new byte[mMbBufLen];
+		 byte[] buffer = mMbBuf;
 		 long time2 = System.currentTimeMillis();
-		 mMbBuf.get(buffer, 0, mMbBufLen);
+		 //mMbBuf.get(buffer, 0, mMbBufLen);
 		 long time3 = System.currentTimeMillis();
 		 
 		 String content = null;
@@ -369,8 +359,8 @@ import android.view.View;
 		 {
 			 while( i < mMbBufLen - 1 ) 
 			 {
-				 b0 = mMbBuf.get(i++);
-				 b1 = mMbBuf.get(i++);
+				 b0 = mMbBuf[i++];
+				 b1 = mMbBuf[i++];
 				 if( b0 == 0x0a && b1 == 0x00 ) 
 				 {
 					 break;
@@ -381,8 +371,8 @@ import android.view.View;
 		 {
 			 while( i < mMbBufLen - 1 ) 
 			 {
-				 b0 = mMbBuf.get(i++);
-				 b1 = mMbBuf.get(i++);
+				 b0 = mMbBuf[i++];
+				 b1 = mMbBuf[i++];
 				 if( b0 == 0x00 && b1 == 0x0a ) 
 				 {
 					 break;
@@ -393,7 +383,7 @@ import android.view.View;
 		 {
 			 while( i < mMbBufLen ) 
 			 {
-				 b0 = mMbBuf.get(i++);
+				 b0 = mMbBuf[i++];
 				 if( b0 == 0x0a ) 
 				 {
 					 break;
@@ -405,7 +395,7 @@ import android.view.View;
 		 byte[] buf = new byte[nParaSize];
 		 for( i = 0; i < nParaSize; i++ ) 
 		 {
-			 buf[i] = mMbBuf.get(nFromPos + i);
+			 buf[i] = mMbBuf[nFromPos + i];
 		 }
 		 
 		 return buf;
@@ -504,8 +494,8 @@ import android.view.View;
 			 i = nEnd - 2;
 			 while( i > 0 ) 
 			 {
-				 b0 = mMbBuf.get(i);
-				 b1 = mMbBuf.get(i + 1);
+				 b0 = mMbBuf[i];
+				 b1 = mMbBuf[i + 1];
 				 if( b0 == 0x0a && b1 == 0x00 && i != nEnd - 2 ) 
 				 {
 					 i += 2;
@@ -519,8 +509,8 @@ import android.view.View;
 			 i = nEnd - 2;
 			 while( i > 0 ) 
 			 {
-				 b0 = mMbBuf.get(i);
-				 b1 = mMbBuf.get(i + 1);
+				 b0 = mMbBuf[i];
+				 b1 = mMbBuf[i + 1];
 				 if( b0 == 0x00 && b1 == 0x0a && i != nEnd - 2 ) 
 				 {
 					 i += 2;
@@ -534,7 +524,7 @@ import android.view.View;
 			 i = nEnd - 1;
 			 while( i > 0 ) 
 			 {
-				 b0 = mMbBuf.get(i);
+				 b0 = mMbBuf[i];
 				 if( b0 == 0x0a && i != nEnd - 1 )	//0x0a表示换行符 
 				 {
 					 i++;
@@ -554,7 +544,7 @@ import android.view.View;
 		 byte[] buf = new byte[nParaSize];
 		 for( j = 0; j < nParaSize; j++ ) 
 		 {
-			 buf[j] = mMbBuf.get(i + j);
+			 buf[j] = mMbBuf[i + j];
 		 }
 		 
 		 return buf;

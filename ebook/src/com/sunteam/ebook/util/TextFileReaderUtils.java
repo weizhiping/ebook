@@ -14,18 +14,33 @@ import java.util.ArrayList;
  */
 public class TextFileReaderUtils 
 {
+	private static TextFileReaderUtils instance = null;
 	private File mBookFile = null;
 	private String mStrCharsetName = "GBK";		//编码格式，默认为GBK
 	private MappedByteBuffer mMbBuf = null;		//内存中的图书字符
 	private int mMbBufLen = 0; 					//图书总长度
-	private byte[] mParagraphBuf = null;		//分段buf
 	private ArrayList<ParagrapInfo> mParagrapInfoList  = null;	//分段信息
 	
-	@SuppressWarnings("resource")
-	public TextFileReaderUtils( final String fullpath ) throws IOException
+	public static TextFileReaderUtils getInstance()
 	{
-		mParagraphBuf = new byte[EbookConstants.MAX_PARAGRAPH];
+		if( null == instance )
+		{
+			instance = new TextFileReaderUtils();
+		}
+		
+		return instance;
+	}
+	
+	public TextFileReaderUtils()
+	{
 		mParagrapInfoList = new ArrayList<ParagrapInfo>();
+	}
+	
+	//初始化
+	@SuppressWarnings("resource")
+	public void init( final String fullpath ) throws IOException
+	{
+		mParagrapInfoList.clear();	//先清除上次保存的信息
 		
 		IdentifyEncoding ie = new IdentifyEncoding();
 		mStrCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
@@ -52,6 +67,29 @@ public class TextFileReaderUtils
 	}
 	
 	/**
+	  * 得到指定部分的文本内容
+	  */	
+	public byte[] getParagraphBuffer( int part )
+	{
+		if( part < 0 || part >= mParagrapInfoList.size() )
+		{
+			return	null;
+		}
+		
+		byte[] buffer = new byte[mParagrapInfoList.get(part).len];		//分段buf
+		mMbBuf.position(mParagrapInfoList.get(part).startPos);			//先移动到开始位置
+		mMbBuf.get( buffer, 0, mParagrapInfoList.get(part).len );		//读入物理内存
+		
+		return	buffer;
+	}
+	
+	//得到编码格式
+	public String getCharsetName()
+	{
+		return	mStrCharsetName;
+	}
+	
+	/**
 	  * 将文本分段
 	  * 
 	  * @param mbb
@@ -69,8 +107,9 @@ public class TextFileReaderUtils
 			return	-1;
 		}
 		
+		byte[] buffer = new byte[len];		//分段buf
 		mbb.position(begin);	//先移动到开始位置
-		mbb.get( mParagraphBuf, 0, len );	//读入物理内存
+		mbb.get( buffer, 0, len );	//读入物理内存
 		
 		int paragraphLen = len;		//段落的长度
 		int i = 0;
@@ -81,8 +120,8 @@ public class TextFileReaderUtils
 		{
 			while( i < len - 1 ) 
 			{
-				b0 = mParagraphBuf[i++];
-				b1 = mParagraphBuf[i++];
+				b0 = buffer[i++];
+				b1 = buffer[i++];
 				if( b0 == 0x0a && b1 == 0x00 ) 
 				{
 					paragraphLen = i;
@@ -94,8 +133,8 @@ public class TextFileReaderUtils
 		{
 			while( i < len - 1 ) 
 			{
-				b0 = mParagraphBuf[i++];
-				b1 = mParagraphBuf[i++];
+				b0 = buffer[i++];
+				b1 = buffer[i++];
 				if( b0 == 0x00 && b1 == 0x0a ) 
 				{
 					paragraphLen = i;
@@ -107,7 +146,7 @@ public class TextFileReaderUtils
 		{
 			while( i < len ) 
 			{
-				b0 = mParagraphBuf[i++];
+				b0 = buffer[i++];
 				if( b0 == 0x0a ) 
 				{
 					paragraphLen = i;

@@ -1,9 +1,8 @@
 package com.sunteam.ebook;
 
-import java.io.IOException;
-
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 
 import android.app.Activity;
@@ -24,12 +23,9 @@ public class ReadTxtActivity extends Activity {
     	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
     	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
 		String filePath = getIntent().getStringExtra("path");
+		int part = getIntent().getIntExtra("part", 0);
 		TextReaderView textView = (TextReaderView) findViewById(R.id.read_txt_view);
 		textView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-	    try {
-	    	textView.openBook(filePath, 0);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	    textView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), 0);
 	}
 }

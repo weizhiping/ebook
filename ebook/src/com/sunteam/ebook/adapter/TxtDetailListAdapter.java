@@ -1,5 +1,6 @@
 package com.sunteam.ebook.adapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -18,6 +19,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
 
 /**
  * 文档详细列表类
@@ -84,10 +86,32 @@ public class TxtDetailListAdapter extends BaseAdapter implements OnClickListener
 			intent.putExtra("flag", 10);
 			mContext.startActivity(intent);
 		}else{
-			Intent intent = new Intent(mContext,ReadTxtActivity.class);
-			intent.putExtra("path", fileInfo.path);
-			mContext.startActivity(intent);
-			manager.insertBookToDb(fileInfo, 2);
+			try
+			{
+				TextFileReaderUtils.getInstance().init(fileInfo.path);
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+			int count = TextFileReaderUtils.getInstance().getParagraphCount();	//得到分段信息
+			
+			if( 0 == count )		//文件为空
+			{
+				//提示一下（语音和文字）
+			}
+			else if( 1 == count )	//只有一部分
+			{
+				Intent intent = new Intent(mContext,ReadTxtActivity.class);
+				intent.putExtra("path", fileInfo.path);	//路径
+				intent.putExtra("part", 0);				//第几部分
+				mContext.startActivity(intent);
+				manager.insertBookToDb(fileInfo, 2);
+			}
+			else
+			{
+				//根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
+			}
 		}
 	}
 
