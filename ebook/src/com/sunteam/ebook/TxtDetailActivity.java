@@ -55,7 +55,7 @@ public class TxtDetailActivity extends Activity {
 	    	
 	    	manager = new DatabaseManager(this);
 	    	if(flag == 0 ){//0为目录浏览，1为我的收藏，2为最近使用
-	    		rootPath = FileOperateUtils.getSDPath() + "ebook/";
+	    		rootPath = FileOperateUtils.getSDPath() + this.getString(R.string.app_name)+"/";
 	    		initFiles();
 	    	}else if(flag == 1 || flag == 2){
 	    		initDataFiles(flag);

@@ -52,11 +52,14 @@ public class EbookConstants
 		R.color.white,
 		R.color.red,
 	};	//选中背景色
+	
 	//数据库表字段
 	public static final String BOOKS_TABLE = "books";
 	public static final String BOOK_NAME = "name";
 	public static final String BOOK_PATH = "path";
-	public static final String BOOK_FOLDER = "folder";//0为文件，1为文件夹
-	public static final String BOOK_TYPE = "type";//1为收藏，2为最近浏览
+	public static final String BOOK_FOLDER = "folder";	//0为文件，1为文件夹
+	public static final String BOOK_TYPE = "type";		//1为收藏，2为最近浏览
+	
+	public static final int MAX_PARAGRAPH = 0x100000;	//最大段落长度
 	
 }

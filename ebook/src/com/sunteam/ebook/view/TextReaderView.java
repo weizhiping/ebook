@@ -8,6 +8,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Vector;
 
+import com.sunteam.ebook.util.IdentifyEncoding;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

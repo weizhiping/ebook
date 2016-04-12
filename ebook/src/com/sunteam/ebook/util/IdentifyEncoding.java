@@ -1,4 +1,4 @@
-package com.sunteam.ebook.view;
+package com.sunteam.ebook.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,6 +8,12 @@ import java.io.IOException;
 
 import android.util.Log;
 
+/**
+ * 编码识别类
+ * 
+ * @author wzp
+ *
+ */
 public class IdentifyEncoding
 {
 	private static final String TAG = "IdentifyEncoding";
