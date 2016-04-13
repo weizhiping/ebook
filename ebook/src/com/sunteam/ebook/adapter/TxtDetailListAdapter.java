@@ -101,7 +101,7 @@ public class TxtDetailListAdapter extends BaseAdapter implements
 			} else if (1 == count){ // 只有一部分
 			
 				Intent intent = new Intent(mContext, ReadTxtActivity.class);
-				intent.putExtra("path", fileInfo.path); // 路径
+				intent.putExtra("name", fileInfo.name); // 路径
 				intent.putExtra("part", 0); // 第几部分
 				mContext.startActivity(intent);
 				manager.insertBookToDb(fileInfo, 2);

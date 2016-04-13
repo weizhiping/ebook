@@ -58,6 +58,7 @@ import android.widget.Toast;
 	 
 	 public interface OnPageFlingListener 
 	 {
+		 public void onLoadCompleted( int pageCount );		//加载完成
 		 public void onPageFlingToTop();	//翻到头了
 		 public void onPageFlingToBottom();	//翻到尾了
 		 public void onPageFlingCompleted( int curPage );	//翻页完成
@@ -892,6 +893,11 @@ import android.widget.Toast;
 				 divideLines();
 			 }
 			 long endTime = System.currentTimeMillis();
+			 
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onLoadCompleted(getPageCount());
+			 }
 			 
 			 Toast.makeText(mContext, "time = "+(endTime-startTime), Toast.LENGTH_LONG).show();
 			 

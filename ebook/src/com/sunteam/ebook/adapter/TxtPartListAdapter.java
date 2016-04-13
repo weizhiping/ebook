@@ -30,11 +30,13 @@ public class TxtPartListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
 	private ArrayList<String> gListData = null;
 	private int selectItem = 0; // 当前选中的项，默认是第一项
+	private String filename = null;
 
-	public TxtPartListAdapter(Context context, ArrayList<String> list) {
+	public TxtPartListAdapter(Context context, String name, ArrayList<String> list) {
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
+		this.filename = name;
 		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
 	}
 
@@ -76,6 +78,7 @@ public class TxtPartListAdapter extends BaseAdapter implements OnClickListener {
 	public void enter() {
 		// 进入到selectItem对应的界面
 		Intent intent = new Intent(mContext,ReadTxtActivity.class);
+		intent.putExtra("name", filename);
 		intent.putExtra("part", selectItem);
 		mContext.startActivity(intent);
 	}

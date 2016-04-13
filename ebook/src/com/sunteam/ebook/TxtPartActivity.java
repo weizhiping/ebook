@@ -50,7 +50,7 @@ public class TxtPartActivity extends Activity {
 	    	for(int i = 1; i <= count; i++){
 	    		partList.add("第" + i + "部分");
 	    	}
-	    	TxtPartListAdapter mAdapter = new TxtPartListAdapter( this, partList);
+	    	TxtPartListAdapter mAdapter = new TxtPartListAdapter( this, name, partList);
 	    	mLvMenu.setAdapter(mAdapter);
 	    }
 	

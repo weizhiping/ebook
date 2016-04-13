@@ -3,12 +3,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" 
     >
+    <TextView
+        android:id="@+id/main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/title_height"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dip"
+        android:gravity="left|center_vertical"
+        android:text="@string/main_title" 
+        android:background="@color/transparent"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/title_height"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dip"
+        android:background="@color/transparent"
+        android:orientation="vertical"
+        >
+        <TextView
+	        android:id="@+id/pageCount"
+	        android:layout_width="wrap_content"
+	        android:layout_height="0dip"
+	        android:layout_weight="1"
+	        android:gravity="right|center_vertical"
+	        android:background="@color/transparent"
+	        />
+        <TextView
+	        android:id="@+id/curPage"
+	        android:layout_width="wrap_content"
+	        android:layout_height="0dip"
+	        android:layout_weight="1"
+	        android:gravity="right|center_vertical"
+	        android:background="@color/transparent"
+	        />
+	</LinearLayout>
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/main_title"
+        android:background="@color/space_line"
+        />
     <com.sunteam.ebook.view.TextReaderView
         android:id="@+id/read_txt_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_below="@id/line"
         android:background="@color/transparent"
         />
 </RelativeLayout>
