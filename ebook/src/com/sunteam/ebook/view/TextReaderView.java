@@ -9,12 +9,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Txt电子书阅读器控件
@@ -346,6 +348,458 @@ import android.view.View;
 		 }
 	 }
 	 
+	 //分行
+	 private void divideLinesEx()
+	 {
+		 mPaint.setTextSize(mTextSize);
+		 mPaint.setTypeface(Typeface.MONOSPACE);
+		 
+		 String strParagraph = "";
+		 int startPos = 0;
+		 //ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
+		 
+		 while( startPos < mMbBufLen ) 
+		 {
+			 int len = getNextParagraphLength(startPos);
+			 
+			 try 
+			 {
+				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+			 
+			 /*
+			 String strReturn = "";
+			 //替换掉回车换行符
+
+			 if( strParagraph.indexOf("\r\n") != -1 ) 
+			 {
+				 strReturn = "\r\n";
+				 strParagraph = strParagraph.replaceAll("\r\n", "");
+			 } 
+			 else if( strParagraph.indexOf("\n") != -1 ) 
+			 {
+				 strReturn = "\n";
+				 strParagraph = strParagraph.replaceAll("\n", "");
+			 }
+			 */
+			 
+			 if( mPaint.measureText(strParagraph) <= mVisibleWidth ) 
+			 {
+				 LineInfo li = new LineInfo(startPos, len);
+				 mLineInfoList.add(li);				 
+			 }
+			 else
+			 {
+				 byte[] gbkBuffer = null;
+				 try
+				 {
+					 gbkBuffer = strParagraph.getBytes("GBK");
+				 }
+				 catch (UnsupportedEncodingException e) 
+				 {
+					 e.printStackTrace();
+				 }	//先统一转换为GBK编码
+				 
+				 int textWidth = 0;
+				 int start = startPos;
+				 int home = 0;
+				 int i = 0;
+				 for( i = 0; i < gbkBuffer.length; i++ )
+				 {
+					 if( 0x0d == gbkBuffer[i] || 0x0a == gbkBuffer[i] )
+					 {
+						 continue;
+					 }
+					 
+					 if( gbkBuffer[i] < 0x80 && gbkBuffer[i] >= 0x0)
+					 {
+						 textWidth += ((int)mTextSize/2);
+						 if( textWidth >= mVisibleWidth )
+						 {
+							 String line = null;
+							 try 
+							 {
+								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 int length = 0;
+							 try
+							 {
+								 length = line.getBytes(mStrCharsetName).length;
+							 }
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 LineInfo li = new LineInfo(start, length);
+							 mLineInfoList.add(li);
+							 
+							 start += length;
+							 home = i;
+							 i--;
+							 textWidth = 0;
+							 continue;
+						 }
+					 }
+					 else
+					 {
+						 textWidth += (int)mTextSize;
+						 if( textWidth >= mVisibleWidth )
+						 {
+							 String line = null;
+							 try 
+							 {
+								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 int length = 0;
+							 try
+							 {
+								 length = line.getBytes(mStrCharsetName).length;
+							 }
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 LineInfo li = new LineInfo(start, length);
+							 mLineInfoList.add(li);
+							 
+							 start += length;
+							 home = i;
+							 i--;
+							 textWidth = 0;
+							 continue;
+						 }
+						 i++;
+					 }
+				 }
+				 
+				 if( textWidth > 0 )
+				 {
+					 String line = null;
+					 try 
+					 {
+						 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+					 } 
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 int length = 0;
+					 try
+					 {
+						 length = line.getBytes(mStrCharsetName).length;
+					 }
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 LineInfo li = new LineInfo(start, length);
+					 mLineInfoList.add(li);
+					 
+					 start += length;
+					 textWidth = 0;
+				 }
+			 }
+			 
+			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
+		 }
+	 }
+	 
+	 //分行
+	 private void divideLinesEx2()
+	 {
+		 mPaint.setTextSize(mTextSize);
+		 mPaint.setTypeface(Typeface.MONOSPACE);
+		 
+		 //String strParagraph = "";
+		 int startPos = 0;
+		 //ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
+		 
+		 while( startPos < mMbBufLen ) 
+		 {
+			 int len = getNextParagraphLength(startPos);
+			 
+			 /*
+			 try 
+			 {
+				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+			 
+			 
+			 String strReturn = "";
+			 //替换掉回车换行符
+
+			 if( strParagraph.indexOf("\r\n") != -1 ) 
+			 {
+				 strReturn = "\r\n";
+				 strParagraph = strParagraph.replaceAll("\r\n", "");
+			 } 
+			 else if( strParagraph.indexOf("\n") != -1 ) 
+			 {
+				 strReturn = "\n";
+				 strParagraph = strParagraph.replaceAll("\n", "");
+			 }
+			 */
+			 int ll = len;
+			 if( mMbBuf[startPos+len-1] == 0x0d || mMbBuf[startPos+len-1] == 0x0a )
+			 {
+				 ll--;
+			 }
+			 
+			 if( mMbBuf[startPos+len-2] == 0x0d || mMbBuf[startPos+len-2] == 0x0a )
+			 {
+				 ll--;
+			 }
+			 
+			 if( ll*((int)mTextSize/2) <= mVisibleWidth ) 
+			 {
+				 LineInfo li = new LineInfo(startPos, len);
+				 mLineInfoList.add(li);				 
+			 }
+			 else
+			 {
+				 byte[] gbkBuffer = new byte[len];
+				 for( int i = 0; i < len; i++ )
+				 {
+					 gbkBuffer[i] = mMbBuf[startPos+i];
+				 }
+				 /*
+				 try
+				 {
+					 gbkBuffer = strParagraph.getBytes("GBK");
+				 }
+				 catch (UnsupportedEncodingException e) 
+				 {
+					 e.printStackTrace();
+				 }	//先统一转换为GBK编码
+				 */
+				 
+				 int textWidth = 0;
+				 int start = startPos;
+				 int home = 0;
+				 int i = 0;
+				 for( i = 0; i < gbkBuffer.length; i++ )
+				 {
+					 if( 0x0d == gbkBuffer[i] || 0x0a == gbkBuffer[i] )
+					 {
+						 continue;
+					 }
+					 
+					 if( gbkBuffer[i] < 0x80 && gbkBuffer[i] >= 0x0)
+					 {
+						 textWidth += ((int)mTextSize/2);
+						 if( textWidth >= mVisibleWidth )
+						 {
+							 /*
+							 String line = null;
+							 try 
+							 {
+								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 
+							 int length = 0;
+							 try
+							 {
+								 length = line.getBytes(mStrCharsetName).length;
+							 }
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 */
+							 int length = i-home;
+							 
+							 LineInfo li = new LineInfo(start, length);
+							 mLineInfoList.add(li);
+							 
+							 start += length;
+							 home = i;
+							 i--;
+							 textWidth = 0;
+							 continue;
+						 }
+					 }
+					 else
+					 {
+						 textWidth += (int)mTextSize;
+						 if( textWidth >= mVisibleWidth )
+						 {
+							 /*
+							 String line = null;
+							 try 
+							 {
+								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 int length = 0;
+							 try
+							 {
+								 length = line.getBytes(mStrCharsetName).length;
+							 }
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 */
+							 
+							 int length = i-home;
+							 LineInfo li = new LineInfo(start, length);
+							 mLineInfoList.add(li);
+							 
+							 start += length;
+							 home = i;
+							 i--;
+							 textWidth = 0;
+							 continue;
+						 }
+						 i++;
+					 }
+				 }
+				 
+				 if( textWidth > 0 )
+				 {
+					 /*
+					 String line = null;
+					 try 
+					 {
+						 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
+					 } 
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 int length = 0;
+					 try
+					 {
+						 length = line.getBytes(mStrCharsetName).length;
+					 }
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 */
+					 int length = i-home;
+					 LineInfo li = new LineInfo(start, length);
+					 mLineInfoList.add(li);
+					 
+					 start += length;
+					 textWidth = 0;
+				 }
+			 }
+			 
+			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
+		 }
+	 }
+	 
+	 //分行
+	 private void divideLines2()
+	 {
+		 mPaint.setTextSize(mTextSize);
+
+		 String content = null;
+		 try 
+		 {
+			 content = new String( mMbBuf, mStrCharsetName );
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 // TODO Auto-generated catch block
+			 e.printStackTrace();
+		 }
+		 
+		 String[] strParagraph = content.split("\r\n");
+		 int startPos = 0;
+		 
+		 for( int i = 0; i < strParagraph.length; i++ )
+		 {
+			 String paragraph = strParagraph[i];
+			 int length = 0;
+			 try
+			 {
+				 length = (paragraph+"\r\n").getBytes(mStrCharsetName).length;
+			 }
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+			 
+			 //如果是空白行，直接添加
+			 if( paragraph.length() == 0 ) 
+			 {
+				 LineInfo li = new LineInfo(startPos, length);
+				 mLineInfoList.add(li);
+				 
+				 startPos += length;
+				 continue;
+			 }
+			 
+			 while( paragraph.length() > 0 ) 
+			 {
+				 //画一行文字
+				 int nSize = mPaint.breakText( paragraph, true, mVisibleWidth, null );
+				 paragraph = paragraph.substring( nSize );
+				 
+				 try
+				 {
+					 length = paragraph.getBytes(mStrCharsetName).length;
+				 }
+				 catch (UnsupportedEncodingException e) 
+				 {
+					 e.printStackTrace();
+				 }
+				 LineInfo li = new LineInfo(startPos, length);
+				 mLineInfoList.add(li);
+				 
+				 startPos += length;
+			 }
+			 
+			 try
+			 {
+				 length = "\r\n".getBytes(mStrCharsetName).length;
+			 }
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+			 
+			 int size = mLineInfoList.size();
+			 mLineInfoList.get(size-1).len += length;
+			 
+			 startPos += length;
+		 }
+	 }
+	 
 	 //得到总页数
 	 public int getPageCount()
 	 {
@@ -403,6 +857,7 @@ import android.view.View;
 		 return	true;
 	 }
 
+	 private static int count = 0;
 	 private void init(Context context) 
 	 {
 		 mWidth = getWidth();
@@ -423,7 +878,24 @@ import android.view.View;
 		 
 		 if( 0 == mLineInfoList.size() )
 		 {
-			 divideLines();
+			 long startTime = System.currentTimeMillis();
+			 if( count % 3 == 0 )
+			 {
+				 divideLinesEx2();
+			 }
+			 else if( count % 3 == 1 )
+			 {
+				 divideLinesEx();
+			 }
+			 else
+			 {
+				 divideLines();
+			 }
+			 long endTime = System.currentTimeMillis();
+			 
+			 Toast.makeText(mContext, "time = "+(endTime-startTime), Toast.LENGTH_LONG).show();
+			 
+			 count++;
 		 }
 	 }
 	 
