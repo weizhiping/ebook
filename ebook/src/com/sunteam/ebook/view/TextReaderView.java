@@ -1,8 +1,7 @@
 package com.sunteam.ebook.view;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -48,12 +46,10 @@ import android.view.View;
 	 private boolean mIsFirstPage = false;	//是否是第一屏
 	 private boolean mIsLastPage = false;	//是否是最后一屏
 	 private String mStrCharsetName = "GBK";//编码格式，默认为GBK
-	 private Vector<String> mLines = new Vector<String>();
+	 private ArrayList<LineInfo> mLineInfoList = new ArrayList<LineInfo>();	//保存分行信息
 	 private byte[] mMbBuf = null;			//内存中的图书字符
-	 private int mMbBufBegin = 0;			//当前页起始位置
-	 private int mMbBufEnd = 0;				//当前页终点位置
+	 private int mLineNumber = 0;			//当前页起始位置(行号)
 	 private int mMbBufLen = 0; 			//图书总长度
-	 private int mPageCount = 0;			//总页数
 	 private int mCurPage = 1;				//当前页
 	 private GestureDetector mGestureDetector = null;	//手势
 	 private OnPageFlingListener mOnPageFlingListener = null;
@@ -127,18 +123,6 @@ import android.view.View;
 		 mLineSpace = size;
 	 }
 	 
-	 //设置页面起始点
-	 public void setPageBegin( int begin ) 
-	 {
-		 this.mMbBufBegin = begin;
-	 }
-	 
-	 //设置页面结束点
-	 public void setPageEnd( int end ) 
-	 {
-		 this.mMbBufEnd = end;
-	 }
-	 
 	 //得到背景色
 	 public int getBackgroundColor()
 	 {
@@ -181,22 +165,31 @@ import android.view.View;
 		 return mIsLastPage;
 	 }
 	 
-	 //得到页面起始点
-	 public int getPageBegin() 
-	 {
-		 return	mMbBufBegin;
-	 }
-	 
-	 //得到页面结束点
-	 public int getPageEnd() 
-	 {
-		 return	mMbBufEnd;
-	 }
-	 
 	 //得到当前屏第一行文本
 	 public String getFirstLineText() 
 	 {
-		 return mLines.size() > 0 ? mLines.get(0) : "";
+		 return	getLineText(mLineNumber);
+	 }
+	 
+	 //得到指定行文本
+	 private String getLineText( final int lineNumber )
+	 {
+		 int size = mLineInfoList.size();
+		 if( lineNumber >= 0  && lineNumber < size )
+		 {
+			 LineInfo li = mLineInfoList.get(lineNumber);
+			 
+			 try 
+			 {
+				 return	new String(mMbBuf, li.startPos, li.len, mStrCharsetName);	//转换成指定编码
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+		 }
+		 
+		 return	"";
 	 }
 	 
 	 /**
@@ -205,153 +198,28 @@ import android.view.View;
 	  * 			文本buffer
 	  * @param charsetName
 	  * 			编码
-	  * @param begin
-	  *            表示书签记录的位置，读取书签时，将begin值给m_mbBufEnd，在读取nextpage，及成功读取到了书签
-	  *            记录时将m_mbBufBegin开始位置作为书签记录
+	  * @param lineNumber
+	  *            表示书签记录的位置(行号)
 	  * 
 	  */
-	 public void openBook(byte[] buffer, String charsetName, int begin) 
+	 public void openBook(byte[] buffer, String charsetName, int lineNumber) 
 	 {
 		 mMbBuf = buffer;
 		 mStrCharsetName = charsetName;
 		 mMbBufLen = (int)buffer.length;
-		 
-		 //设置已读进度
-		 if( begin >= 0 ) 
-		 {
-			 mMbBufBegin = begin;
-			 mMbBufEnd = begin;
-		 }
-		 
-		 //calcPageCount();
-	 }
-	 
-	 //计算总页数
-	 private void calcPageCount()
-	 {
-		 long time1 = System.currentTimeMillis();
-		 byte[] buffer = mMbBuf;
-		 long time2 = System.currentTimeMillis();
-		 //mMbBuf.get(buffer, 0, mMbBufLen);
-		 long time3 = System.currentTimeMillis();
-		 
-		 String content = null;
-		 try 
-		 {
-			 content = new String( buffer, mStrCharsetName );
-		 } 
-		 catch (UnsupportedEncodingException e) 
-		 {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-		 }
-		 long time4 = System.currentTimeMillis();
-		 
-		 String[] strParagraph = content.split("\r\n");
-		 int lineCount = 0;	//总行数
-		 
-		 for( int i = 0; i < strParagraph.length; i++ )
-		 {
-			 String paragraph = strParagraph[i].replaceAll("\r\n", "");
-			 //如果是空白行，直接添加
-			 if( paragraph.length() == 0 ) 
-			 {
-				 lineCount++;
-				 continue;
-			 }
-			 
-			 while( paragraph.length() > 0 ) 
-			 {
-				 //画一行文字
-				 int nSize = mPaint.breakText( paragraph, true, 1060, null );
-				 paragraph = paragraph.substring( nSize );
-				 lineCount++;
-			 }
-		 }
-		 long time5 = System.currentTimeMillis();
-		 
-		 Log.e( TAG, "wzp debug 00000000 time = "+(time2-time1) );
-		 Log.e( TAG, "wzp debug 11111111 time = "+(time3-time2) );
-		 Log.e( TAG, "wzp debug 22222222 time = "+(time4-time3) );
-		 Log.e( TAG, "wzp debug 33333333 time = "+(time5-time4) );
-		 Log.e( TAG, "wzp debug ======== time = "+(time5-time1) );
+		 mLineNumber = lineNumber; 
 	 }
 	 
 	 /**
-	  * 向后翻页
+	  * 得到从指定开始位置的下一个段落的长度
 	  * 
-	  * @throws IOException
-	  */
-	 public boolean nextPage() throws IOException 
-	 {
-		 if( mMbBufEnd >= mMbBufLen ) 
-		 {
-			 mIsLastPage = true;
-			 return false;
-		 } 
-		 else
-		 {
-			 mIsLastPage = false;
-		 }
-		 
-		 mLines.clear();
-		 mMbBufBegin = mMbBufEnd;// 下一页页起始位置=当前页结束位置
-		 mLines = pageDown();
-		 
-		 mCurPage++;
-		 
-		 return	true;
-	 }
-	 
-	 /**
-	  * 当前页
+	  * @param	startPos
 	  * 
-	  * @throws IOException
+	  * @return	int
 	  */
-	 public void currentPage() throws IOException 
+	 private int getNextParagraphLength( final int startPos ) 
 	 {
-		 mLines.clear();
-		 mLines = pageDown();
-	 }
-	 
-	 /**
-	  * 向前翻页
-	  * 
-	  * @throws IOException
-	  */
-	 public boolean prePage() throws IOException 
-	 {
-		 if( mMbBufBegin <= 0 ) 
-		 {
-			 mMbBufBegin = 0;
-			 mIsFirstPage = true;
-			 
-			 return	false;
-		 } 
-		 else
-		 {
-			 mIsFirstPage = false;
-		 }
-
-		 mLines.clear();
-		 pageUpUp();
-		 mLines = pageDown();
-		 
-		 mCurPage--;
-		 
-		 return	true;
-	 }
-	 
-	 /**
-	  * 读取指定位置的下一个段落
-	  * 
-	  * @param nFromPos
-	  * @return byte[]
-	  */
-	 private byte[] readParagraphForward( int nFromPos ) 
-	 {
-		 int nStart = nFromPos;
-		 int i = nStart;
+		 int i = startPos;
 		 byte b0, b1;
 		 
 		 //根据编码格式判断换行
@@ -391,40 +259,29 @@ import android.view.View;
 			 }
 		 }
 		 
-		 int nParaSize = i - nStart;
-		 byte[] buf = new byte[nParaSize];
-		 for( i = 0; i < nParaSize; i++ ) 
-		 {
-			 buf[i] = mMbBuf[nFromPos + i];
-		 }
+		 int len = i - startPos;
 		 
-		 return buf;
+		 return len;
 	 }
-
-	/**
-	 * 画指定页的下一页
-	 * 
-	 * @return 下一页的内容 Vector<String>
-	 */
-	 private Vector<String> pageDown() 
+	 
+	 //分行
+	 private void divideLines()
 	 {
 		 mPaint.setTextSize(mTextSize);
-		 mPaint.setColor(mTextColor);
 		 
 		 String strParagraph = "";
-		 Vector<String> lines = new Vector<String>();
-		 while( lines.size() < mLineCount && mMbBufEnd < mMbBufLen ) 
+		 int startPos = 0;
+		 while( startPos < mMbBufLen ) 
 		 {
-			 byte[] paraBuf = readParagraphForward(mMbBufEnd);
-			 mMbBufEnd += paraBuf.length;						//每次读取后，记录结束点位置，该位置是段落结束位置
+			 int len = getNextParagraphLength(startPos);
 			 
 			 try 
 			 {
-				 strParagraph = new String(paraBuf, mStrCharsetName);	//转换成指定GBK编码
+				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
-				 Log.e(TAG, "pageDown->转换编码失败", e);
+				 e.printStackTrace();
 			 }
 			 
 			 String strReturn = "";
@@ -443,176 +300,109 @@ import android.view.View;
 
 			 if( strParagraph.length() == 0 ) 
 			 {
-				 lines.add(strParagraph);
+				 LineInfo li = new LineInfo(startPos, len);
+				 mLineInfoList.add(li);
 			 }
-				
-			 while( strParagraph.length() > 0 ) 
+			 else
 			 {
-				 //画一行文字
-				 int nSize = mPaint.breakText( strParagraph, true, mVisibleWidth, null );
-				 lines.add( strParagraph.substring( 0, nSize ) );
-				 strParagraph = strParagraph.substring( nSize );// 得到剩余的文字
-					
-				 //超出最大行数则不再画
-				 if( lines.size() >= mLineCount ) 
+				 ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
+				 while( ( strParagraph != null ) && ( strParagraph.length() > 0 ) ) 
 				 {
-					 break;
+					 //画一行文字
+					 int nSize = mPaint.breakText( strParagraph, true, mVisibleWidth, null );
+					 lines.add( strParagraph.substring( 0, nSize ) );
+					 strParagraph = strParagraph.substring( nSize );	//得到剩余的文字
+				 }
+				 
+				 int start = startPos;
+				 int size = lines.size();
+				 for( int i = 0; i < size; i++ )
+				 {
+					 String line = lines.get(i);
+					 
+					 if( i == size-1 )	//最后一行
+					 {
+						 line += strReturn;
+					 }
+					 
+					 int length = 0;
+					 try
+					 {
+						 length = line.getBytes(mStrCharsetName).length;
+					 }
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 LineInfo li = new LineInfo(start, length);
+					 mLineInfoList.add(li);
+					 
+					 start += length;
 				 }
 			 }
-				
-			 //如果该页最后一段只显示了一部分，则从新定位结束点位置
-			 if( strParagraph.length() != 0 ) 
-			 {
-				 try 
-				 {
-					 mMbBufEnd -= (strParagraph + strReturn).getBytes(mStrCharsetName).length;
-				 } 
-				 catch (UnsupportedEncodingException e) 
-				 {
-					 Log.e(TAG, "pageDown->记录结束点位置失败", e);
-				 }
-			 }
+			 
+			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 		 }
-
-		 return lines;
+	 }
+	 
+	 //得到总页数
+	 public int getPageCount()
+	 {
+		 return	( mLineInfoList.size() + mLineCount - 1 ) / mLineCount;
 	 }
 	 
 	 /**
-	  * 读取指定位置的上一个段落
+	  * 向后翻页
 	  * 
-	  * @param nFromPos
-	  * @return byte[]
 	  */
-	 private byte[] readParagraphBack( int nFromPos ) 
+	 public boolean nextPage() 
 	 {
-		 int nEnd = nFromPos;
-		 int i;
-		 byte b0, b1;
-		 
-		 if( mStrCharsetName.equals("utf-16le") )  
+		 if( mLineNumber+mLineCount >= mLineInfoList.size() ) 
 		 {
-			 i = nEnd - 2;
-			 while( i > 0 ) 
-			 {
-				 b0 = mMbBuf[i];
-				 b1 = mMbBuf[i + 1];
-				 if( b0 == 0x0a && b1 == 0x00 && i != nEnd - 2 ) 
-				 {
-					 i += 2;
-					 break;
-				 }
-				 i--;
-			 }
+			 mIsLastPage = true;
+			 return false;
 		 } 
-		 else if( mStrCharsetName.equals("utf-16be") ) 
+		 else
 		 {
-			 i = nEnd - 2;
-			 while( i > 0 ) 
-			 {
-				 b0 = mMbBuf[i];
-				 b1 = mMbBuf[i + 1];
-				 if( b0 == 0x00 && b1 == 0x0a && i != nEnd - 2 ) 
-				 {
-					 i += 2;
-					 break;
-				 }
-				 i--;
-			 }
-		 } 
-		 else 
-		 {
-			 i = nEnd - 1;
-			 while( i > 0 ) 
-			 {
-				 b0 = mMbBuf[i];
-				 if( b0 == 0x0a && i != nEnd - 1 )	//0x0a表示换行符 
-				 {
-					 i++;
-					 break;
-				 }
-				 i--;
-			 }
+			 mIsLastPage = false;
 		 }
 		 
-		 if( i < 0 )
-		 {
-			 i = 0;
-		 }
+		 mLineNumber += mLineCount;
+		 mCurPage++;
 		 
-		 int nParaSize = nEnd - i;
-		 int j;
-		 byte[] buf = new byte[nParaSize];
-		 for( j = 0; j < nParaSize; j++ ) 
-		 {
-			 buf[j] = mMbBuf[i + j];
-		 }
-		 
-		 return buf;
+		 return	true;
 	 }
 	 
 	 /**
-	  * 得到上上页的结束位置
+	  * 向前翻页
+	  * 
 	  */
-	 private void pageUpUp() 
+	 public boolean prePage()
 	 {
-		 if( mMbBufBegin < 0)
+		 if( mLineNumber <= 0 ) 
 		 {
-			 mMbBufBegin = 0;
-		 }
-			
-		 Vector<String> lines = new Vector<String>();
-		 String strParagraph = "";
-		 while( lines.size() < mLineCount && mMbBufBegin > 0 ) 
+			 mLineNumber = 0;
+			 mIsFirstPage = true;
+			 
+			 return	false;
+		 } 
+		 else
 		 {
-			 Vector<String> paraLines = new Vector<String>();
-			 byte[] paraBuf = readParagraphBack( mMbBufBegin );
-			 mMbBufBegin -= paraBuf.length;						//每次读取一段后,记录开始点位置,是段首开始的位置
-			 
-			 try 
-			 {
-				 strParagraph = new String( paraBuf, mStrCharsetName );
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 Log.e(TAG, "pageUp->转换编码失败", e);
-			 }
-			 
-			 strParagraph = strParagraph.replaceAll("\r\n", "");
-			 strParagraph = strParagraph.replaceAll("\n", "");
-			 //如果是空白行，直接添加
-			 if( strParagraph.length() == 0 ) 
-			 {
-				 paraLines.add(strParagraph);
-			 }
-			 
-			 while( strParagraph.length() > 0 ) 
-			 {
-				 //画一行文字
-				 int nSize = mPaint.breakText( strParagraph, true, mVisibleWidth, null );
-				 paraLines.add( strParagraph.substring( 0, nSize ) );
-				 strParagraph = strParagraph.substring( nSize );
-			 }
-			 lines.addAll(0, paraLines);
+			 mIsFirstPage = false;
 		 }
 
-		 while( lines.size() > mLineCount ) 
+		 mLineNumber -= mLineCount;
+		 if( mLineNumber < 0 ) 
 		 {
-			 try 
-			 {
-				 mMbBufBegin += lines.get(0).getBytes( mStrCharsetName).length;
-				 lines.remove(0);
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 Log.e(TAG, "pageUp->记录起始点位置失败", e);
-			 }
+			 mLineNumber = 0;
 		 }
 		 
-		 mMbBufEnd = mMbBufBegin;	//上上一页的结束点等于上一页的起始点
+		 mCurPage--;
 		 
-		 return;
+		 return	true;
 	 }
-	 
+
 	 private void init(Context context) 
 	 {
 		 mWidth = getWidth();
@@ -629,6 +419,11 @@ import android.view.View;
 		 if( null == mCurPageCanvas )
 		 {
 			 mCurPageCanvas = new Canvas(mCurPageBitmap);
+		 }
+		 
+		 if( 0 == mLineInfoList.size() )
+		 {
+			 divideLines();
 		 }
 	 }
 	 
@@ -682,19 +477,14 @@ import android.view.View;
 		 mPaint.setTextSize(mTextSize);			//字体大小
 		 mPaint.setColor(mTextColor);			//字体颜色
 		 
-		 if( mLines.size() == 0 )
-		 {
-			 mLines = pageDown();
-		 }
-		 
-		 if( mLines.size() > 0 ) 
+		 if( mLineInfoList.size() > 0 ) 
 		 {
 			 int y = MARGIN_HEIGHT;
-			 for( String strLine : mLines ) 
+			 for( int i = mLineNumber, j = 0; i < mLineInfoList.size() && j < mLineCount; i++, j++ ) 
 			 {
 				 y += mTextSize;
 				 y += mLineSpace;
-				 mCurPageCanvas.drawText(strLine, MARGIN_WIDTH, y, mPaint);
+				 mCurPageCanvas.drawText(getLineText(i), MARGIN_WIDTH, y, mPaint);
 			 }
 		 }
 		 
@@ -747,57 +537,55 @@ import android.view.View;
 		 if( e1.getX() - e2.getX() > FLING_MIN_DISTANCE ) 
 		 {
 			 //向左滑动
-			 try 
+			 if( nextPage() )
 			 {
-				 if( nextPage() )
+				 this.postInvalidate();
+				 if( mOnPageFlingListener != null )
 				 {
-					 this.postInvalidate();
-					 if( mOnPageFlingListener != null )
-					 {
-						 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-					 }
+					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
 				 }
-				 else
-				 {
-					 if( mOnPageFlingListener != null )
-					 {
-						 mOnPageFlingListener.onPageFlingToBottom();
-					 }
-				 }
-				 
-			 } 
-			 catch (IOException e) 
+			 }
+			 else
 			 {
-				 e.printStackTrace();
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
 			 }
 		 } 
 		 else if( e2.getX() - e1.getX() > FLING_MIN_DISTANCE ) 
 		 {
 			 //向右滑动
-			 try 
+			 if( prePage() )
 			 {
-				 if( prePage() )
+				 this.postInvalidate();
+				 if( mOnPageFlingListener != null )
 				 {
-					 this.postInvalidate();
-					 if( mOnPageFlingListener != null )
-					 {
-						 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-					 }
+					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
 				 }
-				 else
-				 {
-					 if( mOnPageFlingListener != null )
-					 {
-						 mOnPageFlingListener.onPageFlingToTop();
-					 }
-				 }
-			 } 
-			 catch (IOException e) 
+			 }
+			 else
 			 {
-				 e.printStackTrace();
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToTop();
+				 }
 			 }
 		 }
 		 
 		 return false; 
 	 }
+	 
+	 //分行信息类
+	 private class LineInfo
+	 {
+		 public int startPos;	//开始位置
+		 public int len;		//长度
+		 
+		 public LineInfo( int s, int l )
+		 {
+			 startPos = s;
+			 len = l;
+		 }
+	 }	 
 }
