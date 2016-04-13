@@ -1,6 +1,11 @@
 package com.sunteam.ebook.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +35,42 @@ public class FileOperateUtils {
 		String sdPath = Environment.getExternalStorageDirectory().getPath() + "/";
 		return sdPath;
 	}
+	
+	/** 
+	 * 获取扩展存储路径，TF卡、U盘 
+	 */  
+	public static String getExternalStorageDirectory(){  
+	    String dir = new String();  
+	    try {  
+	        Runtime runtime = Runtime.getRuntime();  
+	        Process proc = runtime.exec("mount");  
+	        InputStream is = proc.getInputStream();  
+	        InputStreamReader isr = new InputStreamReader(is);  
+	        String line;  
+	        BufferedReader br = new BufferedReader(isr);  
+	        while ((line = br.readLine()) != null) {  
+	            if (line.contains("secure")) continue;  
+	            if (line.contains("asec")) continue;  
+	              
+	            if (line.contains("fat")) {  
+	                String columns[] = line.split(" ");  
+	                if (columns != null && columns.length > 1) {  
+	                    dir = dir.concat(columns[1] + "\n");  
+	                }  
+	            } else if (line.contains("fuse")) {  
+	                String columns[] = line.split(" ");  
+	                if (columns != null && columns.length > 1) {  
+	                    dir = dir.concat(columns[1] + "\n");  
+	                }  
+	            }  
+	        }  
+	    } catch (FileNotFoundException e) {  
+	        e.printStackTrace();  
+	    } catch (IOException e) {  
+	        e.printStackTrace();  
+	    }  
+	    return dir;  
+	}  
 		
 	public static String getTargetPath(){
 		if(targetPath.isEmpty()){

@@ -102,7 +102,40 @@ public class DatabaseManager {
 				String.valueOf(startResult), String.valueOf(maxResult) });
 
 	}
-
+	//删除数据,Path为null表示删除所有数据
+	public void deleteFile(String table,String path,int flag){
+		db = helper.getWritableDatabase();
+		if(null != path){
+			db.delete(table, "path=? and type=?", new String[] { path,String.valueOf(flag)});
+		}else{
+			Cursor cursor = db.query(table, null, "type=?", new String[] {String.valueOf(flag)}, null,
+					null, null);
+			if (null != cursor) {
+				while (cursor.moveToNext()) {
+					int type = cursor.getInt(cursor
+								.getColumnIndex(EbookConstants.BOOK_TYPE));
+					db.delete(table, "type=?", new String[] {String.valueOf(type)});
+				}
+				cursor.close();
+			}
+		}
+		
+		db.close();
+		
+	}
+	//删除所有相关数据
+	public void deleteAllFile(String table,int flag){
+		Cursor cursor = null;
+		db = helper.getWritableDatabase();
+		cursor = db.query(table, null, "type=?", new String[] {String.valueOf(flag)}, null,
+				null, null);
+		if (null != cursor) {
+			
+			cursor.close();
+		}
+		db.close();
+		
+	}
 	// 数据库更新数据
 //	public void updateToDb(String name) {
 //		db = helper.getWritableDatabase();

@@ -47,6 +47,10 @@
             android:name=".DaisyActivity"
             android:screenOrientation="portrait" >
         </activity>
+         <activity
+            android:name=".TxtPartActivity"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

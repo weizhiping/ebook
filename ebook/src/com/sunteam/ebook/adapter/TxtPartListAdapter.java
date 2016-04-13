@@ -1,10 +1,10 @@
 package com.sunteam.ebook.adapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,32 +16,25 @@ import android.widget.Toast;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.ReadTxtActivity;
 import com.sunteam.ebook.TxtDetailActivity;
-import com.sunteam.ebook.TxtPartActivity;
-import com.sunteam.ebook.db.DatabaseManager;
-import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
-import com.sunteam.ebook.util.TextFileReaderUtils;
 
 /**
- * 文档详细列表类
+ * 文档部分列表类
  * 
  * @author sylar
  * 
  */
-public class TxtDetailListAdapter extends BaseAdapter implements
-		OnClickListener {
+public class TxtPartListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
-	private ArrayList<FileInfo> gListData = null;
+	private ArrayList<String> gListData = null;
 	private int selectItem = 0; // 当前选中的项，默认是第一项
-	private DatabaseManager manager;
 
-	public TxtDetailListAdapter(Context context, ArrayList<FileInfo> list) {
+	public TxtPartListAdapter(Context context, ArrayList<String> list) {
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
-		manager = new DatabaseManager(mContext);
 		readSelectItemContent(); // 此处需要加上tts朗读selectItem内容
 	}
 
@@ -82,52 +75,21 @@ public class TxtDetailListAdapter extends BaseAdapter implements
 	// 按了确定键
 	public void enter() {
 		// 进入到selectItem对应的界面
-		FileInfo fileInfo = gListData.get(selectItem);
-		if (fileInfo.isFolder) {
-			Intent intent = new Intent(mContext, TxtDetailActivity.class);
-			intent.putExtra("path", fileInfo.path);
-			intent.putExtra("name", fileInfo.name);
-			intent.putExtra("flag", 10);
-			mContext.startActivity(intent);
-		} else {
-			try {
-				TextFileReaderUtils.getInstance().init(fileInfo.path);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
-
-			if (0 == count){ // 文件为空
-			
-				// 提示一下（语音和文字）
-			} else if (1 == count){ // 只有一部分
-			
-				Intent intent = new Intent(mContext, ReadTxtActivity.class);
-				intent.putExtra("path", fileInfo.path); // 路径
-				intent.putExtra("part", 0); // 第几部分
-				mContext.startActivity(intent);
-				manager.insertBookToDb(fileInfo, 2);
-			} else {
-				// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
-				Intent intent = new Intent(mContext, TxtPartActivity.class);
-				intent.putExtra("name", fileInfo.name); // 路径
-				intent.putExtra("count", count); // 第几部分
-				mContext.startActivity(intent);
-				manager.insertBookToDb(fileInfo, 2);
-			}
-		}
+		Intent intent = new Intent(mContext,ReadTxtActivity.class);
+		intent.putExtra("part", selectItem);
+		mContext.startActivity(intent);
 	}
 
 	// tts朗读selectItem内容
 	private void readSelectItemContent() {
-	//	 TTSUtils.getInstance().speak(gListData.get(selectItem).name);
+		TTSUtils.getInstance().speak(gListData.get(selectItem));
 	}
 
-	public ArrayList<FileInfo> getListData() {
+	public ArrayList<String> getListData() {
 		return gListData;
 	}
 
-	public void setListData(ArrayList<FileInfo> list) {
+	public void setListData(ArrayList<String> list) {
 		gListData = list;
 	}
 
@@ -182,8 +144,12 @@ public class TxtDetailListAdapter extends BaseAdapter implements
 		} else {
 			convertView.setBackgroundResource(R.color.transparent);
 		}
-		FileInfo fileInfo = gListData.get(position);
-		vh.tvMenu.setText(fileInfo.name);
+
+		if (!TextUtils.isEmpty(gListData.get(position))) {
+			vh.tvMenu.setText(gListData.get(position));
+		} else {
+			vh.tvMenu.setText("");
+		}
 		vh.tvMenu.setTextColor(mContext.getResources().getColor(
 				EbookConstants.FontColorID[index]));
 
@@ -211,7 +177,7 @@ public class TxtDetailListAdapter extends BaseAdapter implements
 			break;
 		}
 	}
-
+	
 	private class ViewHolder {
 		TextView tvMenu = null; // 菜单名称
 	}
