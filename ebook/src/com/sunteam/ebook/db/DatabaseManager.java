@@ -26,8 +26,8 @@ public class DatabaseManager {
 
 	// 收藏和最近浏览数据库插入数据
 	public void insertBookToDb(FileInfo file,int type) {
-		boolean hasOrder = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path);
-		if (!hasOrder) {
+		boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path);
+		if (!hasbook) {
 			db = helper.getWritableDatabase();
 			ContentValues newValues = new ContentValues();
 			newValues.put(EbookConstants.BOOK_NAME, file.name);
@@ -40,7 +40,7 @@ public class DatabaseManager {
 	}
 
 	// 查询电子书数据
-	public ArrayList<FileInfo> queryOrders(int type) {
+	public ArrayList<FileInfo> querybooks(int type) {
 		db = helper.getWritableDatabase();
 		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type;  
 		 Cursor cursor = db.rawQuery(sql, null);

@@ -11,7 +11,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.ReadTxtActivity;
@@ -21,7 +20,6 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
-import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 
 /**

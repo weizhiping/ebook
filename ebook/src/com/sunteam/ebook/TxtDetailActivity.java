@@ -104,7 +104,7 @@ public class TxtDetailActivity extends Activity {
 	}
 	//初始化数据库文件
 	private void initDataFiles(int flag){
-		fileInfoList = manager.queryOrders(flag);
+		fileInfoList = manager.querybooks(flag);
 		
 	}
 }
