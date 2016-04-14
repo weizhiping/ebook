@@ -16,7 +16,6 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * Txt电子书阅读器控件
@@ -31,6 +30,7 @@ import android.widget.Toast;
 	 private static final int MARGIN_WIDTH = 10;		///左右与边缘的距离
 	 private static final int MARGIN_HEIGHT = 10;		//上下与边缘的距离
 	 private static final int FLING_MIN_DISTANCE = 100;	//滑动的距离
+	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
 	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
@@ -47,7 +47,6 @@ import android.widget.Toast;
 	 private float mVisibleHeight;			//绘制内容的高
 	 private boolean mIsFirstPage = false;	//是否是第一屏
 	 private boolean mIsLastPage = false;	//是否是最后一屏
-	 private String mStrCharsetName = "GBK";//编码格式，默认为GBK
 	 private ArrayList<LineInfo> mLineInfoList = new ArrayList<LineInfo>();	//保存分行信息
 	 private byte[] mMbBuf = null;			//内存中的图书字符
 	 private int mLineNumber = 0;			//当前页起始位置(行号)
@@ -184,7 +183,7 @@ import android.widget.Toast;
 			 
 			 try 
 			 {
-				 return	new String(mMbBuf, li.startPos, li.len, mStrCharsetName);	//转换成指定编码
+				 return	new String(mMbBuf, li.startPos, li.len, CHARSET_NAME);	//转换成指定编码
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
@@ -207,9 +206,22 @@ import android.widget.Toast;
 	  */
 	 public void openBook(byte[] buffer, String charsetName, int lineNumber) 
 	 {
-		 mMbBuf = buffer;
-		 mStrCharsetName = charsetName;
-		 mMbBufLen = (int)buffer.length;
+		 if( CHARSET_NAME.equalsIgnoreCase(charsetName) )
+		 {
+			 mMbBuf = buffer;
+		 }
+		 else
+		 {
+			 try 
+			 {
+				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
+		 }
+		 mMbBufLen = (int)mMbBuf.length;
 		 mLineNumber = lineNumber; 
 	 }
 	 
@@ -226,7 +238,7 @@ import android.widget.Toast;
 		 byte b0, b1;
 		 
 		 //根据编码格式判断换行
-		 if( mStrCharsetName.equals("utf-16le") ) 
+		 if( CHARSET_NAME.equals("utf-16le") ) 
 		 {
 			 while( i < mMbBufLen - 1 ) 
 			 {
@@ -238,7 +250,7 @@ import android.widget.Toast;
 				 }
 			 }
 		 } 
-		 else if( mStrCharsetName.equals("utf-16be") ) 
+		 else if( CHARSET_NAME.equals("utf-16be") ) 
 		 {
 			 while( i < mMbBufLen - 1 ) 
 			 {
@@ -271,297 +283,14 @@ import android.widget.Toast;
 	 private void divideLines()
 	 {
 		 mPaint.setTextSize(mTextSize);
-		 
-		 String strParagraph = "";
-		 int startPos = 0;
-		 while( startPos < mMbBufLen ) 
-		 {
-			 int len = getNextParagraphLength(startPos);
-			 
-			 try 
-			 {
-				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
-			 }
-			 
-			 String strReturn = "";
-			 //替换掉回车换行符
-
-			 if( strParagraph.indexOf("\r\n") != -1 ) 
-			 {
-				 strReturn = "\r\n";
-				 strParagraph = strParagraph.replaceAll("\r\n", "");
-			 } 
-			 else if( strParagraph.indexOf("\n") != -1 ) 
-			 {
-				 strReturn = "\n";
-				 strParagraph = strParagraph.replaceAll("\n", "");
-			 }
-
-			 if( strParagraph.length() == 0 ) 
-			 {
-				 LineInfo li = new LineInfo(startPos, len);
-				 mLineInfoList.add(li);
-			 }
-			 else
-			 {
-				 ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
-				 while( ( strParagraph != null ) && ( strParagraph.length() > 0 ) ) 
-				 {
-					 //画一行文字
-					 int nSize = mPaint.breakText( strParagraph, true, mVisibleWidth, null );
-					 lines.add( strParagraph.substring( 0, nSize ) );
-					 strParagraph = strParagraph.substring( nSize );	//得到剩余的文字
-				 }
-				 
-				 int start = startPos;
-				 int size = lines.size();
-				 for( int i = 0; i < size; i++ )
-				 {
-					 String line = lines.get(i);
-					 
-					 if( i == size-1 )	//最后一行
-					 {
-						 line += strReturn;
-					 }
-					 
-					 int length = 0;
-					 try
-					 {
-						 length = line.getBytes(mStrCharsetName).length;
-					 }
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 
-					 LineInfo li = new LineInfo(start, length);
-					 mLineInfoList.add(li);
-					 
-					 start += length;
-				 }
-			 }
-			 
-			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
-		 }
-	 }
-	 
-	 //分行
-	 private void divideLinesEx()
-	 {
-		 mPaint.setTextSize(mTextSize);
 		 mPaint.setTypeface(Typeface.MONOSPACE);
 		 
-		 String strParagraph = "";
 		 int startPos = 0;
-		 //ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
 		 
 		 while( startPos < mMbBufLen ) 
 		 {
 			 int len = getNextParagraphLength(startPos);
 			 
-			 try 
-			 {
-				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
-			 }
-			 
-			 /*
-			 String strReturn = "";
-			 //替换掉回车换行符
-
-			 if( strParagraph.indexOf("\r\n") != -1 ) 
-			 {
-				 strReturn = "\r\n";
-				 strParagraph = strParagraph.replaceAll("\r\n", "");
-			 } 
-			 else if( strParagraph.indexOf("\n") != -1 ) 
-			 {
-				 strReturn = "\n";
-				 strParagraph = strParagraph.replaceAll("\n", "");
-			 }
-			 */
-			 
-			 if( mPaint.measureText(strParagraph) <= mVisibleWidth ) 
-			 {
-				 LineInfo li = new LineInfo(startPos, len);
-				 mLineInfoList.add(li);				 
-			 }
-			 else
-			 {
-				 byte[] gbkBuffer = null;
-				 try
-				 {
-					 gbkBuffer = strParagraph.getBytes("GBK");
-				 }
-				 catch (UnsupportedEncodingException e) 
-				 {
-					 e.printStackTrace();
-				 }	//先统一转换为GBK编码
-				 
-				 int textWidth = 0;
-				 int start = startPos;
-				 int home = 0;
-				 int i = 0;
-				 for( i = 0; i < gbkBuffer.length; i++ )
-				 {
-					 if( 0x0d == gbkBuffer[i] || 0x0a == gbkBuffer[i] )
-					 {
-						 continue;
-					 }
-					 
-					 if( gbkBuffer[i] < 0x80 && gbkBuffer[i] >= 0x0)
-					 {
-						 textWidth += ((int)mTextSize/2);
-						 if( textWidth >= mVisibleWidth )
-						 {
-							 String line = null;
-							 try 
-							 {
-								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 int length = 0;
-							 try
-							 {
-								 length = line.getBytes(mStrCharsetName).length;
-							 }
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 LineInfo li = new LineInfo(start, length);
-							 mLineInfoList.add(li);
-							 
-							 start += length;
-							 home = i;
-							 i--;
-							 textWidth = 0;
-							 continue;
-						 }
-					 }
-					 else
-					 {
-						 textWidth += (int)mTextSize;
-						 if( textWidth >= mVisibleWidth )
-						 {
-							 String line = null;
-							 try 
-							 {
-								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 int length = 0;
-							 try
-							 {
-								 length = line.getBytes(mStrCharsetName).length;
-							 }
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 LineInfo li = new LineInfo(start, length);
-							 mLineInfoList.add(li);
-							 
-							 start += length;
-							 home = i;
-							 i--;
-							 textWidth = 0;
-							 continue;
-						 }
-						 i++;
-					 }
-				 }
-				 
-				 if( textWidth > 0 )
-				 {
-					 String line = null;
-					 try 
-					 {
-						 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-					 } 
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 
-					 int length = 0;
-					 try
-					 {
-						 length = line.getBytes(mStrCharsetName).length;
-					 }
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 
-					 LineInfo li = new LineInfo(start, length);
-					 mLineInfoList.add(li);
-					 
-					 start += length;
-					 textWidth = 0;
-				 }
-			 }
-			 
-			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
-		 }
-	 }
-	 
-	 //分行
-	 private void divideLinesEx2()
-	 {
-		 mPaint.setTextSize(mTextSize);
-		 mPaint.setTypeface(Typeface.MONOSPACE);
-		 
-		 //String strParagraph = "";
-		 int startPos = 0;
-		 //ArrayList<String> lines = new ArrayList<String>();	//记录此段落的每一行数据
-		 
-		 while( startPos < mMbBufLen ) 
-		 {
-			 int len = getNextParagraphLength(startPos);
-			 
-			 /*
-			 try 
-			 {
-				 strParagraph = new String(mMbBuf, startPos, len, mStrCharsetName);	//转换成指定编码
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
-			 }
-			 
-			 
-			 String strReturn = "";
-			 //替换掉回车换行符
-
-			 if( strParagraph.indexOf("\r\n") != -1 ) 
-			 {
-				 strReturn = "\r\n";
-				 strParagraph = strParagraph.replaceAll("\r\n", "");
-			 } 
-			 else if( strParagraph.indexOf("\n") != -1 ) 
-			 {
-				 strReturn = "\n";
-				 strParagraph = strParagraph.replaceAll("\n", "");
-			 }
-			 */
 			 int ll = len;
 			 if( mMbBuf[startPos+len-1] == 0x0d || mMbBuf[startPos+len-1] == 0x0a )
 			 {
@@ -585,16 +314,6 @@ import android.widget.Toast;
 				 {
 					 gbkBuffer[i] = mMbBuf[startPos+i];
 				 }
-				 /*
-				 try
-				 {
-					 gbkBuffer = strParagraph.getBytes("GBK");
-				 }
-				 catch (UnsupportedEncodingException e) 
-				 {
-					 e.printStackTrace();
-				 }	//先统一转换为GBK编码
-				 */
 				 
 				 int textWidth = 0;
 				 int start = startPos;
@@ -612,28 +331,6 @@ import android.widget.Toast;
 						 textWidth += ((int)mTextSize/2);
 						 if( textWidth >= mVisibleWidth )
 						 {
-							 /*
-							 String line = null;
-							 try 
-							 {
-								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 
-							 int length = 0;
-							 try
-							 {
-								 length = line.getBytes(mStrCharsetName).length;
-							 }
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 */
 							 int length = i-home;
 							 
 							 LineInfo li = new LineInfo(start, length);
@@ -651,28 +348,6 @@ import android.widget.Toast;
 						 textWidth += (int)mTextSize;
 						 if( textWidth >= mVisibleWidth )
 						 {
-							 /*
-							 String line = null;
-							 try 
-							 {
-								 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 int length = 0;
-							 try
-							 {
-								 length = line.getBytes(mStrCharsetName).length;
-							 }
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 */
-							 
 							 int length = i-home;
 							 LineInfo li = new LineInfo(start, length);
 							 mLineInfoList.add(li);
@@ -689,27 +364,6 @@ import android.widget.Toast;
 				 
 				 if( textWidth > 0 )
 				 {
-					 /*
-					 String line = null;
-					 try 
-					 {
-						 line = new String(gbkBuffer, home, (i-home), "GBK");	//转换成指定编码
-					 } 
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 
-					 int length = 0;
-					 try
-					 {
-						 length = line.getBytes(mStrCharsetName).length;
-					 }
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 */
 					 int length = i-home;
 					 LineInfo li = new LineInfo(start, length);
 					 mLineInfoList.add(li);
@@ -722,85 +376,7 @@ import android.widget.Toast;
 			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 		 }
 	 }
-	 
-	 //分行
-	 private void divideLines2()
-	 {
-		 mPaint.setTextSize(mTextSize);
 
-		 String content = null;
-		 try 
-		 {
-			 content = new String( mMbBuf, mStrCharsetName );
-		 } 
-		 catch (UnsupportedEncodingException e) 
-		 {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-		 }
-		 
-		 String[] strParagraph = content.split("\r\n");
-		 int startPos = 0;
-		 
-		 for( int i = 0; i < strParagraph.length; i++ )
-		 {
-			 String paragraph = strParagraph[i];
-			 int length = 0;
-			 try
-			 {
-				 length = (paragraph+"\r\n").getBytes(mStrCharsetName).length;
-			 }
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
-			 }
-			 
-			 //如果是空白行，直接添加
-			 if( paragraph.length() == 0 ) 
-			 {
-				 LineInfo li = new LineInfo(startPos, length);
-				 mLineInfoList.add(li);
-				 
-				 startPos += length;
-				 continue;
-			 }
-			 
-			 while( paragraph.length() > 0 ) 
-			 {
-				 //画一行文字
-				 int nSize = mPaint.breakText( paragraph, true, mVisibleWidth, null );
-				 paragraph = paragraph.substring( nSize );
-				 
-				 try
-				 {
-					 length = paragraph.getBytes(mStrCharsetName).length;
-				 }
-				 catch (UnsupportedEncodingException e) 
-				 {
-					 e.printStackTrace();
-				 }
-				 LineInfo li = new LineInfo(startPos, length);
-				 mLineInfoList.add(li);
-				 
-				 startPos += length;
-			 }
-			 
-			 try
-			 {
-				 length = "\r\n".getBytes(mStrCharsetName).length;
-			 }
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
-			 }
-			 
-			 int size = mLineInfoList.size();
-			 mLineInfoList.get(size-1).len += length;
-			 
-			 startPos += length;
-		 }
-	 }
-	 
 	 //得到总页数
 	 public int getPageCount()
 	 {
@@ -858,7 +434,6 @@ import android.widget.Toast;
 		 return	true;
 	 }
 
-	 private static int count = 0;
 	 private void init(Context context) 
 	 {
 		 mWidth = getWidth();
@@ -879,29 +454,7 @@ import android.widget.Toast;
 		 
 		 if( 0 == mLineInfoList.size() )
 		 {
-			 long startTime = System.currentTimeMillis();
-			 if( count % 3 == 0 )
-			 {
-				 divideLinesEx2();
-			 }
-			 else if( count % 3 == 1 )
-			 {
-				 divideLinesEx();
-			 }
-			 else
-			 {
-				 divideLines();
-			 }
-			 long endTime = System.currentTimeMillis();
-			 
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onLoadCompleted(getPageCount());
-			 }
-			 
-			 Toast.makeText(mContext, "time = "+(endTime-startTime), Toast.LENGTH_LONG).show();
-			 
-			 count++;
+			 divideLines();
 		 }
 	 }
 	 
