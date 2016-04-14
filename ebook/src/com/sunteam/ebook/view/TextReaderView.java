@@ -290,43 +290,54 @@ import android.view.View;
 		 while( startPos < mMbBufLen ) 
 		 {
 			 int len = getNextParagraphLength(startPos);
+			 if( len <= 0 )
+			 {
+				 break;
+			 }
 			 
 			 int ll = len;
-			 if( mMbBuf[startPos+len-1] == 0x0d || mMbBuf[startPos+len-1] == 0x0a )
+			 int home = startPos;
+			 int end = startPos+len-1;
+			 if( ( 0x0d == mMbBuf[end] ) || ( 0x0a == mMbBuf[end] ) )
 			 {
 				 ll--;
 			 }
 			 
-			 if( mMbBuf[startPos+len-2] == 0x0d || mMbBuf[startPos+len-2] == 0x0a )
+			 end--;
+			 if( end >= home )
 			 {
-				 ll--;
+				 if( ( 0x0d == mMbBuf[end] ) || ( 0x0a == mMbBuf[end] ) )
+				 {
+					 ll--;
+				 }
 			 }
 			 
-			 if( ll*((int)mTextSize/2) <= mVisibleWidth ) 
+			 
+			 if( (int)(ll*mTextSize) / 2 <= mVisibleWidth ) 
 			 {
 				 LineInfo li = new LineInfo(startPos, len);
 				 mLineInfoList.add(li);				 
 			 }
 			 else
 			 {
-				 byte[] gbkBuffer = new byte[len];
+				 byte[] buffer = new byte[len];
 				 for( int i = 0; i < len; i++ )
 				 {
-					 gbkBuffer[i] = mMbBuf[startPos+i];
+					 buffer[i] = mMbBuf[startPos+i];
 				 }
 				 
 				 int textWidth = 0;
 				 int start = startPos;
-				 int home = 0;
+				 home = 0;
 				 int i = 0;
-				 for( i = 0; i < gbkBuffer.length; i++ )
+				 for( i = 0; i < buffer.length; i++ )
 				 {
-					 if( 0x0d == gbkBuffer[i] || 0x0a == gbkBuffer[i] )
+					 if( 0x0d == buffer[i] || 0x0a == buffer[i] )
 					 {
 						 continue;
 					 }
 					 
-					 if( gbkBuffer[i] < 0x80 && gbkBuffer[i] >= 0x0)
+					 if( buffer[i] < 0x80 && buffer[i] >= 0x0 )	//ascii
 					 {
 						 textWidth += ((int)mTextSize/2);
 						 if( textWidth >= mVisibleWidth )
