@@ -466,6 +466,10 @@ import android.view.View;
 		 if( 0 == mLineInfoList.size() )
 		 {
 			 divideLines();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onLoadCompleted(getPageCount());
+			 }
 		 }
 	 }
 	 
