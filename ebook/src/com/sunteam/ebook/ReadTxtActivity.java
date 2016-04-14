@@ -46,14 +46,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener {
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
     	
     	mTvTitle.setText(filename);
-		
-		
+				
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
     	mTextReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
     	mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), 0);
-    	
-    	mTvCurPage.setText("0");
 	}
 
 	@Override
@@ -75,8 +72,9 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener {
 	}
 
 	@Override
-	public void onLoadCompleted(int pageCount) {
+	public void onLoadCompleted(int pageCount, int curPage) {
 		// TODO Auto-generated method stub
 		mTvPageCount.setText(pageCount+"");
+		mTvCurPage.setText(curPage+"");
 	}
 }

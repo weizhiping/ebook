@@ -29,7 +29,6 @@ import android.view.View;
 	 private static final String TAG = "TextReaderView";
 	 private static final int MARGIN_WIDTH = 10;		///左右与边缘的距离
 	 private static final int MARGIN_HEIGHT = 10;		//上下与边缘的距离
-	 private static final int FLING_MIN_DISTANCE = 100;	//滑动的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
 	 
 	 private Context mContext = null;
@@ -57,7 +56,7 @@ import android.view.View;
 	 
 	 public interface OnPageFlingListener 
 	 {
-		 public void onLoadCompleted( int pageCount );		//加载完成
+		 public void onLoadCompleted( int pageCount, int curPage );		//加载完成
 		 public void onPageFlingToTop();	//翻到头了
 		 public void onPageFlingToBottom();	//翻到尾了
 		 public void onPageFlingCompleted( int curPage );	//翻页完成
@@ -222,7 +221,7 @@ import android.view.View;
 			 }
 		 }
 		 mMbBufLen = (int)mMbBuf.length;
-		 mLineNumber = lineNumber; 
+		 mLineNumber = lineNumber;
 	 }
 	 
 	 /**
@@ -382,6 +381,8 @@ import android.view.View;
 			 
 			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 		 }
+		 
+		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
 	 }
 
 	 //得到总页数
@@ -389,6 +390,52 @@ import android.view.View;
 	 {
 		 return	( mLineInfoList.size() + mLineCount - 1 ) / mLineCount;
 	 }
+	 
+	 /**
+	  * 向后翻行
+	  * 
+	  */
+	 public boolean nextLine()
+	 {
+		 if( mLineNumber+mLineCount >= mLineInfoList.size() ) 
+		 {
+			 mIsLastPage = true;
+			 return false;
+		 } 
+		 else
+		 {
+			 mIsLastPage = false;
+		 }
+		 
+		 mLineNumber++;
+		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 
+		 return	true;
+	 }
+	 
+	 /**
+	  * 向前翻行
+	  * 
+	  */
+	 public boolean preLine()
+	 {
+		 if( mLineNumber <= 0 ) 
+		 {
+			 mLineNumber = 0;
+			 mIsFirstPage = true;
+			 
+			 return	false;
+		 } 
+		 else
+		 {
+			 mIsFirstPage = false;
+		 }
+
+		 mLineNumber--;
+		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 
+		 return	true;
+	 }	 
 	 
 	 /**
 	  * 向后翻页
@@ -464,7 +511,7 @@ import android.view.View;
 			 divideLines();
 			 if( mOnPageFlingListener != null )
 			 {
-				 mOnPageFlingListener.onLoadCompleted(getPageCount());
+				 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
 			 }
 		 }
 	 }
@@ -576,7 +623,10 @@ import android.view.View;
 	 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) 
 	 {
 		 // TODO Auto-generated method stub
-		 if( e1.getX() - e2.getX() > FLING_MIN_DISTANCE ) 
+		 final int FLING_MIN_DISTANCE_X = getWidth()/3;		//x方向最小滑动距离
+		 final int FLING_MIN_DISTANCE_Y = getHeight()/3;	//y方向最新滑动距离
+		 
+		 if( e1.getX() - e2.getX() > FLING_MIN_DISTANCE_X )
 		 {
 			 //向左滑动
 			 if( nextPage() )
@@ -594,11 +644,49 @@ import android.view.View;
 					 mOnPageFlingListener.onPageFlingToBottom();
 				 }
 			 }
-		 } 
-		 else if( e2.getX() - e1.getX() > FLING_MIN_DISTANCE ) 
+		 }
+		 else if( e2.getX() - e1.getX() > FLING_MIN_DISTANCE_X )
 		 {
 			 //向右滑动
 			 if( prePage() )
+			 {
+				 this.postInvalidate();
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 }
+			 }
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToTop();
+				 }
+			 }
+		 }
+		 else if( e1.getY() - e2.getY() > FLING_MIN_DISTANCE_Y )
+		 {
+			 //向上滑动
+			 if( nextLine() )
+			 {
+				 this.postInvalidate();
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 }
+			 }
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
+		 }
+		 else if( e2.getY() - e1.getY() > FLING_MIN_DISTANCE_Y )
+		 {
+			 //向下滑动
+			 if( preLine() )
 			 {
 				 this.postInvalidate();
 				 if( mOnPageFlingListener != null )
