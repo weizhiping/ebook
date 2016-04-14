@@ -284,6 +284,7 @@ import android.view.View;
 	 {
 		 mPaint.setTextSize(mTextSize);
 		 mPaint.setTypeface(Typeface.MONOSPACE);
+		 float asciiWidth = mPaint.measureText(" ");	//一个ascii字符宽度
 		 
 		 int startPos = 0;
 		 
@@ -294,94 +295,89 @@ import android.view.View;
 			 {
 				 break;
 			 }
-			 
-			 int ll = len;
-			 int home = startPos;
-			 int end = startPos+len-1;
-			 if( ( 0x0d == mMbBuf[end] ) || ( 0x0a == mMbBuf[end] ) )
+			 else if( 1 == len )
 			 {
-				 ll--;
-			 }
-			 
-			 end--;
-			 if( end >= home )
-			 {
-				 if( ( 0x0d == mMbBuf[end] ) || ( 0x0a == mMbBuf[end] ) )
+				 if( 0x0a == mMbBuf[startPos+len-1] )
 				 {
-					 ll--;
+					 LineInfo li = new LineInfo(startPos, len);
+					 mLineInfoList.add(li);
+					 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
+					 continue;
+				 }
+			 }
+			 else if( 2 == len )
+			 {
+				 if( 0x0d == mMbBuf[startPos+len-2] && 0x0a == mMbBuf[startPos+len-1] )
+				 {
+					 LineInfo li = new LineInfo(startPos, len);
+					 mLineInfoList.add(li);
+					 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
+					 continue;
 				 }
 			 }
 			 
 			 
-			 if( (int)(ll*mTextSize) / 2 <= mVisibleWidth ) 
+			 byte[] buffer = new byte[len];
+			 for( int i = 0; i < len; i++ )
 			 {
-				 LineInfo li = new LineInfo(startPos, len);
-				 mLineInfoList.add(li);				 
+				 buffer[i] = mMbBuf[startPos+i];
 			 }
-			 else
+			 
+			 int textWidth = 0;
+			 int start = startPos;
+			 int home = 0;
+			 int i = 0;
+			 for( i = 0; i < buffer.length; i++ )
 			 {
-				 byte[] buffer = new byte[len];
-				 for( int i = 0; i < len; i++ )
+				 if( 0x0d == buffer[i] || 0x0a == buffer[i] )
 				 {
-					 buffer[i] = mMbBuf[startPos+i];
+					 continue;
 				 }
 				 
-				 int textWidth = 0;
-				 int start = startPos;
-				 home = 0;
-				 int i = 0;
-				 for( i = 0; i < buffer.length; i++ )
+				 if( buffer[i] < 0x80 && buffer[i] >= 0x0 )	//ascii
 				 {
-					 if( 0x0d == buffer[i] || 0x0a == buffer[i] )
+					 textWidth += ((int)asciiWidth);
+					 if( textWidth >= mVisibleWidth )
 					 {
+						 int length = i-home;
+						 
+						 LineInfo li = new LineInfo(start, length);
+						 mLineInfoList.add(li);
+						 
+						 start += length;
+						 home = i;
+						 i--;
+						 textWidth = 0;
 						 continue;
 					 }
-					 
-					 if( buffer[i] < 0x80 && buffer[i] >= 0x0 )	//ascii
-					 {
-						 textWidth += ((int)mTextSize/2);
-						 if( textWidth >= mVisibleWidth )
-						 {
-							 int length = i-home;
-							 
-							 LineInfo li = new LineInfo(start, length);
-							 mLineInfoList.add(li);
-							 
-							 start += length;
-							 home = i;
-							 i--;
-							 textWidth = 0;
-							 continue;
-						 }
-					 }
-					 else
-					 {
-						 textWidth += (int)mTextSize;
-						 if( textWidth >= mVisibleWidth )
-						 {
-							 int length = i-home;
-							 LineInfo li = new LineInfo(start, length);
-							 mLineInfoList.add(li);
-							 
-							 start += length;
-							 home = i;
-							 i--;
-							 textWidth = 0;
-							 continue;
-						 }
-						 i++;
-					 }
 				 }
-				 
-				 if( textWidth > 0 )
+				 else
 				 {
-					 int length = i-home;
-					 LineInfo li = new LineInfo(start, length);
-					 mLineInfoList.add(li);
-					 
-					 start += length;
-					 textWidth = 0;
+					 textWidth += (int)mTextSize;
+					 if( textWidth >= mVisibleWidth )
+					 {
+						 int length = i-home;
+						 LineInfo li = new LineInfo(start, length);
+						 mLineInfoList.add(li);
+						 
+						 start += length;
+						 home = i;
+						 i--;
+						 textWidth = 0;
+						 continue;
+					 }
+					 i++;
 				 }
+			 }
+			 
+			 if( textWidth > 0 )
+			 {
+				 int length = i-home;
+				 LineInfo li = new LineInfo(start, length);
+				 mLineInfoList.add(li);
+				 
+				 start += length;
+				 textWidth = 0;
 			 }
 			 
 			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
