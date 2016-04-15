@@ -1,6 +1,7 @@
 package com.sunteam.ebook;
 
 import java.io.File;
+import java.io.IOException;
 
 import java.util.ArrayList;
 
@@ -8,67 +9,74 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
-import com.sunteam.ebook.adapter.TxtDetailListAdapter;
+import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
-import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
-import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
+import com.sunteam.ebook.view.MainView;
 
 /**
  * 文档列表界面
  * 
  * @author sylar
  */
-public class TxtDetailActivity extends Activity 
+public class TxtDetailActivity extends Activity implements OnEnterListener 
 {
-	private ListView mLvMenu = null;
-	private TxtDetailListAdapter mAdapter = null;
+	private FrameLayout mFlContainer = null;
+	private MainView mMainView = null;
+	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfoList = null;
-	private int mColorSchemeIndex = 0;	//系统配色索引
-	private String rootPath;//查找文件根路径
+	private String rootPath;	//查找文件根路径
 	private DatabaseManager manager;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_txt);
-	     initViews();
-	    }
-	    
-	    private void initViews()
-	    {
-	    	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
-	    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
-	    	Intent intent = getIntent();
-	    	String name = intent.getStringExtra("name");
-	    	int flag = intent.getIntExtra("flag", 0);
-	    	TextView mTvTitle = (TextView)this.findViewById(R.id.txt_title);
-	    	mLvMenu = (ListView)this.findViewById(R.id.txt_list);
-	    	View mLine = (View)this.findViewById(R.id.line);
-	    	mTvTitle.setText(name);
-	    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-	    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
-	    	mLvMenu.setFocusable(false);	//不让控件获得焦点，让主界面进行按键分发
-	    	fileInfoList = new ArrayList<FileInfo>();
-	    	
-	    	manager = new DatabaseManager(this);
-	    	if(flag == 0 ){//0为目录浏览，1为我的收藏，2为最近使用
+		setContentView(R.layout.activity_main);
+		
+		initViews();
+	}
+	
+	private void initViews()
+    {
+		Intent intent = getIntent();
+    	String name = intent.getStringExtra("name");
+    	int flag = intent.getIntExtra("flag", 0);
+    	
+    	fileInfoList = new ArrayList<FileInfo>();
+    	manager = new DatabaseManager(this);
+    	
+    	switch( flag )	//0为目录浏览，1为我的收藏，2为最近使用
+    	{
+	    	case 0:
 	    		rootPath = FileOperateUtils.getSDPath() + this.getString(R.string.app_name)+"/";
 	    		initFiles();
-	    	}else if(flag == 1 || flag == 2){
+	    		break;
+	    	case 1:
+	    	case 2:
 	    		initDataFiles(flag);
-	    	}else{
+	    		break;
+	    	default:
 	    		rootPath = intent.getStringExtra("path");
 	    		initFiles();
-	    	}
-	    	mAdapter = new TxtDetailListAdapter( this, fileInfoList);
-	    	mLvMenu.setAdapter(mAdapter);
-	    }
+	    		break;
+    	}
+    	
+    	mMenuList = new ArrayList<String>();
+    	for( int i = 0; i < fileInfoList.size(); i++ )
+    	{
+    		mMenuList.add(fileInfoList.get(i).name);
+    	}
+    	
+    	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
+    	mMainView = new MainView( this, this, name, mMenuList );
+    	mFlContainer.removeAllViews();
+    	mFlContainer.addView(mMainView.getView());
+    }
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
@@ -76,38 +84,96 @@ public class TxtDetailActivity extends Activity
 		switch( keyCode )
 		{
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
-				mAdapter.up();
+				mMainView.up();
 				return	true;
-			case KeyEvent.KEYCODE_DPAD_DOWN:	//下 
-				mAdapter.down();
+			case KeyEvent.KEYCODE_DPAD_DOWN:	//下
+				mMainView.down();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
-				mAdapter.enter();
+				mMainView.enter();
 				return	true;
 			default:
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}   
+	}
+
+	@Override
+	public void onEnterCompleted(int selectItem, String menu) 
+	{
+		// TODO Auto-generated method stub
+		// 进入到selectItem对应的界面
+		FileInfo fileInfo = fileInfoList.get(selectItem);
+		if (fileInfo.isFolder) 
+		{
+			Intent intent = new Intent(this, TxtDetailActivity.class);
+			intent.putExtra("path", fileInfo.path);
+			intent.putExtra("name", fileInfo.name);
+			intent.putExtra("flag", 10);
+			this.startActivity(intent);
+		} 
+		else 
+		{
+			try 
+			{
+				TextFileReaderUtils.getInstance().init(fileInfo.path);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
+
+			if( 0 == count )	// 文件为空
+			{ 
+				// 提示一下（语音和文字）
+			} 
+			else if( 1 == count )	// 只有一部分
+			{
+				Intent intent = new Intent(this, ReadTxtActivity.class);
+				intent.putExtra("name", fileInfo.name); // 路径
+				intent.putExtra("part", 0); // 第几部分
+				this.startActivity(intent);
+				manager.insertBookToDb(fileInfo, 2);
+			} 
+			else 
+			{
+				// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
+				Intent intent = new Intent(this, TxtPartActivity.class);
+				intent.putExtra("name", fileInfo.name); // 路径
+				intent.putExtra("count", count); // 第几部分
+				this.startActivity(intent);
+				manager.insertBookToDb(fileInfo, 2);
+			}
+		}
+	}
+	
 	//初始化显示文件
-	private void initFiles(){
+	private void initFiles()
+	{
 		ArrayList<File> filesList = FileOperateUtils.getFilesInDir(rootPath);
-		if(null != filesList){
+		if(null != filesList)
+		{
 			FileInfo fileInfo;
-			for (File f : filesList) {
-				if (f.isDirectory()) {
+			for (File f : filesList) 
+			{
+				if (f.isDirectory()) 
+				{
 					fileInfo = new FileInfo(f.getName(),f.getPath(),true);
 					fileInfoList.add(fileInfo);
-				} else{
+				} 
+				else
+				{
 					fileInfo = new FileInfo(f.getName(),f.getPath(),false);
 					fileInfoList.add(fileInfo);
 				}
 			}
 		}
 	}
+	
 	//初始化数据库文件
-	private void initDataFiles(int flag){
+	private void initDataFiles(int flag)
+	{
 		fileInfoList = manager.querybooks(flag);
-		
 	}
 }
