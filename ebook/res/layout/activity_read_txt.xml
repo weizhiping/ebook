@@ -11,9 +11,10 @@
         android:layout_height="@dimen/title_height"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dip"
+        android:layout_marginLeft="@dimen/item_left_padding"
         android:gravity="left|center_vertical"
         android:text="@string/main_title" 
+        android:textSize="@dimen/file_text_size"
         android:background="@color/transparent"
         />
     <LinearLayout
@@ -21,7 +22,7 @@
         android:layout_height="@dimen/title_height"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dip"
+        android:layout_marginRight="@dimen/item_right_padding"
         android:background="@color/transparent"
         android:orientation="vertical"
         >
@@ -31,6 +32,7 @@
 	        android:layout_height="0dip"
 	        android:layout_weight="1"
 	        android:gravity="right|center_vertical"
+	        android:textSize="@dimen/number_text_size"
 	        android:background="@color/transparent"
 	        />
         <TextView
@@ -39,6 +41,7 @@
 	        android:layout_height="0dip"
 	        android:layout_weight="1"
 	        android:gravity="right|center_vertical"
+	        android:textSize="@dimen/number_text_size"
 	        android:background="@color/transparent"
 	        />
 	</LinearLayout>
