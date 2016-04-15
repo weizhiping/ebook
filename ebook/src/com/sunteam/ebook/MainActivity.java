@@ -94,4 +94,11 @@ public class MainActivity extends Activity implements OnEnterListener
 		}
 		this.startActivity(intent);
 	}
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		TTSUtils.getInstance().destroy();
+	}
 }

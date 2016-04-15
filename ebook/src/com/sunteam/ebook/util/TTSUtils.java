@@ -1,5 +1,6 @@
 package com.sunteam.ebook.util;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.content.Context;
@@ -27,10 +28,22 @@ public class TTSUtils implements OnInitListener
 		return instance;
 	}
 	
+	//得到TTS对象
+	public TextToSpeech getTextToSpeech()
+	{
+		return	tts;
+	}
+	
 	//初始化
 	public void init( Context context )
 	{
 		tts = new TextToSpeech( context.getApplicationContext(), this );
+	}
+	
+	//销毁
+	public void destroy()
+	{
+		tts.shutdown();
 	}
 
 	//是否初始化成功
@@ -71,7 +84,9 @@ public class TTSUtils implements OnInitListener
 				tts.stop();
 			}	//如果正在朗读，先停止
 			
-			tts.speak(content, TextToSpeech.QUEUE_FLUSH, null );
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+			tts.speak(content, TextToSpeech.QUEUE_FLUSH, map );
 		}
 	}
 	
