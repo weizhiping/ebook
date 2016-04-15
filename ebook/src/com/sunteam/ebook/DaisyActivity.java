@@ -13,7 +13,7 @@ import com.sunteam.ebook.adapter.TxtMenuListAdapter;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 /**
- * Dausy主界面
+ * Daisy主界面
  * @author sylar
  *
  */

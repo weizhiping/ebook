@@ -16,9 +16,9 @@ public class TextFileReaderUtils
 {
 	private static TextFileReaderUtils instance = null;
 	private File mBookFile = null;
-	private String mStrCharsetName = "GBK";		//编码格式，默认为GBK
-	private MappedByteBuffer mMbBuf = null;		//内存中的图书字符
-	private int mMbBufLen = 0; 					//图书总长度
+	private String mStrCharsetName = "GB18030";		//编码格式，默认为GB18030
+	private MappedByteBuffer mMbBuf = null;			//内存中的图书字符
+	private int mMbBufLen = 0; 						//图书总长度
 	private ArrayList<ParagrapInfo> mParagrapInfoList  = null;	//分段信息
 	
 	public static TextFileReaderUtils getInstance()
