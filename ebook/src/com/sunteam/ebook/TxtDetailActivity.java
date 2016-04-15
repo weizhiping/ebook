@@ -1,6 +1,7 @@
 package com.sunteam.ebook;
 
 import java.io.File;
+
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -17,12 +18,14 @@ import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.PublicUtils;
+
 /**
  * 文档列表界面
+ * 
  * @author sylar
- *
  */
-public class TxtDetailActivity extends Activity {
+public class TxtDetailActivity extends Activity 
+{
 	private ListView mLvMenu = null;
 	private TxtDetailListAdapter mAdapter = null;
 	private ArrayList<FileInfo> fileInfoList = null;
