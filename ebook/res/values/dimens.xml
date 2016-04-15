@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  	<!-- text font -->
-    <dimen name="title_text_size">20sp</dimen>
-    <dimen name="pub_text_size">18sp</dimen>
-    <dimen name="main_text_size">16sp</dimen>
-    <dimen name="item_text_size">14sp</dimen>
+    <dimen name="title_text_size">22dip</dimen>
+    <dimen name="item_text_size">20dip</dimen>
     
     <!-- space -->
-    <dimen name="title_height">48dp</dimen>
+    <dimen name="title_height">30dip</dimen>
     <dimen name="item_left_padding">5dip</dimen>
     <dimen name="item_right_padding">5dip</dimen>
     <dimen name="item_top_padding">10dip</dimen>

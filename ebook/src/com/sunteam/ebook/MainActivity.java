@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.sunteam.ebook.adapter.MainMenuListAdapter;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.view.MainView;
 
 /**
  * 主界面
@@ -22,12 +24,9 @@ import com.sunteam.ebook.util.TTSUtils;
  */
 public class MainActivity extends Activity 
 {
-	private TextView mTvTitle = null;
-	private View mLine = null;
-	private ListView mLvMenu = null;
-	private MainMenuListAdapter mAdapter = null;
-	private ArrayList<String> mMainMenuList = null;
-	private int mColorSchemeIndex = 0;	//系统配色索引
+	private FrameLayout mFlContainer = null;
+	private MainView mMainView = null;
+	private ArrayList<String> mMenuList = null;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -40,28 +39,22 @@ public class MainActivity extends Activity
     
     private void initViews()
     {
-    	TTSUtils.getInstance().init(getApplicationContext());
+    	TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
+    	
     	//此处需要从系统配置文件中得到配色方案索引
-    	PublicUtils.setColorSchemeIndex(mColorSchemeIndex);
+    	PublicUtils.setColorSchemeIndex(0);
     	
-    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
-    	mTvTitle = (TextView)this.findViewById(R.id.main_title);
-    	mLine = (View)this.findViewById(R.id.line);
-    	mLvMenu = (ListView)this.findViewById(R.id.menu_list);
+    	mMenuList = new ArrayList<String>();
+    	mMenuList.add( this.getString(R.string.main_menu_txt) );
+    	mMenuList.add( this.getString(R.string.main_menu_daisy) );
+    	mMenuList.add( this.getString(R.string.main_menu_word) );
     	
-    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
-    	mLvMenu.setFocusable(false);	//不让控件获得焦点，让主界面进行按键分发
-    	
-    	mMainMenuList = new ArrayList<String>();
-    	mMainMenuList.add( this.getString(R.string.main_menu_txt) );
-    	mMainMenuList.add( this.getString(R.string.main_menu_daisy) );
-    	mMainMenuList.add( this.getString(R.string.main_menu_word) );
-    	
-    	mAdapter = new MainMenuListAdapter( this, mMainMenuList );
-    	mLvMenu.setAdapter(mAdapter);
+    	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
+    	mMainView = new MainView( this, this.getString(R.string.main_title), mMenuList );
+    	mFlContainer.removeAllViews();
+    	mFlContainer.addView(mMainView.getView());
     }
-    
+ /*   
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
@@ -80,5 +73,6 @@ public class MainActivity extends Activity
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}   
+	} 
+	*/  
 }
