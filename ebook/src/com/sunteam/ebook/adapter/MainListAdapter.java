@@ -54,7 +54,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
-		this.notifyDataSetInvalidated();
+		this.notifyDataSetChanged();
 	}
 	
 	public int getSelectItem()
@@ -76,7 +76,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
-		this.notifyDataSetInvalidated();
+		this.notifyDataSetChanged();
 	}
 	
 	//按了下键
@@ -93,7 +93,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
-		this.notifyDataSetInvalidated();
+		this.notifyDataSetChanged();
 	}
 	
 	//按了确定键
@@ -162,7 +162,6 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         	convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_menu, null);
         	
         	vh.tvMenu = (TextView)convertView.findViewById(R.id.menu);    		
-    		vh.tvMenu.setTag(String.valueOf(position));
     		vh.tvMenu.setOnClickListener(this);
 
         	convertView.setTag(vh);
@@ -171,6 +170,8 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         {
         	vh = (ViewHolder) convertView.getTag();
         }
+        
+        vh.tvMenu.setTag(String.valueOf(position));
         
         int index = PublicUtils.getColorSchemeIndex();	//配色方案
         
