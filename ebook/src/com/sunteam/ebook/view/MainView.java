@@ -7,6 +7,7 @@ import com.sunteam.ebook.adapter.MainListAdapter;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 
 import android.content.Context;
 import android.view.KeyEvent;
@@ -58,6 +59,7 @@ public class MainView extends View
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);								//设置分割线的背景色
     	
     	mTvTitle.setText(title);
+    	TTSUtils.getInstance().speak(menuList.get(0));	//默认朗读第一条
     	mAdapter = new MainListAdapter( mContext, listener, menuList );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点
