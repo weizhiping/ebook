@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.adapter.MainListAdapter;
+import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
@@ -21,9 +23,10 @@ import android.widget.TextView;
  *
  */
 
-public class MainView extends View 
+public class MainView extends View
 {
 	private static final String TAG = "MainView";
+	
 	private Context mContext = null;
 	private View mView = null;
 	private TextView mTvTitle = null;
@@ -37,7 +40,7 @@ public class MainView extends View
 		return	mView;
 	}
 	
-	public MainView( final Context context, final String title, ArrayList<String> menuList )
+	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList )
 	{
 		super(context);
 		
@@ -55,7 +58,23 @@ public class MainView extends View
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);								//设置分割线的背景色
     	
     	mTvTitle.setText(title);
-    	mAdapter = new MainListAdapter( mContext, menuList );
+    	mAdapter = new MainListAdapter( mContext, listener, menuList );
     	mLvMenu.setAdapter(mAdapter);
+    	mLvMenu.setFocusable(false);	//不获取焦点
+	}
+	
+	public void up()
+	{
+		mAdapter.up();
+	}
+	
+	public void down()
+	{
+		mAdapter.down();
+	}
+	
+	public void enter()
+	{
+		mAdapter.enter();
 	}
 }

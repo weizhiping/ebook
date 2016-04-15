@@ -3,15 +3,12 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.sunteam.ebook.adapter.MainMenuListAdapter;
-import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
@@ -22,7 +19,7 @@ import com.sunteam.ebook.view.MainView;
  * @author wzp
  *
  */
-public class MainActivity extends Activity 
+public class MainActivity extends Activity implements OnEnterListener
 {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
@@ -50,29 +47,52 @@ public class MainActivity extends Activity
     	mMenuList.add( this.getString(R.string.main_menu_word) );
     	
     	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
-    	mMainView = new MainView( this, this.getString(R.string.main_title), mMenuList );
+    	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
     }
- /*   
+ 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
 		switch( keyCode )
 		{
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
-				mAdapter.up();
+				mMainView.up();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_DOWN:	//下
-				mAdapter.down();
+				mMainView.down();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
-				mAdapter.enter();
+				mMainView.enter();
 				return	true;
 			default:
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	} 
-	*/  
+	}
+
+	@Override
+	public void onEnterCompleted(int selectItem, String menu) 
+	{
+		// TODO Auto-generated method stub
+		Intent intent;
+		switch( selectItem )
+		{
+			case 0:
+				intent = new Intent(this,TxtActivity.class);
+				intent.putExtra("isTxt", true);
+				break;
+			case 1:
+				intent = new Intent(this,TxtActivity.class);
+				intent.putExtra("isTxt", false);
+				break;
+			case 2:
+				intent = new Intent(this,DaisyActivity.class);
+				break;
+			default:
+				return;
+		}
+		this.startActivity(intent);
+	}
 }

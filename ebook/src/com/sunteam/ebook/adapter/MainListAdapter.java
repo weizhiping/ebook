@@ -3,7 +3,6 @@ package com.sunteam.ebook.adapter;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.sunteam.ebook.DaisyActivity;
 import com.sunteam.ebook.R;
-import com.sunteam.ebook.TxtActivity;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
@@ -30,28 +27,25 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	private Context mContext = null;
 	private ArrayList<String> gListData = null;
 	private int selectItem = 0;	//当前选中的项，默认是第一项
+	private OnEnterListener mOnEnterListener = null;
 	
-	public MainListAdapter( Context context, String[] list )
+	public interface OnEnterListener 
 	{
-		this.mContext = context;
-		this.gListData = new ArrayList<String>();
-		this.selectItem = 0;
-		
-		for( int i = 0; i < list.length; i++ )
-		{
-			gListData.add(list[i]);
-		}
-		
-		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		public void onEnterCompleted( int selectItem, String menu );
+	}
+
+	//设置确定监听器
+	public void setOnEnterListener( OnEnterListener listener )
+	{
+		mOnEnterListener = listener;
 	}
 	
-	public MainListAdapter( Context context, ArrayList<String> list )
+	public MainListAdapter( Context context, OnEnterListener listener, ArrayList<String> list )
 	{
 		this.mContext = context;
 		this.gListData = list;
 		this.selectItem = 0;
-		
-		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		this.mOnEnterListener = listener;
 	}
 
 	public void setSelectItem( int selectItem )
@@ -61,6 +55,11 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
 		this.notifyDataSetInvalidated();
+	}
+	
+	public int getSelectItem()
+	{
+		return	this.selectItem;
 	}
 	
 	//按了上键
@@ -100,18 +99,10 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//按了确定键
 	public void enter()
 	{
-		//进入到selectItem对应的界面
-		Intent intent;
-		if(selectItem == 0){
-			intent = new Intent(mContext,TxtActivity.class);
-			intent.putExtra("isTxt", true);
-		}else if(selectItem == 2){
-			intent = new Intent(mContext,TxtActivity.class);
-			intent.putExtra("isTxt", false);
-		}else{
-			intent = new Intent(mContext,DaisyActivity.class);
+		if( mOnEnterListener != null )
+		{
+			mOnEnterListener.onEnterCompleted( this.selectItem, this.gListData.get(selectItem) );
 		}
-		mContext.startActivity(intent);
 	}
 	
 	//tts朗读selectItem内容
