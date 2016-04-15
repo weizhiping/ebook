@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements OnEnterListener
     	TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
     	
     	//此处需要从系统配置文件中得到配色方案索引
-    	PublicUtils.setColorSchemeIndex(0);
+    	PublicUtils.setColorSchemeIndex((int)(System.currentTimeMillis()%7));
     	
     	mMenuList = new ArrayList<String>();
     	mMenuList.add( this.getString(R.string.main_menu_txt) );

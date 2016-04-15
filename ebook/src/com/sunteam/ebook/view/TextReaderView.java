@@ -102,7 +102,6 @@ import android.view.View;
 	 @Override
 	 public void setBackgroundColor( int color )
 	 {
-		 super.setBackgroundColor(color);
 		 mBkColor = color;
 	 }
 	 

@@ -52,6 +52,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
     	mTextReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
+    	mTextReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
     	mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), 0);
 	}
 
