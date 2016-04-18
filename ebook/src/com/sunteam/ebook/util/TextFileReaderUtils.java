@@ -108,6 +108,13 @@ public class TextFileReaderUtils
 		{
 			return	-1;
 		}
+		else if( len < EbookConstants.MAX_PARAGRAPH )
+		{
+			SplitInfo pi = new SplitInfo(begin, len);
+			mSplitInfoList.add(pi);
+			
+			return	-1;
+		}
 		
 		byte[] buffer = new byte[len];		//分段buf
 		mbb.position(begin);	//先移动到开始位置
