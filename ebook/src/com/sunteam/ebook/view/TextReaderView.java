@@ -627,82 +627,108 @@ import android.view.View;
 		 
 		 if( e1.getX() - e2.getX() > FLING_MIN_DISTANCE_X )
 		 {
-			 //向左滑动
-			 if( nextPage() )
-			 {
-				 this.postInvalidate();
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-				 }
-			 }
-			 else
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
-				 }
-			 }
+			 right();	//向左滑动，向后翻页
 		 }
 		 else if( e2.getX() - e1.getX() > FLING_MIN_DISTANCE_X )
 		 {
-			 //向右滑动
-			 if( prePage() )
-			 {
-				 this.postInvalidate();
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-				 }
-			 }
-			 else
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToTop();
-				 }
-			 }
+			 left();	//向右滑动，向前翻页
 		 }
 		 else if( e1.getY() - e2.getY() > FLING_MIN_DISTANCE_Y )
 		 {
-			 //向上滑动
-			 if( nextLine() )
-			 {
-				 this.postInvalidate();
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-				 }
-			 }
-			 else
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
-				 }
-			 }
+			 up();		//向上滑动，向上翻行
 		 }
 		 else if( e2.getY() - e1.getY() > FLING_MIN_DISTANCE_Y )
 		 {
-			 //向下滑动
-			 if( preLine() )
-			 {
-				 this.postInvalidate();
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-				 }
-			 }
-			 else
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToTop();
-				 }
-			 }
+			 down();	//向下滑动，向下翻行
 		 }
 		 
 		 return false; 
+	 }
+	 
+	 //向上翻行
+	 public void up()
+	 {
+		 if( nextLine() )
+		 {
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+	 }
+	 
+	 //向下翻行
+	 public void down()
+	 {
+		 if( preLine() )
+		 {
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+		 }
+	 }
+	 
+	 //向前翻页
+	 public void left()
+	 {
+		 if( prePage() )
+		 {
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+		 }
+	 }
+	 
+	 //向后翻页
+	 public void right()
+	 {
+		 if( nextPage() )
+		 {
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+	 }
+	 
+	 //确定
+	 public void enter()
+	 {
+		 
 	 }
 	 
 	 //分行信息类

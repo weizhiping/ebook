@@ -9,6 +9,7 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,33 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTextReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
     	mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), 0);
 	}
-
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{
+		switch( keyCode )
+		{
+			case KeyEvent.KEYCODE_DPAD_UP:		//上
+				mTextReaderView.up();
+				return	true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:	//下
+				mTextReaderView.down();
+				return	true;
+			case KeyEvent.KEYCODE_DPAD_LEFT:	//左
+				mTextReaderView.left();
+				break;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:	//右
+				mTextReaderView.right();
+				break;
+			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
+				mTextReaderView.enter();
+				return	true;
+			default:
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
 	@Override
 	public void onPageFlingToTop() 
 	{
