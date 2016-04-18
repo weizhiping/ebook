@@ -7,6 +7,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import com.sunteam.ebook.entity.SplitInfo;
+
 /**
  * 文本文件读取工具类。
  * 
@@ -19,7 +21,7 @@ public class TextFileReaderUtils
 	private String mStrCharsetName = "GB18030";		//编码格式，默认为GB18030
 	private MappedByteBuffer mMbBuf = null;			//内存中的图书字符
 	private int mMbBufLen = 0; 						//图书总长度
-	private ArrayList<ParagrapInfo> mParagrapInfoList  = null;	//分段信息
+	private ArrayList<SplitInfo> mSplitInfoList  = null;	//分段信息
 	
 	public static TextFileReaderUtils getInstance()
 	{
@@ -33,14 +35,14 @@ public class TextFileReaderUtils
 	
 	public TextFileReaderUtils()
 	{
-		mParagrapInfoList = new ArrayList<ParagrapInfo>();
+		mSplitInfoList = new ArrayList<SplitInfo>();
 	}
 	
 	//初始化
 	@SuppressWarnings("resource")
 	public void init( final String fullpath ) throws IOException
 	{
-		mParagrapInfoList.clear();	//先清除上次保存的信息
+		mSplitInfoList.clear();	//先清除上次保存的信息
 		
 		IdentifyEncoding ie = new IdentifyEncoding();
 		mStrCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
@@ -63,7 +65,7 @@ public class TextFileReaderUtils
 	  */	
 	public int getParagraphCount()
 	{
-		return	mParagrapInfoList.size();
+		return	mSplitInfoList.size();
 	}
 	
 	/**
@@ -71,14 +73,14 @@ public class TextFileReaderUtils
 	  */	
 	public byte[] getParagraphBuffer( int part )
 	{
-		if( part < 0 || part >= mParagrapInfoList.size() )
+		if( part < 0 || part >= mSplitInfoList.size() )
 		{
 			return	null;
 		}
 		
-		byte[] buffer = new byte[mParagrapInfoList.get(part).len];		//分段buf
-		mMbBuf.position(mParagrapInfoList.get(part).startPos);			//先移动到开始位置
-		mMbBuf.get( buffer, 0, mParagrapInfoList.get(part).len );		//读入物理内存
+		byte[] buffer = new byte[mSplitInfoList.get(part).len];		//分段buf
+		mMbBuf.position(mSplitInfoList.get(part).startPos);			//先移动到开始位置
+		mMbBuf.get( buffer, 0, mSplitInfoList.get(part).len );		//读入物理内存
 		
 		return	buffer;
 	}
@@ -155,19 +157,9 @@ public class TextFileReaderUtils
 			}
 		}
 		
-		ParagrapInfo pi = new ParagrapInfo();
-		pi.startPos = begin;
-		pi.len = paragraphLen;
-		
-		mParagrapInfoList.add(pi);
+		SplitInfo pi = new SplitInfo(begin, paragraphLen);
+		mSplitInfoList.add(pi);
 		
 		return	(begin+paragraphLen);	//返回下一段开始位置	
-	}
-	
-	//分段信息类
-	private class ParagrapInfo
-	{
-		public int startPos;	//开始位置
-		public int len;			//长度
 	}
 }

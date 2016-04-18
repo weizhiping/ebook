@@ -3,6 +3,10 @@ package com.sunteam.ebook.view;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import com.sunteam.ebook.entity.ReadMode;
+import com.sunteam.ebook.entity.ReverseInfo;
+import com.sunteam.ebook.entity.SplitInfo;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -46,13 +50,15 @@ import android.view.View;
 	 private float mVisibleHeight;			//绘制内容的高
 	 private boolean mIsFirstPage = false;	//是否是第一屏
 	 private boolean mIsLastPage = false;	//是否是最后一屏
-	 private ArrayList<LineInfo> mLineInfoList = new ArrayList<LineInfo>();	//保存分行信息
+	 private ArrayList<SplitInfo> mSplitInfoList = new ArrayList<SplitInfo>();	//保存分行信息
 	 private byte[] mMbBuf = null;			//内存中的图书字符
 	 private int mLineNumber = 0;			//当前页起始位置(行号)
 	 private int mMbBufLen = 0; 			//图书总长度
 	 private int mCurPage = 1;				//当前页
 	 private GestureDetector mGestureDetector = null;	//手势
 	 private OnPageFlingListener mOnPageFlingListener = null;
+	 private ReadMode mReadMode = ReadMode.READ_MODE_NIL;	//朗读模式，默认无朗读
+	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -96,6 +102,12 @@ import android.view.View;
 	 public void setOnPageFlingListener( OnPageFlingListener listener )
 	 {
 		 mOnPageFlingListener = listener;
+	 }
+	 
+	 //设置朗读模式
+	 public void setReadMode( ReadMode rm )
+	 {
+		 mReadMode = rm;
 	 }
 	 
 	 //设置背景色
@@ -174,10 +186,10 @@ import android.view.View;
 	 //得到指定行文本
 	 private String getLineText( final int lineNumber )
 	 {
-		 int size = mLineInfoList.size();
+		 int size = mSplitInfoList.size();
 		 if( lineNumber >= 0  && lineNumber < size )
 		 {
-			 LineInfo li = mLineInfoList.get(lineNumber);
+			 SplitInfo li = mSplitInfoList.get(lineNumber);
 			 
 			 try 
 			 {
@@ -297,8 +309,8 @@ import android.view.View;
 			 {
 				 if( 0x0a == mMbBuf[startPos+len-1] )
 				 {
-					 LineInfo li = new LineInfo(startPos, len);
-					 mLineInfoList.add(li);
+					 SplitInfo li = new SplitInfo(startPos, len);
+					 mSplitInfoList.add(li);
 					 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 					 continue;
 				 }
@@ -307,8 +319,8 @@ import android.view.View;
 			 {
 				 if( 0x0d == mMbBuf[startPos+len-2] && 0x0a == mMbBuf[startPos+len-1] )
 				 {
-					 LineInfo li = new LineInfo(startPos, len);
-					 mLineInfoList.add(li);
+					 SplitInfo li = new SplitInfo(startPos, len);
+					 mSplitInfoList.add(li);
 					 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 					 continue;
 				 }
@@ -339,8 +351,8 @@ import android.view.View;
 					 {
 						 int length = i-home;
 						 
-						 LineInfo li = new LineInfo(start, length);
-						 mLineInfoList.add(li);
+						 SplitInfo li = new SplitInfo(start, length);
+						 mSplitInfoList.add(li);
 						 
 						 start += length;
 						 home = i;
@@ -355,8 +367,8 @@ import android.view.View;
 					 if( textWidth >= mVisibleWidth )
 					 {
 						 int length = i-home;
-						 LineInfo li = new LineInfo(start, length);
-						 mLineInfoList.add(li);
+						 SplitInfo li = new SplitInfo(start, length);
+						 mSplitInfoList.add(li);
 						 
 						 start += length;
 						 home = i;
@@ -371,8 +383,8 @@ import android.view.View;
 			 if( textWidth > 0 )
 			 {
 				 int length = i-home;
-				 LineInfo li = new LineInfo(start, length);
-				 mLineInfoList.add(li);
+				 SplitInfo li = new SplitInfo(start, length);
+				 mSplitInfoList.add(li);
 				 
 				 start += length;
 				 textWidth = 0;
@@ -387,7 +399,7 @@ import android.view.View;
 	 //得到总页数
 	 public int getPageCount()
 	 {
-		 return	( mLineInfoList.size() + mLineCount - 1 ) / mLineCount;
+		 return	( mSplitInfoList.size() + mLineCount - 1 ) / mLineCount;
 	 }
 	 
 	 /**
@@ -396,7 +408,7 @@ import android.view.View;
 	  */
 	 public boolean nextLine()
 	 {
-		 if( mLineNumber+mLineCount >= mLineInfoList.size() ) 
+		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
 			 mIsLastPage = true;
 			 return false;
@@ -442,7 +454,7 @@ import android.view.View;
 	  */
 	 public boolean nextPage() 
 	 {
-		 if( mLineNumber+mLineCount >= mLineInfoList.size() ) 
+		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
 			 mIsLastPage = true;
 			 return false;
@@ -505,9 +517,11 @@ import android.view.View;
 			 mCurPageCanvas = new Canvas(mCurPageBitmap);
 		 }
 		 
-		 if( 0 == mLineInfoList.size() )
+		 if( 0 == mSplitInfoList.size() )
 		 {
 			 divideLines();
+			 mReverseInfo.startPos = 0;
+			 mReverseInfo.len = 2;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
@@ -565,10 +579,10 @@ import android.view.View;
 		 mPaint.setTextSize(mTextSize);			//字体大小
 		 mPaint.setColor(mTextColor);			//字体颜色
 		 
-		 if( mLineInfoList.size() > 0 ) 
+		 if( mSplitInfoList.size() > 0 ) 
 		 {
 			 int y = MARGIN_HEIGHT;
-			 for( int i = mLineNumber, j = 0; i < mLineInfoList.size() && j < mLineCount; i++, j++ ) 
+			 for( int i = mLineNumber, j = 0; i < mSplitInfoList.size() && j < mLineCount; i++, j++ ) 
 			 {
 				 y += mTextSize;
 				 y += mLineSpace;
@@ -729,18 +743,5 @@ import android.view.View;
 	 public void enter()
 	 {
 		 
-	 }
-	 
-	 //分行信息类
-	 private class LineInfo
-	 {
-		 public int startPos;	//开始位置
-		 public int len;		//长度
-		 
-		 public LineInfo( int s, int l )
-		 {
-			 startPos = s;
-			 len = l;
-		 }
-	 }	 
+	 } 
 }
