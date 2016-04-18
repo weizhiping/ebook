@@ -75,6 +75,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				mTextReaderView.right();
 				break;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
+			case KeyEvent.KEYCODE_ENTER:
 				mTextReaderView.enter();
 				return	true;
 			default:

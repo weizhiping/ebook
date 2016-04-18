@@ -56,6 +56,7 @@ public class DaisyActivity extends Activity implements OnEnterListener
 				mMainView.down();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
+			case KeyEvent.KEYCODE_ENTER:
 				mMainView.enter();
 				return	true;
 			default:
