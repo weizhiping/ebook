@@ -114,6 +114,17 @@ public class TextFileReaderUtils
 		mbb.get( buffer, 0, len );	//读入物理内存
 		
 		int paragraphLen = len;		//段落的长度
+		
+		for( int i = len-1; i >= 0; i-- )
+		{
+			if( 0x0a == buffer[i] )
+			{
+				paragraphLen = i+1;
+				break;
+			}
+		}
+		
+		/*
 		int i = 0;
 		byte b0, b1;
 		
@@ -156,6 +167,7 @@ public class TextFileReaderUtils
 				}
 			}
 		}
+		*/
 		
 		SplitInfo pi = new SplitInfo(begin, paragraphLen);
 		mSplitInfoList.add(pi);
