@@ -895,22 +895,34 @@ import android.view.View;
 	 //反显下一个字
 	 private void nextReverseWord()
 	 {
-		 for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
+		 int start = mReverseInfo.startPos+mReverseInfo.len;
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+			 return;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
 		 {
 			 if( mMbBuf[i] < 0 )	//汉字
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 2;
+				 
+				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
 			 }
-			 else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )	//英文
+			 else if( isAlpha( mMbBuf[i] ) )	//英文
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 1;
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
-					 if( ( mMbBuf[j] >= 'a' && mMbBuf[j] <= 'z' ) || ( mMbBuf[j] >= 'A' && mMbBuf[j] <= 'Z' ) )
+					 if( isAlpha( mMbBuf[j] ) )
 					 {
 						 mReverseInfo.len++;
 					 }
@@ -919,16 +931,18 @@ import android.view.View;
 						 break;
 					 }
 				 }
+				 
+				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
 			 }
-			 else if( mMbBuf[i] >= '0' && mMbBuf[i] <= '9' )	//数字
+			 else if( isNumber( mMbBuf[i] ) )	//数字
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 1;
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
-					 if( ( mMbBuf[j] >= '0' && mMbBuf[j] <= '9' ) || ( '.' == mMbBuf[j] ) )
+					 if( isNumber( mMbBuf[j] ) )
 					 {
 						 mReverseInfo.len++;
 					 }
@@ -937,9 +951,91 @@ import android.view.View;
 						 break;
 					 }
 				 }
+				 
+				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
+			 }
+			 else if( isEscape( mMbBuf[i]) )	//如果是特殊转义字符
+			 {
+				 continue;
+			 }
+			 else
+			 {
+				 mReverseInfo.startPos = i;
+				 mReverseInfo.len = 1;
+				 
+				 recalcLineNumber();	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 return;
 			 }
 		 }
+		 
+		 //如果执行到此处，证明已经没有可以反显的字符了
+	 }
+	 
+	 //根据反显位置重新计算当前页起始位置(行号)
+	 private void recalcLineNumber()
+	 {
+		 if( mReverseInfo.len <= 0 )	//如果没有反显
+		 {
+			 return;
+		 }
+		 
+		 int size = mSplitInfoList.size();
+		 int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
+		 
+		 SplitInfo si = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
+		 if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
+		 {
+			 if( nextLine() )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 }
+			 }
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
+		 }	//将内容翻到下一行
+	 }
+	 
+	 //是否是英文字符
+	 private boolean isAlpha( byte ch )
+	 {
+		 if( ( ch >= 'a' && ch <= 'z' ) || ( ch >= 'A' && ch <= 'Z' ) )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 //是否是数字字符
+	 private boolean isNumber( byte ch )
+	 {
+		 //if( ( ch >= '0' && ch <= '9' ) || ( '.' == ch ) )
+		 if( ch >= '0' && ch <= '9' )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 //是否是特殊的转义字符，比如换行符/回车符/制表符
+	 private boolean isEscape( byte ch )
+	 {
+		 if( 0x0d == ch || 0x0a == ch || 0x09 == ch )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
 	 }
 }
