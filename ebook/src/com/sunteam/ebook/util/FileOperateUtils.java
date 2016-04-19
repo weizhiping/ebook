@@ -68,7 +68,10 @@ public class FileOperateUtils {
 	        e.printStackTrace();  
 	    } catch (IOException e) {  
 	        e.printStackTrace();  
-	    }  
+	    } catch ( Exception e ) {
+	    	e.printStackTrace();
+	    }
+	    
 	    return dir;  
 	}  
 		

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -117,7 +118,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("flag", 3);
 				this.startActivity(intent);
 			}else{
-				
+				TTSUtils.getInstance().speak(this.getString(R.string.tf_does_not_exist));
+				Toast.makeText(this, this.getString(R.string.tf_does_not_exist), Toast.LENGTH_LONG).show();
 			}
 			return;
 		}

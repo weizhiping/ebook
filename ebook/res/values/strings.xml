@@ -13,5 +13,6 @@
     <string name="txt_menu_null">文件内容为空</string>
     <string name="external_storage">内置存储</string>
     <string name="tf_storage">外置存储</string>
+    <string name="tf_does_not_exist">外置存储不存在！</string>
 
 </resources>
