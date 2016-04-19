@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.TTSUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -660,40 +661,55 @@ import android.view.View;
 					 SplitInfo si = mSplitInfoList.get(i);	//得到当前行的信息
 					 if( ( mReverseInfo.startPos >= si.startPos ) && ( mReverseInfo.startPos < si.startPos+si.len ) )	//反显开始在当前行
 					 {
-						 if( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len )	//反显结束也在当前行
+						 float xx = x;
+						 String str = null;
+						 
+						 try 
 						 {
-							 float xx = x;
-							 String str = null;
-							 try 
-							 {
-								 str = new String(mMbBuf, si.startPos, mReverseInfo.startPos-si.startPos, CHARSET_NAME);	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 if( !TextUtils.isEmpty(str) )
-							 {
-								 xx += mPaint.measureText(str);
-							 }
-							 
-							 try 
-							 {
-								 str = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-							 mCurPageCanvas.drawRect(rect, paint);
-						 }
-						 else
+							 str = new String(mMbBuf, si.startPos, mReverseInfo.startPos-si.startPos, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
 						 {
-							 
+							 e.printStackTrace();
 						 }
+						 
+						 if( !TextUtils.isEmpty(str) )
+						 {
+							 xx += mPaint.measureText(str);
+						 }
+						 
+						 int len = Math.min(mReverseInfo.len, si.startPos+si.len-mReverseInfo.startPos);
+						 
+						 try 
+						 {
+							 str = new String(mMbBuf, mReverseInfo.startPos, len, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
+						 {
+							 e.printStackTrace();
+						 }
+						 
+						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+						 mCurPageCanvas.drawRect(rect, paint);
+					 }
+					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) )	//反显开始不在当前行，但在当前行有反显内容
+					 {
+						 float xx = x;
+						 String str = null;
+						 
+						 int len = Math.min( si.len, mReverseInfo.startPos + mReverseInfo.len - si.startPos );
+						 
+						 try 
+						 {
+							 str = new String(mMbBuf, si.startPos, len, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
+						 {
+							 e.printStackTrace();
+						 }
+						 
+						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+						 mCurPageCanvas.drawRect(rect, paint);
 					 }
 				 }
 				 
@@ -849,40 +865,70 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
-		 if( prePage() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( prePage() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToTop();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
 	 //向后翻页
 	 public void right()
 	 {
-		 if( nextPage() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( nextPage() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToBottom();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
@@ -895,22 +941,35 @@ import android.view.View;
 	 //反显下一个字
 	 private void nextReverseWord()
 	 {
-		 for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
+		 int start = mReverseInfo.startPos+mReverseInfo.len;
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+			 return;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
 		 {
 			 if( mMbBuf[i] < 0 )	//汉字
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 2;
+				 
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
 			 }
-			 else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )	//英文
+			 else if( isAlpha( mMbBuf[i] ) )	//英文
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 1;
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
-					 if( ( mMbBuf[j] >= 'a' && mMbBuf[j] <= 'z' ) || ( mMbBuf[j] >= 'A' && mMbBuf[j] <= 'Z' ) )
+					 if( isAlpha( mMbBuf[j] ) )
 					 {
 						 mReverseInfo.len++;
 					 }
@@ -919,16 +978,19 @@ import android.view.View;
 						 break;
 					 }
 				 }
+				 
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
 			 }
-			 else if( mMbBuf[i] >= '0' && mMbBuf[i] <= '9' )	//数字
+			 else if( isNumber( mMbBuf[i] ) )	//数字
 			 {
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 1;
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
-					 if( ( mMbBuf[j] >= '0' && mMbBuf[j] <= '9' ) || ( '.' == mMbBuf[j] ) )
+					 if( isNumber( mMbBuf[j] ) )
 					 {
 						 mReverseInfo.len++;
 					 }
@@ -937,9 +999,152 @@ import android.view.View;
 						 break;
 					 }
 				 }
+				 
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
-				 break;
+				 return;
+			 }
+			 else if( isEscape( mMbBuf[i]) )	//如果是特殊转义字符
+			 {
+				 continue;
+			 }
+			 else
+			 {
+				 mReverseInfo.startPos = i;
+				 mReverseInfo.len = 1;
+				 
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 return;
 			 }
 		 }
+		 
+		 //如果执行到此处，证明已经没有可以反显的字符了
+	 }
+	 
+	 //朗读反显文字
+	 private void readReverseText()
+	 {
+		 if( mReverseInfo.len <= 0 )	//如果没有反显
+		 {
+			 return;
+		 }
+		 
+		 try 
+		 {
+			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+			 if( !TextUtils.isEmpty( text ) )
+			 {
+				 TTSUtils.getInstance().speak(text);
+			 }
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
+		 }
+	 }
+	 
+	 //根据反显位置重新计算当前页起始位置(行号)
+	 private void recalcLineNumber( Action action )
+	 {
+		 if( mReverseInfo.len <= 0 )	//如果没有反显
+		 {
+			 return;
+		 }
+		 
+		 int size = mSplitInfoList.size();
+		 
+		 switch( action )
+		 {
+		 	case NEXT_LINE:	//下一行
+		 	case NEXT_PAGE:	//下一页
+		 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
+				 
+		 		SplitInfo si = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
+		 		if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
+		 		{
+		 			if( Action.NEXT_LINE == action )
+		 			{
+			 			if( nextLine() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToBottom();
+			 				}
+			 			}
+		 			}	//将内容翻到下一行
+		 			else
+		 			{
+		 				if( nextPage() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToBottom();
+			 				}
+			 			}
+		 			}	//将内容翻到下一页
+		 		}	
+		 		break;
+		 	default:
+		 		break;
+		 }
+	 }
+	 
+	 //是否是英文字符
+	 private boolean isAlpha( byte ch )
+	 {
+		 if( ( ch >= 'a' && ch <= 'z' ) || ( ch >= 'A' && ch <= 'Z' ) )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 //是否是数字字符
+	 private boolean isNumber( byte ch )
+	 {
+		 //if( ( ch >= '0' && ch <= '9' ) || ( '.' == ch ) )
+		 if( ch >= '0' && ch <= '9' )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 //是否是特殊的转义字符，比如换行符/回车符/制表符
+	 private boolean isEscape( byte ch )
+	 {
+		 if( 0x0d == ch || 0x0a == ch || 0x09 == ch )
+		 {
+			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 private enum Action
+	 {
+		 NEXT_LINE, 	//下一行
+		 NEXT_PAGE,		//下一页
+		 PRE_LINE,		//上一行
+		 PRE_PAGE,		//上一页
 	 }
 }
