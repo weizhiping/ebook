@@ -84,18 +84,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
-		case KeyEvent.KEYCODE_DPAD_UP: // 上
-			mMainView.up();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
-			mMainView.down();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
-			mMainView.enter();
-			return true;
-		default:
-			break;
-=======
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
 				mMainView.up();
 				return	true;
