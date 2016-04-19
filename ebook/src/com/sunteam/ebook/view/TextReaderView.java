@@ -661,40 +661,55 @@ import android.view.View;
 					 SplitInfo si = mSplitInfoList.get(i);	//得到当前行的信息
 					 if( ( mReverseInfo.startPos >= si.startPos ) && ( mReverseInfo.startPos < si.startPos+si.len ) )	//反显开始在当前行
 					 {
-						 if( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len )	//反显结束也在当前行
+						 float xx = x;
+						 String str = null;
+						 
+						 try 
 						 {
-							 float xx = x;
-							 String str = null;
-							 try 
-							 {
-								 str = new String(mMbBuf, si.startPos, mReverseInfo.startPos-si.startPos, CHARSET_NAME);	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 if( !TextUtils.isEmpty(str) )
-							 {
-								 xx += mPaint.measureText(str);
-							 }
-							 
-							 try 
-							 {
-								 str = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-							 } 
-							 catch (UnsupportedEncodingException e) 
-							 {
-								 e.printStackTrace();
-							 }
-							 
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-							 mCurPageCanvas.drawRect(rect, paint);
-						 }
-						 else
+							 str = new String(mMbBuf, si.startPos, mReverseInfo.startPos-si.startPos, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
 						 {
-							 
+							 e.printStackTrace();
 						 }
+						 
+						 if( !TextUtils.isEmpty(str) )
+						 {
+							 xx += mPaint.measureText(str);
+						 }
+						 
+						 int len = Math.min(mReverseInfo.len, si.startPos+si.len-mReverseInfo.startPos);
+						 
+						 try 
+						 {
+							 str = new String(mMbBuf, mReverseInfo.startPos, len, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
+						 {
+							 e.printStackTrace();
+						 }
+						 
+						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+						 mCurPageCanvas.drawRect(rect, paint);
+					 }
+					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len ) )	//反显开始不在当前行，但反显结束在当前行
+					 {
+						 float xx = x;
+						 String str = null;
+						 
+						 int len = mReverseInfo.startPos + mReverseInfo.len - si.startPos;
+						 
+						 try 
+						 {
+							 str = new String(mMbBuf, si.startPos, len, CHARSET_NAME);	//转换成指定编码
+						 } 
+						 catch (UnsupportedEncodingException e) 
+						 {
+							 e.printStackTrace();
+						 }
+						 
+						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+						 mCurPageCanvas.drawRect(rect, paint);
 					 }
 				 }
 				 
@@ -850,40 +865,70 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
-		 if( prePage() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( prePage() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToTop();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
 	 //向后翻页
 	 public void right()
 	 {
-		 if( nextPage() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( nextPage() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToBottom();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
