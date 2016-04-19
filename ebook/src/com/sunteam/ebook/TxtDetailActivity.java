@@ -3,12 +3,18 @@ package com.sunteam.ebook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.PopupWindow;
 import android.widget.Toast;
+
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
@@ -20,12 +26,14 @@ import com.sunteam.ebook.view.MainView;
 
 /**
  * 文档列表界面
- * 
+ * 目录浏览、我的收藏、最近使用文件
  * @author sylar
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
+	private View menuLayout;
+	private PopupWindow moreWindow;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private String rootPath; // 查找文件根路径
@@ -66,7 +74,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			initFiles();
 			break;
 		}
-		for (int i = 0; i < fileInfoList.size(); i++) {
+		int size = fileInfoList.size();
+		for (int i = 0; i < size; i++) {
 			mMenuList.add(fileInfoList.get(i).name);
 		}
 
@@ -74,8 +83,29 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
+		if(flag == 1 || flag == 2){
+			initPopu();
+		}
 	}
 
+	private void initPopu() {
+		menuLayout = LayoutInflater.from(this).inflate(
+				R.layout.activity_main, null);
+		ArrayList<String> menuList = new ArrayList<String>();
+		menuList.add(getString(R.string.menu_delete_current));
+		menuList.add(getString(R.string.menu_delete_list));
+		if(2 == flag){
+			menuList.add(getString(R.string.menu_add_fav));
+		}
+		MainView menuView = new MainView(this, this, getString(R.string.menu_function), menuList);
+		FrameLayout menuContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		menuContainer.removeAllViews();
+		menuContainer.addView(menuView.getView());
+		moreWindow = new PopupWindow(menuLayout, LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT, true);
+		//moreWindow.showAtLocation(menuLayout, Gravity.CENTER, 0, 0);
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {

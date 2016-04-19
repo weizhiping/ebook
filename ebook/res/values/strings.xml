@@ -11,8 +11,49 @@
     <string name="txt_menu_recent">最近使用文件</string>
     <string name="txt_menu_part">第%1$s部分</string>
     <string name="txt_menu_null">文件内容为空</string>
-    <string name="external_storage">内置存储</string>
-    <string name="tf_storage">外置存储</string>
-    <string name="tf_does_not_exist">外置存储不存在！</string>
+    <string name="external_storage">内储</string>
+    <string name="tf_storage">存储卡</string>
+    <string name="tf_does_not_exist">存储卡不存在，请插入！</string>
+    <string name="external_catalog">内储根目录</string>
+    <string name="tf_catalog">存储卡根目录</string>
+    <string name="menu_function">功能菜单</string>
+    <string name="menu_delete_current">删除当前</string>
+    <string name="menu_delete_list">清空列表</string>
+    <string name="menu_add_fav">添加到我的收藏</string>
+
+    <string-array name="array_menu">
+        <item>书签管理</item>
+        <item>朗读模式</item>
+        <item>跳至开头</item>
+        <item>跳转页码</item>
+        <item>朗读语音</item>
+        <item>背景音乐</item>
+    </string-array>
+    <string-array name="array_menu_mark">
+        <item>增加书签</item>
+        <item>查看书签</item>
+        <item>删除书签</item>
+        <item>清空书签</item>
+    </string-array>
+    <string-array name="array_menu_read">
+        <item>逐字朗读</item>
+        <item>逐句朗读</item>
+        <item>逐段朗读</item>
+        <item>全文朗读</item>
+        <item>无朗读</item>
+    </string-array>
+    <string-array name="array_menu_voice">
+        <item>中文角色</item>
+        <item>英文角色</item>
+        <item>语速</item>
+        <item>语调</item>
+        <item>语音风格</item>
+        <item>语音音效</item>
+    </string-array>
+    <string-array name="array_menu_music">
+        <item>开关</item>
+        <item>音乐选择</item>
+        <item>背景音强度</item>
+    </string-array>
 
 </resources>
