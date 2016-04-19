@@ -13,8 +13,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -43,6 +46,7 @@ import android.view.View;
 	 private float mTextSize = 60.0f;		//字体大小
 	 private int mTextColor = Color.WHITE;	//字体颜色
 	 private int mBkColor = Color.BLACK;	//背景颜色
+	 private int mReverseColor = Color.RED;	//反显颜色
 	 private int mLineCount = 0; 			//每页可以显示的行数
 	 private int mWidth = 0;				//页面控件的宽
 	 private int mHeight = 0;				//页面控件的高
@@ -123,6 +127,12 @@ import android.view.View;
 		 mTextColor = color;
 	 }
 	 
+	 //设置反显颜色
+	 public void setReverseColor( int color )
+	 {
+		 mReverseColor = color;
+	 }
+	 
 	 //设置字体大小
 	 public void setTextSize( float size )
 	 {
@@ -145,6 +155,12 @@ import android.view.View;
 	 public int getTextColor()
 	 {
 		 return	mTextColor;
+	 }
+	 
+	 //得到反显颜色
+	 public int getReverseColor()
+	 {
+		 return	mReverseColor;
 	 }
 	 
 	 //得到字体大小
@@ -519,13 +535,51 @@ import android.view.View;
 		 
 		 if( 0 == mSplitInfoList.size() )
 		 {
-			 divideLines();
-			 mReverseInfo.startPos = 0;
-			 mReverseInfo.len = 2;
+			 divideLines();		//分行
+			 initReverseInfo();	//初始化反显信息
+			 
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
 			 }
+		 }
+	 }
+	 
+	 //初始化反显信息
+	 private void initReverseInfo()
+	 {
+		 switch( mReadMode )
+		 {
+		 	case READ_MODE_NIL:			//无朗读
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		SplitInfo si = mSplitInfoList.get(mLineNumber);
+		 		mReverseInfo.startPos = 0;
+		 		mReverseInfo.len = 0;
+		 		for( int i = si.startPos; i < mMbBufLen; i++ )
+		 		{
+		 			if( mMbBuf[i] < 0 )	//汉字
+		 			{
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 2;
+				 		break;
+		 			}
+		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
+		 			{
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 1;
+				 		break;
+		 			}
+		 		}
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
@@ -579,14 +633,74 @@ import android.view.View;
 		 mPaint.setTextSize(mTextSize);			//字体大小
 		 mPaint.setColor(mTextColor);			//字体颜色
 		 
-		 if( mSplitInfoList.size() > 0 ) 
+		 int size = mSplitInfoList.size();
+		 
+		 if( size > 0 ) 
 		 {
+			 Paint paint = new Paint();
+			 paint.setColor(mReverseColor);
+			 
+			 //FontMetrics对象  
+			 FontMetrics fontMetrics = mPaint.getFontMetrics(); 
+			 /*
+			 //计算每一个坐标  
+			 float baseX = MARGIN_WIDTH;  
+			 float baseY = MARGIN_HEIGHT;  
+			 float topY = baseY + fontMetrics.top;  
+			 float ascentY = baseY + fontMetrics.ascent;  
+			 float descentY = baseY + fontMetrics.descent;  
+			 float bottomY = baseY + fontMetrics.bottom;  
+			 */
+			 
+			 int x = MARGIN_WIDTH;
 			 int y = MARGIN_HEIGHT;
-			 for( int i = mLineNumber, j = 0; i < mSplitInfoList.size() && j < mLineCount; i++, j++ ) 
+			 
+			 for( int i = mLineNumber, j = 0; i < size && j < mLineCount; i++, j++ ) 
 			 {
+				 if( mReverseInfo.len > 0 )	//如果有反显
+				 {
+					 SplitInfo si = mSplitInfoList.get(i);	//得到当前行的信息
+					 if( ( mReverseInfo.startPos >= si.startPos ) && ( mReverseInfo.startPos < si.startPos+si.len ) )	//反显开始在当前行
+					 {
+						 if( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len )	//反显结束也在当前行
+						 {
+							 int xx = x;
+							 String str = null;
+							 try 
+							 {
+								 str = new String(mMbBuf, si.startPos, mReverseInfo.startPos-si.startPos, CHARSET_NAME);	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 if( !TextUtils.isEmpty(str) )
+							 {
+								 xx += mPaint.measureText(str);
+							 }
+							 
+							 try 
+							 {
+								 str = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+							 } 
+							 catch (UnsupportedEncodingException e) 
+							 {
+								 e.printStackTrace();
+							 }
+							 
+							 Rect rect = new Rect(xx, y, (int) (xx+mPaint.measureText(str)), (int)(y+mTextSize));
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
+						 else
+						 {
+							 
+						 }
+					 }
+				 }
 				 y += mTextSize;
 				 y += mLineSpace;
-				 mCurPageCanvas.drawText(getLineText(i), MARGIN_WIDTH, y, mPaint);
+				 mCurPageCanvas.drawText(getLineText(i), x, y-fontMetrics.bottom, mPaint);	//drawText的坐标是baseX和baseY
 			 }
 		 }
 		 
@@ -649,53 +763,165 @@ import android.view.View;
 		 }
 		 else if( e1.getY() - e2.getY() > FLING_MIN_DISTANCE_Y )
 		 {
-			 up();		//向上滑动，向上翻行
+			 down();	//向上滑动，向后翻行
 		 }
 		 else if( e2.getY() - e1.getY() > FLING_MIN_DISTANCE_Y )
 		 {
-			 down();	//向下滑动，向下翻行
+			 up();		//向下滑动，向前翻行
 		 }
 		 
 		 return false; 
 	 }
 	 
-	 //向上翻行
-	 public void up()
+	 //向后翻行
+	 public void down()
 	 {
-		 if( nextLine() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( nextLine() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToBottom();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
+		 		{
+		 			if( mMbBuf[i] < 0 )	//汉字
+		 			{
+		 				if( -93 == mMbBuf[i] && -70 == mMbBuf[i+1] ) //0xa3ba 汉字：
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				if( -93 == mMbBuf[i] && -65 == mMbBuf[i+1] ) //0xa3bf 汉字？
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				if( -93 == mMbBuf[i] && -84 == mMbBuf[i+1] ) //0xa3ac 汉字，
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				if( -95 == mMbBuf[i] && -93 == mMbBuf[i+1] ) //0xa1a3 汉字。
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				if( -95 == mMbBuf[i] && -95 == mMbBuf[i+1] ) //0xa1a1 汉字空格
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 2;
+				 		this.invalidate();
+				 		break;
+		 			}
+		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
+		 			{
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 1;
+				 		for( int j = i+1; j < mMbBufLen; j++ )
+				 		{
+				 			if( ( mMbBuf[j] >= 'a' && mMbBuf[j] <= 'z' ) || ( mMbBuf[j] >= 'A' && mMbBuf[j] <= 'Z' ) )
+				 			{
+				 				mReverseInfo.len++;
+				 			}
+				 			else
+				 			{
+				 				break;
+				 			}
+				 		}
+				 		this.invalidate();
+				 		break;
+		 			}
+		 		}
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
-	 //向下翻行
-	 public void down()
+	 //向前翻行
+	 public void up()
 	 {
-		 if( preLine() )
+		 switch( mReadMode )
 		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
+		 	case READ_MODE_NIL:			//无朗读
+		 		if( preLine() )
+		 		{
+		 			this.invalidate();
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 			}
+		 		}
+		 		else
+		 		{
+		 			if( mOnPageFlingListener != null )
+		 			{
+		 				mOnPageFlingListener.onPageFlingToTop();
+		 			}
+		 		}
+		 		break;
+		 	case READ_MODE_ALL:			//全文朗读
+		 		break;
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		break;
+		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 		break;
+		 	case READ_MODE_WORD:		//逐字朗读
+		 		for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
+		 		{
+		 			if( mMbBuf[i] < 0 )	//汉字
+		 			{
+		 				if( -93 == mMbBuf[i] && -70 == mMbBuf[i+1] ) //0xa3ba 汉字：
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				if( -95 == mMbBuf[i] && -95 == mMbBuf[i+1] ) //0xa1a1 汉字空格
+		 				{
+		 					i++;
+		 					continue;
+		 				}
+		 				
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 2;
+				 		break;
+		 			}
+		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
+		 			{
+		 				mReverseInfo.startPos = i;
+				 		mReverseInfo.len = 1;
+				 		break;
+		 			}
+		 			
+		 			this.invalidate();
+		 		}
+		 		break;
+		 	default:
+		 		break;
 		 }
 	 }
 	 
