@@ -39,8 +39,8 @@ public class FileOperateUtils {
 	/** 
 	 * 获取扩展存储路径，TF卡、U盘 
 	 */  
-	public static String getExternalStorageDirectory(){  
-	    String dir = new String();  
+	public static String getTFDirectory(){  
+	    String dir = null;  
 	    try {  
 	        Runtime runtime = Runtime.getRuntime();  
 	        Process proc = runtime.exec("mount");  

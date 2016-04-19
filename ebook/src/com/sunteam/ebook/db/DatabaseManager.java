@@ -44,11 +44,10 @@ public class DatabaseManager {
 		db = helper.getWritableDatabase();
 		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type;  
 		 Cursor cursor = db.rawQuery(sql, null);
-		ArrayList<FileInfo> orderList = null;
+		ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 		try { 
 			if (null != cursor) {
 				if (cursor.getCount() > 0) {
-					orderList = new ArrayList<FileInfo>();
 					while (cursor.moveToNext()) {
 						FileInfo book = new FileInfo();
 						book.name = cursor.getString(cursor
