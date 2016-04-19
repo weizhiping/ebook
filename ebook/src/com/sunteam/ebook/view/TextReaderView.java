@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.TTSUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -912,6 +913,7 @@ import android.view.View;
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 2;
 				 
+				 readReverseText();		//朗读反显文字
 				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
@@ -932,6 +934,7 @@ import android.view.View;
 					 }
 				 }
 				 
+				 readReverseText();		//朗读反显文字
 				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
@@ -952,6 +955,7 @@ import android.view.View;
 					 }
 				 }
 				 
+				 readReverseText();		//朗读反显文字
 				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
@@ -965,6 +969,7 @@ import android.view.View;
 				 mReverseInfo.startPos = i;
 				 mReverseInfo.len = 1;
 				 
+				 readReverseText();		//朗读反显文字
 				 recalcLineNumber();	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
@@ -972,6 +977,28 @@ import android.view.View;
 		 }
 		 
 		 //如果执行到此处，证明已经没有可以反显的字符了
+	 }
+	 
+	 //朗读反显文字
+	 private void readReverseText()
+	 {
+		 if( mReverseInfo.len <= 0 )	//如果没有反显
+		 {
+			 return;
+		 }
+		 
+		 try 
+		 {
+			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+			 if( !TextUtils.isEmpty( text ) )
+			 {
+				 TTSUtils.getInstance().speak(text);
+			 }
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
+		 }
 	 }
 	 
 	 //根据反显位置重新计算当前页起始位置(行号)
