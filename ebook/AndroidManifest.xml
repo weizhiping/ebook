@@ -25,6 +25,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" 
+            android:screenOrientation="landscape"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,23 +34,23 @@
         </activity>
          <activity
             android:name=".TxtActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
          <activity
             android:name=".TxtDetailActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".ReadTxtActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
          <activity
             android:name=".DaisyActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
          <activity
             android:name=".TxtPartActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 

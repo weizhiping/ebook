@@ -14,7 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -34,16 +34,16 @@ import android.view.View;
  public class TextReaderView extends View implements OnGestureListener
  {	 
 	 private static final String TAG = "TextReaderView";
-	 private static final int MARGIN_WIDTH = 10;		///左右与边缘的距离
-	 private static final int MARGIN_HEIGHT = 10;		//上下与边缘的距离
+	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
+	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
 	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
 	 private Canvas mCurPageCanvas = null;	//当前画布
 	 private Paint mPaint = null;
-	 private int mLineSpace = 10;			//行间距
-	 private float mTextSize = 60.0f;		//字体大小
+	 private float mLineSpace = 3.6f;		//行间距
+	 private float mTextSize = 20.0f;		//字体大小
 	 private int mTextColor = Color.WHITE;	//字体颜色
 	 private int mBkColor = Color.BLACK;	//背景颜色
 	 private int mReverseColor = Color.RED;	//反显颜色
@@ -61,7 +61,7 @@ import android.view.View;
 	 private int mCurPage = 1;				//当前页
 	 private GestureDetector mGestureDetector = null;	//手势
 	 private OnPageFlingListener mOnPageFlingListener = null;
-	 private ReadMode mReadMode = ReadMode.READ_MODE_NIL;	//朗读模式，默认无朗读
+	 private ReadMode mReadMode = ReadMode.READ_MODE_WORD;	//朗读模式，默认无朗读
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
 	 
 	 public interface OnPageFlingListener 
@@ -85,23 +85,31 @@ import android.view.View;
 	 public TextReaderView(Context context, AttributeSet attrs) 
 	 {
 		 super(context, attrs);
-		 mContext = context;
 		 
-		 mGestureDetector = new GestureDetector( context, this );
-		 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);	//画笔
-		 mPaint.setTextAlign(Align.LEFT);			//做对齐
+		 initReaderView( context );
 	 }
 
 	 public TextReaderView(Context context, AttributeSet attrs, int defStyle) 
 	 {
 		 super(context, attrs, defStyle);
+		 
+		 initReaderView( context );
+	 }
+
+	 private void initReaderView( Context context )
+	 {
 		 mContext = context;
 		 
 		 mGestureDetector = new GestureDetector( context, this );
 		 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);	//画笔
 		 mPaint.setTextAlign(Align.LEFT);			//做对齐
+		 
+		 final float scale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数
+		 
+		 mLineSpace *= scale;		//行间距
+		 mTextSize *= scale;		//字体大小
 	 }
-
+	 
 	 //设置翻页监听器
 	 public void setOnPageFlingListener( OnPageFlingListener listener )
 	 {
@@ -170,7 +178,7 @@ import android.view.View;
 	 }
 	 
 	 //得到行间距
-	 public int getSpaceSize() 
+	 public float getSpaceSize() 
 	 {
 		 return	mLineSpace;
 	 }
@@ -209,7 +217,14 @@ import android.view.View;
 			 
 			 try 
 			 {
-				 return	new String(mMbBuf, li.startPos, li.len, CHARSET_NAME);	//转换成指定编码
+				 String str = new String(mMbBuf, li.startPos, li.len, CHARSET_NAME);	//转换成指定编码
+				 if( str != null )
+				 {
+					 str = str.replaceAll("\n", "");
+					 str = str.replaceAll("\r", "");
+					 
+					 return	str;
+				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
@@ -559,24 +574,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		SplitInfo si = mSplitInfoList.get(mLineNumber);
-		 		mReverseInfo.startPos = 0;
-		 		mReverseInfo.len = 0;
-		 		for( int i = si.startPos; i < mMbBufLen; i++ )
-		 		{
-		 			if( mMbBuf[i] < 0 )	//汉字
-		 			{
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 2;
-				 		break;
-		 			}
-		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
-		 			{
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 1;
-				 		break;
-		 			}
-		 		}
+		 		nextReverseWord();
 		 		break;
 		 	default:
 		 		break;
@@ -652,8 +650,8 @@ import android.view.View;
 			 float bottomY = baseY + fontMetrics.bottom;  
 			 */
 			 
-			 int x = MARGIN_WIDTH;
-			 int y = MARGIN_HEIGHT;
+			 float x = MARGIN_WIDTH;
+			 float y = MARGIN_HEIGHT;
 			 
 			 for( int i = mLineNumber, j = 0; i < size && j < mLineCount; i++, j++ ) 
 			 {
@@ -664,7 +662,7 @@ import android.view.View;
 					 {
 						 if( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len )	//反显结束也在当前行
 						 {
-							 int xx = x;
+							 float xx = x;
 							 String str = null;
 							 try 
 							 {
@@ -689,7 +687,7 @@ import android.view.View;
 								 e.printStackTrace();
 							 }
 							 
-							 Rect rect = new Rect(xx, y, (int) (xx+mPaint.measureText(str)), (int)(y+mTextSize));
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
 							 mCurPageCanvas.drawRect(rect, paint);
 						 }
 						 else
@@ -698,9 +696,13 @@ import android.view.View;
 						 }
 					 }
 				 }
+				 
+				 float baseY = y - fontMetrics.top;
+				 
+				 mCurPageCanvas.drawText(getLineText(i), x, baseY, mPaint);	//drawText的坐标是baseX和baseY
+				 
 				 y += mTextSize;
 				 y += mLineSpace;
-				 mCurPageCanvas.drawText(getLineText(i), x, y-fontMetrics.bottom, mPaint);	//drawText的坐标是baseX和baseY
 			 }
 		 }
 		 
@@ -802,60 +804,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
-		 		{
-		 			if( mMbBuf[i] < 0 )	//汉字
-		 			{
-		 				if( -93 == mMbBuf[i] && -70 == mMbBuf[i+1] ) //0xa3ba 汉字：
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				if( -93 == mMbBuf[i] && -65 == mMbBuf[i+1] ) //0xa3bf 汉字？
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				if( -93 == mMbBuf[i] && -84 == mMbBuf[i+1] ) //0xa3ac 汉字，
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				if( -95 == mMbBuf[i] && -93 == mMbBuf[i+1] ) //0xa1a3 汉字。
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				if( -95 == mMbBuf[i] && -95 == mMbBuf[i+1] ) //0xa1a1 汉字空格
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 2;
-				 		this.invalidate();
-				 		break;
-		 			}
-		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
-		 			{
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 1;
-				 		for( int j = i+1; j < mMbBufLen; j++ )
-				 		{
-				 			if( ( mMbBuf[j] >= 'a' && mMbBuf[j] <= 'z' ) || ( mMbBuf[j] >= 'A' && mMbBuf[j] <= 'Z' ) )
-				 			{
-				 				mReverseInfo.len++;
-				 			}
-				 			else
-				 			{
-				 				break;
-				 			}
-				 		}
-				 		this.invalidate();
-				 		break;
-		 			}
-		 		}
+		 		nextReverseWord();
 		 		break;
 		 	default:
 		 		break;
@@ -891,34 +840,6 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
-		 		{
-		 			if( mMbBuf[i] < 0 )	//汉字
-		 			{
-		 				if( -93 == mMbBuf[i] && -70 == mMbBuf[i+1] ) //0xa3ba 汉字：
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				if( -95 == mMbBuf[i] && -95 == mMbBuf[i+1] ) //0xa1a1 汉字空格
-		 				{
-		 					i++;
-		 					continue;
-		 				}
-		 				
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 2;
-				 		break;
-		 			}
-		 			else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )
-		 			{
-		 				mReverseInfo.startPos = i;
-				 		mReverseInfo.len = 1;
-				 		break;
-		 			}
-		 			
-		 			this.invalidate();
-		 		}
 		 		break;
 		 	default:
 		 		break;
@@ -969,5 +890,56 @@ import android.view.View;
 	 public void enter()
 	 {
 		 
-	 } 
+	 }
+	 
+	 //反显下一个字
+	 private void nextReverseWord()
+	 {
+		 for( int i = mReverseInfo.startPos+mReverseInfo.len; i < mMbBufLen; i++ )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 mReverseInfo.startPos = i;
+				 mReverseInfo.len = 2;
+				 this.invalidate();
+				 break;
+			 }
+			 else if( ( mMbBuf[i] >= 'a' && mMbBuf[i] <= 'z' ) || ( mMbBuf[i] >= 'A' && mMbBuf[i] <= 'Z' ) )	//英文
+			 {
+				 mReverseInfo.startPos = i;
+				 mReverseInfo.len = 1;
+				 for( int j = i+1; j < mMbBufLen; j++ )
+				 {
+					 if( ( mMbBuf[j] >= 'a' && mMbBuf[j] <= 'z' ) || ( mMbBuf[j] >= 'A' && mMbBuf[j] <= 'Z' ) )
+					 {
+						 mReverseInfo.len++;
+					 }
+					 else
+					 {
+						 break;
+					 }
+				 }
+				 this.invalidate();
+				 break;
+			 }
+			 else if( mMbBuf[i] >= '0' && mMbBuf[i] <= '9' )	//数字
+			 {
+				 mReverseInfo.startPos = i;
+				 mReverseInfo.len = 1;
+				 for( int j = i+1; j < mMbBufLen; j++ )
+				 {
+					 if( ( mMbBuf[j] >= '0' && mMbBuf[j] <= '9' ) || ( '.' == mMbBuf[j] ) )
+					 {
+						 mReverseInfo.len++;
+					 }
+					 else
+					 {
+						 break;
+					 }
+				 }
+				 this.invalidate();
+				 break;
+			 }
+		 }
+	 }
 }

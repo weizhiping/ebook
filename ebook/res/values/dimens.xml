@@ -7,7 +7,7 @@
     <dimen name="number_text_size">12dip</dimen>
     
     <!-- space -->
-    <dimen name="title_height">30dip</dimen>
+    <dimen name="title_height">31dip</dimen>
     <dimen name="item_left_padding">4dip</dimen>
     <dimen name="item_right_padding">4dip</dimen>
     <dimen name="item_top_padding">4dip</dimen>
