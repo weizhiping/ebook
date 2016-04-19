@@ -914,7 +914,7 @@ import android.view.View;
 				 mReverseInfo.len = 2;
 				 
 				 readReverseText();		//朗读反显文字
-				 recalcLineNumber();	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
 			 }
@@ -935,7 +935,7 @@ import android.view.View;
 				 }
 				 
 				 readReverseText();		//朗读反显文字
-				 recalcLineNumber();	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
 			 }
@@ -956,7 +956,7 @@ import android.view.View;
 				 }
 				 
 				 readReverseText();		//朗读反显文字
-				 recalcLineNumber();	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
 			 }
@@ -970,7 +970,7 @@ import android.view.View;
 				 mReverseInfo.len = 1;
 				 
 				 readReverseText();		//朗读反显文字
-				 recalcLineNumber();	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 return;
 			 }
@@ -1002,7 +1002,7 @@ import android.view.View;
 	 }
 	 
 	 //根据反显位置重新计算当前页起始位置(行号)
-	 private void recalcLineNumber()
+	 private void recalcLineNumber( Action action )
 	 {
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
@@ -1010,26 +1010,55 @@ import android.view.View;
 		 }
 		 
 		 int size = mSplitInfoList.size();
-		 int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
 		 
-		 SplitInfo si = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
-		 if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
+		 switch( action )
 		 {
-			 if( nextLine() )
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-				 }
-			 }
-			 else
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
-				 }
-			 }
-		 }	//将内容翻到下一行
+		 	case NEXT_LINE:	//下一行
+		 	case NEXT_PAGE:	//下一页
+		 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
+				 
+		 		SplitInfo si = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
+		 		if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
+		 		{
+		 			if( Action.NEXT_LINE == action )
+		 			{
+			 			if( nextLine() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToBottom();
+			 				}
+			 			}
+		 			}	//将内容翻到下一行
+		 			else
+		 			{
+		 				if( nextPage() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToBottom();
+			 				}
+			 			}
+		 			}	//将内容翻到下一页
+		 		}	
+		 		break;
+		 	default:
+		 		break;
+		 }
 	 }
 	 
 	 //是否是英文字符
@@ -1064,5 +1093,13 @@ import android.view.View;
 		 }
 		 
 		 return	false;
+	 }
+	 
+	 private enum Action
+	 {
+		 NEXT_LINE, 	//下一行
+		 NEXT_PAGE,		//下一页
+		 PRE_LINE,		//上一行
+		 PRE_PAGE,		//上一页
 	 }
 }
