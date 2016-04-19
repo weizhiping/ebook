@@ -59,6 +59,9 @@ public class EbookConstants
 	public static final String BOOK_PATH = "path";
 	public static final String BOOK_FOLDER = "folder";	//0为文件，1为文件夹
 	public static final String BOOK_TYPE = "type";		//1为收藏，2为最近浏览
+	public static final String BOOK_TXT = "txt";		
+	public static final String BOOK_WORD = "doc";		
+	public static final String BOOK_DAISY = "daisy";
 	
 	public static final int MAX_PARAGRAPH = 0x400000;	//最大段落长度
 	

@@ -2,20 +2,17 @@ package com.sunteam.ebook;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
@@ -57,9 +54,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		case 0:
 			mMenuList.add(getString(R.string.external_storage));
 			mMenuList.add(getString(R.string.tf_storage));
-			// rootPath = FileOperateUtils.getSDPath() +
-			// this.getString(R.string.app_name)+"/";
-			// initFiles();
 			break;
 		case 1:
 		case 2:
@@ -110,7 +104,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}else{
 				path = FileOperateUtils.getTFDirectory();
 			}
-			Log.e("txt", "-------file path-----:" + path);
 			if(null != path){
 				Intent intent = new Intent(this, TxtDetailActivity.class);
 				intent.putExtra("path", path);
@@ -163,7 +156,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	// 初始化显示文件
 	private void initFiles() {
-		ArrayList<File> filesList = FileOperateUtils.getFilesInDir(rootPath);
+		ArrayList<File> filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_TXT);
 		if (null != filesList) {
 			FileInfo fileInfo;
 			for (File f : filesList) {
