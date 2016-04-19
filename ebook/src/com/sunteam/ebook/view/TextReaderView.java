@@ -692,12 +692,12 @@ import android.view.View;
 						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
 						 mCurPageCanvas.drawRect(rect, paint);
 					 }
-					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len <= si.startPos+si.len ) )	//反显开始不在当前行，但反显结束在当前行
+					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) )	//反显开始不在当前行，但在当前行有反显内容
 					 {
 						 float xx = x;
 						 String str = null;
 						 
-						 int len = mReverseInfo.startPos + mReverseInfo.len - si.startPos;
+						 int len = Math.min( si.len, mReverseInfo.startPos + mReverseInfo.len - si.startPos );
 						 
 						 try 
 						 {
