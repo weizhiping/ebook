@@ -1026,6 +1026,37 @@ import android.view.View;
 				 
 				 return ri;
 			 }
+			 else if( isEscape( mMbBuf[i]) )	//如果是特殊转义字符
+			 {
+				 continue;
+			 }
+			 else
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 
+				 return	ri;
+			 }
+		 }
+		 
+		 return	null;
+	 }
+	 
+	 //得到下一个单词反显信息
+	 private ReverseInfo getNextReverseWordInfo2( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 2);
+				 
+				 return ri;
+			 }
 			 else if( isAlpha( mMbBuf[i] ) )	//英文
 			 {
 				 ReverseInfo ri = new ReverseInfo(i, 1);
@@ -1225,7 +1256,7 @@ import android.view.View;
 	 //是否是特殊的转义字符，比如换行符/回车符/制表符
 	 private boolean isEscape( byte ch )
 	 {
-		 if( 0x0d == ch || 0x0a == ch || 0x09 == ch )
+		 if( 0x07 == ch || 0x08 == ch || 0x09 == ch || 0x0a == ch || 0x0b == ch || 0x0c == ch || 0x0d == ch )
 		 {
 			 return	true;
 		 }
