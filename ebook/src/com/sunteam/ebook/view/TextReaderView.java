@@ -856,6 +856,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
+		 		preReverseWord();
 		 		break;
 		 	default:
 		 		break;
@@ -938,40 +939,113 @@ import android.view.View;
 		 
 	 }
 	 
+	 //反显上一个字
+	 private void preReverseWord()
+	 {
+		 int start = mReverseInfo.startPos;
+		 if( start == 0 )	//已经到顶了
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+			 return;
+		 }
+		 
+		 /*
+		 int count = 0;
+		 for( int i = start-1; i >= 0; i-- )
+		 {
+			 if( 0x0a == mMbBuf[i] )
+			 {
+				 count++;
+				 if( 2 == count )
+				 {
+					 start = i+1;
+					 break;
+				 }
+			 }
+		 }	//先找到当前段
+		 
+		 if( start == mReverseInfo.startPos )
+		 {
+			 start = 0;
+		 }
+		 */
+		 for( int i = 0; i < mMbBufLen; )
+		 {
+			 ReverseInfo ri = getNextReverseWordInfo( i );
+			 if( null == ri )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+				 break;
+			 }
+			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
+			 {
+				 mReverseInfo.startPos = ri.startPos;
+				 mReverseInfo.len = ri.len;
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 break;
+			 }
+			 else if( ri.startPos >= mReverseInfo.startPos )
+			 {
+				 break;
+			 }
+			 
+			 i += ri.len;
+		 }
+	 }
+		 
 	 //反显下一个字
 	 private void nextReverseWord()
 	 {
-		 int start = mReverseInfo.startPos+mReverseInfo.len;
-		 if( start == mMbBufLen-1 )	//已经到底了
+		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToBottom();
 			 }
-			 return;
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText();		//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
+	 }
+	 
+	 //得到下一个单词反显信息
+	 private ReverseInfo getNextReverseWordInfo( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
 		 }
 		 
 		 for( int i = start; i < mMbBufLen; i++ )
 		 {
 			 if( mMbBuf[i] < 0 )	//汉字
 			 {
-				 mReverseInfo.startPos = i;
-				 mReverseInfo.len = 2;
+				 ReverseInfo ri = new ReverseInfo(i, 2);
 				 
-				 readReverseText();		//朗读反显文字
-				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 return;
+				 return ri;
 			 }
 			 else if( isAlpha( mMbBuf[i] ) )	//英文
 			 {
-				 mReverseInfo.startPos = i;
-				 mReverseInfo.len = 1;
+				 ReverseInfo ri = new ReverseInfo(i, 1);
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
 					 if( isAlpha( mMbBuf[j] ) )
 					 {
-						 mReverseInfo.len++;
+						 ri.len++;
 					 }
 					 else
 					 {
@@ -979,20 +1053,16 @@ import android.view.View;
 					 }
 				 }
 				 
-				 readReverseText();		//朗读反显文字
-				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 return;
+				 return	ri;
 			 }
 			 else if( isNumber( mMbBuf[i] ) )	//数字
 			 {
-				 mReverseInfo.startPos = i;
-				 mReverseInfo.len = 1;
+				 ReverseInfo ri = new ReverseInfo(i, 1);
 				 for( int j = i+1; j < mMbBufLen; j++ )
 				 {
 					 if( isNumber( mMbBuf[j] ) )
 					 {
-						 mReverseInfo.len++;
+						 ri.len++;
 					 }
 					 else
 					 {
@@ -1000,10 +1070,7 @@ import android.view.View;
 					 }
 				 }
 				 
-				 readReverseText();		//朗读反显文字
-				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 return;
+				 return	ri;
 			 }
 			 else if( isEscape( mMbBuf[i]) )	//如果是特殊转义字符
 			 {
@@ -1011,17 +1078,13 @@ import android.view.View;
 			 }
 			 else
 			 {
-				 mReverseInfo.startPos = i;
-				 mReverseInfo.len = 1;
+				 ReverseInfo ri = new ReverseInfo(i, 1);
 				 
-				 readReverseText();		//朗读反显文字
-				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 return;
+				 return	ri;
 			 }
 		 }
 		 
-		 //如果执行到此处，证明已经没有可以反显的字符了
+		 return	null;
 	 }
 	 
 	 //朗读反显文字
