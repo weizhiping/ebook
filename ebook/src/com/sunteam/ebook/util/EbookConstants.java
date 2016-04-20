@@ -9,6 +9,8 @@ import com.sunteam.ebook.R;
  */
 public class EbookConstants 
 {
+	public static final String APPID = "5714cb7e";	//TTS的appid
+	
 	public static final int[] ViewBkDrawable = {
 		R.drawable.black,
 		R.drawable.white,

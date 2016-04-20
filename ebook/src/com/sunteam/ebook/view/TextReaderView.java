@@ -66,7 +66,6 @@ import android.view.View;
 	 private OnPageFlingListener mOnPageFlingListener = null;
 	 private ReadMode mReadMode = ReadMode.READ_MODE_WORD;	//朗读模式，默认无朗读
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
-	 private boolean mbIsWaitFinish = false;	//是否等待TTS播放完毕
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -112,28 +111,6 @@ import android.view.View;
 		 
 		 mLineSpace *= scale;		//行间距
 		 mTextSize *= scale;		//字体大小
-		 
-		 TTSUtils.getInstance().getTextToSpeech().setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-			@Override
-			public void onStart(String utteranceId) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onDone(String utteranceId) {
-				// TODO Auto-generated method stub
-				mbIsWaitFinish = false;
-			}
-
-			@Override
-			public void onError(String utteranceId) {
-				// TODO Auto-generated method stub
-				
-			}
-			 
-		 });
 	 }
 	 
 	 //设置翻页监听器
@@ -453,7 +430,6 @@ import android.view.View;
 		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
 		 
 		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-		 mbIsWaitFinish = true;	//需要等待这句播放完毕
 		 TTSUtils.getInstance().speak(tips);
 	 }
 
@@ -1146,22 +1122,7 @@ import android.view.View;
 		 try 
 		 {
 			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-			 if( !TextUtils.isEmpty( text ) )
-			 {
-				 while( mbIsWaitFinish )
-				 {
-					 try 
-					 {
-						 Thread.sleep(50);
-					 } 
-					 catch (InterruptedException e) 
-					 {
-						 // TODO Auto-generated catch block
-						 e.printStackTrace();
-					 }
-				 }
-				 TTSUtils.getInstance().speak(text);
-			 }
+			 TTSUtils.getInstance().speak(text);
 		 } 
 		 catch (UnsupportedEncodingException e) 
 		 {
