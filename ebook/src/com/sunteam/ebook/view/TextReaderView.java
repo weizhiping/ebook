@@ -951,27 +951,9 @@ import android.view.View;
 			 }
 			 return;
 		 }
+
+		 ReverseInfo oldReverseInfo = null;
 		 
-		 /*
-		 int count = 0;
-		 for( int i = start-1; i >= 0; i-- )
-		 {
-			 if( 0x0a == mMbBuf[i] )
-			 {
-				 count++;
-				 if( 2 == count )
-				 {
-					 start = i+1;
-					 break;
-				 }
-			 }
-		 }	//先找到当前段
-		 
-		 if( start == mReverseInfo.startPos )
-		 {
-			 start = 0;
-		 }
-		 */
 		 for( int i = 0; i < mMbBufLen; )
 		 {
 			 ReverseInfo ri = getNextReverseWordInfo( i );
@@ -988,16 +970,22 @@ import android.view.View;
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
 				 readReverseText();		//朗读反显文字
-				 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
 			 }
 			 else if( ri.startPos >= mReverseInfo.startPos )
 			 {
+				 mReverseInfo.startPos = oldReverseInfo.startPos;
+				 mReverseInfo.len = oldReverseInfo.len;
+				 readReverseText();		//朗读反显文字
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
 				 break;
 			 }
 			 
 			 i += ri.len;
+			 oldReverseInfo = ri;
 		 }
 	 }
 		 
@@ -1118,6 +1106,7 @@ import android.view.View;
 		 }
 		 
 		 int size = mSplitInfoList.size();
+		 SplitInfo si = null;
 		 
 		 switch( action )
 		 {
@@ -1125,7 +1114,7 @@ import android.view.View;
 		 	case NEXT_PAGE:	//下一页
 		 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
 				 
-		 		SplitInfo si = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
+		 		si = mSplitInfoList.get(mLineNumber+curPageLine-1);				//得到当前屏最后一行的信息
 		 		if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
 		 		{
 		 			if( Action.NEXT_LINE == action )
@@ -1163,6 +1152,47 @@ import android.view.View;
 			 			}
 		 			}	//将内容翻到下一页
 		 		}	
+		 		break;
+		 	case PRE_LINE:	//上一行
+		 	case PRE_PAGE:	//上一页
+		 		si = mSplitInfoList.get(mLineNumber);							//得到当前屏第一行的信息
+		 		if( mReverseInfo.startPos < si.startPos )						//反显开始在上一页
+		 		{
+		 			if( Action.PRE_LINE == action )
+		 			{
+			 			if( preLine() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToTop();
+			 				}
+			 			}
+		 			}	//将内容翻到上一行
+		 			else
+		 			{
+		 				if( prePage() )
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 				}
+			 			}
+			 			else
+			 			{
+			 				if( mOnPageFlingListener != null )
+			 				{
+			 					mOnPageFlingListener.onPageFlingToTop();
+			 				}
+			 			}
+		 			}	//将内容翻到下一页
+		 		}
 		 		break;
 		 	default:
 		 		break;
