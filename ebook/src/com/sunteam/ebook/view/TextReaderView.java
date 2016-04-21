@@ -19,7 +19,6 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.speech.tts.UtteranceProgressListener;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -694,8 +693,16 @@ import android.view.View;
 							 e.printStackTrace();
 						 }
 						 
-						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-						 mCurPageCanvas.drawRect(rect, paint);
+						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
+						 else
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
 					 }
 					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) )	//反显开始不在当前行，但在当前行有反显内容
 					 {
@@ -713,8 +720,16 @@ import android.view.View;
 							 e.printStackTrace();
 						 }
 						 
-						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-						 mCurPageCanvas.drawRect(rect, paint);
+						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
+						 else
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
 					 }
 				 }
 				 
@@ -1017,6 +1032,61 @@ import android.view.View;
 	 
 	 //得到下一个单词反显信息
 	 private ReverseInfo getNextReverseWordInfo( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 2);
+				 
+				 return ri;
+			 }
+			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
+			 {
+				 if( 0x0d == mMbBuf[i] )
+				 {
+					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 2);
+						 
+						 return	ri;
+					 }
+					 else
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 1);
+						 
+						 return	ri;
+					 }
+				 }
+				 else if( 0x0a == mMbBuf[i] )
+				 {
+					 ReverseInfo ri = new ReverseInfo(i, 1);
+					 
+					 return	ri;
+				 }
+				 else
+				 {
+					 continue;
+				 }
+			 }
+			 else
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 
+				 return	ri;
+			 }
+		 }
+		 
+		 return	null;
+	 }
+	 
+	 //得到下一个单词反显信息
+	 private ReverseInfo getNextReverseWordInfo1( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
