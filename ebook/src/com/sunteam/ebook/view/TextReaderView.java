@@ -2,6 +2,7 @@ package com.sunteam.ebook.view;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import com.sunteam.ebook.R;
@@ -71,6 +72,8 @@ import android.view.View;
 	 private ReadMode mReadMode = ReadMode.READ_MODE_WORD;	//朗读模式，默认无朗读
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
 	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
+	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
+	 private int mCurReadExplainIndex = 0;	//当前朗读的例句索引
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -846,6 +849,7 @@ import android.view.View;
 	 //向后翻行
 	 public void down()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -882,6 +886,7 @@ import android.view.View;
 	 //向前翻行
 	 public void up()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -918,6 +923,7 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -953,6 +959,7 @@ import android.view.View;
 	 //向后翻页
 	 public void right()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -990,41 +997,82 @@ import android.view.View;
 	 {
 		 if( mReverseInfo.len > 0 )
 		 {
-			 byte[] explain = null;
-			 
-			 if( mMbBuf[mReverseInfo.startPos] < 0 )
+			 char ch = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
+			 ArrayList<String> list = mMapWordExplain.get(ch);
+			 if( ( null == list ) || ( 0 == list.size() ) )
 			 {
-				 explain = mWordExplainUtils.getWordExplain(0, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
-			 }
-			 else
-			 {
-				 explain = mWordExplainUtils.getWordExplain(1, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
-			 }
-			 
-			 if( null == explain )
-			 {
-				 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
-			 }
-			 else
-			 {
-				 String txt = null;
+				 byte[] explain = null;
 				 
-				 try 
+				 if( mMbBuf[mReverseInfo.startPos] < 0 )
 				 {
-					 txt = new String(explain, CHARSET_NAME);	//转换成指定编码
-				 } 
-				 catch (UnsupportedEncodingException e) 
-				 {
-					 e.printStackTrace();
-				 }
-				 
-				 if( !TextUtils.isEmpty(txt) )
-				 {
-					 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+					 explain = mWordExplainUtils.getWordExplain(0, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
 				 }
 				 else
 				 {
-					 TTSUtils.getInstance().speak(txt);
+					 explain = mWordExplainUtils.getWordExplain(1, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
+				 }
+				 
+				 if( null == explain )
+				 {
+					 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+					 return;
+				 }
+				 else
+				 {
+					 String txt = null;
+					 
+					 try 
+					 {
+						 txt = new String(explain, CHARSET_NAME);	//转换成指定编码
+					 } 
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 if( TextUtils.isEmpty(txt) )
+					 {
+						 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+						 return;
+					 }
+					 else
+					 {
+						 String[] str = txt.split("=");
+						 if( ( null == str ) || ( str.length < 2 ) )
+						 {
+							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 return;
+						 }
+						 
+						 String[] strExplain = str[1].split(" ");
+						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
+						 {
+							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 return;
+						 }
+						 
+						 ArrayList<String> list2 = new ArrayList<String>();
+						 for( int i = 0; i < strExplain.length; i++ )
+						 {
+							 list2.add(strExplain[i]);
+						 }
+						 
+						 mMapWordExplain.put(ch, list2);
+					 }
+				 }
+			 }
+			 
+			 list = mMapWordExplain.get(ch);
+			 if( ( list != null ) && ( list.size() > 0 ) )
+			 {
+				 TTSUtils.getInstance().speak(list.get(mCurReadExplainIndex));
+				 if( mCurReadExplainIndex == list.size()-1 )
+				 {
+					 mCurReadExplainIndex = 0;
+				 }
+				 else
+				 {
+					 mCurReadExplainIndex++;
 				 }
 			 }
 		 }
