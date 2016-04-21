@@ -9,7 +9,9 @@ import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.CodeTableUtils;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.WordExplainUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,7 +38,7 @@ import android.view.View;
  *
  */
 
- public class TextReaderView extends View implements OnGestureListener
+ public class TextReaderView extends View implements OnGestureListener, OnDoubleTapListener
  {	 
 	 private static final String TAG = "TextReaderView";
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
@@ -67,6 +70,7 @@ import android.view.View;
 	 private OnPageFlingListener mOnPageFlingListener = null;
 	 private ReadMode mReadMode = ReadMode.READ_MODE_WORD;	//朗读模式，默认无朗读
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
+	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -112,6 +116,8 @@ import android.view.View;
 		 
 		 mLineSpace *= scale;		//行间距
 		 mTextSize *= scale;		//字体大小
+		 
+		 mWordExplainUtils.init(mContext);			//初始化例句
 	 }
 	 
 	 //设置翻页监听器
@@ -812,6 +818,30 @@ import android.view.View;
 		 
 		 return false; 
 	 }
+
+	 @Override
+	 public boolean onSingleTapConfirmed(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 return false;
+	 }
+
+	 @Override
+	 public boolean onDoubleTap(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 
+		 enter();
+		 
+		 return false;
+	 }
+
+	 @Override
+	 public boolean onDoubleTapEvent(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 return false;
+	 }
 	 
 	 //向后翻行
 	 public void down()
@@ -958,7 +988,46 @@ import android.view.View;
 	 //确定
 	 public void enter()
 	 {
-		 
+		 if( mReverseInfo.len > 0 )
+		 {
+			 byte[] explain = null;
+			 
+			 if( mMbBuf[mReverseInfo.startPos] < 0 )
+			 {
+				 explain = mWordExplainUtils.getWordExplain(0, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
+			 }
+			 else
+			 {
+				 explain = mWordExplainUtils.getWordExplain(1, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
+			 }
+			 
+			 if( null == explain )
+			 {
+				 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+			 }
+			 else
+			 {
+				 String txt = null;
+				 
+				 try 
+				 {
+					 txt = new String(explain, CHARSET_NAME);	//转换成指定编码
+				 } 
+				 catch (UnsupportedEncodingException e) 
+				 {
+					 e.printStackTrace();
+				 }
+				 
+				 if( !TextUtils.isEmpty(txt) )
+				 {
+					 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+				 }
+				 else
+				 {
+					 TTSUtils.getInstance().speak(txt);
+				 }
+			 }
+		 }
 	 }
 	 
 	 //反显上一个字
@@ -1194,7 +1263,7 @@ import android.view.View;
 		 Locale locale = mContext.getResources().getConfiguration().locale;
 		 String language = locale.getLanguage();
 		 
-		 char code = byte2char(mMbBuf, mReverseInfo.startPos);
+		 char code = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
 		 String str = null;
 		 if( "en".equalsIgnoreCase(language) )	//英文
 		 {
@@ -1357,20 +1426,6 @@ import android.view.View;
 		 }
 		 
 		 return	false;
-	 }
-	 
-	 //byte转char
-	 private char byte2char( byte[] buffer, int offset )
-	 {
-		 if( buffer[offset] >= 0 )
-		 {
-			 return	(char)buffer[offset];
-		 }
-		 
-		 int hi = (int)(256+buffer[offset]);
-		 int li = (int)(256+buffer[offset+1]);
-		 
-		 return	(char)((hi<<8)+li);
 	 }
 	 
 	 private enum Action
