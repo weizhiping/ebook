@@ -998,6 +998,11 @@ import android.view.View;
 		 if( mReverseInfo.len > 0 )
 		 {
 			 char ch = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
+			 if( ( ch >= 'A' ) && ( ch <= 'Z') )
+			 {
+				 ch += 0x20; 
+			 }	//变为小写
+			 
 			 ArrayList<String> list = mMapWordExplain.get(ch);
 			 if( ( null == list ) || ( 0 == list.size() ) )
 			 {
@@ -1052,9 +1057,21 @@ import android.view.View;
 						 }
 						 
 						 ArrayList<String> list2 = new ArrayList<String>();
-						 for( int i = 0; i < strExplain.length; i++ )
+						 
+						 if( ( ch >= 'a' ) && ( ch <= 'z') )
 						 {
-							 list2.add(strExplain[i]);
+							 for( int i = 0; i < strExplain.length; i++ )
+							 {
+								 list2.add(strExplain[i]);
+							 }
+							 list2.add(String.format(mContext.getResources().getString(R.string.en_explain_tips), ch-'a'+1));	//添加在字母表中的顺序
+						 }
+						 else
+						 {
+							 for( int i = 0; i < strExplain.length; i++ )
+							 {
+								 list2.add(strExplain[i]+mContext.getResources().getString(R.string.cn_explain_tips)+str[0]);
+							 }
 						 }
 						 
 						 mMapWordExplain.put(ch, list2);
