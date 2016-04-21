@@ -36,8 +36,6 @@ public class MainActivity extends Activity implements OnEnterListener
     
     private void initViews()
     {
-    	TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
-    	
     	PublicUtils.setColorSchemeIndex(PublicUtils.getSysColorSchemeIndex());	//设置系统配色方案
     	
     	mMenuList = new ArrayList<String>();

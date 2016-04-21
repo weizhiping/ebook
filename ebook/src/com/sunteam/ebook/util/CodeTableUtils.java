@@ -8,6 +8,7 @@ package com.sunteam.ebook.util;
 public class CodeTableUtils 
 {
 	private static final char[] CODE = {
+		0x0D,
 		0x0A,
 		0x20,
 		0x21,
@@ -105,6 +106,7 @@ public class CodeTableUtils
 	
 	private static final String[] EN = {
 		"new line",
+		"new line",
 		"space",
 		"exclamation mark",
 		"quotation marks",
@@ -200,6 +202,7 @@ public class CodeTableUtils
 	};	//英文
 	
 	private static final String[] CN = {
+		"换行",
 		"换行",
 		"空格",
 		"叹号",
@@ -306,7 +309,7 @@ public class CodeTableUtils
 			}
 		}
 		
-		return	"";
+		return	null;
 	}
 	
 	//得到编码对应的中文字符串
@@ -320,6 +323,6 @@ public class CodeTableUtils
 			}
 		}
 		
-		return	"";
+		return	null;
 	}	
 }	

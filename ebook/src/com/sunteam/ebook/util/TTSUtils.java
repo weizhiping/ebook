@@ -11,7 +11,6 @@ import com.iflytek.cloud.util.ResourceUtil.RESOURCE_TYPE;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.Toast;
 
 /**
  * TTS工具类。

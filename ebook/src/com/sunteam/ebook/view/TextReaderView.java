@@ -2,11 +2,13 @@ package com.sunteam.ebook.view;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.CodeTableUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 import android.content.Context;
@@ -1189,14 +1191,35 @@ import android.view.View;
 			 return;
 		 }
 		 
-		 try 
+		 Locale locale = mContext.getResources().getConfiguration().locale;
+		 String language = locale.getLanguage();
+		 
+		 char code = byte2char(mMbBuf, mReverseInfo.startPos);
+		 String str = null;
+		 if( "en".equalsIgnoreCase(language) )	//英文
 		 {
-			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-			 TTSUtils.getInstance().speak(text);
-		 } 
-		 catch (UnsupportedEncodingException e) 
+			 str = CodeTableUtils.getEnString(code);
+		 }
+		 else
 		 {
-			 e.printStackTrace();
+			 str = CodeTableUtils.getCnString(code);
+		 }
+		 
+		 if( null != str )
+		 {
+			 TTSUtils.getInstance().speak(str);
+		 }
+		 else
+		 {
+			 try 
+			 {
+				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+				 TTSUtils.getInstance().speak(text);
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
 		 }
 	 }
 	 
@@ -1334,6 +1357,20 @@ import android.view.View;
 		 }
 		 
 		 return	false;
+	 }
+	 
+	 //byte转char
+	 private char byte2char( byte[] buffer, int offset )
+	 {
+		 if( buffer[offset] >= 0 )
+		 {
+			 return	(char)buffer[offset];
+		 }
+		 
+		 int hi = (int)(256+buffer[offset]);
+		 int li = (int)(256+buffer[offset+1]);
+		 
+		 return	(char)((hi<<8)+li);
 	 }
 	 
 	 private enum Action
