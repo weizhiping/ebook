@@ -1010,11 +1010,11 @@ import android.view.View;
 				 
 				 if( mMbBuf[mReverseInfo.startPos] < 0 )
 				 {
-					 explain = mWordExplainUtils.getWordExplain(0, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
+					 explain = mWordExplainUtils.getWordExplain(0, ch);
 				 }
 				 else
 				 {
-					 explain = mWordExplainUtils.getWordExplain(1, PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos));
+					 explain = mWordExplainUtils.getWordExplain(1, ch);
 				 }
 				 
 				 if( null == explain )
