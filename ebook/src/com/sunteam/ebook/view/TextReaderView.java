@@ -438,9 +438,6 @@ import android.view.View;
 		 }
 		 
 		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
-		 
-		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-		 TTSUtils.getInstance().speak(tips);
 	 }
 
 	 //得到总页数
@@ -590,7 +587,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		nextReverseWord();
+		 		nextReverseWord(true);
 		 		break;
 		 	default:
 		 		break;
@@ -876,7 +873,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		nextReverseWord();
+		 		nextReverseWord(false);
 		 		break;
 		 	default:
 		 		break;
@@ -1125,7 +1122,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
-				 readReverseText();		//朗读反显文字
+				 readReverseText(false);		//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1134,7 +1131,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = oldReverseInfo.startPos;
 				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText();		//朗读反显文字
+				 readReverseText(false);		//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1146,7 +1143,7 @@ import android.view.View;
 	 }
 		 
 	 //反显下一个字
-	 private void nextReverseWord()
+	 private void nextReverseWord(boolean isSpeakPage)
 	 {
 		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1160,7 +1157,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText();		//朗读反显文字
+			 readReverseText(isSpeakPage);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1318,10 +1315,15 @@ import android.view.View;
 	 }
 	 
 	 //朗读反显文字
-	 private void readReverseText()
+	 private void readReverseText( boolean isSpeakPage )
 	 {
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
+			 if( isSpeakPage )
+			 {
+				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 TTSUtils.getInstance().speak(tips);
+			 }
 			 return;
 		 }
 		 
@@ -1348,7 +1350,15 @@ import android.view.View;
 			 try 
 			 {
 				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-				 TTSUtils.getInstance().speak(text);
+				 if( isSpeakPage )
+				 {
+					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+					 TTSUtils.getInstance().speak(tips+text);
+				 }
+				 else
+				 {
+					 TTSUtils.getInstance().speak(text);
+				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
