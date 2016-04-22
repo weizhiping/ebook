@@ -81,4 +81,9 @@ public class MainView extends View
 	{
 		mAdapter.enter();
 	}
+	
+	public void updateAdapter()
+	{
+		mAdapter.notifyDataSetChanged();
+	}
 }

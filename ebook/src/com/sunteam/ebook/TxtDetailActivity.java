@@ -57,7 +57,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		fileInfoList = new ArrayList<FileInfo>();
 		manager = new DatabaseManager(this);
 
-		switch (flag) // 0为目录浏览，1为我的收藏，2为最近使用
+		switch (flag) // 0为目录浏览，1为我的收藏，2为最近使用，3为目录浏览中文件
 		{
 		case 0:
 			mMenuList.add(getString(R.string.external_storage));

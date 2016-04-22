@@ -53,10 +53,27 @@
             android:name=".TxtPartActivity"
             android:screenOrientation="landscape" >
         </activity>
+        <!-- 
          <activity
             android:name=".MenuActivity"
             android:screenOrientation="landscape" >
-        </activity>
+        </activity> -->
+         <activity
+            android:name=".MenuMarkActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
+         <activity
+            android:name=".MenuReadActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
+         <activity
+            android:name=".MenuMusicActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
+         <activity
+            android:name=".MenuVoiceActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
     </application>
 
 </manifest>
