@@ -44,4 +44,45 @@ public class PublicUtils
         
 		return (int)(pxValue / scale + 0.5f); 	
 	}
+	
+	//byte转char
+	public static char byte2char( byte[] buffer, int offset )
+	{
+		if( buffer[offset] >= 0 )
+		{
+			return	(char)buffer[offset];
+		}
+		 
+		int hi = (int)(256+buffer[offset]);
+		int li = (int)(256+buffer[offset+1]);
+		 
+		return	(char)((hi<<8)+li);
+	}
+
+	//byte转int
+	public static int byte2int( byte[] buffer, int offset )
+	{
+		int[] temp = new int[4];
+		
+		for( int i = offset, j = 0; i < offset+4; i++, j++ )
+		{
+			if( buffer[i] < 0 )
+			{
+				temp[j] = 256+buffer[i];
+			}
+			else
+			{
+				temp[j] = buffer[i];
+			}
+		}
+		
+		int result = 0;
+		
+		for( int i = 0; i < 4; i++ )
+		{
+			result += (temp[i]<<(8*(i)));
+		}
+		
+		return	result;
+	}	
 }	

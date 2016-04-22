@@ -2,12 +2,17 @@ package com.sunteam.ebook.view;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.CodeTableUtils;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.WordExplainUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,10 +24,10 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.speech.tts.UtteranceProgressListener;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,7 +39,7 @@ import android.view.View;
  *
  */
 
- public class TextReaderView extends View implements OnGestureListener
+ public class TextReaderView extends View implements OnGestureListener, OnDoubleTapListener
  {	 
 	 private static final String TAG = "TextReaderView";
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
@@ -66,6 +71,9 @@ import android.view.View;
 	 private OnPageFlingListener mOnPageFlingListener = null;
 	 private ReadMode mReadMode = ReadMode.READ_MODE_WORD;	//朗读模式，默认无朗读
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
+	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
+	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
+	 private int mCurReadExplainIndex = 0;	//当前朗读的例句索引
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -111,6 +119,8 @@ import android.view.View;
 		 
 		 mLineSpace *= scale;		//行间距
 		 mTextSize *= scale;		//字体大小
+		 
+		 mWordExplainUtils.init(mContext);			//初始化例句
 	 }
 	 
 	 //设置翻页监听器
@@ -256,13 +266,28 @@ import android.view.View;
 		 }
 		 else
 		 {
+			 byte[] gb18030 = null;
 			 try 
 			 {
-				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 gb18030 = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
 				 e.printStackTrace();
+			 }
+			 
+			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
+			 if( ( gb18030.length >= 4 ) && ( -124 == gb18030[0] ) && ( 49 == gb18030[1] ) && ( -107 == gb18030[2] ) && ( 51 == gb18030[3] ) )
+			 {
+				 mMbBuf = new byte[gb18030.length-4];
+				 for( int i = 0; i < mMbBuf.length; i++ )
+				 {
+					 mMbBuf[i] = gb18030[i+4];
+				 }
+			 }
+			 else
+			 {
+				 mMbBuf = gb18030;
 			 }
 		 }
 		 mMbBufLen = (int)mMbBuf.length;
@@ -428,9 +453,6 @@ import android.view.View;
 		 }
 		 
 		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
-		 
-		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-		 TTSUtils.getInstance().speak(tips);
 	 }
 
 	 //得到总页数
@@ -580,7 +602,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		nextReverseWord();
+		 		nextReverseWord(true);
 		 		break;
 		 	default:
 		 		break;
@@ -694,8 +716,16 @@ import android.view.View;
 							 e.printStackTrace();
 						 }
 						 
-						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-						 mCurPageCanvas.drawRect(rect, paint);
+						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
+						 else
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
 					 }
 					 else if( ( mReverseInfo.startPos < si.startPos ) && ( mReverseInfo.startPos+mReverseInfo.len-1 >= si.startPos ) )	//反显开始不在当前行，但在当前行有反显内容
 					 {
@@ -713,8 +743,16 @@ import android.view.View;
 							 e.printStackTrace();
 						 }
 						 
-						 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
-						 mCurPageCanvas.drawRect(rect, paint);
+						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
+						 else
+						 {
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 mCurPageCanvas.drawRect(rect, paint);
+						 }
 					 }
 				 }
 				 
@@ -795,10 +833,35 @@ import android.view.View;
 		 
 		 return false; 
 	 }
+
+	 @Override
+	 public boolean onSingleTapConfirmed(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 return false;
+	 }
+
+	 @Override
+	 public boolean onDoubleTap(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 
+		 enter();
+		 
+		 return false;
+	 }
+
+	 @Override
+	 public boolean onDoubleTapEvent(MotionEvent e) 
+	 {
+		 // TODO Auto-generated method stub
+		 return false;
+	 }
 	 
 	 //向后翻行
 	 public void down()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -825,7 +888,7 @@ import android.view.View;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
 		 	case READ_MODE_WORD:		//逐字朗读
-		 		nextReverseWord();
+		 		nextReverseWord(false);
 		 		break;
 		 	default:
 		 		break;
@@ -835,6 +898,7 @@ import android.view.View;
 	 //向前翻行
 	 public void up()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -871,6 +935,7 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -906,6 +971,7 @@ import android.view.View;
 	 //向后翻页
 	 public void right()
 	 {
+		 mCurReadExplainIndex = 0;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_NIL:			//无朗读
@@ -941,7 +1007,104 @@ import android.view.View;
 	 //确定
 	 public void enter()
 	 {
-		 
+		 if( mReverseInfo.len > 0 )
+		 {
+			 char ch = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
+			 if( ( ch >= 'A' ) && ( ch <= 'Z') )
+			 {
+				 ch += 0x20; 
+			 }	//变为小写
+			 
+			 ArrayList<String> list = mMapWordExplain.get(ch);
+			 if( ( null == list ) || ( 0 == list.size() ) )
+			 {
+				 byte[] explain = null;
+				 
+				 if( mMbBuf[mReverseInfo.startPos] < 0 )
+				 {
+					 explain = mWordExplainUtils.getWordExplain(0, ch);
+				 }
+				 else
+				 {
+					 explain = mWordExplainUtils.getWordExplain(1, ch);
+				 }
+				 
+				 if( null == explain )
+				 {
+					 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+					 return;
+				 }
+				 else
+				 {
+					 String txt = null;
+					 
+					 try 
+					 {
+						 txt = new String(explain, CHARSET_NAME);	//转换成指定编码
+					 } 
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
+					 }
+					 
+					 if( TextUtils.isEmpty(txt) )
+					 {
+						 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+						 return;
+					 }
+					 else
+					 {
+						 String[] str = txt.split("=");
+						 if( ( null == str ) || ( str.length < 2 ) )
+						 {
+							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 return;
+						 }
+						 
+						 String[] strExplain = str[1].split(" ");
+						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
+						 {
+							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 return;
+						 }
+						 
+						 ArrayList<String> list2 = new ArrayList<String>();
+						 
+						 if( ( ch >= 'a' ) && ( ch <= 'z') )
+						 {
+							 for( int i = 0; i < strExplain.length; i++ )
+							 {
+								 list2.add(strExplain[i]);
+							 }
+							 list2.add(String.format(mContext.getResources().getString(R.string.en_explain_tips), ch-'a'+1));	//添加在字母表中的顺序
+						 }
+						 else
+						 {
+							 for( int i = 0; i < strExplain.length; i++ )
+							 {
+								 list2.add(strExplain[i]+mContext.getResources().getString(R.string.cn_explain_tips)+str[0]);
+							 }
+						 }
+						 
+						 mMapWordExplain.put(ch, list2);
+					 }
+				 }
+			 }
+			 
+			 list = mMapWordExplain.get(ch);
+			 if( ( list != null ) && ( list.size() > 0 ) )
+			 {
+				 TTSUtils.getInstance().speak(list.get(mCurReadExplainIndex));
+				 if( mCurReadExplainIndex == list.size()-1 )
+				 {
+					 mCurReadExplainIndex = 0;
+				 }
+				 else
+				 {
+					 mCurReadExplainIndex++;
+				 }
+			 }
+		 }
 	 }
 	 
 	 //反显上一个字
@@ -974,7 +1137,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
-				 readReverseText();		//朗读反显文字
+				 readReverseText(false);		//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -983,7 +1146,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = oldReverseInfo.startPos;
 				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText();		//朗读反显文字
+				 readReverseText(false);		//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -995,7 +1158,7 @@ import android.view.View;
 	 }
 		 
 	 //反显下一个字
-	 private void nextReverseWord()
+	 private void nextReverseWord(boolean isSpeakPage)
 	 {
 		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1009,7 +1172,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText();		//朗读反显文字
+			 readReverseText(isSpeakPage);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1017,6 +1180,61 @@ import android.view.View;
 	 
 	 //得到下一个单词反显信息
 	 private ReverseInfo getNextReverseWordInfo( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 2);
+				 
+				 return ri;
+			 }
+			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
+			 {
+				 if( 0x0d == mMbBuf[i] )
+				 {
+					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 2);
+						 
+						 return	ri;
+					 }
+					 else
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 1);
+						 
+						 return	ri;
+					 }
+				 }
+				 else if( 0x0a == mMbBuf[i] )
+				 {
+					 ReverseInfo ri = new ReverseInfo(i, 1);
+					 
+					 return	ri;
+				 }
+				 else
+				 {
+					 continue;
+				 }
+			 }
+			 else
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 
+				 return	ri;
+			 }
+		 }
+		 
+		 return	null;
+	 }
+	 
+	 //得到下一个单词反显信息
+	 private ReverseInfo getNextReverseWordInfo1( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
@@ -1112,21 +1330,55 @@ import android.view.View;
 	 }
 	 
 	 //朗读反显文字
-	 private void readReverseText()
+	 private void readReverseText( boolean isSpeakPage )
 	 {
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
+			 if( isSpeakPage )
+			 {
+				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 TTSUtils.getInstance().speak(tips);
+			 }
 			 return;
 		 }
 		 
-		 try 
+		 Locale locale = mContext.getResources().getConfiguration().locale;
+		 String language = locale.getLanguage();
+		 
+		 char code = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
+		 String str = null;
+		 if( "en".equalsIgnoreCase(language) )	//英文
 		 {
-			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-			 TTSUtils.getInstance().speak(text);
-		 } 
-		 catch (UnsupportedEncodingException e) 
+			 str = CodeTableUtils.getEnString(code);
+		 }
+		 else
 		 {
-			 e.printStackTrace();
+			 str = CodeTableUtils.getCnString(code);
+		 }
+		 
+		 if( null != str )
+		 {
+			 TTSUtils.getInstance().speak(str);
+		 }
+		 else
+		 {
+			 try 
+			 {
+				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+				 if( isSpeakPage )
+				 {
+					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+					 TTSUtils.getInstance().speak(tips+text);
+				 }
+				 else
+				 {
+					 TTSUtils.getInstance().speak(text);
+				 }
+			 } 
+			 catch (UnsupportedEncodingException e) 
+			 {
+				 e.printStackTrace();
+			 }
 		 }
 	 }
 	 

@@ -64,9 +64,13 @@
 }
 
 -libraryjars ./libs/android-support-v4.jar
+-libraryjars ./libs/Msc.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }
+
+-dontwarn com.iflytek.**
+-keep class com.iflytek.** {*; }
 
 -keep class **.R$* {   
 *;   
