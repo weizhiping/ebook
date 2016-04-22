@@ -20,7 +20,7 @@ public class TxtActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	private boolean isTxt;//true为txt文档，false为word文档
+	public static boolean isTxt;//true为txt文档，false为word文档
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 

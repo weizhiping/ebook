@@ -186,7 +186,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	// 初始化显示文件
 	private void initFiles() {
-		ArrayList<File> filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_TXT);
+		ArrayList<File> filesList;
+		if(TxtActivity.isTxt){
+			filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_TXT,EbookConstants.BOOK_TXT);
+		}else{
+			filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_WORD,EbookConstants.BOOK_WORDX);
+		}
 		if (null != filesList) {
 			FileInfo fileInfo;
 			for (File f : filesList) {

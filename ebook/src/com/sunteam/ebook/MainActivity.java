@@ -82,11 +82,11 @@ public class MainActivity extends Activity implements OnEnterListener
 				intent.putExtra("isTxt", true);
 				break;
 			case 1:
-				intent = new Intent(this,TxtActivity.class);
-				intent.putExtra("isTxt", false);
+				intent = new Intent(this,DaisyActivity.class);
 				break;
 			case 2:
-				intent = new Intent(this,DaisyActivity.class);
+				intent = new Intent(this,TxtActivity.class);
+				intent.putExtra("isTxt", false);
 				break;
 			default:
 				return;

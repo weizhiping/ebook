@@ -113,7 +113,7 @@ public class FileOperateUtils {
 	 *            保存目录下的所有文件
 	 * @return
 	 */
-	public static ArrayList<File> getFilesInDir(String path, String suffix) {
+	public static ArrayList<File> getFilesInDir(String path, String suffix,String suffixDocx) {
 		File dir = new File(path);
 		ArrayList<File> fileList = new ArrayList<File>();
 		if (dir == null || !dir.isDirectory())
@@ -125,11 +125,11 @@ public class FileOperateUtils {
 			fileList.clear();
 		for (File f : files) {
 			if (f.isDirectory()) {
-				if(hasSuffixFile(f, suffix)){
+				if(hasSuffixFile(f, suffix,suffixDocx)){
 					fileList.add(f);
 				}
 			} else {
-				if (suffix.equals(getFileExtensions(f))) {
+				if (suffix.equals(getFileExtensions(f)) || getFileExtensions(f).equals(suffixDocx)) {
 					fileList.add(f);
 				}
 			}
@@ -246,17 +246,17 @@ public class FileOperateUtils {
 		return strEx;
 	}
 
-	public static boolean hasSuffixFile(File file,String suffix) {
+	public static boolean hasSuffixFile(File file,String suffix,String suffixTwo) {
 		boolean bIsFilter = false;
 		if (file == null || !file.exists())
 			return bIsFilter;
 		for (File f : file.listFiles()) {
 			if(!f.isDirectory()){
-				if(suffix.equals(getFileExtensions(f))){
+				if(suffix.equals(getFileExtensions(f)) || getFileExtensions(f).equals(suffixTwo)){
 					return true;
 				}
 			}else{
-				hasSuffixFile(f,suffix);
+				hasSuffixFile(f,suffix,suffixTwo);
 			}
 		}
 		return bIsFilter;
