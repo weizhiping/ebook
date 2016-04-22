@@ -266,13 +266,28 @@ import android.view.View;
 		 }
 		 else
 		 {
+			 byte[] gb18030 = null;
 			 try 
 			 {
-				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 gb18030 = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
 				 e.printStackTrace();
+			 }
+			 
+			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
+			 if( ( gb18030.length >= 4 ) && ( -124 == gb18030[0] ) && ( 49 == gb18030[1] ) && ( -107 == gb18030[2] ) && ( 51 == gb18030[3] ) )
+			 {
+				 mMbBuf = new byte[gb18030.length-4];
+				 for( int i = 0; i < mMbBuf.length; i++ )
+				 {
+					 mMbBuf[i] = gb18030[i+4];
+				 }
+			 }
+			 else
+			 {
+				 mMbBuf = gb18030;
 			 }
 		 }
 		 mMbBufLen = (int)mMbBuf.length;
