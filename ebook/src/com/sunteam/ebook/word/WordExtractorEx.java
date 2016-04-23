@@ -117,7 +117,9 @@ public class WordExtractorEx
 	    		if (i6 < i4)
 	    		{
 	    			str2 = localTextPiece.substring(i5 - i3, i6 - i3);
-	    			out.write(str2+"\r\n");
+	    			str2 = str2.replaceAll("\r\n", "\n");
+					str2 = str2.replaceAll("\r", "\n");
+					out.write(str2);
 	    		}
 	    		else if (i6 > i4)
 	    		{
@@ -125,7 +127,9 @@ public class WordExtractorEx
 	    			{
 	    				str2 = localTextPiece.substring(i5 - i3, i4 - i3);
 
-	    				out.write(str2+"\r\n");
+	    				str2 = str2.replaceAll("\r\n", "\n");
+						str2 = str2.replaceAll("\r", "\n");
+						out.write(str2);
 	    				if (localIterator2.hasNext())
 	    				{
 	    					localTextPiece = (TextPiece)localIterator2.next();
@@ -139,7 +143,9 @@ public class WordExtractorEx
 	    				}
 	    			}
 	    			str2 = localTextPiece.substring(0, i6 - i3);
-	    			out.write(str2+"\r\n");
+	    			str2 = str2.replaceAll("\r\n", "\n");
+					str2 = str2.replaceAll("\r", "\n");
+					out.write(str2);
 	    		}
 	    		else
 	    		{
@@ -150,7 +156,9 @@ public class WordExtractorEx
 	    				i3 = localTextPiece.getStart();
 	    				i4 = localTextPiece.getEnd();
 	    			}
-	    			out.write(str2+"\r\n");
+	    			str2 = str2.replaceAll("\r\n", "\n");
+					str2 = str2.replaceAll("\r", "\n");
+					out.write(str2);
 	    		}
 	    	}
 	    }

@@ -12,7 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.textmining.text.extraction.WordExtractor;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -101,7 +100,8 @@ public class WordParseUtils
         				String tag = xmlParser.getName();
                         if (tag.equalsIgnoreCase("t")) 
                         {
-                        	out.write(xmlParser.nextText() + "\r\n");
+                        	String str = xmlParser.nextText()+"\n";
+            				out.write(str);
                         }
                         break;
         			case XmlPullParser.END_TAG:

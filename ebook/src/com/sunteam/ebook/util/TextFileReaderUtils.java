@@ -124,57 +124,12 @@ public class TextFileReaderUtils
 		
 		for( int i = len-1; i >= 0; i-- )
 		{
-			if( 0x0a == buffer[i] )
+			if( ( 0x0a == buffer[i] ) || ( 0x0d == buffer[i] ) )
 			{
 				paragraphLen = i+1;
 				break;
 			}
 		}
-		
-		/*
-		int i = 0;
-		byte b0, b1;
-		
-		//根据编码格式判断换行
-		if( mStrCharsetName.equals("utf-16le") ) 
-		{
-			while( i < len - 1 ) 
-			{
-				b0 = buffer[i++];
-				b1 = buffer[i++];
-				if( b0 == 0x0a && b1 == 0x00 ) 
-				{
-					paragraphLen = i;
-					continue;
-				}
-			}
-		} 
-		else if( mStrCharsetName.equals("utf-16be") ) 
-		{
-			while( i < len - 1 ) 
-			{
-				b0 = buffer[i++];
-				b1 = buffer[i++];
-				if( b0 == 0x00 && b1 == 0x0a ) 
-				{
-					paragraphLen = i;
-					continue;
-				}
-			}
-		} 
-		else 
-		{
-			while( i < len ) 
-			{
-				b0 = buffer[i++];
-				if( b0 == 0x0a ) 
-				{
-					paragraphLen = i;
-					continue;
-				}
-			}
-		}
-		*/
 		
 		SplitInfo pi = new SplitInfo(begin, paragraphLen);
 		mSplitInfoList.add(pi);

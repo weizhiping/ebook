@@ -32,7 +32,9 @@ public class Word6ExtractorEx
 			if( !isDeleted(localCHPX.getGrpprl()) )
 			{
 				String str = new String(paramArrayOfByte, n, Math.min(i1, j) - n, "Cp1252");
-				out.write(str+"\r\n");
+				str = str.replaceAll("\r\n", "\n");
+				str = str.replaceAll("\r", "\n");
+				out.write(str);
 				if( i1 >= j )
 				{
 					break;
