@@ -1,7 +1,7 @@
 package com.sunteam.ebook.word;
 
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,15 +16,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.textmining.text.extraction.FastSavedException;
 import org.textmining.text.extraction.PasswordProtectedException;
-import org.textmining.text.extraction.WordTextBuffer;
 import org.textmining.text.extraction.sprm.SprmIterator;
 import org.textmining.text.extraction.sprm.SprmOperation;
 
 public class WordExtractorEx 
 {
-	public String extractText( InputStream paramInputStream ) throws Exception
+	public boolean extractText( InputStream paramInputStream, OutputStreamWriter out ) throws Exception
 	{
-		ArrayList localArrayList = new ArrayList();
 	    POIFSFileSystem localPOIFSFileSystem = new POIFSFileSystem(paramInputStream);
 
 	    DocumentEntry localDocumentEntry1 = (DocumentEntry)localPOIFSFileSystem.getRoot().getEntry("WordDocument");
@@ -53,7 +51,7 @@ public class WordExtractorEx
 		    case 103:
 		    case 104:
 		    	Word6ExtractorEx localWord6Extractor = new Word6ExtractorEx();
-		    	return localWord6Extractor.extractText(arrayOfByte1);
+		    	return localWord6Extractor.extractText(out, arrayOfByte1);
 	    }
 
 	    int k = (i & 0x200) != 0 ? 1 : 0;
@@ -100,8 +98,6 @@ public class WordExtractorEx
 	    int i3 = localTextPiece.getStart();
 	    int i4 = localTextPiece.getEnd();
 
-	    WordTextBuffer localWordTextBuffer = new WordTextBuffer();
-
 	    while (localIterator1.hasNext())
 	    {
 	    	CHPX localCHPX = (CHPX)localIterator1.next();
@@ -121,7 +117,7 @@ public class WordExtractorEx
 	    		if (i6 < i4)
 	    		{
 	    			str2 = localTextPiece.substring(i5 - i3, i6 - i3);
-	    			localWordTextBuffer.append(str2);
+	    			out.write(str2+"\r\n");
 	    		}
 	    		else if (i6 > i4)
 	    		{
@@ -129,7 +125,7 @@ public class WordExtractorEx
 	    			{
 	    				str2 = localTextPiece.substring(i5 - i3, i4 - i3);
 
-	    				localWordTextBuffer.append(str2);
+	    				out.write(str2+"\r\n");
 	    				if (localIterator2.hasNext())
 	    				{
 	    					localTextPiece = (TextPiece)localIterator2.next();
@@ -139,11 +135,11 @@ public class WordExtractorEx
 	    				}
 	    				else
 	    				{
-	    					return localWordTextBuffer.toString();
+	    					return true;
 	    				}
 	    			}
 	    			str2 = localTextPiece.substring(0, i6 - i3);
-	    			localWordTextBuffer.append(str2);
+	    			out.write(str2+"\r\n");
 	    		}
 	    		else
 	    		{
@@ -154,12 +150,12 @@ public class WordExtractorEx
 	    				i3 = localTextPiece.getStart();
 	    				i4 = localTextPiece.getEnd();
 	    			}
-	    			localWordTextBuffer.append(str2);
+	    			out.write(str2+"\r\n");
 	    		}
 	    	}
 	    }
 	    
-	    return localWordTextBuffer.toString();
+	    return true;
 	}
 
 	private boolean isDeleted( byte[] paramArrayOfByte )

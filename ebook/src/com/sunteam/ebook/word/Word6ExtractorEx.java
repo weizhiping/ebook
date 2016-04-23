@@ -1,16 +1,16 @@
 package com.sunteam.ebook.word;
 
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.util.LittleEndian;
-import org.textmining.text.extraction.WordTextBuffer;
 import org.textmining.text.extraction.chp.Word6CHPBinTable;
 
 public class Word6ExtractorEx 
 {
-	public String extractText( byte[] paramArrayOfByte ) throws Exception
+	public boolean extractText( OutputStreamWriter out, byte[] paramArrayOfByte ) throws Exception
 	{
 		int i = LittleEndian.getInt(paramArrayOfByte, 24);
 		int j = LittleEndian.getInt(paramArrayOfByte, 28);
@@ -22,7 +22,6 @@ public class Word6ExtractorEx
 
 		List localList = localWord6CHPBinTable.getTextRuns();
 
-		WordTextBuffer localWordTextBuffer = new WordTextBuffer();
 		Iterator localIterator = localList.iterator();
 		while( localIterator.hasNext() )
 		{
@@ -33,7 +32,7 @@ public class Word6ExtractorEx
 			if( !isDeleted(localCHPX.getGrpprl()) )
 			{
 				String str = new String(paramArrayOfByte, n, Math.min(i1, j) - n, "Cp1252");
-				localWordTextBuffer.append(str);
+				out.write(str+"\r\n");
 				if( i1 >= j )
 				{
 					break;
@@ -41,7 +40,7 @@ public class Word6ExtractorEx
 			}
 		}
 
-		return localWordTextBuffer.toString();
+		return true;
 	}
 
 	private boolean isDeleted( byte[] paramArrayOfByte )
