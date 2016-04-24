@@ -24,6 +24,8 @@
     <string name="no_explain">无例句</string>
     <string name="en_explain_tips">字母表中的第 %1$s个字母</string>
     <string name="cn_explain_tips">的</string>
+    <string name="to_top">已经到开头</string>
+    <string name="to_bottom">已经到结尾</string>
 
     <string-array name="array_menu">
         <item>书签管理</item>

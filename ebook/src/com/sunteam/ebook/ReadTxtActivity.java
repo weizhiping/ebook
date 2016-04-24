@@ -3,6 +3,7 @@ package com.sunteam.ebook;
 import com.sunteam.ebook.util.EbookConstants;
 
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
@@ -89,14 +90,18 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "已经是第一页了！", Toast.LENGTH_LONG).show();
+		String tips = this.getString(R.string.to_top);
+		Toast.makeText(this, tips, Toast.LENGTH_LONG).show();
+		TTSUtils.getInstance().speak(tips);
 	}
 
 	@Override
 	public void onPageFlingToBottom() 
 	{
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "已经是最后一页了！", Toast.LENGTH_LONG).show();
+		String tips = this.getString(R.string.to_bottom);
+		Toast.makeText(this, tips, Toast.LENGTH_LONG).show();
+		TTSUtils.getInstance().speak(tips);
 	}
 
 	@Override
