@@ -1,6 +1,8 @@
 package com.sunteam.ebook.util;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import com.sunteam.ebook.R;
 
 /**
  * 可重用的方法工具类。
@@ -9,6 +11,7 @@ import android.content.Context;
  */
 public class PublicUtils 
 {
+	private static ProgressDialog progress;
 	private static int mColorSchemeIndex = 0;	//配色方案索引
 	
 	//从系统配置文件中得到配色方案索引
@@ -85,4 +88,35 @@ public class PublicUtils
 		
 		return	result;
 	}	
+	
+	/**
+	 * 加载提示
+	 * 
+	 * @param context
+	 */
+	public static void showProgress(Context context) {
+		if (null == progress) {
+			progress = new ProgressDialog(context, R.style.progress_dialog);
+			progress.setIndeterminate(false);
+			progress.setCancelable(true);
+			progress.setCanceledOnTouchOutside(false);
+			progress.show();
+			progress.setContentView(R.layout.progress_layout);
+		} else {
+			try{
+				progress.show();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void cancelProgress() {
+		if (null != progress) {
+			if(progress.isShowing()){
+				progress.cancel();
+			}
+			progress = null;
+		}
+	}
 }	

@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +21,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
@@ -33,6 +33,7 @@ import com.sunteam.ebook.word.WordParseUtils;
  * @author sylar
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
+	private static final String TAG = "TxtDetailActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private View menuLayout;
@@ -237,7 +238,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			
+			PublicUtils.showProgress(TxtDetailActivity.this);
 		}
 
 		@Override
@@ -257,6 +258,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		@Override
 		protected void onPostExecute(FileInfo result) {
 			super.onPostExecute(result);
+			PublicUtils.cancelProgress();
 			showFiles(result);
 		}
 	}
