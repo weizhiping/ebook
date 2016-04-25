@@ -45,6 +45,31 @@ import android.view.View;
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
 	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
+	 private static final char[] CN_SEPARATOR = { 
+		 0xA3BA,	//冒号
+		 0xA6DC,	//冒号
+		 0xA955,	//冒号
+		 0xA973,	//冒号
+		 
+		 0xA3AC,	//逗号
+		 0xA6D9,	//逗号
+		 0xA96F,	//逗号
+		 
+		 0xA3BB,	//分号
+		 0xA6DD,	//分号
+		 0xA972,	//分号
+		 
+		 0xA1A3,	//句号
+		 
+		 0xA3BF,	//问号
+		 0xA974,	//问号
+		 
+		 0xA3A1,	//叹号
+		 0xA6DE,	//叹号
+		 0xA975,	//叹号
+		 
+		 0xA1AD,	//省略号
+	 };	//中午分隔符
 	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
@@ -593,11 +618,9 @@ import android.view.View;
 	 {
 		 switch( mReadMode )
 		 {
-		 	case READ_MODE_NIL:			//无朗读
-		 		break;
 		 	case READ_MODE_ALL:			//全文朗读
-		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		nextReverseSentenceEx(true);
 		 		break;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
@@ -882,8 +905,8 @@ import android.view.View;
 		 		}
 		 		break;
 		 	case READ_MODE_ALL:			//全文朗读
-		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		nextReverseSentenceEx(false);
 		 		break;
 		 	case READ_MODE_SENTENCE:	//逐句朗读
 		 		break;
@@ -1106,6 +1129,132 @@ import android.view.View;
 			 }
 		 }
 	 }
+
+	 //反显下一个句(段落和全文模式)
+	 private void nextReverseSentenceEx(boolean isSpeakPage)
+	 {
+		 ReverseInfo ri = getNextReverseSentenceInfoEx( mReverseInfo.startPos+mReverseInfo.len );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(isSpeakPage);			//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
+	 }
+	 
+	 //得到下一个句子反显信息(段落和全文模式)
+	 private ReverseInfo getNextReverseSentenceInfoEx( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; i++ )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 2);
+				 
+				 for( int j = i+2; j < mMbBufLen; j+=2 )
+				 {
+					 if( mMbBuf[j] < 0 )
+					 {
+						 ri.len += 2;
+						 
+						 boolean isBreak = false;
+						 char ch = PublicUtils.byte2char(mMbBuf, j);
+						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+						 {
+							 if( CN_SEPARATOR[k] == ch )
+							 {
+								 isBreak = true;
+								 break;
+							 }
+						 }
+						 
+						 if( isBreak )
+						 {
+							 break;
+						 }
+					 }
+					 else
+					 {
+						 break;
+					 }
+				 }
+				 
+				 return ri;
+			 }
+			 else if( isAlpha( mMbBuf[i] ) )	//英文
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 for( int j = i+1; j < mMbBufLen; j++ )
+				 {
+					 if( isEscape( mMbBuf[j] ) )	//如果是转义字符
+					 {
+						 break;
+					 }
+					 else if( mMbBuf[j] < 0x0 )		//如果是中文字符
+					 {
+						 break;
+					 }
+					 else if( 0x20 == mMbBuf[j] )	//如果是空格
+					 {
+						 break;
+					 }
+					 else
+					 {
+						 ri.len++;
+					 }
+				 }
+				 
+				 return	ri;
+			 }
+			 else if( isNumber( mMbBuf[i] ) )	//数字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 for( int j = i+1; j < mMbBufLen; j++ )
+				 {
+					 if( isEscape( mMbBuf[j] ) )	//如果是转义字符
+					 {
+						 break;
+					 }
+					 else if( mMbBuf[j] < 0x0 )		//如果是中文字符
+					 {
+						 break;
+					 }
+					 else
+					 {
+						 ri.len++;
+					 }
+				 }
+				 
+				 return	ri;
+			 }
+			 else if( isEscape( mMbBuf[i]) || 0x20 == mMbBuf[i] )	//如果是特殊转义字符或者空格
+			 {
+				 continue;
+			 }
+			 else
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 
+				 return	ri;
+			 }
+		 }
+		 
+		 return	null;
+	 }
 	 
 	 //反显上一个字
 	 private void preReverseWord()
@@ -1156,7 +1305,7 @@ import android.view.View;
 			 oldReverseInfo = ri;
 		 }
 	 }
-		 
+	 
 	 //反显下一个字
 	 private void nextReverseWord(boolean isSpeakPage)
 	 {
