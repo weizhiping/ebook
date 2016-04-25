@@ -129,7 +129,7 @@ public class FileOperateUtils {
 					fileList.add(f);
 				}
 			} else {
-				if (suffix.equals(getFileExtensions(f)) || getFileExtensions(f).equals(suffixDocx)) {
+				if (suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixDocx)) {
 					fileList.add(f);
 				}
 			}
@@ -252,7 +252,7 @@ public class FileOperateUtils {
 			return bIsFilter;
 		for (File f : file.listFiles()) {
 			if(!f.isDirectory()){
-				if(suffix.equals(getFileExtensions(f)) || getFileExtensions(f).equals(suffixTwo)){
+				if(suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixTwo)){
 					return true;
 				}
 			}else{

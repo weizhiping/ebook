@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +25,11 @@ import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
+import com.sunteam.ebook.word.WordParseUtils;
 
 /**
- * 文档列表界面
- * 目录浏览、我的收藏、最近使用文件
+ * 文档列表界面 目录浏览、我的收藏、最近使用文件
+ * 
  * @author sylar
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
@@ -83,44 +86,46 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
-		if(flag == 1 || flag == 2){
+		if (flag == 1 || flag == 2) {
 			initPopu();
 		}
 	}
 
 	private void initPopu() {
-		menuLayout = LayoutInflater.from(this).inflate(
-				R.layout.activity_main, null);
+		menuLayout = LayoutInflater.from(this).inflate(R.layout.activity_main,
+				null);
 		ArrayList<String> menuList = new ArrayList<String>();
 		menuList.add(getString(R.string.menu_delete_current));
 		menuList.add(getString(R.string.menu_delete_list));
-		if(2 == flag){
+		if (2 == flag) {
 			menuList.add(getString(R.string.menu_add_fav));
 		}
-		MainView menuView = new MainView(this, this, getString(R.string.menu_function), menuList);
-		FrameLayout menuContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		MainView menuView = new MainView(this, this,
+				getString(R.string.menu_function), menuList);
+		FrameLayout menuContainer = (FrameLayout) this
+				.findViewById(R.id.fl_container);
 		menuContainer.removeAllViews();
 		menuContainer.addView(menuView.getView());
 		moreWindow = new PopupWindow(menuLayout, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
-		//moreWindow.showAtLocation(menuLayout, Gravity.CENTER, 0, 0);
+		// moreWindow.showAtLocation(menuLayout, Gravity.CENTER, 0, 0);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
-			case KeyEvent.KEYCODE_DPAD_UP:		//上
-				mMainView.up();
-				return	true;
-			case KeyEvent.KEYCODE_DPAD_DOWN:	//下
-				mMainView.down();
-				return	true;
-			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
-			case KeyEvent.KEYCODE_ENTER:
-				mMainView.enter();
-				return	true;
-			default:
-				break;
+		case KeyEvent.KEYCODE_DPAD_UP: // 上
+			mMainView.up();
+			return true;
+		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
+			mMainView.down();
+			return true;
+		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
+		case KeyEvent.KEYCODE_ENTER:
+			mMainView.enter();
+			return true;
+		default:
+			break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -155,42 +160,55 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("flag", 10);
 			this.startActivity(intent);
 		} else {
-			try {
-				TextFileReaderUtils.getInstance().init(fileInfo.path);
-			} catch (IOException e) {
-				e.printStackTrace();
+			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
+			if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)||
+					 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
+				new WordAsyncTask().execute(fileInfo);
+			}else{
+				showFiles(fileInfo);
 			}
-			int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
+		}
+	}
 
-			if (0 == count) // 文件为空
-			{
-				// 提示一下（语音和文字）
-				TTSUtils.getInstance().speak(getString(R.string.txt_menu_null));
-			} else if (1 == count) // 只有一部分
-			{
-				Intent intent = new Intent(this, ReadTxtActivity.class);
-				intent.putExtra("name", fileInfo.name); // 路径
-				intent.putExtra("part", 0); // 第几部分
-				this.startActivity(intent);
-				manager.insertBookToDb(fileInfo, 2);
-			} else {
-				// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
-				Intent intent = new Intent(this, TxtPartActivity.class);
-				intent.putExtra("name", fileInfo.name); // 路径
-				intent.putExtra("count", count); // 第几部分
-				this.startActivity(intent);
-				manager.insertBookToDb(fileInfo, 2);
-			}
+	// 显示文件内容
+	private void showFiles(FileInfo fileInfo) {
+		try {
+			TextFileReaderUtils.getInstance().init(fileInfo.path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
+
+		if (0 == count) // 文件为空
+		{
+			// 提示一下（语音和文字）
+			TTSUtils.getInstance().speak(getString(R.string.txt_menu_null));
+		} else if (1 == count) // 只有一部分
+		{
+			Intent intent = new Intent(this, ReadTxtActivity.class);
+			intent.putExtra("name", fileInfo.name); // 路径
+			intent.putExtra("part", 0); // 第几部分
+			this.startActivity(intent);
+			manager.insertBookToDb(fileInfo, 2);
+		} else {
+			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
+			Intent intent = new Intent(this, TxtPartActivity.class);
+			intent.putExtra("name", fileInfo.name); // 路径
+			intent.putExtra("count", count); // 第几部分
+			this.startActivity(intent);
+			manager.insertBookToDb(fileInfo, 2);
 		}
 	}
 
 	// 初始化显示文件
 	private void initFiles() {
 		ArrayList<File> filesList;
-		if(TxtActivity.isTxt){
-			filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_TXT,EbookConstants.BOOK_TXT);
-		}else{
-			filesList = FileOperateUtils.getFilesInDir(rootPath,EbookConstants.BOOK_WORD,EbookConstants.BOOK_WORDX);
+		if (TxtActivity.isTxt) {
+			filesList = FileOperateUtils.getFilesInDir(rootPath,
+					EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
+		} else {
+			filesList = FileOperateUtils.getFilesInDir(rootPath,
+					EbookConstants.BOOK_WORD, EbookConstants.BOOK_WORDX);
 		}
 		if (null != filesList) {
 			FileInfo fileInfo;
@@ -209,5 +227,37 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// 初始化数据库文件
 	private void initDataFiles(int flag) {
 		fileInfoList = manager.querybooks(flag);
+	}
+	/**
+	 * word转换txt
+	 * @author sylar
+	 *
+	 */
+	private class WordAsyncTask extends AsyncTask<FileInfo, Void, FileInfo> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+		}
+
+		@Override
+		protected FileInfo doInBackground(FileInfo... params) {
+			FileInfo fileInfo = params[0];
+			String newPath = null;
+			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
+			if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)){
+				 newPath = WordParseUtils.doc2txt(fileInfo.path);
+			}else if(name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
+				 newPath = WordParseUtils.docx2txt(fileInfo.path);
+			}
+			fileInfo.path = newPath;
+			return fileInfo;
+		}
+
+		@Override
+		protected void onPostExecute(FileInfo result) {
+			super.onPostExecute(result);
+			showFiles(result);
+		}
 	}
 }
