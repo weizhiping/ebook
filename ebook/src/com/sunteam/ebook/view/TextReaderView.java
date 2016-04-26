@@ -1700,86 +1700,104 @@ import android.view.View;
 		 {
 		 	case NEXT_LINE:	//下一行
 		 	case NEXT_PAGE:	//下一页
-		 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
-				 
-		 		si = mSplitInfoList.get(mLineNumber+curPageLine-1);				//得到当前屏最后一行的信息
-		 		if( ( mReverseInfo.startPos >= si.startPos+si.len ) || ( mReverseInfo.startPos + mReverseInfo.len > si.startPos + si.len ) )	//反显开始在下一页，或者延伸到下一页
+		 		while( true )
 		 		{
-		 			if( Action.NEXT_LINE == action )
-		 			{
-			 			if( nextLine() )
+			 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
+					 
+			 		si = mSplitInfoList.get(mLineNumber+curPageLine-1);				//得到当前屏最后一行的信息
+			 		if( ( mReverseInfo.startPos >= si.startPos+si.len ) || ( mReverseInfo.startPos + mReverseInfo.len > si.startPos + si.len ) )	//反显开始在下一页，或者延伸到下一页
+			 		{
+			 			if( Action.NEXT_LINE == action )
 			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 				}
-			 			}
+				 			if( nextLine() )
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 				}
+				 			}
+				 			else
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingToBottom();
+				 				}
+				 				break;
+				 			}
+			 			}	//将内容翻到下一行
 			 			else
 			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingToBottom();
-			 				}
-			 			}
-		 			}	//将内容翻到下一行
-		 			else
-		 			{
-		 				if( nextPage() )
-			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 				}
-			 			}
-			 			else
-			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingToBottom();
-			 				}
-			 			}
-		 			}	//将内容翻到下一页
-		 		}	
+			 				if( nextPage() )
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 				}
+				 			}
+				 			else
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingToBottom();
+				 				}
+				 				break;
+				 			}
+			 			}	//将内容翻到下一页
+			 		}
+			 		else
+			 		{
+			 			break;
+			 		}
+		 		}
 		 		break;
 		 	case PRE_LINE:	//上一行
 		 	case PRE_PAGE:	//上一页
-		 		si = mSplitInfoList.get(mLineNumber);							//得到当前屏第一行的信息
-		 		if( mReverseInfo.startPos < si.startPos )						//反显开始在上一页
+		 		while( true )
 		 		{
-		 			if( Action.PRE_LINE == action )
-		 			{
-			 			if( preLine() )
+			 		si = mSplitInfoList.get(mLineNumber);							//得到当前屏第一行的信息
+			 		if( mReverseInfo.startPos < si.startPos )						//反显开始在上一页
+			 		{
+			 			if( Action.PRE_LINE == action )
 			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 				}
-			 			}
+				 			if( preLine() )
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 				}
+				 			}
+				 			else
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingToTop();
+				 				}
+				 				break;
+				 			}
+			 			}	//将内容翻到上一行
 			 			else
 			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingToTop();
-			 				}
-			 			}
-		 			}	//将内容翻到上一行
-		 			else
-		 			{
-		 				if( prePage() )
-			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 				}
-			 			}
-			 			else
-			 			{
-			 				if( mOnPageFlingListener != null )
-			 				{
-			 					mOnPageFlingListener.onPageFlingToTop();
-			 				}
-			 			}
-		 			}	//将内容翻到下一页
+			 				if( prePage() )
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 				}
+				 			}
+				 			else
+				 			{
+				 				if( mOnPageFlingListener != null )
+				 				{
+				 					mOnPageFlingListener.onPageFlingToTop();
+				 				}
+				 				break;
+				 			}
+			 			}	//将内容翻到下一页
+			 		}
+			 		else
+			 		{
+			 			break;
+			 		}
 		 		}
 		 		break;
 		 	default:
