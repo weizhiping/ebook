@@ -627,7 +627,7 @@ import android.view.View;
 		 		nextReverseSentence(true);
 		 		break;
 		 	case READ_MODE_CHARACTER:	//逐字朗读
-		 		nextReverseWord(true);
+		 		nextReverseCharacter(true);
 		 		break;
 		 	default:
 		 		break;
@@ -887,9 +887,9 @@ import android.view.View;
 	 //向前翻行
 	 public void up()
 	 {
-		 mCurReadExplainIndex = 0;
 		 if( preLine() )
 		 {
+			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -908,9 +908,9 @@ import android.view.View;
 	 //向后翻行
 	 public void down()
 	 {
-		 mCurReadExplainIndex = 0;
 		 if( nextLine() )
 		 {
+			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -929,9 +929,9 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
-		 mCurReadExplainIndex = 0;
 		 if( prePage() )
 		 {
+			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -950,9 +950,9 @@ import android.view.View;
 	 //向后翻页
 	 public void right()
 	 {
-		 mCurReadExplainIndex = 0;
 		 if( nextPage() )
 		 {
+			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1074,19 +1074,43 @@ import android.view.View;
 	 //到上一个字符
 	 public void preCharacter()
 	 {
-		 preReverseWord();
+		 preReverseCharacter();
 	 }	 
 	 
 	 //到下一个字符
 	 public void nextCharacter()
 	 {
-		 nextReverseWord();
+		 nextReverseCharacter();
 	 }
 	 
-	 //反显下一个句(逐句模式)
-	 private void nextReverseSentence(boolean isSpeakPage)
+	 //到上一个单词
+	 public void preWord()
 	 {
-		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 
+	 }	 
+	 
+	 //到下一个单词
+	 public void nextWord()
+	 {
+		 
+	 }
+	 
+	 //到上一个段落
+	 public void preParagraph()
+	 {
+		 
+	 }	 
+	 
+	 //到下一个段落
+	 public void nextParagraph()
+	 {
+		 
+	 }
+	 
+	 //反显下一个词(逐词模式)
+	 private void nextReverseWord(boolean isSpeakPage)
+	 {
+		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
@@ -1104,8 +1128,8 @@ import android.view.View;
 		 }
 	 }
 	 
-	 //得到下一个句子反显信息(逐句模式)
-	 private ReverseInfo getNextReverseSentenceInfo( int start )
+	 //得到下一个词反显信息(逐词模式)
+	 private ReverseInfo getNextReverseWordInfo( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
@@ -1226,9 +1250,9 @@ import android.view.View;
 	 }	 
 
 	 //反显下一个句(段落和全文模式)
-	 private void nextReverseSentenceEx(boolean isSpeakPage)
+	 private void nextReverseSentence(boolean isSpeakPage)
 	 {
-		 ReverseInfo ri = getNextReverseSentenceInfoEx( mReverseInfo.startPos+mReverseInfo.len );
+		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
@@ -1247,7 +1271,7 @@ import android.view.View;
 	 }
 	 
 	 //得到下一个句子反显信息(段落和全文模式)
-	 private ReverseInfo getNextReverseSentenceInfoEx( int start )
+	 private ReverseInfo getNextReverseSentenceInfo( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
@@ -1352,7 +1376,7 @@ import android.view.View;
 	 }
 	 
 	 //反显上一个字
-	 private void preReverseWord()
+	 private void preReverseCharacter()
 	 {
 		 int start = mReverseInfo.startPos;
 		 if( start == 0 )	//已经到顶了
@@ -1368,7 +1392,7 @@ import android.view.View;
 		 
 		 for( int i = 0; i < mMbBufLen; )
 		 {
-			 ReverseInfo ri = getNextReverseWordInfo( i );
+			 ReverseInfo ri = getNextReverseCharacterInfo( i );
 			 if( null == ri )
 			 {
 				 if( mOnPageFlingListener != null )
@@ -1402,9 +1426,9 @@ import android.view.View;
 	 }
 	 
 	 //反显下一个字
-	 private void nextReverseWord()
+	 private void nextReverseCharacter()
 	 {
-		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
@@ -1423,7 +1447,7 @@ import android.view.View;
 	 }
 	 
 	 //得到下一个单词反显信息
-	 private ReverseInfo getNextReverseWordInfo( int start )
+	 private ReverseInfo getNextReverseCharacterInfo( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
