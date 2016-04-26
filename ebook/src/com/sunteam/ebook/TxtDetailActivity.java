@@ -112,7 +112,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				LayoutParams.MATCH_PARENT, true);
 		// moreWindow.showAtLocation(menuLayout, Gravity.CENTER, 0, 0);
 	}
-
+	
+    @Override
+    public void onResume()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onResume();
+    	}
+    	super.onResume();
+    }
+    
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {

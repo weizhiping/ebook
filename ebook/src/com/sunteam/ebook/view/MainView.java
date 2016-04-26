@@ -59,12 +59,17 @@ public class MainView extends View
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);								//设置分割线的背景色
     	
     	mTvTitle.setText(title);
-    	if(menuList.size() > 0){
-    		TTSUtils.getInstance().speak(menuList.get(0));	//默认朗读第一条
-    	}
     	mAdapter = new MainListAdapter( mContext, listener, menuList );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点
+	}
+	
+	public void onResume()
+	{
+		if( mAdapter != null )
+		{
+			TTSUtils.getInstance().speak(mAdapter.getSelectItemContent());
+		}
 	}
 	
 	public void up()

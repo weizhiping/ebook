@@ -53,7 +53,17 @@ public class TxtActivity extends Activity implements OnEnterListener
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
     }
- 
+	
+    @Override
+    public void onResume()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onResume();
+    	}
+    	super.onResume();
+    }
+    
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
