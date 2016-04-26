@@ -94,7 +94,7 @@ import android.view.View;
 	 private int mCurPage = 1;				//当前页
 	 private GestureDetector mGestureDetector = null;	//手势
 	 private OnPageFlingListener mOnPageFlingListener = null;
-	 private ReadMode mReadMode = ReadMode.READ_MODE_SENTENCE;	//朗读模式，默认无朗读
+	 private ReadMode mReadMode = ReadMode.READ_MODE_ALL;	//朗读模式
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
 	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
 	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
@@ -616,21 +616,23 @@ import android.view.View;
 	 //初始化反显信息
 	 private void initReverseInfo()
 	 {
+		 /*
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
 		 		nextReverseSentenceEx(true);
 		 		break;
-		 	case READ_MODE_SENTENCE:	//逐句朗读
+		 	case READ_MODE_WORD:		//逐词朗读
 		 		nextReverseSentence(true);
 		 		break;
-		 	case READ_MODE_WORD:		//逐字朗读
+		 	case READ_MODE_CHARACTER:	//逐字朗读
 		 		nextReverseWord(true);
 		 		break;
 		 	default:
 		 		break;
 		 }
+		 */
 	 }
 	 
 	 @Override
@@ -881,115 +883,67 @@ import android.view.View;
 		 // TODO Auto-generated method stub
 		 return false;
 	 }
+ 
+	 //向前翻行
+	 public void up()
+	 {
+		 mCurReadExplainIndex = 0;
+		 if( preLine() )
+		 {
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+		 }
+	 }
 	 
 	 //向后翻行
 	 public void down()
 	 {
 		 mCurReadExplainIndex = 0;
-		 switch( mReadMode )
+		 if( nextLine() )
 		 {
-		 	case READ_MODE_NIL:			//无朗读
-		 		if( nextLine() )
-		 		{
-		 			this.invalidate();
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-		 			}
-		 		}
-		 		else
-		 		{
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingToBottom();
-		 			}
-		 		}
-		 		break;
-		 	case READ_MODE_ALL:			//全文朗读
-		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextReverseSentenceEx(false);
-		 		break;
-		 	case READ_MODE_SENTENCE:	//逐句朗读
-		 		nextReverseSentence(false);
-		 		break;
-		 	case READ_MODE_WORD:		//逐字朗读
-		 		nextReverseWord(false);
-		 		break;
-		 	default:
-		 		break;
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
 		 }
 	 }
-	 
-	 //向前翻行
-	 public void up()
-	 {
-		 mCurReadExplainIndex = 0;
-		 switch( mReadMode )
-		 {
-		 	case READ_MODE_NIL:			//无朗读
-		 		if( preLine() )
-		 		{
-		 			this.invalidate();
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-		 			}
-		 		}
-		 		else
-		 		{
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingToTop();
-		 			}
-		 		}
-		 		break;
-		 	case READ_MODE_ALL:			//全文朗读
-		 		break;
-		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		break;
-		 	case READ_MODE_SENTENCE:	//逐句朗读
-		 		break;
-		 	case READ_MODE_WORD:		//逐字朗读
-		 		preReverseWord();
-		 		break;
-		 	default:
-		 		break;
-		 }
-	 }
-	 
+		 
 	 //向前翻页
 	 public void left()
 	 {
 		 mCurReadExplainIndex = 0;
-		 switch( mReadMode )
+		 if( prePage() )
 		 {
-		 	case READ_MODE_NIL:			//无朗读
-		 		if( prePage() )
-		 		{
-		 			this.invalidate();
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-		 			}
-		 		}
-		 		else
-		 		{
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingToTop();
-		 			}
-		 		}
-		 		break;
-		 	case READ_MODE_ALL:			//全文朗读
-		 		break;
-		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		break;
-		 	case READ_MODE_SENTENCE:	//逐句朗读
-		 		break;
-		 	case READ_MODE_WORD:		//逐字朗读
-		 		break;
-		 	default:
-		 		break;
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
 		 }
 	 }
 	 
@@ -997,35 +951,20 @@ import android.view.View;
 	 public void right()
 	 {
 		 mCurReadExplainIndex = 0;
-		 switch( mReadMode )
+		 if( nextPage() )
 		 {
-		 	case READ_MODE_NIL:			//无朗读
-		 		if( nextPage() )
-		 		{
-		 			this.invalidate();
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-		 			}
-		 		}
-		 		else
-		 		{
-		 			if( mOnPageFlingListener != null )
-		 			{
-		 				mOnPageFlingListener.onPageFlingToBottom();
-		 			}
-		 		}
-		 		break;
-		 	case READ_MODE_ALL:			//全文朗读
-		 		break;
-		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		break;
-		 	case READ_MODE_SENTENCE:	//逐句朗读
-		 		break;
-		 	case READ_MODE_WORD:		//逐字朗读
-		 		break;
-		 	default:
-		 		break;
+			 this.invalidate();
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+		 }
+		 else
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
 		 }
 	 }
 	 
@@ -1131,7 +1070,19 @@ import android.view.View;
 			 }
 		 }
 	 }
-
+	 
+	 //到上一个字符
+	 public void preCharacter()
+	 {
+		 preReverseWord();
+	 }	 
+	 
+	 //到下一个字符
+	 public void nextCharacter()
+	 {
+		 nextReverseWord();
+	 }
+	 
 	 //反显下一个句(逐句模式)
 	 private void nextReverseSentence(boolean isSpeakPage)
 	 {
@@ -1451,7 +1402,7 @@ import android.view.View;
 	 }
 	 
 	 //反显下一个字
-	 private void nextReverseWord(boolean isSpeakPage)
+	 private void nextReverseWord()
 	 {
 		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1465,7 +1416,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
+			 readReverseText(false);				//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
