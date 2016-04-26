@@ -33,6 +33,11 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_NAME, file.name);
 			newValues.put(EbookConstants.BOOK_PATH, file.path);
 			newValues.put(EbookConstants.BOOK_FOLDER, file.isFolder);
+			newValues.put(EbookConstants.BOOK_PART, file.part);
+			newValues.put(EbookConstants.BOOK_START, file.startPos);
+			newValues.put(EbookConstants.BOOK_LINE, file.line);
+			newValues.put(EbookConstants.BOOK_LEN, file.len);
+			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
 			newValues.put(EbookConstants.BOOK_TYPE, type);
 			db.insert(EbookConstants.BOOKS_TABLE, null, newValues);
 			db.close();
@@ -61,6 +66,11 @@ public class DatabaseManager {
 						}else{
 							book.isFolder = true;
 						}
+						book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
+						book.startPos = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_START));
+						book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
+						book.len = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LEN));
+						book.checksum = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
 						orderList.add(book);
 					}
 				}

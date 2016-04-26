@@ -89,7 +89,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 		if (flag == 1 || flag == 2) {
-			initPopu();
+		//	initPopu();
 		}
 	}
 

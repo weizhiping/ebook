@@ -64,7 +64,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	
 	public String getSelectItemContent()
 	{
-		if( gListData != null )
+		if( gListData != null && gListData.size() > 0)
 		{
 			return	gListData.get(selectItem);
 		}

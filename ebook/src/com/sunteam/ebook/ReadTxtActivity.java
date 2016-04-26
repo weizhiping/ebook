@@ -1,5 +1,6 @@
 package com.sunteam.ebook;
 
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.util.EbookConstants;
 
 import com.sunteam.ebook.util.PublicUtils;
@@ -104,6 +105,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
 				mTextReaderView.nextParagraph(false);
 				return	true;
+			case KeyEvent.KEYCODE_BACK://返回保存最近使用
+//				DatabaseManager manager = new DatabaseManager(this);
+//				manager.insertBookToDb(file, type);
+				return true;
 			default:
 				break;
 		}
