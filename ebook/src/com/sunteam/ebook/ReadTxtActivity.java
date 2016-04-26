@@ -72,13 +72,31 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_LEFT:	//左
 				mTextReaderView.left();
-				break;
+				return	true;
 			case KeyEvent.KEYCODE_DPAD_RIGHT:	//右
 				mTextReaderView.right();
-				break;
+				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
 			case KeyEvent.KEYCODE_ENTER:
 				mTextReaderView.enter();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_7:		//朗读上一个字
+				mTextReaderView.preCharacter();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_9:		//朗读下一个字
+				mTextReaderView.nextCharacter();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_4:		//朗读上一个词
+				mTextReaderView.preWord();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_6:		//朗读下一个词
+				mTextReaderView.nextWord();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
+				mTextReaderView.preParagraph();
+				return	true;
+			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
+				mTextReaderView.nextParagraph();
 				return	true;
 			default:
 				break;
