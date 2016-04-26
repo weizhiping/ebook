@@ -112,6 +112,7 @@ import android.view.View;
 	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
 	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
 	 private int mCurReadExplainIndex = 0;	//当前朗读的例句索引
+	 private int mCheckSum = 0;				//当前buffer的checksum
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -258,6 +259,47 @@ import android.view.View;
 		 return	getLineText(mLineNumber);
 	 }
 	 
+	 //得到当前屏的反显信息
+	 public ReverseInfo getReverseInfo()
+	 {
+		 return	mReverseInfo;
+	 }
+	 
+	 //得到当前屏第一行的行号
+	 public int getLineNumber()
+	 {
+		 return	mLineNumber;
+	 }
+	 
+	 //得到当前buffer的CheckSum
+	 public int getCheckSum()
+	 {
+		 return	mCheckSum;
+	 }
+	 
+	 private int calcCheckSum( byte[] buffer )
+	 {
+		 int checksum = 0;
+		 int len = buffer.length;
+		 int shang = len / 4;
+		 int yu = len % 4;
+		 
+		 for( int i = 0; i < shang; i++ )
+		 {
+			 checksum += PublicUtils.byte2int(buffer, i*4);
+		 }
+		 
+		 byte[] data = new byte[4];
+		 for( int i = 0; i < yu; i++ )
+		 {
+			 data[i] = buffer[i];
+		 }
+		 
+		 checksum += PublicUtils.byte2int(data, 0);
+		 
+		 return	checksum;
+	 }
+	 
 	 //得到指定行文本
 	 private String getLineText( final int lineNumber )
 	 {
@@ -320,8 +362,11 @@ import android.view.View;
 				 mReverseInfo.startPos = mOffset;
 			 }
 		 }
+		 
 		 mMbBufLen = (int)mMbBuf.length;
 		 mLineNumber = lineNumber;
+		 
+		 mCheckSum = calcCheckSum( mMbBuf );	//计算CheckSum
 	 }
 	 
 	 /**
