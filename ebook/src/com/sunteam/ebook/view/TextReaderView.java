@@ -74,6 +74,15 @@ import android.view.View;
 		 0xA970,	//顿号
 	 };	//中文分隔符
 	 
+	 private static final char[] EN_SEPARATOR = { 
+		 0x3A,	//冒号
+		 0x2C,	//逗号
+		 0x3B,	//分号
+		 0x3F,	//问号
+		 //0x2E,	//句号
+		 0x21,	//叹号
+	 };	//英文分隔符
+	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
 	 private Canvas mCurPageCanvas = null;	//当前画布
@@ -1243,7 +1252,7 @@ import android.view.View;
 	 }
 	 
 	 //得到下一个句子反显信息(段落和全文模式)
-	 private ReverseInfo getNextReverseSentenceInfo( int start )
+	 private ReverseInfo getNextReverseSentenceInfo2( int start )
 	 {
 		 if( start == mMbBufLen-1 )	//已经到底了
 		 {
@@ -1511,6 +1520,142 @@ import android.view.View;
 		 
 		 return	null;
 	 }	 
+	 
+	 //得到下一个句子反显信息(逐段和全文模式)
+	 private ReverseInfo getNextReverseSentenceInfo( int start )
+	 {
+		 if( start == mMbBufLen-1 )	//已经到底了
+		 {
+			 return	null;
+		 }
+		 
+		 for( int i = start; i < mMbBufLen; )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 2);
+				 
+				 boolean isBreak = false;
+				 char ch = PublicUtils.byte2char(mMbBuf, i);
+				 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+				 {
+					 if( CN_SEPARATOR[k] == ch )
+					 {
+						 isBreak = true;
+						 break;
+					 }
+				 }	//如果一开始就是点符号则跳过反显这个点符号
+				 
+				 i += 2;
+				 if( isBreak )
+				 {
+					 continue;
+				 }
+				 
+				 for( int j = i; j < mMbBufLen; )
+				 {
+					 if( mMbBuf[j] < 0 )
+					 {
+						 j += 2;
+						 ri.len += 2;
+						 ch = PublicUtils.byte2char(mMbBuf, j);
+						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+						 {
+							 if( CN_SEPARATOR[k] == ch )
+							 {
+								 return ri;
+							 }
+						 }	//如果是点符号则返回前面的字符串
+					 }
+					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
+					 {
+						 return ri;
+					 }
+					 else
+					 {
+						 j++;
+						 ri.len++;
+						 continue;
+					 }
+				 }
+				 
+				 return ri;
+			 }
+			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] ) )	//英文或者数字
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 i++;
+				 for( int j = i; j < mMbBufLen; )
+				 {
+					 if( mMbBuf[j] < 0 )
+					 {
+						 j += 2;
+						 ri.len += 2;
+					 }
+					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
+					 {
+						 return ri;
+					 }
+					 else
+					 {
+						 j++;
+						 ri.len++;
+						 
+						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
+						 {
+							 if( EN_SEPARATOR[k] == mMbBuf[j] )
+							 {
+								 return ri;
+							 }
+						 }
+						 
+						 if( ( 0x2E == mMbBuf[j] ) && ( j+1 < mMbBufLen ) && ( 0x20 == mMbBuf[j+1] ) )
+						 {
+							 return	ri;
+						 }
+					 }
+				 }
+				 
+				 return	ri;
+			 }
+			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
+			 {
+				 if( 0x0d == mMbBuf[i] )
+				 {
+					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 2);
+						 
+						 return	ri;
+					 }
+					 else
+					 {
+						 ReverseInfo ri = new ReverseInfo(i, 1);
+						 
+						 return	ri;
+					 }
+				 }
+				 else if( 0x0a == mMbBuf[i] )
+				 {
+					 ReverseInfo ri = new ReverseInfo(i, 1);
+					 
+					 return	ri;
+				 }
+				 else
+				 {
+					 continue;
+				 }
+			 }
+			 else
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 
+				 return	ri;
+			 }
+		 }
+		 
+		 return	null;
+	 }
 	 
 	 //朗读反显文字
 	 private void readReverseText( boolean isSpeakPage )
