@@ -1070,13 +1070,72 @@ import android.view.View;
 	 //到上一个字符
 	 public void preCharacter()
 	 {
-		 preReverseCharacter();
+		 int start = mReverseInfo.startPos;
+		 if( start == mOffset )	//已经到顶了
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+			 return;
+		 }
+
+		 ReverseInfo oldReverseInfo = null;
+		 
+		 for( int i = mOffset; i < mMbBufLen; )
+		 {
+			 ReverseInfo ri = getNextReverseCharacterInfo( i );
+			 if( null == ri )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+				 break;
+			 }
+			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
+			 {
+				 mReverseInfo.startPos = ri.startPos;
+				 mReverseInfo.len = ri.len;
+				 readReverseText(false);		//朗读反显文字
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 break;
+			 }
+			 else if( ri.startPos >= mReverseInfo.startPos )
+			 {
+				 mReverseInfo.startPos = oldReverseInfo.startPos;
+				 mReverseInfo.len = oldReverseInfo.len;
+				 readReverseText(false);		//朗读反显文字
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 break;
+			 }
+			 
+			 i += ri.len;
+			 oldReverseInfo = ri;
+		 }
 	 }	 
 	 
 	 //到下一个字符
 	 public void nextCharacter()
 	 {
-		 nextReverseCharacter();
+		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(false);				//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
 	 }
 	 
 	 //到上一个单词
@@ -1370,78 +1429,7 @@ import android.view.View;
 		 
 		 return	null;
 	 }
-	 
-	 //反显上一个字
-	 private void preReverseCharacter()
-	 {
-		 int start = mReverseInfo.startPos;
-		 if( start == 0 )	//已经到顶了
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-			 return;
-		 }
 
-		 ReverseInfo oldReverseInfo = null;
-		 
-		 for( int i = 0; i < mMbBufLen; )
-		 {
-			 ReverseInfo ri = getNextReverseCharacterInfo( i );
-			 if( null == ri )
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
-				 }
-				 break;
-			 }
-			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = ri.startPos;
-				 mReverseInfo.len = ri.len;
-				 readReverseText(false);		//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 else if( ri.startPos >= mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = oldReverseInfo.startPos;
-				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);		//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 
-			 i += ri.len;
-			 oldReverseInfo = ri;
-		 }
-	 }
-	 
-	 //反显下一个字
-	 private void nextReverseCharacter()
-	 {
-		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
-		 if( null == ri )
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
-		 else
-		 {
-			 mReverseInfo.startPos = ri.startPos;
-			 mReverseInfo.len = ri.len;
-			 readReverseText(false);				//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-			 this.invalidate();
-		 }
-	 }
-	 
 	 //得到下一个单词反显信息
 	 private ReverseInfo getNextReverseCharacterInfo( int start )
 	 {
@@ -1762,7 +1750,6 @@ import android.view.View;
 	 //是否是数字字符
 	 private boolean isNumber( byte ch )
 	 {
-		 //if( ( ch >= '0' && ch <= '9' ) || ( '.' == ch ) )
 		 if( ch >= '0' && ch <= '9' )
 		 {
 			 return	true;
