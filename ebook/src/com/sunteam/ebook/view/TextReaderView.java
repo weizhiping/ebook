@@ -666,23 +666,21 @@ import android.view.View;
 	 //初始化反显信息
 	 private void initReverseInfo()
 	 {
-		 /*
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextReverseSentenceEx(true);
+		 		nextParagraph(true);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
-		 		nextReverseSentence(true);
+		 		nextWord(true);
 		 		break;
 		 	case READ_MODE_CHARACTER:	//逐字朗读
-		 		nextReverseCharacter(true);
+		 		nextCharacter(true);
 		 		break;
 		 	default:
 		 		break;
 		 }
-		 */
 	 }
 	 
 	 @Override
@@ -1172,7 +1170,7 @@ import android.view.View;
 	 }	 
 	 
 	 //到下一个字符
-	 public void nextCharacter()
+	 public void nextCharacter( boolean isSpeakPage )
 	 {
 		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1186,7 +1184,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(false);				//朗读反显文字
+			 readReverseText(isSpeakPage);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1243,7 +1241,7 @@ import android.view.View;
 	 }	 	 
 	 
 	 //到下一个单词
-	 public void nextWord()
+	 public void nextWord( boolean isSpeakPage )
 	 {
 		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1257,7 +1255,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(false);				//朗读反显文字
+			 readReverseText(isSpeakPage);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1294,7 +1292,7 @@ import android.view.View;
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
 				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_PAGE);	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
 			 }
@@ -1303,7 +1301,7 @@ import android.view.View;
 				 mReverseInfo.startPos = oldReverseInfo.startPos;
 				 mReverseInfo.len = oldReverseInfo.len;
 				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_PAGE);	//重新计算当前页起始位置(行号)
+				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
 			 }
@@ -1314,7 +1312,7 @@ import android.view.View;
 	 }	 
 	 
 	 //到下一个段落
-	 public void nextParagraph()
+	 public void nextParagraph( boolean isSpeakPage )
 	 {
 		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1328,8 +1326,8 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(false);				//朗读反显文字
-			 recalcLineNumber(Action.NEXT_PAGE);	//重新计算当前页起始位置(行号)
+			 readReverseText(isSpeakPage);			//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
 	 }
@@ -1705,7 +1703,7 @@ import android.view.View;
 		 		int curPageLine = Math.min( mLineCount, (size-mLineNumber) );	//当前屏最大行数
 				 
 		 		si = mSplitInfoList.get(mLineNumber+curPageLine-1);				//得到当前屏最后一行的信息
-		 		if( mReverseInfo.startPos >= si.startPos+si.len )				//反显开始在下一页
+		 		if( ( mReverseInfo.startPos >= si.startPos+si.len ) || ( mReverseInfo.startPos + mReverseInfo.len > si.startPos + si.len ) )	//反显开始在下一页，或者延伸到下一页
 		 		{
 		 			if( Action.NEXT_LINE == action )
 		 			{

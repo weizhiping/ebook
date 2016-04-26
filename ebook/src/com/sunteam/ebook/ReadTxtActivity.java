@@ -86,7 +86,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_9:
 			case KeyEvent.KEYCODE_NUMPAD_9:		//朗读下一个字
-				mTextReaderView.nextCharacter();
+				mTextReaderView.nextCharacter(false);
 				return	true;
 			case KeyEvent.KEYCODE_4:
 			case KeyEvent.KEYCODE_NUMPAD_4:		//朗读上一个词
@@ -94,7 +94,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_6:
 			case KeyEvent.KEYCODE_NUMPAD_6:		//朗读下一个词
-				mTextReaderView.nextWord();
+				mTextReaderView.nextWord(false);
 				return	true;
 			case KeyEvent.KEYCODE_2:
 			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
@@ -102,7 +102,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_8:
 			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
-				mTextReaderView.nextParagraph();
+				mTextReaderView.nextParagraph(false);
 				return	true;
 			default:
 				break;
