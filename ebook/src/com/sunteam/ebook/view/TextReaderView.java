@@ -68,8 +68,11 @@ import android.view.View;
 		 0xA6DE,	//叹号
 		 0xA975,	//叹号
 		 
-		 0xA1AD,	//省略号
-	 };	//中午分隔符
+		 //0xA1AD,	//省略号
+		 
+		 0xA1A2,	//顿号
+		 0xA970,	//顿号
+	 };	//中文分隔符
 	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
@@ -89,6 +92,7 @@ import android.view.View;
 	 private boolean mIsLastPage = false;	//是否是最后一屏
 	 private ArrayList<SplitInfo> mSplitInfoList = new ArrayList<SplitInfo>();	//保存分行信息
 	 private byte[] mMbBuf = null;			//内存中的图书字符
+	 private int mOffset = 0;				//图书字符真正开始位置，有BOM的地方需要跳过
 	 private int mLineNumber = 0;			//当前页起始位置(行号)
 	 private int mMbBufLen = 0; 			//图书总长度
 	 private int mCurPage = 1;				//当前页
@@ -291,10 +295,9 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 byte[] gb18030 = null;
 			 try 
 			 {
-				 gb18030 = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
@@ -302,17 +305,10 @@ import android.view.View;
 			 }
 			 
 			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
-			 if( ( gb18030.length >= 4 ) && ( -124 == gb18030[0] ) && ( 49 == gb18030[1] ) && ( -107 == gb18030[2] ) && ( 51 == gb18030[3] ) )
+			 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
 			 {
-				 mMbBuf = new byte[gb18030.length-4];
-				 for( int i = 0; i < mMbBuf.length; i++ )
-				 {
-					 mMbBuf[i] = gb18030[i+4];
-				 }
-			 }
-			 else
-			 {
-				 mMbBuf = gb18030;
+				 mOffset = 4;
+				 mReverseInfo.startPos = mOffset;
 			 }
 		 }
 		 mMbBufLen = (int)mMbBuf.length;
@@ -380,7 +376,7 @@ import android.view.View;
 		 mPaint.setTypeface(Typeface.MONOSPACE);
 		 float asciiWidth = mPaint.measureText(" ");	//一个ascii字符宽度
 		 
-		 int startPos = 0;
+		 int startPos = mOffset;
 		 
 		 while( startPos < mMbBufLen ) 
 		 {
