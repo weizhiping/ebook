@@ -1221,17 +1221,55 @@ import android.view.View;
 	 //到上一个段落
 	 public void preParagraph()
 	 {
+		 int start = mReverseInfo.startPos;
+		 if( start == mOffset )	//已经到顶了
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+			 return;
+		 }
+
+		 ReverseInfo oldReverseInfo = null;
 		 
+		 for( int i = mOffset; i < mMbBufLen; )
+		 {
+			 ReverseInfo ri = getNextReverseSentenceInfo( i );
+			 if( null == ri )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+				 break;
+			 }
+			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
+			 {
+				 mReverseInfo.startPos = ri.startPos;
+				 mReverseInfo.len = ri.len;
+				 readReverseText(false);			//朗读反显文字
+				 recalcLineNumber(Action.PRE_PAGE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 break;
+			 }
+			 else if( ri.startPos >= mReverseInfo.startPos )
+			 {
+				 mReverseInfo.startPos = oldReverseInfo.startPos;
+				 mReverseInfo.len = oldReverseInfo.len;
+				 readReverseText(false);			//朗读反显文字
+				 recalcLineNumber(Action.PRE_PAGE);	//重新计算当前页起始位置(行号)
+				 this.invalidate();
+				 break;
+			 }
+			 
+			 i += ri.len;
+			 oldReverseInfo = ri;
+		 }
 	 }	 
 	 
 	 //到下一个段落
 	 public void nextParagraph()
-	 {
-		 
-	 }
-
-	 //反显下一个句(段落和全文模式)
-	 private void nextReverseSentence(boolean isSpeakPage)
 	 {
 		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
@@ -1245,115 +1283,10 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 readReverseText(false);				//朗读反显文字
+			 recalcLineNumber(Action.NEXT_PAGE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
-	 }
-	 
-	 //得到下一个句子反显信息(段落和全文模式)
-	 private ReverseInfo getNextReverseSentenceInfo2( int start )
-	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
-		 {
-			 return	null;
-		 }
-		 
-		 for( int i = start; i < mMbBufLen; i++ )
-		 {
-			 if( mMbBuf[i] < 0 )	//汉字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 2);
-				 
-				 for( int j = i+2; j < mMbBufLen; j+=2 )
-				 {
-					 if( mMbBuf[j] < 0 )
-					 {
-						 ri.len += 2;
-						 
-						 boolean isBreak = false;
-						 char ch = PublicUtils.byte2char(mMbBuf, j);
-						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
-						 {
-							 if( CN_SEPARATOR[k] == ch )
-							 {
-								 isBreak = true;
-								 break;
-							 }
-						 }
-						 
-						 if( isBreak )
-						 {
-							 break;
-						 }
-					 }
-					 else
-					 {
-						 break;
-					 }
-				 }
-				 
-				 return ri;
-			 }
-			 else if( isAlpha( mMbBuf[i] ) )	//英文
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 for( int j = i+1; j < mMbBufLen; j++ )
-				 {
-					 if( isEscape( mMbBuf[j] ) )	//如果是转义字符
-					 {
-						 break;
-					 }
-					 else if( mMbBuf[j] < 0x0 )		//如果是中文字符
-					 {
-						 break;
-					 }
-					 else if( 0x20 == mMbBuf[j] )	//如果是空格
-					 {
-						 break;
-					 }
-					 else
-					 {
-						 ri.len++;
-					 }
-				 }
-				 
-				 return	ri;
-			 }
-			 else if( isNumber( mMbBuf[i] ) )	//数字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 for( int j = i+1; j < mMbBufLen; j++ )
-				 {
-					 if( isEscape( mMbBuf[j] ) )	//如果是转义字符
-					 {
-						 break;
-					 }
-					 else if( mMbBuf[j] < 0x0 )		//如果是中文字符
-					 {
-						 break;
-					 }
-					 else
-					 {
-						 ri.len++;
-					 }
-				 }
-				 
-				 return	ri;
-			 }
-			 else if( isEscape( mMbBuf[i]) || 0x20 == mMbBuf[i] )	//如果是特殊转义字符或者空格
-			 {
-				 continue;
-			 }
-			 else
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 
-				 return	ri;
-			 }
-		 }
-		 
-		 return	null;
 	 }
 
 	 //得到下一个字符反显信息
@@ -1428,7 +1361,7 @@ import android.view.View;
 				 char ch = PublicUtils.byte2char(mMbBuf, i);
 				 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
 				 {
-					 if( CodeTableUtils.CODE[k] == ch )
+					 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )			//过滤掉空格
 					 {
 						 return ri;
 					 }
@@ -1441,7 +1374,7 @@ import android.view.View;
 						 ch = PublicUtils.byte2char(mMbBuf, j);
 						 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
 						 {
-							 if( CodeTableUtils.CODE[k] == ch )
+							 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )	//过滤掉空格
 							 {
 								 return ri;
 							 }
@@ -1510,6 +1443,10 @@ import android.view.View;
 					 continue;
 				 }
 			 }
+			 else if( 0x20 == mMbBuf[i] )	//跳过空格
+			 {
+				 continue;
+			 }
 			 else
 			 {
 				 ReverseInfo ri = new ReverseInfo(i, 1);
@@ -1575,7 +1512,19 @@ import android.view.View;
 					 {
 						 j++;
 						 ri.len++;
-						 continue;
+						 
+						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
+						 {
+							 if( EN_SEPARATOR[k] == mMbBuf[j] )
+							 {
+								 return ri;
+							 }
+						 }
+						 
+						 if( ( 0x2E == mMbBuf[j] ) && ( j+1 < mMbBufLen ) && ( 0x20 == mMbBuf[j+1] ) )
+						 {
+							 return	ri;
+						 }
 					 }
 				 }
 				 
@@ -1591,6 +1540,15 @@ import android.view.View;
 					 {
 						 j += 2;
 						 ri.len += 2;
+						 
+						 char ch = PublicUtils.byte2char(mMbBuf, j);
+						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+						 {
+							 if( CN_SEPARATOR[k] == ch )
+							 {
+								 return ri;
+							 }
+						 }	//如果是点符号则返回前面的字符串
 					 }
 					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
 					 {
@@ -1618,39 +1576,9 @@ import android.view.View;
 				 
 				 return	ri;
 			 }
-			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
-			 {
-				 if( 0x0d == mMbBuf[i] )
-				 {
-					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 2);
-						 
-						 return	ri;
-					 }
-					 else
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 1);
-						 
-						 return	ri;
-					 }
-				 }
-				 else if( 0x0a == mMbBuf[i] )
-				 {
-					 ReverseInfo ri = new ReverseInfo(i, 1);
-					 
-					 return	ri;
-				 }
-				 else
-				 {
-					 continue;
-				 }
-			 }
 			 else
 			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 
-				 return	ri;
+				 i++;
 			 }
 		 }
 		 
