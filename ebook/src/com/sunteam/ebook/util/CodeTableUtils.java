@@ -7,7 +7,7 @@ package com.sunteam.ebook.util;
  */
 public class CodeTableUtils 
 {
-	private static final char[] CODE = {
+	public static final char[] CODE = {
 		0x0D,
 		0x0A,
 		0x20,
