@@ -27,6 +27,9 @@
     <string name="to_top">已经到开头</string>
     <string name="to_bottom">已经到结尾</string>
 	<string name="loading">请稍候</string>
+	<string name="word_parse_tips">正在解析Word文档，请稍候！</string>
+	<string name="word_parse_fail">Word文档解析失败！</string>
+	
     <string-array name="array_menu">
         <item>书签管理</item>
         <item>朗读模式</item>

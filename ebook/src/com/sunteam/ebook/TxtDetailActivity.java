@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -166,15 +167,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
 				new WordAsyncTask().execute(fileInfo);
 			}else{
-				showFiles(fileInfo);
+				showFiles(fileInfo, fileInfo.path);
 			}
 		}
 	}
 
 	// 显示文件内容
-	private void showFiles(FileInfo fileInfo) {
+	private void showFiles(FileInfo fileInfo, final String fullpath) {
 		try {
-			TextFileReaderUtils.getInstance().init(fileInfo.path);
+			TextFileReaderUtils.getInstance().init(fullpath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -234,16 +235,20 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	 * @author sylar
 	 *
 	 */
-	private class WordAsyncTask extends AsyncTask<FileInfo, Void, FileInfo> {
+	private class WordAsyncTask extends AsyncTask<FileInfo, Void, String> {
+		private FileInfo fileInfo = null;
+		
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			PublicUtils.showProgress(TxtDetailActivity.this);
+			String tips = TxtDetailActivity.this.getString(R.string.word_parse_tips);
+			TTSUtils.getInstance().speak(tips);
+			PublicUtils.showProgress(TxtDetailActivity.this, tips);
 		}
 
 		@Override
-		protected FileInfo doInBackground(FileInfo... params) {
-			FileInfo fileInfo = params[0];
+		protected String doInBackground(FileInfo... params) {
+			fileInfo = params[0];
 			String newPath = null;
 			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
 			if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)){
@@ -251,15 +256,24 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}else if(name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
 				 newPath = WordParseUtils.docx2txt(fileInfo.path);
 			}
-			fileInfo.path = newPath;
-			return fileInfo;
+			return	newPath;
 		}
 
 		@Override
-		protected void onPostExecute(FileInfo result) {
+		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			
 			PublicUtils.cancelProgress();
-			showFiles(result);
+			if( !TextUtils.isEmpty(result) )
+			{
+				showFiles(fileInfo, result);
+			}
+			else
+			{
+				String tips = TxtDetailActivity.this.getString(R.string.word_parse_fail);
+				Toast.makeText(TxtDetailActivity.this, tips, Toast.LENGTH_SHORT).show();
+				TTSUtils.getInstance().speak(tips);
+			}
 		}
 	}
 }

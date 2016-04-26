@@ -2,6 +2,8 @@ package com.sunteam.ebook.util;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.widget.TextView;
+
 import com.sunteam.ebook.R;
 
 /**
@@ -94,26 +96,38 @@ public class PublicUtils
 	 * 
 	 * @param context
 	 */
+	public static void showProgress(Context context, String info) {
+		cancelProgress();
+
+		progress = new ProgressDialog(context, R.style.progress_dialog);
+		progress.setIndeterminate(false);
+		progress.setCancelable(true);
+		progress.setCanceledOnTouchOutside(false);
+		progress.show();
+		progress.setContentView(R.layout.progress_layout);
+		TextView tvInfo = (TextView) progress.findViewById(R.id.tv_info);
+		tvInfo.setText(info);
+	}
+	
+	/**
+	 * 加载提示
+	 * 
+	 * @param context
+	 */
 	public static void showProgress(Context context) {
-		if (null == progress) {
-			progress = new ProgressDialog(context, R.style.progress_dialog);
-			progress.setIndeterminate(false);
-			progress.setCancelable(true);
-			progress.setCanceledOnTouchOutside(false);
-			progress.show();
-			progress.setContentView(R.layout.progress_layout);
-		} else {
-			try{
-				progress.show();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
+		cancelProgress();
+
+		progress = new ProgressDialog(context, R.style.progress_dialog);
+		progress.setIndeterminate(false);
+		progress.setCancelable(true);
+		progress.setCanceledOnTouchOutside(false);
+		progress.show();
+		progress.setContentView(R.layout.progress_layout);
 	}
 
 	public static void cancelProgress() {
 		if (null != progress) {
-			if(progress.isShowing()){
+			if (progress.isShowing()) {
 				progress.cancel();
 			}
 			progress = null;
