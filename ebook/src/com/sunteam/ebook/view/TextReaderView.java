@@ -427,7 +427,7 @@ import android.view.View;
 				 if( buffer[i] < 0x80 && buffer[i] >= 0x0 )	//ascii
 				 {
 					 textWidth += ((int)asciiWidth);
-					 if( textWidth >= mVisibleWidth )
+					 if( textWidth > mVisibleWidth )
 					 {
 						 int length = i-home;
 						 
@@ -444,7 +444,7 @@ import android.view.View;
 				 else
 				 {
 					 textWidth += (int)mTextSize;
-					 if( textWidth >= mVisibleWidth )
+					 if( textWidth > mVisibleWidth )
 					 {
 						 int length = i-home;
 						 SplitInfo li = new SplitInfo(start, length);
