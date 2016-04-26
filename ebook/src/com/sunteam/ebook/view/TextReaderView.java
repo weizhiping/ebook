@@ -1493,7 +1493,6 @@ import android.view.View;
 				 {
 					 if( mMbBuf[j] < 0 )
 					 {
-						 j += 2;
 						 ri.len += 2;
 						 ch = PublicUtils.byte2char(mMbBuf, j);
 						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
@@ -1503,6 +1502,8 @@ import android.view.View;
 								 return ri;
 							 }
 						 }	//如果是点符号则返回前面的字符串
+						 
+						 j += 2;
 					 }
 					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
 					 {
@@ -1510,7 +1511,6 @@ import android.view.View;
 					 }
 					 else
 					 {
-						 j++;
 						 ri.len++;
 						 
 						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
@@ -1525,6 +1525,8 @@ import android.view.View;
 						 {
 							 return	ri;
 						 }
+						 
+						 j++;
 					 }
 				 }
 				 
@@ -1538,7 +1540,6 @@ import android.view.View;
 				 {
 					 if( mMbBuf[j] < 0 )
 					 {
-						 j += 2;
 						 ri.len += 2;
 						 
 						 char ch = PublicUtils.byte2char(mMbBuf, j);
@@ -1549,6 +1550,8 @@ import android.view.View;
 								 return ri;
 							 }
 						 }	//如果是点符号则返回前面的字符串
+						 
+						 j += 2;
 					 }
 					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
 					 {
@@ -1556,7 +1559,6 @@ import android.view.View;
 					 }
 					 else
 					 {
-						 j++;
 						 ri.len++;
 						 
 						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
@@ -1571,6 +1573,8 @@ import android.view.View;
 						 {
 							 return	ri;
 						 }
+						 
+						 j++;
 					 }
 				 }
 				 
