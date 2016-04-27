@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -22,7 +23,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	private String filename = null;
+	private FileInfo fileInfo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -36,7 +37,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private void initViews()
     {
 		Intent intent = getIntent();
-		filename = intent.getStringExtra("name");
+		fileInfo = (FileInfo) intent.getSerializableExtra("file");
     	int count = intent.getIntExtra("count", 0);
     	
     	mMenuList = new ArrayList<String>();
@@ -46,7 +47,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	}
     	
     	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
-    	mMainView = new MainView( this, this, filename, mMenuList );
+    	mMainView = new MainView( this, this, fileInfo.name, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
     }
@@ -85,10 +86,11 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) 
 	{
-		// TODO Auto-generated method stub
+		fileInfo.part = selectItem;
 		Intent intent = new Intent(this,ReadTxtActivity.class);
-		intent.putExtra("name", filename);
-		intent.putExtra("part", selectItem);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("file", fileInfo);
+		intent.putExtras(bundle);
 		this.startActivity(intent);
 	} 
 }

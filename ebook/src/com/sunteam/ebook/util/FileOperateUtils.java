@@ -124,18 +124,31 @@ public class FileOperateUtils {
 		if (!fileList.isEmpty())
 			fileList.clear();
 		for (File f : files) {
-			if (f.isDirectory()) {
-				if(hasSuffixFile(f, suffix,suffixDocx)){
-					fileList.add(f);
-				}
-			} else {
-				if (suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixDocx)) {
-					fileList.add(f);
+			if(!isHideFile(f)){
+				if (f.isDirectory()) {
+					if(hasSuffixFile(f, suffix,suffixDocx)){
+						fileList.add(f);
+					}
+				} else {
+					if (suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixDocx)) {
+						fileList.add(f);
+					}
 				}
 			}
 		}
-
 		return fileList;
+	}
+	/**
+	 * 判断是否为隐藏文件
+	 * @param f 
+	 * @return
+	 */
+	public static boolean isHideFile(File f){
+		String name = f.getName();
+		if(name.substring(0, 1).equals(".")){
+			return true;
+		}
+		return false;
 	}
 
 	/**

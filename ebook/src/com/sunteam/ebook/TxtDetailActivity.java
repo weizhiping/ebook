@@ -198,14 +198,20 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		} else if (1 == count) // 只有一部分
 		{
 			Intent intent = new Intent(this, ReadTxtActivity.class);
-			intent.putExtra("name", fileInfo.name); // 路径
-			intent.putExtra("part", 0); // 第几部分
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("file", fileInfo);
+			intent.putExtras(bundle);
+//			intent.putExtra("name", fileInfo.name); // 路径
+//			intent.putExtra("part", 0); // 第几部分
 			this.startActivity(intent);
 			manager.insertBookToDb(fileInfo, 2);
 		} else {
 			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
 			Intent intent = new Intent(this, TxtPartActivity.class);
-			intent.putExtra("name", fileInfo.name); // 路径
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("file", fileInfo);
+			intent.putExtras(bundle);
+		//	intent.putExtra("name", fileInfo.name); // 路径
 			intent.putExtra("count", count); // 第几部分
 			this.startActivity(intent);
 			manager.insertBookToDb(fileInfo, 2);

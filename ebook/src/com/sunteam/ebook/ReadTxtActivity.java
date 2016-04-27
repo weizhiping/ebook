@@ -1,6 +1,8 @@
 package com.sunteam.ebook;
 
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.EbookConstants;
 
 import com.sunteam.ebook.util.PublicUtils;
@@ -11,6 +13,7 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -29,15 +32,15 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private View mLine = null;
 	private TextReaderView mTextReaderView = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
+	private FileInfo fileInfo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_txt);
 		
-		String filename = getIntent().getStringExtra("name");
-		int part = getIntent().getIntExtra("part", 0);
-		
+		 fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		int part = fileInfo.part;
 		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
     	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
     	mTvTitle = (TextView)this.findViewById(R.id.main_title);
@@ -50,7 +53,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTvCurPage.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
     	
-    	mTvTitle.setText(filename);
+    	mTvTitle.setText(fileInfo.name);
 				
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
@@ -106,15 +109,22 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				mTextReaderView.nextParagraph(false);
 				return	true;
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
-//				DatabaseManager manager = new DatabaseManager(this);
-//				manager.insertBookToDb(file, type);
-				return true;
+				insertToDb();
+				break;
 			default:
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 	
+	private void insertToDb(){
+		fileInfo.line = mTextReaderView.getLineNumber();
+		fileInfo.checksum = mTextReaderView.getCheckSum();
+		fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
+		fileInfo.len = mTextReaderView.getReverseInfo().len;
+		DatabaseManager manager = new DatabaseManager(this);
+		manager.insertBookToDb(fileInfo, 2);
+	}
 	@Override
 	public void onPageFlingToTop() 
 	{

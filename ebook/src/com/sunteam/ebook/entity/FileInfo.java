@@ -1,10 +1,15 @@
 package com.sunteam.ebook.entity;
+
+import java.io.Serializable;
+
 /**
  * 文件实体类
  * @author sylar
  *
  */
-public class FileInfo {
+public class FileInfo implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	public String name;
 	public String path;
 	public boolean isFolder;
@@ -22,4 +27,5 @@ public class FileInfo {
 		this.path = path;
 		this.isFolder = isFolder;
 	}
+
 }
