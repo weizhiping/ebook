@@ -11,7 +11,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 	 * The name of the apps SQLite database.
 	 */
 	public static final String DATABASE = "ebook.db";
-	private static final int DB_VERSION = 2;
+	private static final int DB_VERSION = 3;
 	
 	public SQLHelper(Context context) {
 		super(context, DATABASE, null, DB_VERSION);
@@ -42,6 +42,8 @@ public class SQLHelper extends SQLiteOpenHelper {
 			createOrder.append(" INTEGER,");
 			createOrder.append(EbookConstants.BOOK_CHECKSUM);
 			createOrder.append(" INTEGER,");
+			createOrder.append(EbookConstants.BOOK_TIME);
+			createOrder.append(" TEXT,");
 			createOrder.append(EbookConstants.BOOK_TYPE);
 			createOrder.append(" INTEGER);");
 			db.execSQL(createOrder.toString());

@@ -38,16 +38,20 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_LINE, file.line);
 			newValues.put(EbookConstants.BOOK_LEN, file.len);
 			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
+			newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
 			newValues.put(EbookConstants.BOOK_TYPE, type);
 			db.insert(EbookConstants.BOOKS_TABLE, null, newValues);
 			db.close();
+		}else{
+			updateToDb(file.path);
 		}
 	}
 
 	// 查询电子书数据
 	public ArrayList<FileInfo> querybooks(int type) {
 		db = helper.getWritableDatabase();
-		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type;  
+		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type
+				 + " order by " + EbookConstants.BOOK_TIME + " desc";  
 		 Cursor cursor = db.rawQuery(sql, null);
 		ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 		try { 
@@ -145,13 +149,13 @@ public class DatabaseManager {
 		db.close();
 		
 	}
-	// 数据库更新数据
-//	public void updateToDb(String name) {
-//		db = helper.getWritableDatabase();
-//		ContentValues newValues = new ContentValues();
-//		newValues.put(SQLHelper.TABLE_TIME, System.currentTimeMillis());
-//		db.update(SQLHelper.SHOP_TABLE, newValues, SQLHelper.TABLE_NAME + "=?",
-//				new String[] { name });
-//		db.close();
-//	}
+//	 数据库更新数据
+	public void updateToDb(String path) {
+		db = helper.getWritableDatabase();
+		ContentValues newValues = new ContentValues();
+		newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
+		db.update(EbookConstants.BOOKS_TABLE, newValues, EbookConstants.BOOK_PATH + "=?",
+				new String[] { path });
+		db.close();
+	}
 }

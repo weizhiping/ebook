@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
@@ -47,6 +48,11 @@ public class MainActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
+    }
+    
+    private void getRecentInfo(){
+    	DatabaseManager manager = new DatabaseManager(this);
+    	
     }
     
     @Override
