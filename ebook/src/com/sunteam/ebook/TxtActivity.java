@@ -20,14 +20,14 @@ public class TxtActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	public static boolean isTxt;//true为txt文档，false为word文档
+	private int catalog;//1为txt文档，2为word文档,3为disay
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		isTxt = getIntent().getBooleanExtra("isTxt", true);
+		catalog = getIntent().getIntExtra("catalogType", 1);
 		initViews();
 	}
 	
@@ -39,11 +39,11 @@ public class TxtActivity extends Activity implements OnEnterListener
     	mMenuList.add( this.getString(R.string.txt_menu_recent) );
     	
     	String title = null;
-    	if( isTxt )
+    	if( catalog == 1 )
     	{
     		title = this.getString(R.string.main_menu_txt);
     	}
-    	else
+    	else if(catalog == 2)
     	{
     		title = this.getString(R.string.main_menu_word);
     	}
@@ -93,6 +93,8 @@ public class TxtActivity extends Activity implements OnEnterListener
 		Intent intent = new Intent(this,TxtDetailActivity.class);
 		intent.putExtra("name", name);
 		intent.putExtra("flag", selectItem);
+		intent.putExtra("flagType", selectItem);
+		intent.putExtra("catalogType", catalog);
 		this.startActivity(intent);
 	} 
 }

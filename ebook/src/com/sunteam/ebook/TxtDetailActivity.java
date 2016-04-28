@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private String rootPath; // 查找文件根路径
 	private DatabaseManager manager;
 	private int flag;
+	private int flagType;
+	private int catalog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		Intent intent = getIntent();
 		String name = intent.getStringExtra("name");
 		flag = intent.getIntExtra("flag", 0);
+		flagType = intent.getIntExtra("flagType", 0);
 		rootPath = intent.getStringExtra("path");
+		catalog = intent.getIntExtra("catalogType", 1);
 		mMenuList = new ArrayList<String>();
 		fileInfoList = new ArrayList<FileInfo>();
 		manager = new DatabaseManager(this);
@@ -70,7 +75,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			break;
 		case 1:
 		case 2:
-			initDataFiles(flag);
+			initDataFiles(flag,catalog);
 			break;
 		case 3:
 			initFiles();
@@ -156,6 +161,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("path", path);
 				intent.putExtra("name", mMenuList.get(selectItem));
 				intent.putExtra("flag", 3);
+				intent.putExtra("flagType", flagType);
+				intent.putExtra("catalogType", catalog);
 				this.startActivity(intent);
 			}else{
 				TTSUtils.getInstance().speak(this.getString(R.string.tf_does_not_exist));
@@ -170,6 +177,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("path", fileInfo.path);
 			intent.putExtra("name", fileInfo.name);
 			intent.putExtra("flag", 10);
+			intent.putExtra("flagType", flagType);
+			intent.putExtra("catalogType", catalog);
 			this.startActivity(intent);
 		} else {
 			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
@@ -184,6 +193,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	// 显示文件内容
 	private void showFiles(FileInfo fileInfo, final String fullpath) {
+		fileInfo.flag = flagType;
 		try {
 			TextFileReaderUtils.getInstance().init(fullpath);
 		} catch (IOException e) {
@@ -201,27 +211,24 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			Bundle bundle = new Bundle();
 			bundle.putSerializable("file", fileInfo);
 			intent.putExtras(bundle);
-//			intent.putExtra("name", fileInfo.name); // 路径
-//			intent.putExtra("part", 0); // 第几部分
 			this.startActivity(intent);
-			manager.insertBookToDb(fileInfo, 2);
+//			manager.insertBookToDb(fileInfo, 2);
 		} else {
 			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
 			Intent intent = new Intent(this, TxtPartActivity.class);
 			Bundle bundle = new Bundle();
 			bundle.putSerializable("file", fileInfo);
 			intent.putExtras(bundle);
-		//	intent.putExtra("name", fileInfo.name); // 路径
 			intent.putExtra("count", count); // 第几部分
 			this.startActivity(intent);
-			manager.insertBookToDb(fileInfo, 2);
+//			manager.insertBookToDb(fileInfo, 2);
 		}
 	}
 
 	// 初始化显示文件
 	private void initFiles() {
 		ArrayList<File> filesList;
-		if (TxtActivity.isTxt) {
+		if (catalog == 1) {
 			filesList = FileOperateUtils.getFilesInDir(rootPath,
 					EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
 		} else {
@@ -232,10 +239,10 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			FileInfo fileInfo;
 			for (File f : filesList) {
 				if (f.isDirectory()) {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), true);
+					fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType);
 					fileInfoList.add(fileInfo);
 				} else {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), false);
+					fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType);
 					fileInfoList.add(fileInfo);
 				}
 			}
@@ -243,8 +250,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	// 初始化数据库文件
-	private void initDataFiles(int flag) {
-		fileInfoList = manager.querybooks(flag);
+	private void initDataFiles(int flag,int catalog) {
+		fileInfoList = manager.querybooks(flag,catalog);
 	}
 	/**
 	 * word转换txt
@@ -259,7 +266,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			super.onPreExecute();
 			String tips = TxtDetailActivity.this.getString(R.string.word_parse_tips);
 			TTSUtils.getInstance().speak(tips);
-			PublicUtils.showProgress(TxtDetailActivity.this, tips);
+			PublicUtils.showProgress(TxtDetailActivity.this, tips); 
 		}
 
 		@Override

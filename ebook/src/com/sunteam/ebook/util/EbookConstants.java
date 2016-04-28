@@ -60,6 +60,8 @@ public class EbookConstants
 	public static final String BOOK_NAME = "name";
 	public static final String BOOK_PATH = "path";
 	public static final String BOOK_FOLDER = "folder";	//0为文件，1为文件夹
+	public static final String BOOK_CATALOG = "catalog";//1为txt,2为word,3为disay
+	public static final String BOOK_FLAG = "flag";
 	public static final String BOOK_PART = "part";
 	public static final String BOOK_START = "startPos";
 	public static final String BOOK_LINE = "line";
@@ -71,6 +73,9 @@ public class EbookConstants
 	public static final String BOOK_WORD = "doc";	
 	public static final String BOOK_WORDX = "docx";	
 	public static final String BOOK_DAISY = "daisy";
+	
+	public static final int BOOK_COLLECTION = 1;
+	public static final int BOOK_RECENT = 2;
 	
 	public static final int MAX_PARAGRAPH = 0x400000;	//最大段落长度
 	

@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
@@ -33,6 +36,7 @@ public class MainActivity extends Activity implements OnEnterListener
         setContentView(R.layout.activity_main);
         
         initViews();
+        getRecentInfo();
     }
     
     private void initViews()
@@ -49,10 +53,14 @@ public class MainActivity extends Activity implements OnEnterListener
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
     }
-    
+    //获取最近一次使用的文件
     private void getRecentInfo(){
     	DatabaseManager manager = new DatabaseManager(this);
-    	
+    	FileInfo file = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+    	if(null != file){
+    		Log.e("txt", "--len--:" +file.len + "--catalog-:" + file.catalog + "--flag--:" + file.flag
+    				+ "--path--:" + file.path);
+    	}
     }
     
     @Override
@@ -92,17 +100,18 @@ public class MainActivity extends Activity implements OnEnterListener
 		// TODO Auto-generated method stub
 		Intent intent;
 		switch( selectItem )
-		{
+		{//1为txt文档，2为word文档,3为disay
 			case 0:
 				intent = new Intent(this,TxtActivity.class);
-				intent.putExtra("isTxt", true);
+				intent.putExtra("catalogType", 1);
 				break;
 			case 1:
 				intent = new Intent(this,DaisyActivity.class);
+				intent.putExtra("catalogType", 3);
 				break;
 			case 2:
 				intent = new Intent(this,TxtActivity.class);
-				intent.putExtra("isTxt", false);
+				intent.putExtra("catalogType", 2);
 				break;
 			default:
 				return;

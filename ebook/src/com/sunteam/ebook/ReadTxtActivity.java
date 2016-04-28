@@ -1,23 +1,20 @@
 package com.sunteam.ebook;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
-import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.EbookConstants;
-
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * TXT文件显示
@@ -39,7 +36,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_txt);
 		
-		 fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		int part = fileInfo.part;
 		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
     	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
@@ -123,7 +120,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
 		fileInfo.len = mTextReaderView.getReverseInfo().len;
 		DatabaseManager manager = new DatabaseManager(this);
-		manager.insertBookToDb(fileInfo, 2);
+		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
 	@Override
 	public void onPageFlingToTop() 

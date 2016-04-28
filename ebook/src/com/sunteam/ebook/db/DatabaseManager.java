@@ -1,12 +1,14 @@
 package com.sunteam.ebook.db;
 
 import java.util.ArrayList;
-import com.sunteam.ebook.entity.FileInfo;
-import com.sunteam.ebook.util.EbookConstants;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.EbookConstants;
 
 /**
  * 数据库操作类
@@ -33,6 +35,8 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_NAME, file.name);
 			newValues.put(EbookConstants.BOOK_PATH, file.path);
 			newValues.put(EbookConstants.BOOK_FOLDER, file.isFolder);
+			newValues.put(EbookConstants.BOOK_CATALOG, file.catalog);
+			newValues.put(EbookConstants.BOOK_FLAG, file.flag);
 			newValues.put(EbookConstants.BOOK_PART, file.part);
 			newValues.put(EbookConstants.BOOK_START, file.startPos);
 			newValues.put(EbookConstants.BOOK_LINE, file.line);
@@ -43,15 +47,15 @@ public class DatabaseManager {
 			db.insert(EbookConstants.BOOKS_TABLE, null, newValues);
 			db.close();
 		}else{
-			updateToDb(file.path);
+			updateToDb(file.path,file.flag);
 		}
 	}
 
 	// 查询电子书数据
-	public ArrayList<FileInfo> querybooks(int type) {
+	public ArrayList<FileInfo> querybooks(int type,int catalog) {
 		db = helper.getWritableDatabase();
-		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type
-				 + " order by " + EbookConstants.BOOK_TIME + " desc";  
+		 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type 
+				 + " and catalog=" + catalog + " order by " + EbookConstants.BOOK_TIME + " desc";  
 		 Cursor cursor = db.rawQuery(sql, null);
 		ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 		try { 
@@ -70,6 +74,8 @@ public class DatabaseManager {
 						}else{
 							book.isFolder = true;
 						}
+						book.catalog = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CATALOG));
+						book.flag = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_FLAG));
 						book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
 						book.startPos = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_START));
 						book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
@@ -89,7 +95,48 @@ public class DatabaseManager {
 		}
 		return orderList;
 	}
-
+	// 查询电子书数据最后一条
+		public FileInfo queryLastBook(int type) {
+			db = helper.getWritableDatabase();
+			 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type 
+					 + " order by " + EbookConstants.BOOK_TIME + " desc";  
+			 Cursor cursor = db.rawQuery(sql, null);
+			FileInfo book = new FileInfo();
+			try { 
+				if (null != cursor) {
+					if (cursor.getCount() > 0) {
+						if(cursor.moveToFirst()){
+							book.name = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_NAME));
+							book.path = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_PATH));
+							int folder = cursor.getInt(cursor
+									.getColumnIndex(EbookConstants.BOOK_FOLDER));
+							if(0 == folder){
+								book.isFolder = false;
+							}else{
+								book.isFolder = true;
+							}
+							book.catalog = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CATALOG));
+							book.flag = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_FLAG));
+							book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
+							book.startPos = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_START));
+							book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
+							book.len = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LEN));
+							book.checksum = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
+						}
+					}
+				}
+			} finally {
+				if (null != cursor) {
+					cursor.close();
+				}
+				if (null != db) {
+					db.close();
+				}
+			}
+			return book;
+		}
 	// 查找数据库中是否已经存在某一条数据
 	private boolean hasDataInBase(String table, String path) {
 		Cursor cursor = null;
@@ -150,10 +197,11 @@ public class DatabaseManager {
 		
 	}
 //	 数据库更新数据
-	public void updateToDb(String path) {
+	public void updateToDb(String path,int flag) {
 		db = helper.getWritableDatabase();
 		ContentValues newValues = new ContentValues();
 		newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
+		newValues.put(EbookConstants.BOOK_FLAG, flag);
 		db.update(EbookConstants.BOOKS_TABLE, newValues, EbookConstants.BOOK_PATH + "=?",
 				new String[] { path });
 		db.close();
