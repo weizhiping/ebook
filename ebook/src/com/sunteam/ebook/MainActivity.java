@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -28,15 +27,15 @@ public class MainActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private FileInfo fileInfo;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        initViews();
         getRecentInfo();
+        initViews();
     }
     
     private void initViews()
@@ -49,18 +48,17 @@ public class MainActivity extends Activity implements OnEnterListener
     	mMenuList.add( this.getString(R.string.main_menu_word) );
     	
     	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
-    	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList );
+    	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList);
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
+    	if(null != fileInfo){
+    		mMainView.setSelection(fileInfo.catalog);
+    	}
     }
     //获取最近一次使用的文件
     private void getRecentInfo(){
     	DatabaseManager manager = new DatabaseManager(this);
-    	FileInfo file = manager.queryLastBook(EbookConstants.BOOK_RECENT);
-    	if(null != file){
-    		Log.e("txt", "--len--:" +file.len + "--catalog-:" + file.catalog + "--flag--:" + file.flag
-    				+ "--path--:" + file.path);
-    	}
+    	fileInfo = manager.queryLastBook(EbookConstants.BOOK_RECENT);
     }
     
     @Override
@@ -97,25 +95,28 @@ public class MainActivity extends Activity implements OnEnterListener
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) 
 	{
-		// TODO Auto-generated method stub
-		Intent intent;
 		switch( selectItem )
-		{//1为txt文档，2为word文档,3为disay
+		{//0为txt文档，2为word文档,1为disay
 			case 0:
-				intent = new Intent(this,TxtActivity.class);
-				intent.putExtra("catalogType", 1);
+				initToActivity(TxtActivity.class,0);
 				break;
 			case 1:
-				intent = new Intent(this,DaisyActivity.class);
-				intent.putExtra("catalogType", 3);
+				initToActivity(DaisyActivity.class,1);
 				break;
 			case 2:
-				intent = new Intent(this,TxtActivity.class);
-				intent.putExtra("catalogType", 2);
+				initToActivity(TxtActivity.class,2);
 				break;
 			default:
 				return;
 		}
+	}
+	
+	private void initToActivity(Class activity,int catalog){
+		Intent intent = new Intent(this,activity);	
+		intent.putExtra("catalogType", catalog);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("file", fileInfo);
+		intent.putExtras(bundle);
 		this.startActivity(intent);
 	}
 	

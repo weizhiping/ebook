@@ -10,6 +10,7 @@ import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,7 @@ public class MainView extends View
 		return	mView;
 	}
 	
-	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList )
+	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList)
 	{
 		super(context);
 		
@@ -62,6 +63,10 @@ public class MainView extends View
     	mAdapter = new MainListAdapter( mContext, listener, menuList );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点
+	}
+	
+	public void setSelection(int position){
+		mAdapter.setSelectItem(position);
 	}
 	
 	public void onResume()

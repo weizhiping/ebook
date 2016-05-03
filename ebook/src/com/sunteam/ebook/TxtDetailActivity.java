@@ -62,7 +62,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		flag = intent.getIntExtra("flag", 0);
 		flagType = intent.getIntExtra("flagType", 0);
 		rootPath = intent.getStringExtra("path");
-		catalog = intent.getIntExtra("catalogType", 1);
+		catalog = intent.getIntExtra("catalogType", 0);
 		mMenuList = new ArrayList<String>();
 		fileInfoList = new ArrayList<FileInfo>();
 		manager = new DatabaseManager(this);
@@ -228,7 +228,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// 初始化显示文件
 	private void initFiles() {
 		ArrayList<File> filesList;
-		if (catalog == 1) {
+		if (catalog == 0) {
 			filesList = FileOperateUtils.getFilesInDir(rootPath,
 					EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
 		} else {

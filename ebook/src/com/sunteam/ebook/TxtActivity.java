@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -21,13 +22,15 @@ public class TxtActivity extends Activity implements OnEnterListener
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private int catalog;//1为txt文档，2为word文档,3为disay
+	private FileInfo fileInfo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		catalog = getIntent().getIntExtra("catalogType", 1);
+		catalog = getIntent().getIntExtra("catalogType", 0);
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		initViews();
 	}
 	
@@ -39,7 +42,7 @@ public class TxtActivity extends Activity implements OnEnterListener
     	mMenuList.add( this.getString(R.string.txt_menu_recent) );
     	
     	String title = null;
-    	if( catalog == 1 )
+    	if( catalog == 0 )
     	{
     		title = this.getString(R.string.main_menu_txt);
     	}
@@ -52,6 +55,9 @@ public class TxtActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, title, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
+    	if(null != fileInfo){
+    		mMainView.setSelection(fileInfo.flag);
+    	}
     }
 	
     @Override
