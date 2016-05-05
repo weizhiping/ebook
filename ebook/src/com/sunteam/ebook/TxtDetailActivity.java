@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,15 +43,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private ArrayList<FileInfo> fileInfoList = null;
 	private String rootPath; // 查找文件根路径
 	private DatabaseManager manager;
-	private int flag;
+	private int flag;// 0为目录浏览，1为我的收藏，2为最近使用，3为目录浏览中文件
 	private int flagType;
-	private int catalog;
+	private int storage;//0为内部存储，1为外部存储
+	private int catalog;//0为txt,2为word,1为disay
+	private FileInfo remberFile;//路径记忆传递
+	private int position;//路径记忆位置
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 		initViews();
 	}
 
@@ -61,13 +62,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		String name = intent.getStringExtra("name");
 		flag = intent.getIntExtra("flag", 0);
 		flagType = intent.getIntExtra("flagType", 0);
+		storage = intent.getIntExtra("storage", 0);
 		rootPath = intent.getStringExtra("path");
 		catalog = intent.getIntExtra("catalogType", 0);
+		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		mMenuList = new ArrayList<String>();
 		fileInfoList = new ArrayList<FileInfo>();
 		manager = new DatabaseManager(this);
 
-		switch (flag) // 0为目录浏览，1为我的收藏，2为最近使用，3为目录浏览中文件
+		switch (flag) 
 		{
 		case 0:
 			mMenuList.add(getString(R.string.external_storage));
@@ -86,7 +89,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 		int size = fileInfoList.size();
 		for (int i = 0; i < size; i++) {
-			mMenuList.add(fileInfoList.get(i).name);
+			FileInfo fileInfo = fileInfoList.get(i);
+			mMenuList.add(fileInfo.name);
+			if(null != remberFile && remberFile.path.contains(fileInfo.path)){
+				if(remberFile.flag == flag){
+					position = i;
+				}else if(0 == remberFile.flag){
+					position = i;
+				}
+			}
 		}
 
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
@@ -95,6 +106,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mFlContainer.addView(mMainView.getView());
 		if (flag == 1 || flag == 2) {
 		//	initPopu();
+		}
+		if(null != remberFile){
+			if(flag == 0){
+				mMainView.setSelection(storage);
+			}else{
+				mMainView.setSelection(position);
+			}
 		}
 	}
 
@@ -163,6 +181,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("flag", 3);
 				intent.putExtra("flagType", flagType);
 				intent.putExtra("catalogType", catalog);
+				intent.putExtra("storage", selectItem);
+				intent.putExtra("file", remberFile);
 				this.startActivity(intent);
 			}else{
 				TTSUtils.getInstance().speak(this.getString(R.string.tf_does_not_exist));
@@ -179,6 +199,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("flag", 10);
 			intent.putExtra("flagType", flagType);
 			intent.putExtra("catalogType", catalog);
+			intent.putExtra("file", remberFile);
 			this.startActivity(intent);
 		} else {
 			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
@@ -237,12 +258,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 		if (null != filesList) {
 			FileInfo fileInfo;
-			for (File f : filesList) {
+			for (File f: filesList) {
 				if (f.isDirectory()) {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType);
+					fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType,storage);
 					fileInfoList.add(fileInfo);
 				} else {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType);
+					fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType,storage);
 					fileInfoList.add(fileInfo);
 				}
 			}

@@ -62,6 +62,7 @@ public class EbookConstants
 	public static final String BOOK_FOLDER = "folder";	//0为文件，1为文件夹
 	public static final String BOOK_CATALOG = "catalog";//1为txt,2为word,3为disay
 	public static final String BOOK_FLAG = "flag";
+	public static final String BOOK_STORAGE = "storage";
 	public static final String BOOK_PART = "part";
 	public static final String BOOK_START = "startPos";
 	public static final String BOOK_LINE = "line";

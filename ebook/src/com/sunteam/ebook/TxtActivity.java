@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.view.MainView;
@@ -22,7 +23,7 @@ public class TxtActivity extends Activity implements OnEnterListener
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private int catalog;//1为txt文档，2为word文档,3为disay
-	private FileInfo fileInfo;
+	private FileInfo remberFile;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -30,7 +31,7 @@ public class TxtActivity extends Activity implements OnEnterListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		catalog = getIntent().getIntExtra("catalogType", 0);
-		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		initViews();
 	}
 	
@@ -55,8 +56,8 @@ public class TxtActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, title, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
-    	if(null != fileInfo){
-    		mMainView.setSelection(fileInfo.flag);
+    	if(null != remberFile){
+    		mMainView.setSelection(remberFile.flag);
     	}
     }
 	
@@ -101,6 +102,7 @@ public class TxtActivity extends Activity implements OnEnterListener
 		intent.putExtra("flag", selectItem);
 		intent.putExtra("flagType", selectItem);
 		intent.putExtra("catalogType", catalog);
+		intent.putExtra("file", remberFile);
 		this.startActivity(intent);
 	} 
 }

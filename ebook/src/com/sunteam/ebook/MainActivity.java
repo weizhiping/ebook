@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	private FileInfo fileInfo;
+	private FileInfo remberFile;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -51,14 +51,14 @@ public class MainActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList);
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
-    	if(null != fileInfo){
-    		mMainView.setSelection(fileInfo.catalog);
+    	if(null != remberFile){
+    		mMainView.setSelection(remberFile.catalog);
     	}
     }
     //获取最近一次使用的文件
     private void getRecentInfo(){
     	DatabaseManager manager = new DatabaseManager(this);
-    	fileInfo = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+    	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
     }
     
     @Override
@@ -115,7 +115,9 @@ public class MainActivity extends Activity implements OnEnterListener
 		Intent intent = new Intent(this,activity);	
 		intent.putExtra("catalogType", catalog);
 		Bundle bundle = new Bundle();
-		bundle.putSerializable("file", fileInfo);
+		if(null != remberFile && catalog == remberFile.catalog){
+			bundle.putSerializable("file", remberFile);
+		}
 		intent.putExtras(bundle);
 		this.startActivity(intent);
 	}

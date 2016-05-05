@@ -37,6 +37,7 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_FOLDER, file.isFolder);
 			newValues.put(EbookConstants.BOOK_CATALOG, file.catalog);
 			newValues.put(EbookConstants.BOOK_FLAG, file.flag);
+			newValues.put(EbookConstants.BOOK_STORAGE, file.storage);
 			newValues.put(EbookConstants.BOOK_PART, file.part);
 			newValues.put(EbookConstants.BOOK_START, file.startPos);
 			newValues.put(EbookConstants.BOOK_LINE, file.line);
@@ -76,6 +77,7 @@ public class DatabaseManager {
 						}
 						book.catalog = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CATALOG));
 						book.flag = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_FLAG));
+						book.storage = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_STORAGE));
 						book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
 						book.startPos = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_START));
 						book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
@@ -101,10 +103,11 @@ public class DatabaseManager {
 			 String sql= "select * from " + EbookConstants.BOOKS_TABLE +  " where type=" + type 
 					 + " order by " + EbookConstants.BOOK_TIME + " desc";  
 			 Cursor cursor = db.rawQuery(sql, null);
-			FileInfo book = new FileInfo();
+			FileInfo book = null;
 			try { 
 				if (null != cursor) {
 					if (cursor.getCount() > 0) {
+						book = new FileInfo();
 						if(cursor.moveToFirst()){
 							book.name = cursor.getString(cursor
 									.getColumnIndex(EbookConstants.BOOK_NAME));
@@ -119,6 +122,7 @@ public class DatabaseManager {
 							}
 							book.catalog = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_CATALOG));
 							book.flag = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_FLAG));
+							book.storage = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_STORAGE));
 							book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
 							book.startPos = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_START));
 							book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
