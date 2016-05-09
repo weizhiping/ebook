@@ -23,6 +23,33 @@ public class TTSUtils
 	private Context mContext;
 	private SpeechSynthesizer mTts;		//语音合成对象
 	private boolean isSuccess = false;
+	private OnTTSListener mOnTTSListener = null;
+	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
+	
+	public interface OnTTSListener 
+	{
+		public void onSpeakCompleted();		//朗读完成
+		public void onSpeakError();			//朗读错误
+	}
+	
+	public enum SpeakStatus
+	{
+		STOP, 	//停止
+		PAUSE,	//暂停
+		SPEAK,	//朗读
+	}	//朗读状态
+	
+	//设置监听器
+	public void OnTTSListener( OnTTSListener listener )
+	{
+		mOnTTSListener = listener;
+	}
+	
+	//得到当前TTS状态
+	public SpeakStatus getSpeakStatus()
+	{
+		return	mSpeakStatus;
+	}
 	
 	public static TTSUtils getInstance()
 	{
@@ -68,14 +95,41 @@ public class TTSUtils
 		return	isSuccess;
 	}
 	
+	//暂停朗读
+	public void pause()
+	{
+		if( isSuccess && mTts != null )
+		{
+			if( SpeakStatus.SPEAK == mSpeakStatus )
+			{
+				mTts.pauseSpeaking();
+				mSpeakStatus = SpeakStatus.PAUSE;
+			}	//如果正在朗读，先暂停
+		}
+	}
+	
+	//恢复朗读
+	public void resume()
+	{
+		if( isSuccess && mTts != null )
+		{
+			if( SpeakStatus.PAUSE == mSpeakStatus )
+			{
+				mTts.resumeSpeaking();
+				mSpeakStatus = SpeakStatus.SPEAK;
+			}	//如果正在暂停，先恢复
+		}
+	}
+	
 	//停止朗读
 	public void stop()
 	{
 		if( isSuccess && mTts != null )
 		{
-			if( mTts.isSpeaking() )
+			if( SpeakStatus.SPEAK != mSpeakStatus )
 			{
 				mTts.stopSpeaking();
+				mSpeakStatus = SpeakStatus.STOP;
 			}	//如果正在朗读，先停止
 		}
 	}
@@ -95,6 +149,10 @@ public class TTSUtils
 	        {
 	        	//Toast.makeText(mContext, "语音合成失败,错误码: " + code, Toast.LENGTH_SHORT).show();
 	        }
+	        else
+	        {
+	        	mSpeakStatus = SpeakStatus.SPEAK;
+	        }
 		}
     }
 
@@ -107,18 +165,21 @@ public class TTSUtils
 		@Override
 		public void onSpeakBegin() 
 		{
+			mSpeakStatus = SpeakStatus.SPEAK;
 		}
 
 		//暂停合成
 		@Override
 		public void onSpeakPaused() 
 		{
+			mSpeakStatus = SpeakStatus.PAUSE;
 		}
 
 		//继续合成
 		@Override
 		public void onSpeakResumed() 
 		{
+			mSpeakStatus = SpeakStatus.SPEAK;
 		}
 
 		//传冲进度
@@ -138,13 +199,22 @@ public class TTSUtils
 		public void onCompleted(SpeechError error) 
 		{
 			// TODO Auto-generated method stub
+			mSpeakStatus = SpeakStatus.STOP;
 			if( null == error )
 			{
 				//合成完成
+				if( mOnTTSListener != null )
+				{
+					mOnTTSListener.onSpeakCompleted();
+				}
 			}
 			else
 			{
 				//合成错误
+				if( mOnTTSListener != null )
+				{
+					mOnTTSListener.onSpeakError();
+				}
 			}
 		}
 

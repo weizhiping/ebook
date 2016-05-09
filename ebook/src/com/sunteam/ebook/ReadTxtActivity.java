@@ -57,7 +57,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTextReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
     	mTextReaderView.setReverseColor(this.getResources().getColor(EbookConstants.SelectBkColorID[mColorSchemeIndex]));
     	mTextReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
-    	mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), 0);
+    	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum) == false )
+    	{
+    		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
+    		finish();
+    	}
 	}
 	
 	@Override
@@ -80,6 +84,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
 			case KeyEvent.KEYCODE_ENTER:
 				mTextReaderView.enter();
+				return	true;
+			case KeyEvent.KEYCODE_5:
+			case KeyEvent.KEYCODE_NUMPAD_5:		//精读
+				mTextReaderView.intensiveReading();
 				return	true;
 			case KeyEvent.KEYCODE_7:
 			case KeyEvent.KEYCODE_NUMPAD_7:		//朗读上一个字
@@ -122,6 +130,16 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		
+		TTSUtils.getInstance().stop();
+		TTSUtils.getInstance().OnTTSListener(null);
+	}
+	
 	@Override
 	public void onPageFlingToTop() 
 	{

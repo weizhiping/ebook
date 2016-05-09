@@ -12,6 +12,8 @@ import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.CodeTableUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.util.WordExplainUtils;
 
 import android.content.Context;
@@ -39,7 +41,7 @@ import android.view.View;
  *
  */
 
- public class TextReaderView extends View implements OnGestureListener, OnDoubleTapListener
+ public class TextReaderView extends View implements OnGestureListener, OnDoubleTapListener, OnTTSListener
  {	 
 	 private static final String TAG = "TextReaderView";
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
@@ -125,11 +127,8 @@ import android.view.View;
 	 public TextReaderView(Context context) 
 	 {
 		 super(context);
-		 mContext = context;
 		 
-		 mGestureDetector = new GestureDetector( context, this );
-		 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);	//画笔
-		 mPaint.setTextAlign(Align.LEFT);			//做对齐
+		 initReaderView( context );
 	 }
 	 
 	 public TextReaderView(Context context, AttributeSet attrs) 
@@ -160,6 +159,8 @@ import android.view.View;
 		 mTextSize *= scale;		//字体大小
 		 
 		 mWordExplainUtils.init(mContext);			//初始化例句
+		 
+		 TTSUtils.getInstance().OnTTSListener(this);
 	 }
 	 
 	 //设置翻页监听器
@@ -336,9 +337,14 @@ import android.view.View;
 	  * 			编码
 	  * @param lineNumber
 	  *            表示书签记录的位置(行号)
-	  * 
+	  * @param startPos
+	  *            表示反显开始位置
+	  * @param len
+	  *            表示反显长度
+	  * @param checksum
+	  *            校验值
 	  */
-	 public void openBook(byte[] buffer, String charsetName, int lineNumber) 
+	 public boolean openBook(byte[] buffer, String charsetName, int lineNumber, int startPos, int len, int checksum) 
 	 {
 		 if( CHARSET_NAME.equalsIgnoreCase(charsetName) )
 		 {
@@ -367,6 +373,16 @@ import android.view.View;
 		 mLineNumber = lineNumber;
 		 
 		 mCheckSum = calcCheckSum( mMbBuf );	//计算CheckSum
+		 
+		 if( ( checksum != 0 ) && ( mCheckSum != checksum ) )
+		 {
+			 return	false;
+		 }
+		 
+		 mReverseInfo.startPos = startPos;
+		 mReverseInfo.len = len;
+		 
+		 return	true;
 	 }
 	 
 	 /**
@@ -1018,6 +1034,21 @@ import android.view.View;
 	 
 	 //确定
 	 public void enter()
+	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 
+		 if( status == SpeakStatus.SPEAK )
+		 {
+			 TTSUtils.getInstance().pause();
+		 }
+		 else if( status == SpeakStatus.PAUSE )
+		 {
+			 TTSUtils.getInstance().resume();
+		 } 
+	 }
+	 
+	 //精读
+	 public void intensiveReading()
 	 {
 		 if( mReverseInfo.len > 0 )
 		 {
@@ -1857,4 +1888,32 @@ import android.view.View;
 		 PRE_LINE,		//上一行
 		 PRE_PAGE,		//上一页
 	 }
+
+	//朗读完成
+	@Override
+	public void onSpeakCompleted() 
+	{
+		// TODO Auto-generated method stub
+		switch( mReadMode )
+		{
+			case READ_MODE_ALL:			//全文朗读
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		nextParagraph(false);
+		 		break;
+		 	case READ_MODE_WORD:		//逐词朗读
+		 		break;
+		 	case READ_MODE_CHARACTER:	//逐字朗读
+		 		break;
+		 	default:
+		 		break;
+		 }
+	}
+
+	//朗读错误
+	@Override
+	public void onSpeakError() 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
