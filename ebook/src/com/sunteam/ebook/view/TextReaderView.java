@@ -1141,7 +1141,7 @@ import android.view.View;
 			 {
 				 if( mOnPageFlingListener != null )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
+					 mOnPageFlingListener.onPageFlingToTop();
 				 }
 				 break;
 			 }
@@ -1164,7 +1164,7 @@ import android.view.View;
 				 break;
 			 }
 			 
-			 i += ri.len;
+			 i = ri.startPos+ri.len;
 			 oldReverseInfo = ri;
 		 }
 	 }	 
@@ -1212,7 +1212,7 @@ import android.view.View;
 			 {
 				 if( mOnPageFlingListener != null )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
+					 mOnPageFlingListener.onPageFlingToTop();
 				 }
 				 break;
 			 }
@@ -1235,7 +1235,7 @@ import android.view.View;
 				 break;
 			 }
 			 
-			 i += ri.len;
+			 i = ri.startPos+ri.len;
 			 oldReverseInfo = ri;
 		 }
 	 }	 	 
@@ -1264,6 +1264,18 @@ import android.view.View;
 	 //到上一个段落
 	 public void preParagraph()
 	 {
+		 preSentence();
+	 }
+	 
+	 //到下一个段落
+	 public void nextParagraph( boolean isSpeakPage )
+	 {
+		 nextSentence( isSpeakPage );
+	 }
+	 
+	 //到上一个句子
+	 private void preSentence()
+	 {
 		 int start = mReverseInfo.startPos;
 		 if( start == mOffset )	//已经到顶了
 		 {
@@ -1283,7 +1295,7 @@ import android.view.View;
 			 {
 				 if( mOnPageFlingListener != null )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
+					 mOnPageFlingListener.onPageFlingToTop();
 				 }
 				 break;
 			 }
@@ -1306,13 +1318,13 @@ import android.view.View;
 				 break;
 			 }
 			 
-			 i += ri.len;
+			 i = ri.startPos+ri.len;
 			 oldReverseInfo = ri;
 		 }
 	 }	 
 	 
-	 //到下一个段落
-	 public void nextParagraph( boolean isSpeakPage )
+	 //到下一个句子
+	 private void nextSentence( boolean isSpeakPage )
 	 {
 		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
