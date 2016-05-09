@@ -25,12 +25,19 @@ public class TTSUtils
 	private boolean isSuccess = false;
 	private OnTTSListener mOnTTSListener = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
+	private SpeakForm mSpeakForm = SpeakForm.TIPS;
 	
 	public interface OnTTSListener 
 	{
 		public void onSpeakCompleted();		//朗读完成
 		public void onSpeakError();			//朗读错误
 	}
+	
+	public enum SpeakForm
+	{
+		TIPS,	//提示
+		CONTENT,//内容
+	}	//朗读形式
 	
 	public enum SpeakStatus
 	{
@@ -126,7 +133,7 @@ public class TTSUtils
 	{
 		if( isSuccess && mTts != null )
 		{
-			if( SpeakStatus.SPEAK != mSpeakStatus )
+			if( SpeakStatus.STOP != mSpeakStatus )
 			{
 				mTts.stopSpeaking();
 				mSpeakStatus = SpeakStatus.STOP;
@@ -139,7 +146,7 @@ public class TTSUtils
      *
      * @param text
      */
-	public void speak( final String text ) 
+	public void speakContent( final String text ) 
 	{
 		if( isSuccess && mTts != null )
 		{
@@ -152,10 +159,34 @@ public class TTSUtils
 	        else
 	        {
 	        	mSpeakStatus = SpeakStatus.SPEAK;
+	        	mSpeakForm = SpeakForm.CONTENT;
 	        }
 		}
     }
-
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	public void speakTips( final String text ) 
+	{
+		if( isSuccess && mTts != null )
+		{
+	        setParam();	//设置参数
+	        int code = mTts.startSpeaking(text, mTtsListener);
+	        if( code != ErrorCode.SUCCESS ) 
+	        {
+	        	//Toast.makeText(mContext, "语音合成失败,错误码: " + code, Toast.LENGTH_SHORT).show();
+	        }
+	        else
+	        {
+	        	//用于提示信息朗读，不记录状态
+	        	mSpeakForm = SpeakForm.TIPS;
+	        }
+		}
+    }
+	
     /**
      * 合成回调监听。
      */
@@ -165,21 +196,18 @@ public class TTSUtils
 		@Override
 		public void onSpeakBegin() 
 		{
-			mSpeakStatus = SpeakStatus.SPEAK;
 		}
 
 		//暂停合成
 		@Override
 		public void onSpeakPaused() 
 		{
-			mSpeakStatus = SpeakStatus.PAUSE;
 		}
 
 		//继续合成
 		@Override
 		public void onSpeakResumed() 
 		{
-			mSpeakStatus = SpeakStatus.SPEAK;
 		}
 
 		//传冲进度
@@ -199,6 +227,10 @@ public class TTSUtils
 		public void onCompleted(SpeechError error) 
 		{
 			// TODO Auto-generated method stub
+			if( SpeakForm.TIPS == mSpeakForm )
+			{
+				return;
+			}
 			mSpeakStatus = SpeakStatus.STOP;
 			if( null == error )
 			{

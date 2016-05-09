@@ -185,8 +185,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("file", remberFile);
 				this.startActivity(intent);
 			}else{
-				TTSUtils.getInstance().speak(this.getString(R.string.tf_does_not_exist));
-				Toast.makeText(this, this.getString(R.string.tf_does_not_exist), Toast.LENGTH_LONG).show();
+				String tips = this.getString(R.string.tf_does_not_exist);
+				PublicUtils.showToast(this, tips);
 			}
 			return;
 		}
@@ -225,8 +225,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		if (0 == count) // 文件为空
 		{
 			// 提示一下（语音和文字）
-			TTSUtils.getInstance().speak(getString(R.string.txt_menu_null));
-		} else if (1 == count) // 只有一部分
+			PublicUtils.showToast(this, getString(R.string.txt_menu_null));
+		} 
+		else if (1 == count) // 只有一部分
 		{
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			Bundle bundle = new Bundle();
@@ -286,7 +287,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			String tips = TxtDetailActivity.this.getString(R.string.word_parse_tips);
-			TTSUtils.getInstance().speak(tips);
 			PublicUtils.showProgress(TxtDetailActivity.this, tips); 
 		}
 
@@ -315,8 +315,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			else
 			{
 				String tips = TxtDetailActivity.this.getString(R.string.word_parse_fail);
-				Toast.makeText(TxtDetailActivity.this, tips, Toast.LENGTH_SHORT).show();
-				TTSUtils.getInstance().speak(tips);
+				PublicUtils.showToast(TxtDetailActivity.this, tips);
 			}
 		}
 	}

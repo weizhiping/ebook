@@ -951,6 +951,11 @@ import android.view.View;
 	 //向前翻行
 	 public void up()
 	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 TTSUtils.getInstance().stop();
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 
 		 if( preLine() )
 		 {
 			 mCurReadExplainIndex = 0;
@@ -967,11 +972,26 @@ import android.view.View;
 				 mOnPageFlingListener.onPageFlingToTop();
 			 }
 		 }
+		 
+		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+		 {
+			 nextSentence();
+		 }
+		 else
+		 {
+			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 TTSUtils.getInstance().speakTips(tips);
+		 }
 	 }
 	 
 	 //向后翻行
 	 public void down()
 	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 TTSUtils.getInstance().stop();
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 
 		 if( nextLine() )
 		 {
 			 mCurReadExplainIndex = 0;
@@ -979,6 +999,16 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+			 
+			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+			 {
+				 nextSentence();
+			 }
+			 else
+			 {
+				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+				 TTSUtils.getInstance().speakTips(tips);
 			 }
 		 }
 		 else
@@ -993,6 +1023,11 @@ import android.view.View;
 	 //向前翻页
 	 public void left()
 	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 TTSUtils.getInstance().stop();
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 
 		 if( prePage() )
 		 {
 			 mCurReadExplainIndex = 0;
@@ -1009,11 +1044,26 @@ import android.view.View;
 				 mOnPageFlingListener.onPageFlingToTop();
 			 }
 		 }
+		 
+		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+		 {
+			 nextSentence();
+		 }
+		 else
+		 {
+			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 TTSUtils.getInstance().speakTips(tips);
+		 }
 	 }
 	 
 	 //向后翻页
 	 public void right()
 	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 TTSUtils.getInstance().stop();
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 
 		 if( nextPage() )
 		 {
 			 mCurReadExplainIndex = 0;
@@ -1021,6 +1071,16 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+			 }
+			 
+			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+			 {
+				 nextSentence();
+			 }
+			 else
+			 {
+				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+				 TTSUtils.getInstance().speakTips(tips);
 			 }
 		 }
 		 else
@@ -1044,7 +1104,11 @@ import android.view.View;
 		 else if( status == SpeakStatus.PAUSE )
 		 {
 			 TTSUtils.getInstance().resume();
-		 } 
+		 }
+		 else if( status == SpeakStatus.STOP )
+		 {
+			 nextSentence();
+		 }
 	 }
 	 
 	 //精读
@@ -1074,7 +1138,7 @@ import android.view.View;
 				 
 				 if( null == explain )
 				 {
-					 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
 					 return;
 				 }
 				 else
@@ -1092,7 +1156,7 @@ import android.view.View;
 					 
 					 if( TextUtils.isEmpty(txt) )
 					 {
-						 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
 						 return;
 					 }
 					 else
@@ -1100,14 +1164,14 @@ import android.view.View;
 						 String[] str = txt.split("=");
 						 if( ( null == str ) || ( str.length < 2 ) )
 						 {
-							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
 							 return;
 						 }
 						 
 						 String[] strExplain = str[1].split(" ");
 						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
 						 {
-							 TTSUtils.getInstance().speak(mContext.getString(R.string.no_explain));
+							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
 							 return;
 						 }
 						 
@@ -1137,7 +1201,7 @@ import android.view.View;
 			 list = mMapWordExplain.get(ch);
 			 if( ( list != null ) && ( list.size() > 0 ) )
 			 {
-				 TTSUtils.getInstance().speak(list.get(mCurReadExplainIndex));
+				 TTSUtils.getInstance().speakTips(list.get(mCurReadExplainIndex));
 				 if( mCurReadExplainIndex == list.size()-1 )
 				 {
 					 mCurReadExplainIndex = 0;
@@ -1302,6 +1366,27 @@ import android.view.View;
 	 public void nextParagraph( boolean isSpeakPage )
 	 {
 		 nextSentence( isSpeakPage );
+	 }
+	 
+	 //到下一个句子，用于方向键操作
+	 private void nextSentence()
+	 {
+		 ReverseInfo ri = getNextReverseSentenceInfo( mSplitInfoList.get(mLineNumber).startPos );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(false);				//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
 	 }
 	 
 	 //到上一个句子
@@ -1683,7 +1768,7 @@ import android.view.View;
 			 if( isSpeakPage )
 			 {
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-				 TTSUtils.getInstance().speak(tips);
+				 TTSUtils.getInstance().speakTips(tips);
 			 }
 			 return;
 		 }
@@ -1704,7 +1789,7 @@ import android.view.View;
 		 
 		 if( null != str )
 		 {
-			 TTSUtils.getInstance().speak(str);
+			 TTSUtils.getInstance().speakContent(str);
 		 }
 		 else
 		 {
@@ -1714,11 +1799,11 @@ import android.view.View;
 				 if( isSpeakPage )
 				 {
 					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-					 TTSUtils.getInstance().speak(tips+text);
+					 TTSUtils.getInstance().speakContent(tips+text);
 				 }
 				 else
 				 {
-					 TTSUtils.getInstance().speak(text);
+					 TTSUtils.getInstance().speakContent(text);
 				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 

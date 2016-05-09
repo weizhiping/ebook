@@ -118,7 +118,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//tts朗读selectItem内容
 	private void readSelectItemContent()
 	{
-		TTSUtils.getInstance().speak(gListData.get(selectItem));
+		TTSUtils.getInstance().speakTips(gListData.get(selectItem));
 	}
 	
 	public ArrayList<String> getListData()

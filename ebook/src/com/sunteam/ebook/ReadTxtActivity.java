@@ -145,8 +145,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	{
 		// TODO Auto-generated method stub
 		String tips = this.getString(R.string.to_top);
-		Toast.makeText(this, tips, Toast.LENGTH_LONG).show();
-		TTSUtils.getInstance().speak(tips);
+		PublicUtils.showToast(this, tips);
 	}
 
 	@Override
@@ -154,8 +153,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	{
 		// TODO Auto-generated method stub
 		String tips = this.getString(R.string.to_bottom);
-		Toast.makeText(this, tips, Toast.LENGTH_LONG).show();
-		TTSUtils.getInstance().speak(tips);
+		PublicUtils.showToast(this, tips);
 	}
 
 	@Override

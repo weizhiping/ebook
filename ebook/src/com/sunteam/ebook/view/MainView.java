@@ -73,7 +73,7 @@ public class MainView extends View
 	{
 		if( mAdapter != null )
 		{
-			TTSUtils.getInstance().speak(mAdapter.getSelectItemContent());
+			TTSUtils.getInstance().speakTips(mAdapter.getSelectItemContent());
 		}
 	}
 	

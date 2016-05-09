@@ -3,6 +3,7 @@ package com.sunteam.ebook.util;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sunteam.ebook.R;
 
@@ -107,6 +108,8 @@ public class PublicUtils
 		progress.setContentView(R.layout.progress_layout);
 		TextView tvInfo = (TextView) progress.findViewById(R.id.tv_info);
 		tvInfo.setText(info);
+		
+		TTSUtils.getInstance().speakTips(info);
 	}
 	
 	/**
@@ -132,5 +135,12 @@ public class PublicUtils
 			}
 			progress = null;
 		}
+	}
+	
+	//显示提示信息并朗读
+	public static void showToast( Context context, String tips )
+	{
+		TTSUtils.getInstance().speakTips(tips);
+		Toast.makeText(context, tips, Toast.LENGTH_SHORT).show();
 	}
 }	
