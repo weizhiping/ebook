@@ -385,6 +385,86 @@ import android.view.View;
 		 
 		 return	true;
 	 }
+
+	 /**
+	  * 得到从指定开始位置的上一个段落的长度
+	  * @param endPos
+	  * @return len
+	  */
+	 private int getPreParagraphLength( final int endPos ) 
+	 {
+		 int nEnd = endPos;
+		 int i;
+		 int count = 0;
+		 byte b0, b1;
+		 
+		 if( CHARSET_NAME.equals("utf-16le") ) 
+		 {
+			 i = nEnd - 2;
+			 while (i > 0) 
+			 {
+				 b0 = mMbBuf[i];
+				 b1 = mMbBuf[i + 1];
+				 //if( b0 == 0x0a && b1 == 0x00 && i != nEnd - 2 ) 
+				 if( b0 == 0x0a && b1 == 0x00 )
+				 {
+					 count++;
+					 if( 2 == count )
+					 {
+						 i += 2;
+						 break;
+					 }
+				 }
+				 i--;
+			 }
+		 } 
+		 else if( CHARSET_NAME.equals("utf-16be") ) 
+		 {
+			 i = nEnd - 2;
+			 while( i > 0 ) 
+			 {
+				 b0 = mMbBuf[i];
+				 b1 = mMbBuf[i + 1];
+				 //if( b0 == 0x00 && b1 == 0x0a && i != nEnd - 2 ) 
+				 if( b0 == 0x00 && b1 == 0x0a ) 
+				 {
+					 count++;
+					 if( 2 == count )
+					 {
+						 i += 2;
+						 break;
+					 }
+				 }
+				 i--;
+			 }
+		 } 
+		 else 
+		 {
+			 i = nEnd - 1;
+			 while( i > 0 )
+			 {
+				 b0 = mMbBuf[i];
+				 //if( b0 == 0x0a && i != nEnd - 1 ) 
+				 if( b0 == 0x0a )
+				 {	// 0x0a表示换行符
+					 count++;
+					 if( 2 == count )
+					 {
+						 i++;
+						 break;
+					 }
+				 }
+				 i--;
+			 }
+		 }
+		 
+		 if( i < 0 )
+			 i = 0;
+		 
+		 int nParaSize = nEnd - i;
+		 
+		 return	nParaSize;
+	 }
 	 
 	 /**
 	  * 得到从指定开始位置的下一个段落的长度
@@ -979,7 +1059,7 @@ import android.view.View;
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence();
+			 nextSentence(false);
 		 }
 		 else
 		 {
@@ -1010,7 +1090,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence();
+				 nextSentence(false);
 			 }
 			 else
 			 {
@@ -1057,7 +1137,7 @@ import android.view.View;
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence();
+			 nextSentence(false);
 		 }
 		 else
 		 {
@@ -1088,7 +1168,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence();
+				 nextSentence(false);
 			 }
 			 else
 			 {
@@ -1122,7 +1202,7 @@ import android.view.View;
 			 }
 			 else if( status == SpeakStatus.STOP )
 			 {
-				 nextSentence();
+				 nextSentence(false);
 			 }
 		 }
 		 else
@@ -1437,7 +1517,42 @@ import android.view.View;
 	 {
 		 TTSUtils.getInstance().stop();
 		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
-		 preSentence();
+		 
+		 int end = mReverseInfo.startPos;
+		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 {
+			 end = mSplitInfoList.get(mLineNumber).startPos;
+		 }
+		 
+		 int len = getPreParagraphLength( end );
+		 if( 0 == len )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+		 }
+		 else
+		 {
+			 end -= len;
+			 
+			 for( int i = 0; i < mSplitInfoList.size(); i++ )
+			 {
+				 if( mSplitInfoList.get(i).startPos == end )
+				 {
+					 mReverseInfo.startPos = 0;
+					 mReverseInfo.len = 0;
+					 mLineNumber = i;
+					 nextSentence( false );
+					 return;
+				 }
+			 }
+			 
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+		 }
 	 }
 	 
 	 //到下一个段落
@@ -1445,14 +1560,15 @@ import android.view.View;
 	 {
 		 TTSUtils.getInstance().stop();
 		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
-		 nextSentence( isSpeakPage );
-	 }
-	 
-	 //到下一个句子，用于方向键操作
-	 private void nextSentence()
-	 {
-		 ReverseInfo ri = getNextReverseSentenceInfo( mSplitInfoList.get(mLineNumber).startPos );
-		 if( null == ri )
+		 
+		 int start = mReverseInfo.startPos;
+		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 {
+			 start = mSplitInfoList.get(mLineNumber).startPos;
+		 }
+		 
+		 int len = getNextParagraphLength( start );
+		 if( 0 == len )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1461,11 +1577,24 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 mReverseInfo.startPos = ri.startPos;
-			 mReverseInfo.len = ri.len;
-			 readReverseText(false);				//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-			 this.invalidate();
+			 start += len;
+			 
+			 for( int i = mLineNumber; i < mSplitInfoList.size(); i++ )
+			 {
+				 if( mSplitInfoList.get(i).startPos == start )
+				 {
+					 mReverseInfo.startPos = 0;
+					 mReverseInfo.len = 0;
+					 mLineNumber = i;
+					 nextSentence( isSpeakPage );
+					 return;
+				 }
+			 }
+			 
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
 		 }
 	 }
 	 
@@ -1522,7 +1651,13 @@ import android.view.View;
 	 //到下一个句子
 	 private void nextSentence( boolean isSpeakPage )
 	 {
-		 ReverseInfo ri = getNextReverseSentenceInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 int start = mReverseInfo.startPos + mReverseInfo.len;
+		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 {
+			 start = mSplitInfoList.get(mLineNumber).startPos;
+		 }
+		 
+		 ReverseInfo ri = getNextReverseSentenceInfo( start );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
