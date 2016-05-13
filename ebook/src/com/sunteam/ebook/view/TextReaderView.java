@@ -173,6 +173,7 @@ import android.view.View;
 	 public void setReadMode( ReadMode rm )
 	 {
 		 mReadMode = rm;
+		 mCurReadExplainIndex = 0;
 	 }
 	 
 	 //设置背景色
@@ -372,7 +373,7 @@ import android.view.View;
 		 mMbBufLen = (int)mMbBuf.length;
 		 mLineNumber = lineNumber;
 		 
-		 mCheckSum = calcCheckSum( mMbBuf );	//计算CheckSum
+		 mCheckSum = 0;//calcCheckSum( mMbBuf );	//计算CheckSum
 		 
 		 if( ( checksum != 0 ) && ( mCheckSum != checksum ) )
 		 {
@@ -686,7 +687,7 @@ import android.view.View;
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextParagraph(true);
+		 		nextSentence(true);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
 		 		nextWord(true);
@@ -953,6 +954,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_ALL);
+		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
 		 
@@ -989,6 +993,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_ALL);
+		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
 		 
@@ -1025,6 +1032,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_ALL);
+		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
 		 
@@ -1061,6 +1071,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_ALL);
+		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
 		 
@@ -1097,7 +1110,40 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 
-		 if( status == SpeakStatus.SPEAK )
+		 if( ReadMode.READ_MODE_ALL == mReadMode )	//如果当前是全文朗读模式
+		 {
+			 if( status == SpeakStatus.SPEAK )
+			 {
+				 TTSUtils.getInstance().pause();
+			 }
+			 else if( status == SpeakStatus.PAUSE )
+			 {
+				 TTSUtils.getInstance().resume();
+			 }
+			 else if( status == SpeakStatus.STOP )
+			 {
+				 nextSentence();
+			 }
+		 }
+		 else
+		 {
+			 setReadMode(ReadMode.READ_MODE_ALL);
+			 if( status == SpeakStatus.STOP )
+			 {
+				 nextSentence(false);
+			 }
+			 else
+			 {
+				 TTSUtils.getInstance().stop();
+			 }
+		 }
+	 }
+	 
+	 //精读
+	 public void intensiveReading()
+	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();	//当前朗读状态
+		 if( SpeakStatus.SPEAK == status )	//如果当前正在朗读
 		 {
 			 TTSUtils.getInstance().pause();
 		 }
@@ -1107,12 +1153,26 @@ import android.view.View;
 		 }
 		 else if( status == SpeakStatus.STOP )
 		 {
-			 nextSentence();
-		 }
+			 switch( mReadMode )
+			 {
+			 	case READ_MODE_ALL:			//全文朗读
+			 	case READ_MODE_PARAGRAPH:	//逐段朗读
+			 		nextSentence(false);
+			 		break;
+			 	case READ_MODE_WORD:		//逐词朗读
+			 		nextWord(false);
+			 		break;
+			 	case READ_MODE_CHARACTER:	//逐字朗读
+			 		readExplain();
+			 		break;
+			 	default:
+			 		break;
+			 }
+		 }	 
 	 }
 	 
-	 //精读
-	 public void intensiveReading()
+	 //朗读例句
+	 private void readExplain()
 	 {
 		 if( mReverseInfo.len > 0 )
 		 {
@@ -1217,6 +1277,10 @@ import android.view.View;
 	 //到上一个字符
 	 public void preCharacter()
 	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_CHARACTER);
+		 
 		 int start = mReverseInfo.startPos;
 		 if( start == mOffset )	//已经到顶了
 		 {
@@ -1267,6 +1331,10 @@ import android.view.View;
 	 //到下一个字符
 	 public void nextCharacter( boolean isSpeakPage )
 	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_CHARACTER);
+		 
 		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
 		 {
@@ -1288,6 +1356,10 @@ import android.view.View;
 	 //到上一个单词
 	 public void preWord()
 	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_WORD);
+		 
 		 int start = mReverseInfo.startPos;
 		 if( start == mOffset )	//已经到顶了
 		 {
@@ -1338,6 +1410,10 @@ import android.view.View;
 	 //到下一个单词
 	 public void nextWord( boolean isSpeakPage )
 	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_WORD);
+		 
 		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
 		 if( null == ri )
 		 {
@@ -1359,12 +1435,16 @@ import android.view.View;
 	 //到上一个段落
 	 public void preParagraph()
 	 {
+		 TTSUtils.getInstance().stop();
+		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
 		 preSentence();
 	 }
 	 
 	 //到下一个段落
 	 public void nextParagraph( boolean isSpeakPage )
 	 {
+		 TTSUtils.getInstance().stop();
+		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
 		 nextSentence( isSpeakPage );
 	 }
 	 
@@ -1983,7 +2063,7 @@ import android.view.View;
 		{
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextParagraph(false);
+		 		nextSentence(false);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
 		 		break;
