@@ -64,13 +64,25 @@
 }
 
 -libraryjars ./libs/android-support-v4.jar
+-libraryjars ./libs/jxl.jar
 -libraryjars ./libs/Msc.jar
+-libraryjars ./libs/tm-extractors-0.4.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }
 
+-dontwarn common.**
+-keep class common.** {*; }
+-dontwarn jxl.**
+-keep class jxl.** {*; }
+
 -dontwarn com.iflytek.**
 -keep class com.iflytek.** {*; }
+
+-dontwarn org.apache.poi.**
+-keep class org.apache.poi.** {*; }
+-dontwarn org.textmining.text.extraction.**
+-keep class org.textmining.text.extraction.** {*; }
 
 -keep class **.R$* {   
 *;   
