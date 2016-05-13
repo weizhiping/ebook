@@ -115,6 +115,8 @@ import android.view.View;
 	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
 	 private int mCurReadExplainIndex = 0;	//当前朗读的例句索引
 	 private int mCheckSum = 0;				//当前buffer的checksum
+	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
+	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -409,7 +411,7 @@ import android.view.View;
 				 if( b0 == 0x0a && b1 == 0x00 )
 				 {
 					 count++;
-					 if( 2 == count )
+					 if( count >= 2 )
 					 {
 						 i += 2;
 						 break;
@@ -429,7 +431,7 @@ import android.view.View;
 				 if( b0 == 0x00 && b1 == 0x0a ) 
 				 {
 					 count++;
-					 if( 2 == count )
+					 if( count >= 2 )
 					 {
 						 i += 2;
 						 break;
@@ -448,7 +450,7 @@ import android.view.View;
 				 if( b0 == 0x0a )
 				 {	// 0x0a表示换行符
 					 count++;
-					 if( 2 == count )
+					 if( count >= 2 && mMbBuf[i+1] != 0x0d && mMbBuf[i+1] != 0x0a )
 					 {
 						 i++;
 						 break;
@@ -1543,6 +1545,9 @@ import android.view.View;
 					 mReverseInfo.startPos = 0;
 					 mReverseInfo.len = 0;
 					 mLineNumber = i;
+					 mParagraphStartPos = end;
+					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
+					 
 					 nextSentence( false );
 					 return;
 				 }
@@ -1586,6 +1591,9 @@ import android.view.View;
 					 mReverseInfo.startPos = 0;
 					 mReverseInfo.len = 0;
 					 mLineNumber = i;
+					 mParagraphStartPos = start;
+					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
+					 
 					 nextSentence( isSpeakPage );
 					 return;
 				 }
@@ -1657,6 +1665,11 @@ import android.view.View;
 			 start = mSplitInfoList.get(mLineNumber).startPos;
 		 }
 		 
+		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) )
+		 {
+			 return;
+		 }
+		 
 		 ReverseInfo ri = getNextReverseSentenceInfo( start );
 		 if( null == ri )
 		 {
@@ -1667,6 +1680,11 @@ import android.view.View;
 		 }
 		 else
 		 {
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) )
+			 {
+				 return;
+			 }
+			 
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
 			 readReverseText(isSpeakPage);			//朗读反显文字
