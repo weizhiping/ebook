@@ -3,6 +3,7 @@ package com.sunteam.ebook.view;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 
 import com.sunteam.ebook.R;
@@ -626,9 +627,76 @@ import android.view.View;
 			 startPos += len;						//每次读取后，记录结束点位置，该位置是段落结束位置
 		 }
 		 
-		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 calcCurPage();	//计算当前屏位置
 	 }
 
+	 //计算当前页
+	 private void calcCurPage()
+	 {
+		 //mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 //计算当前页规则：以当前屏显示的行数较多的逻辑页号播报显示（逻辑页：对应分页预处理中的页号） 
+		 
+		 class PageInfo
+		 {
+			 int page;	//页码
+			 int count;	//个数
+			 
+			 public PageInfo( int p, int c )
+			 {
+				 page = p;
+				 count = c;
+			 }
+		 }
+		 
+		 int size = mSplitInfoList.size();
+		 int maxLine = Math.min( size, mLineNumber+mLineCount );
+		 HashMap<Integer, PageInfo> pageMap = new HashMap<Integer, PageInfo>();
+		 
+		 for( int i = mLineNumber; i < maxLine; i++ )
+		 {
+			 int curPage = i / mLineCount + 1;	//计算当前行在逻辑屏中的位置
+			 
+			 PageInfo pi = pageMap.get(curPage);
+			 if( null == pi )
+			 {
+				 pi = new PageInfo( curPage, 1 );
+				 pageMap.put(curPage, pi);
+			 }
+			 else
+			 {
+				 pi.count++;
+				 pageMap.remove(curPage);
+				 pageMap.put(curPage, pi);
+			 }
+		 }
+		 
+		 ArrayList<PageInfo> list = new ArrayList<PageInfo>();
+		 Iterator<Integer> iterator = pageMap.keySet().iterator();
+		 while(iterator.hasNext()) 
+		 {
+			 list.add(pageMap.get(iterator.next()));
+		 }
+		 
+		 size = list.size();
+		 PageInfo pi = null;
+		 for( int i = 0; i < size; i++ )
+		 {
+			 if( null == pi )
+			 {
+				 pi = list.get(i);
+			 }
+			 else
+			 {
+				 if( pi.count < list.get(i).count )
+				 {
+					 pi = list.get(i);
+				 }
+			 }
+		 }
+		 
+		 mCurPage = pi.page;
+	 }
+	 
 	 //得到总页数
 	 public int getPageCount()
 	 {
@@ -652,7 +720,7 @@ import android.view.View;
 		 }
 		 
 		 mLineNumber++;
-		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 calcCurPage();	//计算当前屏位置
 		 
 		 return	true;
 	 }
@@ -676,7 +744,7 @@ import android.view.View;
 		 }
 
 		 mLineNumber--;
-		 mCurPage = mLineNumber / mLineCount + 1;	//计算当前屏位置
+		 calcCurPage();	//计算当前屏位置
 		 
 		 return	true;
 	 }	 
@@ -698,7 +766,7 @@ import android.view.View;
 		 }
 		 
 		 mLineNumber += mLineCount;
-		 mCurPage++;
+		 calcCurPage();	//计算当前屏位置
 		 
 		 return	true;
 	 }
@@ -727,7 +795,7 @@ import android.view.View;
 			 mLineNumber = 0;
 		 }
 		 
-		 mCurPage--;
+		 calcCurPage();	//计算当前屏位置
 		 
 		 return	true;
 	 }
