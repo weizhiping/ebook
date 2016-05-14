@@ -108,12 +108,14 @@ public class FileOperateUtils {
 	/**
 	 * @ 遍历目录下的指定后缀的文件和目录
 	 * 
-	 * @param path 路径
-	 * @param suffix 后缀名
-	 *            保存目录下的所有文件
+	 * @param path
+	 *            路径
+	 * @param suffix
+	 *            后缀名 保存目录下的所有文件
 	 * @return
 	 */
-	public static ArrayList<File> getFilesInDir(String path, String suffix,String suffixDocx) {
+	public static ArrayList<File> getFilesInDir(String path, String suffix,
+			String suffixDocx) {
 		File dir = new File(path);
 		ArrayList<File> fileList = new ArrayList<File>();
 		if (dir == null || !dir.isDirectory())
@@ -124,13 +126,15 @@ public class FileOperateUtils {
 		if (!fileList.isEmpty())
 			fileList.clear();
 		for (File f : files) {
-			if(!isHideFile(f)){
+			if (!isHideFile(f)) {
 				if (f.isDirectory()) {
-					if(hasSuffixFile(f, suffix,suffixDocx)){
+					if (hasSuffixFile(f, suffix, suffixDocx)) {
 						fileList.add(f);
 					}
 				} else {
-					if (suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixDocx)) {
+					if (suffix.equalsIgnoreCase(getFileExtensions(f))
+							|| getFileExtensions(f)
+									.equalsIgnoreCase(suffixDocx)) {
 						fileList.add(f);
 					}
 				}
@@ -138,14 +142,44 @@ public class FileOperateUtils {
 		}
 		return fileList;
 	}
+
 	/**
-	 * 判断是否为隐藏文件
-	 * @param f 
+	 * @ 遍历目录下的Daisy文件目录
+	 * 
+	 * @param path 路径
 	 * @return
 	 */
-	public static boolean isHideFile(File f){
+	public static ArrayList<File> getDaisyInDir() {
+		File dir = new File(FileOperateUtils.getSDPath());
+		ArrayList<File> fileList = new ArrayList<File>();
+		if (dir == null || !dir.isDirectory())
+			return null;
+		File[] files = dir.listFiles();
+		if (files == null)
+			return null;
+		if (!fileList.isEmpty())
+			fileList.clear();
+		for (File f : files) {
+			if (!isHideFile(f)) {
+				if (f.isDirectory()) {
+					if(hasDaisyFile(f)){
+						fileList.add(f);
+					}
+				}
+			}
+		}
+		return fileList;
+	}
+
+	/**
+	 * 判断是否为隐藏文件
+	 * 
+	 * @param f
+	 * @return
+	 */
+	public static boolean isHideFile(File f) {
 		String name = f.getName();
-		if(name.substring(0, 1).equals(".")){
+		if (name.substring(0, 1).equals(".")) {
 			return true;
 		}
 		return false;
@@ -259,17 +293,56 @@ public class FileOperateUtils {
 		return strEx;
 	}
 
-	public static boolean hasSuffixFile(File file,String suffix,String suffixTwo) {
+	/**
+	 * 获取是否包含文件
+	 * 
+	 * @param file
+	 * @param suffix
+	 *            后缀名
+	 * @param suffixTwo
+	 *            后缀名
+	 * @return
+	 */
+	public static boolean hasSuffixFile(File file, String suffix,
+			String suffixTwo) {
 		boolean bIsFilter = false;
 		if (file == null || !file.exists())
 			return bIsFilter;
 		for (File f : file.listFiles()) {
-			if(!f.isDirectory()){
-				if(suffix.equalsIgnoreCase(getFileExtensions(f)) || getFileExtensions(f).equalsIgnoreCase(suffixTwo)){
+			if (!f.isDirectory()) {
+				if (suffix.equalsIgnoreCase(getFileExtensions(f))
+						|| getFileExtensions(f).equalsIgnoreCase(suffixTwo)) {
 					return true;
 				}
-			}else{
-				hasSuffixFile(f,suffix,suffixTwo);
+			} else {
+				hasSuffixFile(f, suffix, suffixTwo);
+			}
+		}
+		return bIsFilter;
+	}
+	
+	/**
+	 * 获取是否包含文件
+	 * 
+	 * @param file
+	 * @param suffix
+	 *            后缀名
+	 * @param suffixTwo
+	 *            后缀名
+	 * @return
+	 */
+	public static boolean hasDaisyFile(File file) {
+		boolean bIsFilter = false;
+		if (file == null || !file.exists())
+			return bIsFilter;
+		for (File f : file.listFiles()) {
+			if (!f.isDirectory()) {
+				if (EbookConstants.BOOK_DAISY_NCC.equalsIgnoreCase(f.getName())
+						|| EbookConstants.BOOK_DAISY_OPF.equalsIgnoreCase(f.getName())) {
+					return true;
+				}
+			} else {
+				hasDaisyFile(f);
 			}
 		}
 		return bIsFilter;
