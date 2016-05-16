@@ -8,6 +8,7 @@ package com.sunteam.ebook.entity;
  */
 public class DiasyNode 
 {
+	public int father;		//父节点序号
 	public int seq;			//节点序号
 	public int level;		//节点等级
 	public String name;		//节点名称

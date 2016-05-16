@@ -3,7 +3,6 @@ package com.sunteam.ebook.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.sunteam.ebook.entity.DiasyNode;
@@ -65,13 +64,9 @@ public class DaisyFileReaderUtils
 			for( int i = fatherSeq+1; i < size; i++ )
 			{
 				DiasyNode node = mDiasyNodeList.get(i);
-				if( fatherNode.level+1 == node.level )
+				if( fatherNode.seq == node.father )
 				{
 					list.add(node);
-				}
-				else
-				{
-					break;
 				}
 			}
 		}
@@ -80,7 +75,6 @@ public class DaisyFileReaderUtils
 	}
 
 	//初始化
-	@SuppressWarnings("resource")
 	public void init( final String fullpath )
 	{		
 		mDiasyNodeList.clear();
@@ -131,21 +125,72 @@ public class DaisyFileReaderUtils
 				
 				int oldEnd = end;
 				String item = body.substring(start+TAG_H_START.length(), end);	//取得一个item
-				String[] split = item.split(" ");
+				String[] splitItem = item.split(" ");
 				
 				start = item.indexOf(TAG_A_START);
 				end = item.indexOf(TAG_A_END);
 				String href = item.substring(start+TAG_A_START.length(), end);
-				href = href.replaceAll("\">", "#");
-				
-				String[] splitStr = href.split("#");
+				String[] splitHref = href.split("\">");
+				String[] splitStr = splitHref[0].split("#");
 				
 				DiasyNode node = new DiasyNode();
 				node.seq = mDiasyNodeList.size();			//序号
-				node.level = Integer.parseInt(split[0]);	//等级
+				node.level = Integer.parseInt(splitItem[0]);//等级
 				node.href = splitStr[0];					//子链接
 				node.label = splitStr[1];					//标签
-				node.name = splitStr[2];					//节点名称
+				if( 1 == node.level )	//如果节点等级为第一等级
+				{
+					node.father = -1;
+				}
+				else
+				{
+					for( int i = node.seq-1; i >= 0; i-- )
+					{
+						if( node.level-1 == mDiasyNodeList.get(i).level )
+						{
+							node.father = mDiasyNodeList.get(i).seq;
+							break;
+						}
+					}
+				}
+				
+				String[] splitUnicode = splitHref[1].split("&#x");
+				if( (null == splitUnicode ) || ( 0 == splitUnicode.length) )
+				{
+					node.name = splitHref[1];					//节点名称
+				}
+				else
+				{
+					node.name = "";
+					for( int i = 0; i < splitUnicode.length; i++ )
+					{
+						if( splitUnicode[i].length() < 5 )
+						{
+							node.name += splitUnicode[i];
+						}
+						else if( isHex(splitUnicode[i].substring(0, 4)) && ";".equals(splitUnicode[i].substring(4, 5)) )
+						{
+							String unicode = splitUnicode[i].substring(0, 4);
+							int code = Integer.parseInt(unicode, 16);
+							
+							byte[] byteCode = new byte[2];
+							byteCode[0] = (byte) ((code&0x0000ff00)>>8);
+							byteCode[1] = (byte) (code&0x000000ff);
+							
+							node.name += new String(byteCode, "utf-16be");
+							
+							String temp = splitUnicode[i].substring(5);
+							if( null != temp )
+							{
+								node.name += temp;
+							}
+						}
+						else
+						{
+							node.name += splitUnicode[i];
+						}
+					}
+				}
 				
 				mDiasyNodeList.add(node);
 				
@@ -159,6 +204,21 @@ public class DaisyFileReaderUtils
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+		}
+	}
+	
+	//是否是16进制数
+	private boolean isHex( String str )
+	{
+		try
+		{
+			Integer.parseInt(str, 16);
+			
+			return	true;
+		}
+		catch( Exception e )
+		{
+			return	false;
 		}
 	}
 }
