@@ -49,6 +49,10 @@
             android:name=".DaisyActivity"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name=".DaisyDetailActivity"
+            android:screenOrientation="landscape" >
+        </activity>
          <activity
             android:name=".TxtPartActivity"
             android:screenOrientation="landscape" >

@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.FileInfo;
-import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.view.MainView;
 
@@ -63,7 +62,6 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 	// 初始化显示文件
 	private void initFiles() {
 		ArrayList<File> filesList = FileOperateUtils.getDaisyInDir();
-		Log.e("diaiy", "---------file list--:" + filesList);
 		if (null != filesList) {
 			for (File f : filesList) {
 				if (f.isDirectory()) {
@@ -97,14 +95,15 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) {
-		// TODO Auto-generated method stub
-//		String name = menu;
-//		Intent intent = new Intent(this, TxtDetailActivity.class);
-//		intent.putExtra("name", name);
-//		intent.putExtra("flag", selectItem);
-//		intent.putExtra("flagType", selectItem);
-//		intent.putExtra("catalogType", catalog);
-//		intent.putExtra("file", remberFile);
-//		this.startActivity(intent);
+		
+		FileInfo file= fileInfoList.get(selectItem);
+	//	DaisyFileReaderUtils.getInstance().init(file.path + "/ncc.html");
+		
+		Intent intent = new Intent(this, DaisyDetailActivity.class);
+		intent.putExtra("name", menu);
+		intent.putExtra("catalogType", catalog);
+		intent.putExtra("path", file.path);
+		intent.putExtra("file", remberFile);
+		this.startActivity(intent);
 	}
 }
