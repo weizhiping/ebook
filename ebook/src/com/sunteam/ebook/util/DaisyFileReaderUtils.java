@@ -154,7 +154,7 @@ public class DaisyFileReaderUtils
 					}
 				}
 				
-				String[] splitUnicode = splitHref[1].split("&#x");
+				String[] splitUnicode = splitHref[1].split("&#");
 				if( (null == splitUnicode ) || ( 0 == splitUnicode.length) )
 				{
 					node.name = splitHref[1];					//节点名称
@@ -164,30 +164,72 @@ public class DaisyFileReaderUtils
 					node.name = "";
 					for( int i = 0; i < splitUnicode.length; i++ )
 					{
-						if( splitUnicode[i].length() < 5 )
+						if( "".equals(splitUnicode[i]) )
 						{
-							node.name += splitUnicode[i];
+							continue;
 						}
-						else if( isHex(splitUnicode[i].substring(0, 4)) && ";".equals(splitUnicode[i].substring(4, 5)) )
+						String ch = splitUnicode[i].substring(0, 1);
+						if( "x".equals(ch) || "X".equals(ch) )	//十六进制
 						{
-							String unicode = splitUnicode[i].substring(0, 4);
-							int code = Integer.parseInt(unicode, 16);
-							
-							byte[] byteCode = new byte[2];
-							byteCode[0] = (byte) ((code&0x0000ff00)>>8);
-							byteCode[1] = (byte) (code&0x000000ff);
-							
-							node.name += new String(byteCode, "utf-16be");
-							
-							String temp = splitUnicode[i].substring(5);
-							if( null != temp )
+							int seq = splitUnicode[i].indexOf(";");
+							if( -1 == seq )
 							{
-								node.name += temp;
+								node.name = splitUnicode[i];
+								continue;
+							}
+							
+							String unicode = splitUnicode[i].substring(1, seq);
+							try
+							{
+								int code = Integer.parseInt(unicode, 16);
+								byte[] byteCode = new byte[2];
+								byteCode[0] = (byte) ((code&0x0000ff00)>>8);
+								byteCode[1] = (byte) (code&0x000000ff);
+								
+								node.name += new String(byteCode, "utf-16be");
+								
+								String temp = splitUnicode[i].substring(seq+1);
+								if( null != temp )
+								{
+									node.name += temp;
+								}
+							}
+							catch( Exception e )
+							{
+								e.printStackTrace();
+								node.name = splitUnicode[i];
 							}
 						}
-						else
+						else	//十进制
 						{
-							node.name += splitUnicode[i];
+							int seq = splitUnicode[i].indexOf(";");
+							if( -1 == seq )
+							{
+								node.name = splitUnicode[i];
+								continue;
+							}
+							
+							String unicode = splitUnicode[i].substring(0, seq);
+							try
+							{
+								int code = Integer.parseInt(unicode, 10);
+								byte[] byteCode = new byte[2];
+								byteCode[0] = (byte) ((code&0x0000ff00)>>8);
+								byteCode[1] = (byte) (code&0x000000ff);
+								
+								node.name += new String(byteCode, "utf-16be");
+								
+								String temp = splitUnicode[i].substring(seq+1);
+								if( null != temp )
+								{
+									node.name += temp;
+								}
+							}
+							catch( Exception e )
+							{
+								e.printStackTrace();
+								node.name = splitUnicode[i];
+							}
 						}
 					}
 				}
@@ -204,21 +246,6 @@ public class DaisyFileReaderUtils
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-		}
-	}
-	
-	//是否是16进制数
-	private boolean isHex( String str )
-	{
-		try
-		{
-			Integer.parseInt(str, 16);
-			
-			return	true;
-		}
-		catch( Exception e )
-		{
-			return	false;
 		}
 	}
 }
