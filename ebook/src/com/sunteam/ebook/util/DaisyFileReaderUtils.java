@@ -35,6 +35,8 @@ public class DaisyFileReaderUtils
 	private static DaisyFileReaderUtils instance = null;
 
 	private ArrayList<DiasyNode> mDiasyNodeList = new ArrayList<DiasyNode>();	//保存索引列表
+	private String mSentencePath = null;	//保存句子的路径
+	private String mSentenceData = null;	//保存所有的句子数据
 	
 	public static DaisyFileReaderUtils getInstance()
 	{
@@ -301,27 +303,37 @@ public class DaisyFileReaderUtils
 		{
 			final String sentencePath = path + "/" + sentenceHref;
 			
-			IdentifyEncoding ie = new IdentifyEncoding();
-			String strCharsetName = ie.GetEncodingName( sentencePath );	//得到文本编码
-			
-			File file = new File(sentencePath);
-			if( !file.exists() )
+			if( sentencePath.equals(mSentencePath) )
 			{
-				return	"";
+				
 			}
-			int length = (int)file.length();
-			if( 0 == length )
+			else
 			{
-				return	"";
+				IdentifyEncoding ie = new IdentifyEncoding();
+				String strCharsetName = ie.GetEncodingName( sentencePath );	//得到文本编码
+				
+				File file = new File(sentencePath);
+				if( !file.exists() )
+				{
+					return	"";
+				}
+				int length = (int)file.length();
+				if( 0 == length )
+				{
+					return	"";
+				}
+				
+				//先将content文件读取到内存
+				FileInputStream fis = new FileInputStream(file);
+				byte[] buffer = new byte[length];
+				fis.read(buffer);
+				fis.close();
+				
+				mSentencePath = sentencePath;
+				mSentenceData = new String(buffer, strCharsetName);
 			}
-			
-			//先将content文件读取到内存
-			FileInputStream fis = new FileInputStream(file);
-			byte[] buffer = new byte[length];
-			fis.read(buffer);
-			fis.close();
 		
-			String data = new String(buffer, strCharsetName);
+			String data = mSentenceData;
 			int start = data.indexOf(TAG_BODY_START);
 			int end = data.lastIndexOf(TAG_BODY_END);
 			
