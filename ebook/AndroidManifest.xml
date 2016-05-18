@@ -78,6 +78,10 @@
             android:name=".MenuVoiceActivity"
             android:screenOrientation="landscape" >
         </activity> 
+        <activity
+            android:name=".MenuVoiceDetailActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
     </application>
 
 </manifest>
