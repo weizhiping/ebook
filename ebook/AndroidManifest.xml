@@ -45,7 +45,11 @@
             android:name=".ReadTxtActivity"
             android:screenOrientation="landscape" >
         </activity>
-         <activity
+        <activity
+            android:name=".ReadDaisyActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
             android:name=".DaisyActivity"
             android:screenOrientation="landscape" >
         </activity>

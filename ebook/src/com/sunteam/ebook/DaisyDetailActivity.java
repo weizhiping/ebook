@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.DiasyNode;
@@ -102,7 +101,11 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 		int size = diaysList.size();
 		if(0 == size){
-			Toast.makeText(this, "-----需要进入阅读界面----", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(this, ReadDaisyActivity.class);
+			intent.putExtra("name", menu);
+			intent.putExtra("path", path);
+			intent.putExtra("node",  dias);
+			this.startActivity(intent);
 		}else{
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
 			intent.putExtra("name", menu);
