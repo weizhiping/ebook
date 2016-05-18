@@ -123,12 +123,12 @@ public class DaisyFileReaderUtils
 				return;
 			}
 			
-			String body = data.substring(start+TAG_BODY_START.length(), end);	//得到body内容
-			
+			start += TAG_BODY_START.length();
+
 			while( true )
 			{
-				start = body.indexOf(TAG_H_START);
-				end = body.indexOf(TAG_H_END);
+				start = data.indexOf(TAG_H_START, start);
+				end = data.indexOf(TAG_H_END, start);
 				
 				if( ( -1 == start ) || ( -1 == end ) )
 				{
@@ -136,7 +136,7 @@ public class DaisyFileReaderUtils
 				}
 				
 				int oldEnd = end;
-				String item = body.substring(start+TAG_H_START.length(), end);	//取得一个item
+				String item = data.substring(start+TAG_H_START.length(), end);	//取得一个item
 				String[] splitItem = item.split(" ");
 				
 				start = item.indexOf(TAG_A_START);
@@ -169,7 +169,7 @@ public class DaisyFileReaderUtils
 				node.name = getEscapeString(splitHref[1]);	//得到转义字符串
 				mDiasyNodeList.add(node);
 				
-				body = body.substring(oldEnd+TAG_H_END.length());
+				start = oldEnd+TAG_H_END.length();
 			}
 		} 
 		catch (IOException e)
