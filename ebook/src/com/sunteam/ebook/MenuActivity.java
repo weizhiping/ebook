@@ -88,20 +88,16 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			startActivity(intent);
 			break;
 		case 1:
-			intent.setClass(this, MenuReadActivity.class);
-			startActivity(intent);
+			
 			break;
 		case 2:
 			
 			break;
 		case 3:
-			
-			break;
-		case 4:
 			intent.setClass(this, MenuVoiceActivity.class);
 			startActivity(intent);
 			break;
-		case 5:
+		case 4:
 			intent.setClass(this, MenuMusicActivity.class);
 			startActivity(intent);
 			break;

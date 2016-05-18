@@ -34,7 +34,6 @@
 	
     <string-array name="array_menu">
         <item>书签管理</item>
-        <item>朗读模式</item>
         <item>跳至开头</item>
         <item>跳转页码</item>
         <item>朗读语音</item>
@@ -46,13 +45,6 @@
         <item>删除书签</item>
         <item>清空书签</item>
     </string-array>
-    <string-array name="array_menu_read">
-        <item>逐字朗读</item>
-        <item>逐句朗读</item>
-        <item>逐段朗读</item>
-        <item>全文朗读</item>
-        <item>无朗读</item>
-    </string-array>
     <string-array name="array_menu_voice">
         <item>中文角色</item>
         <item>英文角色</item>
@@ -60,6 +52,28 @@
         <item>语调</item>
         <item>语音风格</item>
         <item>语音音效</item>
+    </string-array>
+    <string-array name="array_menu_voice_china">
+        <item>国语男声</item>
+        <item>国语女声</item>
+        <item>粤语女声</item>
+        <item>童声</item>
+    </string-array>
+    <string-array name="array_menu_voice_english">
+        <item>英语男声</item>
+        <item>英语女声</item>
+    </string-array>
+    <string-array name="array_menu_voice_style">
+        <item>一字一顿</item>
+        <item>平铺直叙</item>
+    </string-array>
+     <string-array name="array_menu_voice_effect">
+        <item>正常</item>
+        <item>忽远忽近</item>
+         <item>回声</item>
+        <item>合唱</item>
+         <item>混响</item>
+        <item>阴阳怪气</item>
     </string-array>
     <string-array name="array_menu_music">
         <item>开关</item>

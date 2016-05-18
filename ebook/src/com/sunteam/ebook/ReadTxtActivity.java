@@ -1,6 +1,7 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -115,6 +116,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
 				insertToDb();
+				break;
+			case KeyEvent.KEYCODE_MENU:
+				Intent intent = new Intent(this, MenuActivity.class);
+				startActivity(intent);
 				break;
 			default:
 				break;
