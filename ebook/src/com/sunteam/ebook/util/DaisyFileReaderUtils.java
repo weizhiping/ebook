@@ -226,18 +226,18 @@ public class DaisyFileReaderUtils
 				return	list;
 			}
 			
-			String body = data.substring(start+TAG_BODY_START.length(), end);	//得到body内容
+			start += TAG_BODY_START.length();
 			
 			while( true )
 			{
-				start = body.indexOf(TAG_TEXT_START);
-				end = body.indexOf(TAG_TEXT_END);
+				start = data.indexOf(TAG_TEXT_START, start);
+				end = data.indexOf(TAG_TEXT_END, start);
 				if( ( -1 == start ) || ( -1 == end ) )
 				{
 					break;
 				}
 				
-				String txtItem = body.substring(start+TAG_TEXT_START.length(), end);	//取得一个txt item
+				String txtItem = data.substring(start+TAG_TEXT_START.length(), end);	//取得一个txt item
 				String[] splitTextItem = txtItem.split(" ");
 				if( ( null == splitTextItem ) || ( 0 == splitTextItem.length ) )
 				{
@@ -253,7 +253,7 @@ public class DaisyFileReaderUtils
 					}
 				}
 				
-				body = body.substring(end+TAG_TEXT_END.length());
+				start = end+TAG_TEXT_END.length();
 				
 				if( i >= splitTextItem.length )
 				{
@@ -274,7 +274,7 @@ public class DaisyFileReaderUtils
 				
 				DiasySentenceNode node = new DiasySentenceNode();
 				node.sentence = getEscapeString(getDaisySentence( path, splitText[1], splitText[2] ));
-				body = getDaisySentenceAudioInfo(body, node);
+				start = getDaisySentenceAudioInfo(data, start, node);
 				
 				list.add(node);
 			}
@@ -343,26 +343,26 @@ public class DaisyFileReaderUtils
 				return	"";
 			}
 			
-			String body = data.substring(start+TAG_BODY_START.length(), end);	//得到body内容
+			start += TAG_BODY_START.length();
 			
 			while( true )
 			{
-				start = body.indexOf(lableName);
+				start = data.indexOf(lableName, start);
 				if( -1 == start )
 				{
 					return	"";
 				}
 				
-				body = body.substring(start+lableName.length());
+				start += lableName.length();
 				
-				start = body.indexOf(TAG_A_START);
-				end = body.indexOf(TAG_A_END);
+				start = data.indexOf(TAG_A_START, start);
+				end = data.indexOf(TAG_A_END, start);
 				if( ( -1 == start ) || ( -1 == end ) )
 				{
 					return	"";
 				}
 				
-				String sentenceItem = body.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
+				String sentenceItem = data.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
 				String[] splitSentenceItem = sentenceItem.split(">");
 				if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
 				{
@@ -385,20 +385,20 @@ public class DaisyFileReaderUtils
 	}
 	
 	//得到句子对应的音频文件信息
-	private String getDaisySentenceAudioInfo( String body, DiasySentenceNode node )
+	private int getDaisySentenceAudioInfo( String data, int offset, DiasySentenceNode node )
 	{
 		int n = 0;
 		while( true )
 		{
-			int textStart = body.indexOf(TAG_TEXT_START);
-			int start = body.indexOf(TAG_AUDIO_START);
-			int end = body.indexOf(TAG_AUDIO_END);
+			int textStart = data.indexOf(TAG_TEXT_START, offset);
+			int start = data.indexOf(TAG_AUDIO_START, offset);
+			int end = data.indexOf(TAG_AUDIO_END, offset);
 			if( ( -1 == start ) || ( -1 == end ) || ( textStart != -1 && start > textStart ) )
 			{
 				break;
 			}
 			
-			String audioItem = body.substring(start+TAG_AUDIO_START.length(), end);	//取得一个audio item
+			String audioItem = data.substring(start+TAG_AUDIO_START.length(), end);	//取得一个audio item
 			String[] splitAudioItem = audioItem.split(" ");
 			if( ( null == splitAudioItem ) || ( 0 == splitAudioItem.length ) )
 			{
@@ -429,10 +429,10 @@ public class DaisyFileReaderUtils
 				}
 			}
 			
-			body = body.substring(end+TAG_AUDIO_END.length());
+			offset = end+TAG_AUDIO_END.length();
 		}
 		
-		return	body;
+		return	offset;
 	}
 	
 	//得到转义字符串
