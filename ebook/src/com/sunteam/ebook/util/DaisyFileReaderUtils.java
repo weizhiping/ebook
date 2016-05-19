@@ -385,7 +385,7 @@ public class DaisyFileReaderUtils
 							start = splitItem[i].indexOf("\"");
 							end = splitItem[i].lastIndexOf("\"");
 							initNcx(path+"/"+splitItem[i].substring(start+1, end));	//初始化ncx文件
-							break;
+							return;
 						}
 					}
 				}
@@ -399,6 +399,64 @@ public class DaisyFileReaderUtils
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	//解析navPoint
+	private void parseNavPoint( String navpoint, int level )
+	{
+		String text = "";
+		String content = "";
+		
+		int s = navpoint.indexOf(TAG_NAVTEXT_START);
+		int e = navpoint.indexOf(TAG_NAVTEXT_END, s);
+		if( ( -1 == s ) || ( -1 == e ) )
+		{
+			return;
+		}
+		else
+		{
+			text = navpoint.substring(s+TAG_NAVTEXT_START.length(), e);
+		}
+		
+		s = navpoint.indexOf(TAG_CONTENT_START);
+		e = navpoint.indexOf(TAG_CONTENT_END, s);
+		if( ( -1 == s ) || ( -1 == e ) )
+		{
+			return;
+		}
+		else
+		{
+			content = navpoint.substring(s+TAG_CONTENT_START.length(), e);
+			s = content.indexOf("\"");
+			e = content.lastIndexOf("\"");
+			content = content.substring(s+1, e);
+		}
+		
+		String[] splitStr = content.split("#");
+		
+		DiasyNode node = new DiasyNode();
+		node.seq = mDiasyNodeList.size();			//序号
+		node.level = level;							//等级
+		node.href = splitStr[0];					//子链接
+		node.label = splitStr[1];					//标签
+		if( 1 == node.level )	//如果节点等级为第一等级
+		{
+			node.father = -1;
+		}
+		else
+		{
+			for( int i = node.seq-1; i >= 0; i-- )
+			{
+				if( node.level-1 == mDiasyNodeList.get(i).level )
+				{
+					node.father = mDiasyNodeList.get(i).seq;
+					break;
+				}
+			}
+		}
+		
+		node.name = getEscapeString(text);	//得到转义字符串
+		mDiasyNodeList.add(node);
 	}
 	
 	//初始化ncx文件，从中解析出Daisy3.0文件的目录结构
@@ -456,65 +514,46 @@ public class DaisyFileReaderUtils
 				if( ( -1 == position ) || ( position > end ) )
 				{
 					//当前Point是叶子节点
-					
 					String navpoint = data.substring(start, end);
-					String href = "";
-					String content = "";
+					parseNavPoint( navpoint, level );
 					
-					int s = navpoint.indexOf(TAG_NAVTEXT_START);
-					int e = navpoint.indexOf(TAG_NAVTEXT_END);
-					if( ( -1 == s ) || ( -1 == e ) )
-					{
-						continue;
-					}
-					else
-					{
-						href = navpoint.substring(s+TAG_NAVTEXT_START.length(), e);
-					}
+					start = end+TAG_NAVPOINT_END.length();
 					
-					s = navpoint.indexOf(TAG_CONTENT_START);
-					e = navpoint.indexOf(TAG_CONTENT_END);
-					if( ( -1 == s ) || ( -1 == e ) )
+					while( true )
 					{
-						continue;
-					}
-					else
-					{
-						content = navpoint.substring(s+TAG_CONTENT_START.length(), e);
-						s = content.indexOf("\"");
-						e = content.lastIndexOf("\"");
-						content = content.substring(s+1, e);
-					}
-					
-					String[] splitStr = content.split("#");
-					
-					DiasyNode node = new DiasyNode();
-					node.seq = mDiasyNodeList.size();			//序号
-					node.level = level;							//等级
-					node.href = splitStr[0];					//子链接
-					node.label = splitStr[1];					//标签
-					if( 1 == node.level )	//如果节点等级为第一等级
-					{
-						node.father = -1;
-					}
-					else
-					{
-						for( int i = node.seq-1; i >= 0; i-- )
+						int s = data.indexOf(TAG_NAVPOINT_START, start);
+						int e = data.indexOf(TAG_NAVPOINT_END, start);
+						if( ( -1 == s ) && ( -1 == e ) )
 						{
-							if( node.level-1 == mDiasyNodeList.get(i).level )
-							{
-								node.father = mDiasyNodeList.get(i).seq;
-								break;
-							}
+							break;
+						}
+						else if( ( s != -1 ) && ( -1 == e ) )
+						{
+							break;
+						}
+						else if( ( -1 == s ) && ( e != -1 ) )
+						{
+							level--;
+							start = e+TAG_NAVPOINT_END.length();
+						}
+						else if ( s > e )
+						{
+							level--;
+							start = e+TAG_NAVPOINT_END.length();
+						}
+						else
+						{
+							break;
 						}
 					}
-					
-					node.name = getEscapeString(href);	//得到转义字符串
-					mDiasyNodeList.add(node);
 				}
 				else
 				{
+					String navpoint = data.substring(start, position);
+					parseNavPoint( navpoint, level );
 					
+					start = position;
+					level++;
 				}
 			}
 		} 
