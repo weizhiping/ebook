@@ -19,7 +19,6 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class MenuActivity extends Activity implements OnEnterListener {
-	private static String TAG = "MenuActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;

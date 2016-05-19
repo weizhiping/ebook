@@ -1,0 +1,30 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/menu_layout"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/title_menu"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:background="@color/transparent"
+        android:gravity="center"
+        android:textSize="@dimen/title_text_size" />
+
+    <View
+        android:id="@+id/menu_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/title_menu"
+        android:background="@color/space_line" />
+
+    <TextView
+        android:id="@+id/num_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" 
+        android:textSize="@dimen/title_text_size"/>
+
+</RelativeLayout>
