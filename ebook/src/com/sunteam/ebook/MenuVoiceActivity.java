@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -27,6 +28,7 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ScreenManager.getScreenManager().pushActivity(this);
 		initViews();
 	}
 

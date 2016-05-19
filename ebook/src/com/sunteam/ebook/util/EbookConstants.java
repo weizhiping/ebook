@@ -73,8 +73,8 @@ public class EbookConstants
 	public static final String BOOK_TXT = "txt";		
 	public static final String BOOK_WORD = "doc";	
 	public static final String BOOK_WORDX = "docx";	
-	public static final String BOOK_DAISY_NCC = "ncc.html";
-	public static final String BOOK_DAISY_OPF = "package.OPF";
+	public static final String BOOK_DAISY_NCC = "ncc";
+	public static final String BOOK_DAISY_OPF = "OPF";
 	
 	public static final int BOOK_COLLECTION = 1;
 	public static final int BOOK_RECENT = 2;

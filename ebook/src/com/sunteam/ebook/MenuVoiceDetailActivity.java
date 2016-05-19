@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -28,6 +29,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ScreenManager.getScreenManager().pushActivity(this);
 		initData();
 		initViews();
 	}
@@ -100,7 +102,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	public void onEnterCompleted(int selectItem, String menu) {
 		switch (selectItem) {
 		case 0:
-
+			ScreenManager.getScreenManager().popAllActivityExceptOne(null);
 			break;
 		case 1:
 

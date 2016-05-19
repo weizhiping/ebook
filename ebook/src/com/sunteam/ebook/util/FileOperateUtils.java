@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * 通用文件操作
@@ -292,7 +293,20 @@ public class FileOperateUtils {
 				.toLowerCase();
 		return strEx;
 	}
-
+	/**
+	 * 获取文件最后一个"."之前的名字
+	 * @param fileName
+	 * @return
+	 */
+	public static String getFileExtensionsName(String fileName) {
+		String strEx = "*";
+		int dotIndex = fileName.lastIndexOf(".");
+		if (dotIndex < 0)
+			return strEx;
+		strEx = fileName.substring(0, dotIndex);
+		return strEx;
+	}
+	
 	/**
 	 * 获取是否包含文件
 	 * 
@@ -322,7 +336,7 @@ public class FileOperateUtils {
 	}
 	
 	/**
-	 * 获取是否包含文件
+	 * 获取是否包含diasy文件
 	 * 
 	 * @param file
 	 * @param suffix
@@ -337,8 +351,9 @@ public class FileOperateUtils {
 			return bIsFilter;
 		for (File f : file.listFiles()) {
 			if (!f.isDirectory()) {
-				if (EbookConstants.BOOK_DAISY_NCC.equalsIgnoreCase(f.getName())
-						|| EbookConstants.BOOK_DAISY_OPF.equalsIgnoreCase(f.getName())) {
+				String name = f.getName();
+				if (EbookConstants.BOOK_DAISY_NCC.equalsIgnoreCase(getFileExtensionsName(name))
+						|| EbookConstants.BOOK_DAISY_OPF.equalsIgnoreCase(getFileExtensions(name))) {
 					return true;
 				}
 			} else {
