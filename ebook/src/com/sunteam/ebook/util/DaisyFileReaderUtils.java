@@ -20,7 +20,7 @@ public class DaisyFileReaderUtils
 	private static final String TAG_BODY_START = "<body>";
 	private static final String TAG_BODY_END = "</body>";
 	
-	//以下TAG主要在ncc.html文件中使用
+	//以下TAG主要在ncc.*文件中使用
 	private static final String TAG_H_START = "<h";
 	private static final String TAG_H_END = "</h";
 	private static final String TAG_A_START = "<a href=\"";
@@ -31,6 +31,22 @@ public class DaisyFileReaderUtils
 	private static final String TAG_TEXT_END = "/>";
 	private static final String TAG_AUDIO_START = "<audio";
 	private static final String TAG_AUDIO_END = "/>";
+	
+	//以下TAG主要在*.opf文件中使用
+	private static final String TAG_MANIFEST_START = "<manifest>";
+	private static final String TAG_MANIFEST_END = "</manifest>";
+	private static final String TAG_ITEM_START = "<item";
+	private static final String TAG_ITEM_END = "/>";
+	
+	//以下TAG主要在*.ncx文件中使用
+	private static final String TAG_NAVMAP_START = "<navMap";
+	private static final String TAG_NAVMAP_END = "</navMap>";
+	private static final String TAG_NAVPOINT_START = "<navPoint";
+	private static final String TAG_NAVPOINT_END = "</navPoint>";
+	private static final String TAG_NAVTEXT_START = "<text>";
+	private static final String TAG_NAVTEXT_END = "</text>";
+	private static final String TAG_CONTENT_START = "<content";
+	private static final String TAG_CONTENT_END = "/>";
 	
 	private static DaisyFileReaderUtils instance = null;
 
@@ -138,7 +154,8 @@ public class DaisyFileReaderUtils
 			}
 			else
 			{
-				initDaisy3(buffer, strCharsetName);
+				seq = fullpath.lastIndexOf("/");
+				initDaisy3(fullpath.substring(0, seq), buffer, strCharsetName);
 			}
 		} 
 		catch (IOException e)
@@ -331,70 +348,181 @@ public class DaisyFileReaderUtils
 	}
 
 	//初始化Daisy3文件
-	private void initDaisy3( byte[] buffer, String strCharsetName )
+	private void initDaisy3( String path, byte[] buffer, String strCharsetName )
 	{
 		try
 		{
 			String data = new String(buffer, strCharsetName);
-			int start = data.indexOf(TAG_BODY_START);
-			int end = data.lastIndexOf(TAG_BODY_END);
+			int start = data.indexOf(TAG_MANIFEST_START);
+			int end = data.lastIndexOf(TAG_MANIFEST_END);
 			
 			if( ( -1 == start ) || ( -1 == end ) )
 			{
-				//body为空
+				//manifest为空
 				return;
 			}
 			
-			start += TAG_BODY_START.length();
+			start += TAG_MANIFEST_START.length();
 
 			while( true )
 			{
-				start = data.indexOf(TAG_H_START, start);
-				end = data.indexOf(TAG_H_END, start);
+				start = data.indexOf(TAG_ITEM_START, start);
+				end = data.indexOf(TAG_ITEM_END, start);
 				
 				if( ( -1 == start ) || ( -1 == end ) )
 				{
 					break;
 				}
 				
-				int oldEnd = end;
-				String item = data.substring(start+TAG_H_START.length(), end);	//取得一个item
-				String[] splitItem = item.split(" ");
-				
-				start = item.indexOf(TAG_A_START);
-				end = item.indexOf(TAG_A_END);
-				String href = item.substring(start+TAG_A_START.length(), end);
-				String[] splitHref = href.split("\">");
-				String[] splitStr = splitHref[0].split("#");
-				
-				DiasyNode node = new DiasyNode();
-				node.seq = mDiasyNodeList.size();			//序号
-				node.level = Integer.parseInt(splitItem[0]);//等级
-				node.href = splitStr[0];					//子链接
-				node.label = splitStr[1];					//标签
-				if( 1 == node.level )	//如果节点等级为第一等级
+				String item = data.substring(start+TAG_ITEM_START.length(), end);	//取得一个item
+				if( item.contains("media-type=\"application/x-dtbncx+xml\"") )
 				{
-					node.father = -1;
-				}
-				else
-				{
-					for( int i = node.seq-1; i >= 0; i-- )
+					String[] splitItem = item.split(" ");
+					for( int i = 0; i < splitItem.length; i++ )
 					{
-						if( node.level-1 == mDiasyNodeList.get(i).level )
+						if( splitItem[i].contains("href=") )
 						{
-							node.father = mDiasyNodeList.get(i).seq;
+							start = splitItem[i].indexOf("\"");
+							end = splitItem[i].lastIndexOf("\"");
+							initNcx(path+"/"+splitItem[i].substring(start+1, end));	//初始化ncx文件
 							break;
 						}
 					}
 				}
-				
-				node.name = getEscapeString(splitHref[1]);	//得到转义字符串
-				mDiasyNodeList.add(node);
-				
-				start = oldEnd+TAG_H_END.length();
+				else
+				{
+					start = end+TAG_ITEM_END.length();
+				}
 			}
 		}
 		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	//初始化ncx文件，从中解析出Daisy3.0文件的目录结构
+	private void initNcx( String fullpath )
+	{
+		try 
+		{
+			IdentifyEncoding ie = new IdentifyEncoding();
+			String strCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
+			
+			File file = new File(fullpath);
+			if( !file.exists() )
+			{
+				return;
+			}
+			int length = (int)file.length();
+			if( 0 == length )
+			{
+				return;
+			}
+			
+			//先将索引文件读取到内存
+			FileInputStream fis = new FileInputStream(file);
+			byte[] buffer = new byte[length];
+			fis.read(buffer);
+			fis.close();
+			
+			String data = new String(buffer, strCharsetName);
+			
+			int start = data.indexOf(TAG_NAVMAP_START);
+			int end = data.lastIndexOf(TAG_NAVMAP_END);
+			
+			if( ( -1 == start ) || ( -1 == end ) )
+			{
+				//navmap为空
+				return;
+			}
+			
+			start += TAG_NAVMAP_START.length();
+			int level = 1;
+
+			while( true )
+			{
+				start = data.indexOf(TAG_NAVPOINT_START, start);
+				end = data.indexOf(TAG_NAVPOINT_END, start);
+				
+				if( ( -1 == start ) || ( -1 == end ) )
+				{
+					break;
+				}
+				
+				start += TAG_NAVPOINT_START.length();
+				
+				int position = data.indexOf(TAG_NAVPOINT_START, start);
+				if( ( -1 == position ) || ( position > end ) )
+				{
+					//当前Point是叶子节点
+					
+					String navpoint = data.substring(start, end);
+					String href = "";
+					String content = "";
+					
+					int s = navpoint.indexOf(TAG_NAVTEXT_START);
+					int e = navpoint.indexOf(TAG_NAVTEXT_END);
+					if( ( -1 == s ) || ( -1 == e ) )
+					{
+						continue;
+					}
+					else
+					{
+						href = navpoint.substring(s+TAG_NAVTEXT_START.length(), e);
+					}
+					
+					s = navpoint.indexOf(TAG_CONTENT_START);
+					e = navpoint.indexOf(TAG_CONTENT_END);
+					if( ( -1 == s ) || ( -1 == e ) )
+					{
+						continue;
+					}
+					else
+					{
+						content = navpoint.substring(s+TAG_CONTENT_START.length(), e);
+						s = content.indexOf("\"");
+						e = content.lastIndexOf("\"");
+						content = content.substring(s+1, e);
+					}
+					
+					String[] splitStr = content.split("#");
+					
+					DiasyNode node = new DiasyNode();
+					node.seq = mDiasyNodeList.size();			//序号
+					node.level = level;							//等级
+					node.href = splitStr[0];					//子链接
+					node.label = splitStr[1];					//标签
+					if( 1 == node.level )	//如果节点等级为第一等级
+					{
+						node.father = -1;
+					}
+					else
+					{
+						for( int i = node.seq-1; i >= 0; i-- )
+						{
+							if( node.level-1 == mDiasyNodeList.get(i).level )
+							{
+								node.father = mDiasyNodeList.get(i).seq;
+								break;
+							}
+						}
+					}
+					
+					node.name = getEscapeString(href);	//得到转义字符串
+					mDiasyNodeList.add(node);
+				}
+				else
+				{
+					
+				}
+			}
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
