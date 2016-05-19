@@ -610,42 +610,65 @@ public class DaisyFileReaderUtils
 			}
 		
 			String data = mSentenceData;
-			int start = data.indexOf(TAG_BODY_START);
-			int end = data.lastIndexOf(TAG_BODY_END);
-			
-			if( ( -1 == start ) || ( -1 == end ) )
+			if( DaisyType.DAISY2 == mDaisyType )	//Daisy2.0
 			{
-				//body为空
-				return	"";
+				int start = data.indexOf(TAG_BODY_START);
+				int end = data.lastIndexOf(TAG_BODY_END);
+				
+				if( ( -1 == start ) || ( -1 == end ) )
+				{
+					//body为空
+					return	"";
+				}
+				
+				start += TAG_BODY_START.length();
+				
+				while( true )
+				{
+					start = data.indexOf(lableName, start);
+					if( -1 == start )
+					{
+						return	"";
+					}
+					
+					start += lableName.length();
+					
+					start = data.indexOf(TAG_A_START, start);
+					end = data.indexOf(TAG_A_END, start);
+					if( ( -1 == start ) || ( -1 == end ) )
+					{
+						return	"";
+					}
+					
+					String sentenceItem = data.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
+					String[] splitSentenceItem = sentenceItem.split(">");
+					if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
+					{
+						return	"";
+					}
+					
+					return	splitSentenceItem[1];
+				}
 			}
-			
-			start += TAG_BODY_START.length();
-			
-			while( true )
+			else	//Daisy3.0
 			{
-				start = data.indexOf(lableName, start);
+				int start = data.indexOf("id=\""+lableName+"\"");
 				if( -1 == start )
 				{
 					return	"";
 				}
-				
-				start += lableName.length();
-				
-				start = data.indexOf(TAG_A_START, start);
-				end = data.indexOf(TAG_A_END, start);
-				if( ( -1 == start ) || ( -1 == end ) )
+				start = data.indexOf(">", start );
+				if( -1 == start )
+				{
+					return	"";
+				}
+				int end = data.indexOf("</", start);
+				if( -1 == end )
 				{
 					return	"";
 				}
 				
-				String sentenceItem = data.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
-				String[] splitSentenceItem = sentenceItem.split(">");
-				if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
-				{
-					return	"";
-				}
-				
-				return	splitSentenceItem[1];
+				return	data.substring(start+1, end);
 			}
 		} 
 		catch (IOException e)
@@ -689,7 +712,7 @@ public class DaisyFileReaderUtils
 					String[] splitAudio = splitAudioItem[i].replaceAll("\"", "#").split("#");
 					node.audioFile = splitAudio[1];
 				}
-				else if( splitAudioItem[i].indexOf("clip-begin=\"npt=") == 0 )	//时间开始
+				else if( splitAudioItem[i].indexOf("clip-begin=\"npt=") == 0 )	//时间开始,daisy2.0
 				{
 					if( 0 == n )
 					{
@@ -698,10 +721,46 @@ public class DaisyFileReaderUtils
 					}
 					n++;
 				}
-				else if( splitAudioItem[i].indexOf("clip-end=\"npt=") == 0 )	//时间结束
+				else if( splitAudioItem[i].indexOf("clip-end=\"npt=") == 0 )	//时间结束,daisy2.0
 				{
 					String[] splitTime = splitAudioItem[i].replaceAll("s\"", "").split("=");
 					node.endTime = (long)(Float.parseFloat(splitTime[2])*1000);
+				}
+				else if( splitAudioItem[i].indexOf("clipBegin=\"") == 0 )	//时间开始,daisy3.0
+				{
+					if( 0 == n )
+					{
+						String[] splitTime = splitAudioItem[i].split("\"");
+						if( splitTime[1].contains(".") )	//有毫秒
+						{
+							String[] splitStr1 = splitTime[1].split("\\.");
+							String[] splitStr2 = splitStr1[0].split(":");
+							
+							node.startTime = ( Long.parseLong(splitStr2[0]) * 3600 + Long.parseLong(splitStr2[1]) * 60 + Long.parseLong(splitStr2[2]) ) * 1000L + Long.parseLong(splitStr1[1]);  
+						}
+						else
+						{
+							String[] splitStr2 = splitTime[1].split(":");
+							node.startTime = ( Long.parseLong(splitStr2[0]) * 3600 + Long.parseLong(splitStr2[1]) * 60 + Long.parseLong(splitStr2[2]) ) * 1000L;
+						}
+					}
+					n++;
+				}
+				else if( splitAudioItem[i].indexOf("clipEnd=\"") == 0 )	//时间结束,daisy3.0
+				{
+					String[] splitTime = splitAudioItem[i].split("\"");
+					if( splitTime[1].contains(".") )	//有毫秒
+					{
+						String[] splitStr1 = splitTime[1].split("\\.");
+						String[] splitStr2 = splitStr1[0].split(":");
+						
+						node.endTime = ( Long.parseLong(splitStr2[0]) * 3600 + Long.parseLong(splitStr2[1]) * 60 + Long.parseLong(splitStr2[2]) ) * 1000L + Long.parseLong(splitStr1[1]);  
+					}
+					else
+					{
+						String[] splitStr2 = splitTime[1].split(":");
+						node.endTime = ( Long.parseLong(splitStr2[0]) * 3600 + Long.parseLong(splitStr2[1]) * 60 + Long.parseLong(splitStr2[2]) ) * 1000L;
+					}
 				}
 			}
 			
