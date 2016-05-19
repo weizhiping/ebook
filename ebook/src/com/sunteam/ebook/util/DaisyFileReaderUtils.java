@@ -37,6 +37,13 @@ public class DaisyFileReaderUtils
 	private ArrayList<DiasyNode> mDiasyNodeList = new ArrayList<DiasyNode>();	//保存索引列表
 	private String mSentencePath = null;	//保存句子的路径
 	private String mSentenceData = null;	//保存所有的句子数据
+	private DaisyType mDaisyType = DaisyType.DAISY2;
+	
+	enum DaisyType
+	{
+		DAISY2,
+		DAISY3,
+	}	//Daisy文件格式
 	
 	public static DaisyFileReaderUtils getInstance()
 	{
@@ -107,69 +114,31 @@ public class DaisyFileReaderUtils
 				return;
 			}
 			
+			String filename = file.getName();			//文件名
+			int seq = filename.lastIndexOf(".");	
+			String suffix = filename.substring(seq+1);	//后缀名
+			if( "opf".equalsIgnoreCase(suffix) )
+			{
+				mDaisyType = DaisyType.DAISY3;
+			}
+			else
+			{
+				mDaisyType = DaisyType.DAISY2;
+			}
+			
 			//先将索引文件读取到内存
 			FileInputStream fis = new FileInputStream(file);
 			byte[] buffer = new byte[length];
 			fis.read(buffer);
 			fis.close();
-		
-			String data = new String(buffer, strCharsetName);
-			int start = data.indexOf(TAG_BODY_START);
-			int end = data.lastIndexOf(TAG_BODY_END);
 			
-			if( ( -1 == start ) || ( -1 == end ) )
+			if( DaisyType.DAISY2 == mDaisyType )
 			{
-				//body为空
-				return;
+				initDaisy2(buffer, strCharsetName);
 			}
-			
-			start += TAG_BODY_START.length();
-
-			while( true )
+			else
 			{
-				start = data.indexOf(TAG_H_START, start);
-				end = data.indexOf(TAG_H_END, start);
-				
-				if( ( -1 == start ) || ( -1 == end ) )
-				{
-					break;
-				}
-				
-				int oldEnd = end;
-				String item = data.substring(start+TAG_H_START.length(), end);	//取得一个item
-				String[] splitItem = item.split(" ");
-				
-				start = item.indexOf(TAG_A_START);
-				end = item.indexOf(TAG_A_END);
-				String href = item.substring(start+TAG_A_START.length(), end);
-				String[] splitHref = href.split("\">");
-				String[] splitStr = splitHref[0].split("#");
-				
-				DiasyNode node = new DiasyNode();
-				node.seq = mDiasyNodeList.size();			//序号
-				node.level = Integer.parseInt(splitItem[0]);//等级
-				node.href = splitStr[0];					//子链接
-				node.label = splitStr[1];					//标签
-				if( 1 == node.level )	//如果节点等级为第一等级
-				{
-					node.father = -1;
-				}
-				else
-				{
-					for( int i = node.seq-1; i >= 0; i-- )
-					{
-						if( node.level-1 == mDiasyNodeList.get(i).level )
-						{
-							node.father = mDiasyNodeList.get(i).seq;
-							break;
-						}
-					}
-				}
-				
-				node.name = getEscapeString(splitHref[1]);	//得到转义字符串
-				mDiasyNodeList.add(node);
-				
-				start = oldEnd+TAG_H_END.length();
+				initDaisy3(buffer, strCharsetName);
 			}
 		} 
 		catch (IOException e)
@@ -289,6 +258,146 @@ public class DaisyFileReaderUtils
 		}
 		
 		return	list;
+	}
+
+	//初始化Daisy2文件
+	private void initDaisy2( byte[] buffer, String strCharsetName )
+	{
+		try
+		{
+			String data = new String(buffer, strCharsetName);
+			int start = data.indexOf(TAG_BODY_START);
+			int end = data.lastIndexOf(TAG_BODY_END);
+			
+			if( ( -1 == start ) || ( -1 == end ) )
+			{
+				//body为空
+				return;
+			}
+			
+			start += TAG_BODY_START.length();
+
+			while( true )
+			{
+				start = data.indexOf(TAG_H_START, start);
+				end = data.indexOf(TAG_H_END, start);
+				
+				if( ( -1 == start ) || ( -1 == end ) )
+				{
+					break;
+				}
+				
+				int oldEnd = end;
+				String item = data.substring(start+TAG_H_START.length(), end);	//取得一个item
+				String[] splitItem = item.split(" ");
+				
+				start = item.indexOf(TAG_A_START);
+				end = item.indexOf(TAG_A_END);
+				String href = item.substring(start+TAG_A_START.length(), end);
+				String[] splitHref = href.split("\">");
+				String[] splitStr = splitHref[0].split("#");
+				
+				DiasyNode node = new DiasyNode();
+				node.seq = mDiasyNodeList.size();			//序号
+				node.level = Integer.parseInt(splitItem[0]);//等级
+				node.href = splitStr[0];					//子链接
+				node.label = splitStr[1];					//标签
+				if( 1 == node.level )	//如果节点等级为第一等级
+				{
+					node.father = -1;
+				}
+				else
+				{
+					for( int i = node.seq-1; i >= 0; i-- )
+					{
+						if( node.level-1 == mDiasyNodeList.get(i).level )
+						{
+							node.father = mDiasyNodeList.get(i).seq;
+							break;
+						}
+					}
+				}
+				
+				node.name = getEscapeString(splitHref[1]);	//得到转义字符串
+				mDiasyNodeList.add(node);
+				
+				start = oldEnd+TAG_H_END.length();
+			}
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+
+	//初始化Daisy3文件
+	private void initDaisy3( byte[] buffer, String strCharsetName )
+	{
+		try
+		{
+			String data = new String(buffer, strCharsetName);
+			int start = data.indexOf(TAG_BODY_START);
+			int end = data.lastIndexOf(TAG_BODY_END);
+			
+			if( ( -1 == start ) || ( -1 == end ) )
+			{
+				//body为空
+				return;
+			}
+			
+			start += TAG_BODY_START.length();
+
+			while( true )
+			{
+				start = data.indexOf(TAG_H_START, start);
+				end = data.indexOf(TAG_H_END, start);
+				
+				if( ( -1 == start ) || ( -1 == end ) )
+				{
+					break;
+				}
+				
+				int oldEnd = end;
+				String item = data.substring(start+TAG_H_START.length(), end);	//取得一个item
+				String[] splitItem = item.split(" ");
+				
+				start = item.indexOf(TAG_A_START);
+				end = item.indexOf(TAG_A_END);
+				String href = item.substring(start+TAG_A_START.length(), end);
+				String[] splitHref = href.split("\">");
+				String[] splitStr = splitHref[0].split("#");
+				
+				DiasyNode node = new DiasyNode();
+				node.seq = mDiasyNodeList.size();			//序号
+				node.level = Integer.parseInt(splitItem[0]);//等级
+				node.href = splitStr[0];					//子链接
+				node.label = splitStr[1];					//标签
+				if( 1 == node.level )	//如果节点等级为第一等级
+				{
+					node.father = -1;
+				}
+				else
+				{
+					for( int i = node.seq-1; i >= 0; i-- )
+					{
+						if( node.level-1 == mDiasyNodeList.get(i).level )
+						{
+							node.father = mDiasyNodeList.get(i).seq;
+							break;
+						}
+					}
+				}
+				
+				node.name = getEscapeString(splitHref[1]);	//得到转义字符串
+				mDiasyNodeList.add(node);
+				
+				start = oldEnd+TAG_H_END.length();
+			}
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	/**
