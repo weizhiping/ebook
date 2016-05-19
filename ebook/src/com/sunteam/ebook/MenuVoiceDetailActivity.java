@@ -19,7 +19,6 @@ import com.sunteam.ebook.view.MainView;
  */
 public class MenuVoiceDetailActivity extends Activity implements
 		OnEnterListener {
-	private static String TAG = "MenuVoiceDetailActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -90,7 +89,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 			return true;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-			mMainView.enter();
+			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		default:
 			break;
@@ -102,7 +101,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	public void onEnterCompleted(int selectItem, String menu) {
 		switch (selectItem) {
 		case 0:
-			ScreenManager.getScreenManager().popAllActivityExceptOne(null);
+			
 			break;
 		case 1:
 
@@ -120,5 +119,6 @@ public class MenuVoiceDetailActivity extends Activity implements
 
 			break;
 		}
+		ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 }

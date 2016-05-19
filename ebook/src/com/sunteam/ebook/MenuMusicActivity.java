@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -18,7 +17,6 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class MenuMusicActivity extends Activity implements OnEnterListener {
-	private static String TAG = "MenuActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;

@@ -19,7 +19,6 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class MenuVoiceActivity extends Activity implements OnEnterListener {
-	private static String TAG = "MenuVoiceActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -90,10 +89,10 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 			startToDetail(1);
 			break;
 		case 2://语速
-			
+			startToNumEdit(mMenuList.get(selectItem));
 			break;
 		case 3://语调
-			
+			startToNumEdit(mMenuList.get(selectItem));
 			break;
 		case 4://语音风格
 			startToDetail(4);
@@ -107,6 +106,13 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 	private void startToDetail(int flag){
 		Intent intent = new Intent(this,MenuVoiceDetailActivity.class);
 		intent.putExtra("voice_flag", flag);
+		startActivity(intent);
+	}
+	
+	private void startToNumEdit(String name){
+		Intent intent = new Intent(this,MenuNumEditActivity.class);
+		intent.putExtra("edit_name", name);
+		intent.putExtra("edit_max", 20);
 		startActivity(intent);
 	}
 }
