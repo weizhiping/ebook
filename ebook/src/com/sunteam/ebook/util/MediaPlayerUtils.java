@@ -14,7 +14,7 @@ public class MediaPlayerUtils
 {
 	private static final int MSG_PLAY_COMPLETION = 100;
 	private static MediaPlayerUtils instance = null;
-	private MediaPlayer mMediaPlayer;
+	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
 	
@@ -56,14 +56,10 @@ public class MediaPlayerUtils
 	//初始化
 	public void init()
 	{
-		mMediaPlayer = new MediaPlayer();
-	}
-	
-	//销毁
-	public void destroy()
-	{
-		mMediaPlayer.release();
-		mMediaPlayer = null;
+		if( null == mMediaPlayer )
+		{
+			mMediaPlayer = new MediaPlayer();
+		}
 	}
 
 	//暂停
@@ -102,6 +98,9 @@ public class MediaPlayerUtils
 				mMediaPlayer.stop();
 				mPlayStatus = PlayStatus.STOP;
 			}	//如果没有停止，先停止
+			
+			mMediaPlayer.release();
+			mMediaPlayer = null;
 		}
 	}
 
@@ -113,6 +112,7 @@ public class MediaPlayerUtils
 	public void play( final String audioPath, long startTime, long endTime ) 
 	{
 		stop();	//先停止当前播放
+		init();
 		if( mMediaPlayer != null )
 		{
 			try 
@@ -130,6 +130,8 @@ public class MediaPlayerUtils
 					{										
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
+						mMediaPlayer.release();
+						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayCompleted();
@@ -142,6 +144,8 @@ public class MediaPlayerUtils
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
+						mMediaPlayer.release();
+						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayError();
@@ -180,7 +184,7 @@ public class MediaPlayerUtils
             switch (msg.what) 
             {
             	case MSG_PLAY_COMPLETION:	//播放完毕
-            		mPlayStatus = PlayStatus.STOP;
+            		stop();	//先停止当前播放
 					if( mOnMediaPlayerListener != null )
 					{
 						mOnMediaPlayerListener.onPlayCompleted();

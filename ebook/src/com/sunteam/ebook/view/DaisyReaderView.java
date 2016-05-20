@@ -752,7 +752,7 @@ import android.view.View;
 		 	case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
 		 	case READ_MODE_SENCENTE:	//逐句朗读
-		 		nextSentence(true);
+		 		curSentence(true);
 		 		break;
 		 	default:
 		 		break;
@@ -1087,14 +1087,42 @@ import android.view.View;
 		 this.invalidate();
 	 }	 
 	 
+	 //到当前句子
+	 private void curSentence( boolean isSpeakPage )
+	 {
+		 int position = getCurReversePosition();
+		 if( position >= mDiasySentenceNodeList.size() )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+			 
+			 return;
+		 }
+		 
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 {
+			 if( position == i )
+			 {
+				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
+				 break;
+			 }
+			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
+		 }
+		 
+		 readReverseText(isSpeakPage);			//朗读反显文字
+		 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+		 this.invalidate();
+	 }
+	 
 	 //到下一个句子
 	 private void nextSentence( boolean isSpeakPage )
 	 {
 		 int position = getCurReversePosition();
-		 if( !isSpeakPage )
-		 {
-			 position++;
-		 }
+		 position++;
 		 if( position >= mDiasySentenceNodeList.size() )
 		 {
 			 if( mOnPageFlingListener != null )
@@ -1285,7 +1313,7 @@ import android.view.View;
 		{
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextSentence(false);
+		 		curSentence(false);
 		 		break;
 		 	default:
 		 		break;

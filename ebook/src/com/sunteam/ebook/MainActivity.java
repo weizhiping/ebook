@@ -128,6 +128,5 @@ public class MainActivity extends Activity implements OnEnterListener
 	{
 		super.onDestroy();
 		TTSUtils.getInstance().destroy();
-		MediaPlayerUtils.getInstance().destroy();
 	}
 }

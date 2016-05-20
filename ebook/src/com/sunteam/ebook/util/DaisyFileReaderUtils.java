@@ -283,7 +283,7 @@ public class DaisyFileReaderUtils
 					e.printStackTrace();
 				}
 				
-				start = getDaisySentenceAudioInfo(data, start, node);
+				start = getDaisySentenceAudioInfo(path, data, start, node);
 				
 				list.add(node);
 			}
@@ -707,7 +707,7 @@ public class DaisyFileReaderUtils
 	}
 	
 	//得到句子对应的音频文件信息
-	private int getDaisySentenceAudioInfo( String data, int offset, DiasySentenceNode node )
+	private int getDaisySentenceAudioInfo( String path, String data, int offset, DiasySentenceNode node )
 	{
 		int n = 0;
 		while( true )
@@ -733,7 +733,7 @@ public class DaisyFileReaderUtils
 				if( splitAudioItem[i].indexOf("src=\"") == 0 )	//音频文件
 				{
 					String[] splitAudio = splitAudioItem[i].replaceAll("\"", "#").split("#");
-					node.audioFile = splitAudio[1];
+					node.audioFile = path+"/"+splitAudio[1];
 				}
 				else if( splitAudioItem[i].indexOf("clip-begin=\"npt=") == 0 )	//时间开始,daisy2.0
 				{
