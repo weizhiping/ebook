@@ -697,10 +697,34 @@ import android.view.View;
 		 mCurPage = pi.page;
 	 }
 	 
+	 //得到当前页
+	 public int getCurPage()
+	 {
+		 return	mCurPage;
+	 }
+	 
 	 //得到总页数
 	 public int getPageCount()
 	 {
 		 return	( mSplitInfoList.size() + mLineCount - 1 ) / mLineCount;
+	 }
+	 
+	 //设置页码
+	 public boolean setCurPage( int page )
+	 {
+		 if( ( page < 1 ) || ( page > getPageCount() ) )
+		 {
+			 return	false;
+		 }
+		 
+		 TTSUtils.getInstance().stop();
+		 mCurPage = page;
+		 mLineNumber = (mCurPage-1)*mLineCount;
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 this.invalidate();
+		 
+		 return	true;
 	 }
 	 
 	 /**
