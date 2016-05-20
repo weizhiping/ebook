@@ -10,6 +10,9 @@ import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.MediaPlayerUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils.OnMediaPlayerListener;
+import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
@@ -40,7 +43,7 @@ import android.view.View;
  *
  */
 
- public class DaisyReaderView extends View implements OnGestureListener, OnDoubleTapListener, OnTTSListener
+ public class DaisyReaderView extends View implements OnGestureListener, OnDoubleTapListener, OnTTSListener, OnMediaPlayerListener
  {	 
 	 private static final String TAG = "DaisyReaderView";
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
@@ -120,6 +123,7 @@ import android.view.View;
 		 mTextSize *= scale;		//字体大小
 		 
 		 TTSUtils.getInstance().OnTTSListener(this);
+		 MediaPlayerUtils.getInstance().OnMediaPlayerListener(this);
 	 }
 	 
 	 //设置翻页监听器
@@ -603,7 +607,7 @@ import android.view.View;
 			 return	false;
 		 }
 		 
-		 TTSUtils.getInstance().stop();
+		 MediaPlayerUtils.getInstance().stop();
 		 mCurPage = page;
 		 mLineNumber = (mCurPage-1)*mLineCount;
 		 mReverseInfo.startPos = 0;
@@ -1007,7 +1011,7 @@ import android.view.View;
 	 //跳到上一句
 	 public void up()
 	 {
-		 TTSUtils.getInstance().stop();
+		 MediaPlayerUtils.getInstance().stop();
 		 
 		 preSentence();
 	 }
@@ -1015,7 +1019,7 @@ import android.view.View;
 	 //跳到下一句
 	 public void down()
 	 {
-		 TTSUtils.getInstance().stop();
+		 MediaPlayerUtils.getInstance().stop();
 		 
 		 nextSentence(false);
 	 }
@@ -1023,29 +1027,29 @@ import android.view.View;
 	 //跳到上一章节
 	 public void left()
 	 {
-		 TTSUtils.getInstance().stop();
+		 MediaPlayerUtils.getInstance().stop();
 	 }
 	 
 	 //跳到下一章节
 	 public void right()
 	 {
-		 TTSUtils.getInstance().stop();
+		 MediaPlayerUtils.getInstance().stop();
 	 }
 	 
 	 //确定
 	 public void enter()
 	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 PlayStatus status = MediaPlayerUtils.getInstance().getPlayStatus();
 		 
-		 if( status == SpeakStatus.SPEAK )
+		 if( status == PlayStatus.PLAY )
 		 {
-			 TTSUtils.getInstance().pause();
+			 MediaPlayerUtils.getInstance().pause();
 		 }
-		 else if( status == SpeakStatus.PAUSE )
+		 else if( status == PlayStatus.PAUSE )
 		 {
-			 TTSUtils.getInstance().resume();
+			 MediaPlayerUtils.getInstance().resume();
 		 }
-		 else if( status == SpeakStatus.STOP )
+		 else if( status == PlayStatus.STOP )
 		 {
 			 nextSentence(false);
 		 }
@@ -1130,23 +1134,17 @@ import android.view.View;
 			 }
 			 return;
 		 }
-		
-		 try 
+		 
+		 int postion = getCurReversePosition();
+		 DiasySentenceNode node = mDiasySentenceNodeList.get(postion);
+		 if( isSpeakPage )
 		 {
-			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-			 if( isSpeakPage )
-			 {
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-				 TTSUtils.getInstance().speakContent(tips+text);
-			 }
-			 else
-			 {
-				 TTSUtils.getInstance().speakContent(text);
-			 }
-		 } 
-		 catch (UnsupportedEncodingException e) 
+			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+			 TTSUtils.getInstance().speakContent(tips);
+		 }
+		 else
 		 {
-			 e.printStackTrace();
+			 MediaPlayerUtils.getInstance().play(node.audioFile, node.startTime, node.endTime);
 		 }
 	 }
 	 
@@ -1297,6 +1295,29 @@ import android.view.View;
 	//朗读错误
 	@Override
 	public void onSpeakError() 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	//播放完成
+	@Override
+	public void onPlayCompleted() 
+	{
+		// TODO Auto-generated method stub
+		switch( mReadMode )
+		{
+			case READ_MODE_ALL:			//全文朗读
+		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		nextSentence(false);
+		 		break;
+		 	default:
+		 		break;
+		 }
+	}
+
+	@Override
+	public void onPlayError() 
 	{
 		// TODO Auto-generated method stub
 		
