@@ -12,6 +12,7 @@ import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.DaisyReaderView;
@@ -115,6 +116,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
+		
+		MediaPlayerUtils.getInstance().stop();
+		MediaPlayerUtils.getInstance().OnMediaPlayerListener(null);
 	}
 	
 	@Override
