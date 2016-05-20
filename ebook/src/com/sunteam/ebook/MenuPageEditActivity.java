@@ -33,6 +33,7 @@ public class MenuPageEditActivity extends Activity {
 		Intent intent = getIntent();
 		currentPage = intent.getIntExtra("page_cur", 1);
 		totalPage = intent.getIntExtra("page_count", 1);
+		number = currentPage;
 		initViews();
 	}
 
@@ -68,14 +69,21 @@ public class MenuPageEditActivity extends Activity {
 			number++;
 			break;
 		case KeyEvent.KEYCODE_DPAD_LEFT: // 左
-			number--;
+			String num = String.valueOf(number);
+			if(1 == num.length()){
+				number = 0;
+			}else{
+				num = num.substring(0, num.length()-1);
+				number = Integer.valueOf(num);
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT: // 右
+		//	Log.e("page", "--right------page--:" );
 			number = number*10;
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-			Log.e("page", "-----enter num--:" + number);
+		//	Log.e("page", "-----enter num--:" + number);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		default:
