@@ -3,6 +3,7 @@ package com.sunteam.ebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private TextReaderView mTextReaderView = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
+	private static final int MENU_CODE = 10;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +121,9 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				break;
 			case KeyEvent.KEYCODE_MENU:
 				Intent intent = new Intent(this, MenuActivity.class);
-				startActivity(intent);
+				intent.putExtra("page_count", mTextReaderView.getPageCount());
+				intent.putExtra("page_cur", mTextReaderView.getCurPage());
+				startActivityForResult(intent, MENU_CODE);
 				break;
 			default:
 				break;
@@ -136,6 +140,22 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
 	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("menu", "-----------------MENU_CODE---:" + requestCode);
+		if(RESULT_OK == resultCode){
+			switch(requestCode){
+			case MENU_CODE:
+				int page = data.getIntExtra("page", 1);
+				Log.e("menu", "-----------------MENU_CODE-page--:" + page);
+				mTextReaderView.setCurPage(page);
+				break;
+			}
+		}
+	}
+
 	@Override
 	public void onDestroy()
 	{

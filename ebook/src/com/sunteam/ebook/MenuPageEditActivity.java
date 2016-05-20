@@ -1,7 +1,9 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -13,47 +15,44 @@ import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 
 /**
- * 数字选择界面
+ * 选择页码界面
  * 
  * @author sylar
  */
-public class MenuNumEditActivity extends Activity {
+public class MenuPageEditActivity extends Activity {
 	private int number;
-	private int maxNum;
 	private EditText numView;
+	private int currentPage;
+	private int totalPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
+		Intent intent = getIntent();
+		currentPage = intent.getIntExtra("page_cur", 1);
+		totalPage = intent.getIntExtra("page_count", 1);
 		initViews();
 	}
 
 	private void initViews() {
 
 		String title = getIntent().getStringExtra("edit_name");
-		maxNum = getIntent().getIntExtra("edit_max", 0);
 		RelativeLayout layout = (RelativeLayout) findViewById(R.id.menu_layout);
 		TextView titleView = (TextView) findViewById(R.id.title_menu);
 		numView = (EditText) findViewById(R.id.num_edit);
 		View line = findViewById(R.id.menu_line);
 		titleView.setText(title);
-		numView.setFocusable(false);
+
 		int mColorSchemeIndex = PublicUtils.getColorSchemeIndex(); // 得到系统配色索引
 		layout.setBackgroundResource(EbookConstants.ViewBkColorID[mColorSchemeIndex]); // 设置View的背景色
 		titleView.setTextColor(getResources().getColor(
 				EbookConstants.FontColorID[mColorSchemeIndex])); // 设置title的背景色
 		line.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
 		numView.setTextColor(getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-		numView.setText(1+"");
-	}
-	
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
+		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
+		numView.setText(tips);
 	}
 
 	@Override
@@ -72,17 +71,18 @@ public class MenuNumEditActivity extends Activity {
 			number--;
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT: // 右
-			number++;
+			number = number*10;
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
+			Log.e("page", "-----enter num--:" + number);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		default:
 			break;
 		}
-		if(number > maxNum){
-			number = maxNum;
+		if(number > totalPage){
+			number = totalPage;
 		}else if(number < 1){
 			number = 1;
 		}

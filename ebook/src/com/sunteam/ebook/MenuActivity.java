@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -22,12 +23,18 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private int page;
+	private int currentPage;
+	private int totalPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
+		Intent intent = getIntent();
+		currentPage = intent.getIntExtra("page_cur", 1);
+		totalPage = intent.getIntExtra("page_count", 1);
 		initViews();
 	}
 
@@ -89,10 +96,17 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			startActivity(intent);
 			break;
 		case 1:
-			
+			Log.e("menu", "-----------------page---:" + page);
+			intent.putExtra("page", 1);
+			setResult(RESULT_OK,intent);
+			finish();
 			break;
 		case 2:
-			
+			intent.setClass(this, MenuPageEditActivity.class);
+			intent.putExtra("page_count", totalPage);
+			intent.putExtra("page_cur", currentPage);
+			intent.putExtra("edit_name", mMenuList.get(selectItem));
+			startActivity(intent);
 			break;
 		case 3:
 			intent.setClass(this, MenuVoiceActivity.class);
