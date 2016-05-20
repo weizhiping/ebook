@@ -731,7 +731,7 @@ import android.view.View;
 	  * 向后翻行
 	  * 
 	  */
-	 public boolean nextLine()
+	 private boolean nextLine()
 	 {
 		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
@@ -753,7 +753,7 @@ import android.view.View;
 	  * 向前翻行
 	  * 
 	  */
-	 public boolean preLine()
+	 private boolean preLine()
 	 {
 		 if( mLineNumber <= 0 ) 
 		 {
@@ -777,7 +777,7 @@ import android.view.View;
 	  * 向后翻页
 	  * 
 	  */
-	 public boolean nextPage() 
+	 private boolean nextPage() 
 	 {
 		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
@@ -799,7 +799,7 @@ import android.view.View;
 	  * 向前翻页
 	  * 
 	  */
-	 public boolean prePage()
+	 private boolean prePage()
 	 {
 		 if( mLineNumber <= 0 ) 
 		 {

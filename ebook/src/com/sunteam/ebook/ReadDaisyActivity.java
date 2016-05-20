@@ -90,34 +90,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_ENTER:
 				mDaisyReaderView.enter();
 				return	true;
-			case KeyEvent.KEYCODE_5:
-			case KeyEvent.KEYCODE_NUMPAD_5:		//精读
-				mDaisyReaderView.intensiveReading();
-				return	true;
-			case KeyEvent.KEYCODE_7:
-			case KeyEvent.KEYCODE_NUMPAD_7:		//朗读上一个字
-				mDaisyReaderView.preCharacter();
-				return	true;
-			case KeyEvent.KEYCODE_9:
-			case KeyEvent.KEYCODE_NUMPAD_9:		//朗读下一个字
-				mDaisyReaderView.nextCharacter(false);
-				return	true;
-			case KeyEvent.KEYCODE_4:
-			case KeyEvent.KEYCODE_NUMPAD_4:		//朗读上一个词
-				mDaisyReaderView.preWord();
-				return	true;
-			case KeyEvent.KEYCODE_6:
-			case KeyEvent.KEYCODE_NUMPAD_6:		//朗读下一个词
-				mDaisyReaderView.nextWord(false);
-				return	true;
-			case KeyEvent.KEYCODE_2:
-			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
-				mDaisyReaderView.preParagraph();
-				return	true;
-			case KeyEvent.KEYCODE_8:
-			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
-				mDaisyReaderView.nextParagraph(false);
-				return	true;
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
 				//insertToDb();
 				break;

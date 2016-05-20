@@ -4,19 +4,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
-import com.sunteam.ebook.util.CodeTableUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
-import com.sunteam.ebook.util.WordExplainUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -49,43 +46,6 @@ import android.view.View;
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
 	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
-	 private static final char[] CN_SEPARATOR = { 
-		 0xA3BA,	//冒号
-		 0xA6DC,	//冒号
-		 0xA955,	//冒号
-		 0xA973,	//冒号
-		 
-		 0xA3AC,	//逗号
-		 0xA6D9,	//逗号
-		 0xA96F,	//逗号
-		 
-		 0xA3BB,	//分号
-		 0xA6DD,	//分号
-		 0xA972,	//分号
-		 
-		 0xA1A3,	//句号
-		 
-		 0xA3BF,	//问号
-		 0xA974,	//问号
-		 
-		 0xA3A1,	//叹号
-		 0xA6DE,	//叹号
-		 0xA975,	//叹号
-		 
-		 //0xA1AD,	//省略号
-		 
-		 0xA1A2,	//顿号
-		 0xA970,	//顿号
-	 };	//中文分隔符
-	 
-	 private static final char[] EN_SEPARATOR = { 
-		 0x3A,	//冒号
-		 0x2C,	//逗号
-		 0x3B,	//分号
-		 0x3F,	//问号
-		 //0x2E,	//句号
-		 0x21,	//叹号
-	 };	//英文分隔符
 	 
 	 private Context mContext = null;
 	 private Bitmap mCurPageBitmap = null;
@@ -113,12 +73,8 @@ import android.view.View;
 	 private OnPageFlingListener mOnPageFlingListener = null;
 	 private ReadMode mReadMode = ReadMode.READ_MODE_ALL;	//朗读模式
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
-	 private WordExplainUtils mWordExplainUtils = new WordExplainUtils();
-	 private HashMap<Character, ArrayList<String> > mMapWordExplain = new HashMap<Character, ArrayList<String>>();
-	 private int mCurReadExplainIndex = 0;	//当前朗读的例句索引
+
 	 private int mCheckSum = 0;				//当前buffer的checksum
-	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
-	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
 	 private ArrayList<DiasySentenceNode> mDiasySentenceNodeList = null;
 	 
 	 public interface OnPageFlingListener 
@@ -163,8 +119,6 @@ import android.view.View;
 		 mLineSpace *= scale;		//行间距
 		 mTextSize *= scale;		//字体大小
 		 
-		 mWordExplainUtils.init(mContext);			//初始化例句
-		 
 		 TTSUtils.getInstance().OnTTSListener(this);
 	 }
 	 
@@ -178,7 +132,6 @@ import android.view.View;
 	 public void setReadMode( ReadMode rm )
 	 {
 		 mReadMode = rm;
-		 mCurReadExplainIndex = 0;
 	 }
 	 
 	 //设置背景色
@@ -335,6 +288,23 @@ import android.view.View;
 		 return	"";
 	 }
 	 
+	 //得到当前反显句子的序号
+	 private int getCurReversePosition()
+	 {
+		 int length = 0;
+		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 {
+			 if( mReverseInfo.startPos == length )
+			 {
+				 return	i;
+			 }	//查找反显开始的句子序号
+			 
+			 length += mDiasySentenceNodeList.get(i).sentence.length;
+		 }
+		 
+		 return	0;
+	 }
+	 
 	 /**
 	  * 
 	  * @param list
@@ -385,86 +355,6 @@ import android.view.View;
 		 return	true;
 	 }
 
-	 /**
-	  * 得到从指定开始位置的上一个段落的长度
-	  * @param endPos
-	  * @return len
-	  */
-	 private int getPreParagraphLength( final int endPos ) 
-	 {
-		 int nEnd = endPos;
-		 int i;
-		 int count = 0;
-		 byte b0, b1;
-		 
-		 if( CHARSET_NAME.equals("utf-16le") ) 
-		 {
-			 i = nEnd - 2;
-			 while (i > 0) 
-			 {
-				 b0 = mMbBuf[i];
-				 b1 = mMbBuf[i + 1];
-				 //if( b0 == 0x0a && b1 == 0x00 && i != nEnd - 2 ) 
-				 if( b0 == 0x0a && b1 == 0x00 )
-				 {
-					 count++;
-					 if( count >= 2 )
-					 {
-						 i += 2;
-						 break;
-					 }
-				 }
-				 i--;
-			 }
-		 } 
-		 else if( CHARSET_NAME.equals("utf-16be") ) 
-		 {
-			 i = nEnd - 2;
-			 while( i > 0 ) 
-			 {
-				 b0 = mMbBuf[i];
-				 b1 = mMbBuf[i + 1];
-				 //if( b0 == 0x00 && b1 == 0x0a && i != nEnd - 2 ) 
-				 if( b0 == 0x00 && b1 == 0x0a ) 
-				 {
-					 count++;
-					 if( count >= 2 )
-					 {
-						 i += 2;
-						 break;
-					 }
-				 }
-				 i--;
-			 }
-		 } 
-		 else 
-		 {
-			 i = nEnd - 1;
-			 while( i > 0 )
-			 {
-				 b0 = mMbBuf[i];
-				 //if( b0 == 0x0a && i != nEnd - 1 ) 
-				 if( b0 == 0x0a )
-				 {	// 0x0a表示换行符
-					 count++;
-					 if( count >= 2 && mMbBuf[i+1] != 0x0d && mMbBuf[i+1] != 0x0a )
-					 {
-						 i++;
-						 break;
-					 }
-				 }
-				 i--;
-			 }
-		 }
-		 
-		 if( i < 0 )
-			 i = 0;
-		 
-		 int nParaSize = nEnd - i;
-		 
-		 return	nParaSize;
-	 }
-	 
 	 /**
 	  * 得到从指定开始位置的下一个段落的长度
 	  * 
@@ -727,7 +617,7 @@ import android.view.View;
 	  * 向后翻行
 	  * 
 	  */
-	 public boolean nextLine()
+	 private boolean nextLine()
 	 {
 		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
@@ -749,7 +639,7 @@ import android.view.View;
 	  * 向前翻行
 	  * 
 	  */
-	 public boolean preLine()
+	 private boolean preLine()
 	 {
 		 if( mLineNumber <= 0 ) 
 		 {
@@ -773,7 +663,7 @@ import android.view.View;
 	  * 向后翻页
 	  * 
 	  */
-	 public boolean nextPage() 
+	 private boolean nextPage() 
 	 {
 		 if( mLineNumber+mLineCount >= mSplitInfoList.size() ) 
 		 {
@@ -795,7 +685,7 @@ import android.view.View;
 	  * 向前翻页
 	  * 
 	  */
-	 public boolean prePage()
+	 private boolean prePage()
 	 {
 		 if( mLineNumber <= 0 ) 
 		 {
@@ -1120,14 +1010,8 @@ import android.view.View;
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 setReadMode(ReadMode.READ_MODE_ALL);
-		 
-		 mReverseInfo.startPos = 0;
-		 mReverseInfo.len = 0;
-		 
 		 if( preLine() )
 		 {
-			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1159,14 +1043,8 @@ import android.view.View;
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 setReadMode(ReadMode.READ_MODE_ALL);
-		 
-		 mReverseInfo.startPos = 0;
-		 mReverseInfo.len = 0;
-		 
 		 if( nextLine() )
 		 {
-			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1197,15 +1075,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_ALL);
-		 
-		 mReverseInfo.startPos = 0;
-		 mReverseInfo.len = 0;
-		 
+		  
 		 if( prePage() )
 		 {
-			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1236,15 +1108,9 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_ALL);
-		 
-		 mReverseInfo.startPos = 0;
-		 mReverseInfo.len = 0;
-		 
+	 
 		 if( nextPage() )
 		 {
-			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1275,40 +1141,7 @@ import android.view.View;
 	 {
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 
-		 if( ReadMode.READ_MODE_ALL == mReadMode )	//如果当前是全文朗读模式
-		 {
-			 if( status == SpeakStatus.SPEAK )
-			 {
-				 TTSUtils.getInstance().pause();
-			 }
-			 else if( status == SpeakStatus.PAUSE )
-			 {
-				 TTSUtils.getInstance().resume();
-			 }
-			 else if( status == SpeakStatus.STOP )
-			 {
-				 nextSentence(false);
-			 }
-		 }
-		 else
-		 {
-			 setReadMode(ReadMode.READ_MODE_ALL);
-			 if( status == SpeakStatus.STOP )
-			 {
-				 nextSentence(false);
-			 }
-			 else
-			 {
-				 TTSUtils.getInstance().stop();
-			 }
-		 }
-	 }
-	 
-	 //精读
-	 public void intensiveReading()
-	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();	//当前朗读状态
-		 if( SpeakStatus.SPEAK == status )	//如果当前正在朗读
+		 if( status == SpeakStatus.SPEAK )
 		 {
 			 TTSUtils.getInstance().pause();
 		 }
@@ -1318,762 +1151,72 @@ import android.view.View;
 		 }
 		 else if( status == SpeakStatus.STOP )
 		 {
-			 switch( mReadMode )
-			 {
-			 	case READ_MODE_ALL:			//全文朗读
-			 	case READ_MODE_PARAGRAPH:	//逐段朗读
-			 		nextSentence(false);
-			 		break;
-			 	case READ_MODE_WORD:		//逐词朗读
-			 		nextWord(false);
-			 		break;
-			 	case READ_MODE_CHARACTER:	//逐字朗读
-			 		readExplain();
-			 		break;
-			 	default:
-			 		break;
-			 }
-		 }	 
-	 }
-	 
-	 //朗读例句
-	 private void readExplain()
-	 {
-		 if( mReverseInfo.len > 0 )
-		 {
-			 char ch = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
-			 if( ( ch >= 'A' ) && ( ch <= 'Z') )
-			 {
-				 ch += 0x20; 
-			 }	//变为小写
-			 
-			 ArrayList<String> list = mMapWordExplain.get(ch);
-			 if( ( null == list ) || ( 0 == list.size() ) )
-			 {
-				 byte[] explain = null;
-				 
-				 if( mMbBuf[mReverseInfo.startPos] < 0 )
-				 {
-					 explain = mWordExplainUtils.getWordExplain(0, ch);
-				 }
-				 else
-				 {
-					 explain = mWordExplainUtils.getWordExplain(1, ch);
-				 }
-				 
-				 if( null == explain )
-				 {
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
-					 return;
-				 }
-				 else
-				 {
-					 String txt = null;
-					 
-					 try 
-					 {
-						 txt = new String(explain, CHARSET_NAME);	//转换成指定编码
-					 } 
-					 catch (UnsupportedEncodingException e) 
-					 {
-						 e.printStackTrace();
-					 }
-					 
-					 if( TextUtils.isEmpty(txt) )
-					 {
-						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
-						 return;
-					 }
-					 else
-					 {
-						 String[] str = txt.split("=");
-						 if( ( null == str ) || ( str.length < 2 ) )
-						 {
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
-							 return;
-						 }
-						 
-						 String[] strExplain = str[1].split(" ");
-						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
-						 {
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
-							 return;
-						 }
-						 
-						 ArrayList<String> list2 = new ArrayList<String>();
-						 
-						 if( ( ch >= 'a' ) && ( ch <= 'z') )
-						 {
-							 for( int i = 0; i < strExplain.length; i++ )
-							 {
-								 list2.add(strExplain[i]);
-							 }
-							 list2.add(String.format(mContext.getResources().getString(R.string.en_explain_tips), ch-'a'+1));	//添加在字母表中的顺序
-						 }
-						 else
-						 {
-							 for( int i = 0; i < strExplain.length; i++ )
-							 {
-								 list2.add(strExplain[i]+mContext.getResources().getString(R.string.cn_explain_tips)+str[0]);
-							 }
-						 }
-						 
-						 mMapWordExplain.put(ch, list2);
-					 }
-				 }
-			 }
-			 
-			 list = mMapWordExplain.get(ch);
-			 if( ( list != null ) && ( list.size() > 0 ) )
-			 {
-				 TTSUtils.getInstance().speakTips(list.get(mCurReadExplainIndex));
-				 if( mCurReadExplainIndex == list.size()-1 )
-				 {
-					 mCurReadExplainIndex = 0;
-				 }
-				 else
-				 {
-					 mCurReadExplainIndex++;
-				 }
-			 }
+			 nextSentence(false);
 		 }
 	 }
-	 
-	 //到上一个字符
-	 public void preCharacter()
-	 {
-		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_CHARACTER);
-		 
-		 int start = mReverseInfo.startPos;
-		 if( start == mOffset )	//已经到顶了
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-			 return;
-		 }
 
-		 ReverseInfo oldReverseInfo = null;
-		 
-		 for( int i = mOffset; i < mMbBufLen; )
-		 {
-			 ReverseInfo ri = getNextReverseCharacterInfo( i );
-			 if( null == ri )
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToTop();
-				 }
-				 break;
-			 }
-			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = ri.startPos;
-				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 else if( ri.startPos >= mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = oldReverseInfo.startPos;
-				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 
-			 i = ri.startPos+ri.len;
-			 oldReverseInfo = ri;
-		 }
-	 }	 
-	 
-	 //到下一个字符
-	 public void nextCharacter( boolean isSpeakPage )
-	 {
-		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_CHARACTER);
-		 
-		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
-		 if( null == ri )
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
-		 else
-		 {
-			 mReverseInfo.startPos = ri.startPos;
-			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-			 this.invalidate();
-		 }
-	 }
-	 
-	 //到上一个单词
-	 public void preWord()
-	 {
-		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_WORD);
-		 
-		 int start = mReverseInfo.startPos;
-		 if( start == mOffset )	//已经到顶了
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-			 return;
-		 }
-
-		 ReverseInfo oldReverseInfo = null;
-		 
-		 for( int i = mOffset; i < mMbBufLen; )
-		 {
-			 ReverseInfo ri = getNextReverseWordInfo( i );
-			 if( null == ri )
-			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToTop();
-				 }
-				 break;
-			 }
-			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = ri.startPos;
-				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 else if( ri.startPos >= mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = oldReverseInfo.startPos;
-				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 
-			 i = ri.startPos+ri.len;
-			 oldReverseInfo = ri;
-		 }
-	 }	 	 
-	 
-	 //到下一个单词
-	 public void nextWord( boolean isSpeakPage )
-	 {
-		 TTSUtils.getInstance().stop();
-		 
-		 setReadMode(ReadMode.READ_MODE_WORD);
-		 
-		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
-		 if( null == ri )
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
-		 else
-		 {
-			 mReverseInfo.startPos = ri.startPos;
-			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-			 this.invalidate();
-		 }
-	 }
-	 
-	 //到上一个段落
-	 public void preParagraph()
-	 {
-		 TTSUtils.getInstance().stop();
-		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
-		 
-		 int end = mReverseInfo.startPos;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
-		 {
-			 end = mSplitInfoList.get(mLineNumber).startPos;
-		 }
-		 
-		 int len = getPreParagraphLength( end );
-		 if( 0 == len )
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-		 }
-		 else
-		 {
-			 end -= len;
-			 
-			 for( int i = 0; i < mSplitInfoList.size(); i++ )
-			 {
-				 if( mSplitInfoList.get(i).startPos == end )
-				 {
-					 mReverseInfo.startPos = 0;
-					 mReverseInfo.len = 0;
-					 mLineNumber = i;
-					 mParagraphStartPos = end;
-					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
-					 
-					 nextSentence( false );
-					 return;
-				 }
-			 }
-			 
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-		 }
-	 }
-	 
-	 //到下一个段落
-	 public void nextParagraph( boolean isSpeakPage )
-	 {
-		 TTSUtils.getInstance().stop();
-		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
-		 
-		 int start = mReverseInfo.startPos;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
-		 {
-			 start = mSplitInfoList.get(mLineNumber).startPos;
-		 }
-		 
-		 int len = getNextParagraphLength( start );
-		 if( 0 == len )
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
-		 else
-		 {
-			 start += len;
-			 
-			 for( int i = mLineNumber; i < mSplitInfoList.size(); i++ )
-			 {
-				 if( mSplitInfoList.get(i).startPos == start )
-				 {
-					 mReverseInfo.startPos = 0;
-					 mReverseInfo.len = 0;
-					 mLineNumber = i;
-					 mParagraphStartPos = start;
-					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
-					 
-					 nextSentence( isSpeakPage );
-					 return;
-				 }
-			 }
-			 
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
-	 }
-	 
 	 //到上一个句子
 	 private void preSentence()
 	 {
-		 int start = mReverseInfo.startPos;
-		 if( start == mOffset )	//已经到顶了
+		 int position = getCurReversePosition();
+		 if( 0 == position )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
 			 }
+			 
 			 return;
 		 }
-
-		 ReverseInfo oldReverseInfo = null;
 		 
-		 for( int i = mOffset; i < mMbBufLen; )
+		 position--;
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
 		 {
-			 ReverseInfo ri = getNextReverseSentenceInfo( i );
-			 if( null == ri )
+			 if( position == i )
 			 {
-				 if( mOnPageFlingListener != null )
-				 {
-					 mOnPageFlingListener.onPageFlingToTop();
-				 }
+				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
 				 break;
 			 }
-			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = ri.startPos;
-				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 else if( ri.startPos >= mReverseInfo.startPos )
-			 {
-				 mReverseInfo.startPos = oldReverseInfo.startPos;
-				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
-				 break;
-			 }
-			 
-			 i = ri.startPos+ri.len;
-			 oldReverseInfo = ri;
+			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
 		 }
+		 
+		 readReverseText(false);				//朗读反显文字
+		 recalcLineNumber(Action.PRE_LINE);		//重新计算当前页起始位置(行号)
+		 this.invalidate();
 	 }	 
 	 
 	 //到下一个句子
 	 private void nextSentence( boolean isSpeakPage )
 	 {
-		 int start = mReverseInfo.startPos + mReverseInfo.len;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
-		 {
-			 start = mSplitInfoList.get(mLineNumber).startPos;
-		 }
-		 
-		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) )
-		 {
-			 return;
-		 }
-		 
-		 ReverseInfo ri = getNextReverseSentenceInfo( start );
-		 if( null == ri )
+		 int position = getCurReversePosition();
+		 if( position >= mDiasySentenceNodeList.size()-1 )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToBottom();
 			 }
-		 }
-		 else
-		 {
-			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) )
-			 {
-				 return;
-			 }
 			 
-			 mReverseInfo.startPos = ri.startPos;
-			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
-			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
-			 this.invalidate();
-		 }
-	 }
-
-	 //得到下一个字符反显信息
-	 private ReverseInfo getNextReverseCharacterInfo( int start )
-	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
-		 {
-			 return	null;
+			 return;
 		 }
 		 
-		 for( int i = start; i < mMbBufLen; i++ )
+		 position++;
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
 		 {
-			 if( mMbBuf[i] < 0 )	//汉字
+			 if( position == i )
 			 {
-				 ReverseInfo ri = new ReverseInfo(i, 2);
-				 
-				 return ri;
+				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
+				 break;
 			 }
-			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
-			 {
-				 if( 0x0d == mMbBuf[i] )
-				 {
-					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 2);
-						 
-						 return	ri;
-					 }
-					 else
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 1);
-						 
-						 return	ri;
-					 }
-				 }
-				 else if( 0x0a == mMbBuf[i] )
-				 {
-					 ReverseInfo ri = new ReverseInfo(i, 1);
-					 
-					 return	ri;
-				 }
-				 else
-				 {
-					 continue;
-				 }
-			 }
-			 else
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 
-				 return	ri;
-			 }
+			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
 		 }
 		 
-		 return	null;
-	 }
-	 
-	 //得到下一个词反显信息(逐词模式)
-	 private ReverseInfo getNextReverseWordInfo( int start )
-	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
-		 {
-			 return	null;
-		 }
-		 
-		 for( int i = start; i < mMbBufLen; i++ )
-		 {
-			 if( mMbBuf[i] < 0 )	//汉字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 2);
-				 
-				 char ch = PublicUtils.byte2char(mMbBuf, i);
-				 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
-				 {
-					 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )			//过滤掉空格
-					 {
-						 return ri;
-					 }
-				 }	//如果是标点符号则反显这个标点符号
-				 
-				 for( int j = i+2; j < mMbBufLen; j+=2 )
-				 {
-					 if( mMbBuf[j] < 0 )
-					 {
-						 ch = PublicUtils.byte2char(mMbBuf, j);
-						 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
-						 {
-							 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )	//过滤掉空格
-							 {
-								 return ri;
-							 }
-						 }	//如果是标点符号则返回前面的字符串
-						 
-						 ri.len += 2;
-					 }
-					 else
-					 {
-						 break;
-					 }
-				 }
-				 
-				 return ri;
-			 }
-			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] ) )	//英文或者数字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 for( int j = i+1; j < mMbBufLen; j++ )
-				 {
-					 if( isEscape( mMbBuf[j] ) )	//如果是转义字符
-					 {
-						 break;
-					 }
-					 else if( mMbBuf[j] < 0x0 )		//如果是中文字符
-					 {
-						 break;
-					 }
-					 else if( 0x20 == mMbBuf[j] )	//如果是空格
-					 {
-						 break;
-					 }
-					 else
-					 {
-						 ri.len++;
-					 }
-				 }
-				 
-				 return	ri;
-			 }
-			 else if( mMbBuf[i] >= 0x0 && mMbBuf[i] < 0x20 )
-			 {
-				 if( 0x0d == mMbBuf[i] )
-				 {
-					 if( ( i+1 < mMbBufLen ) && ( 0x0a == mMbBuf[i+1] ) )
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 2);
-						 
-						 return	ri;
-					 }
-					 else
-					 {
-						 ReverseInfo ri = new ReverseInfo(i, 1);
-						 
-						 return	ri;
-					 }
-				 }
-				 else if( 0x0a == mMbBuf[i] )
-				 {
-					 ReverseInfo ri = new ReverseInfo(i, 1);
-					 
-					 return	ri;
-				 }
-				 else
-				 {
-					 continue;
-				 }
-			 }
-			 else if( 0x20 == mMbBuf[i] )	//跳过空格
-			 {
-				 continue;
-			 }
-			 else
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 
-				 return	ri;
-			 }
-		 }
-		 
-		 return	null;
-	 }	 
-	 
-	 //得到下一个句子反显信息(逐段和全文模式)
-	 private ReverseInfo getNextReverseSentenceInfo( int start )
-	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
-		 {
-			 return	null;
-		 }
-		 
-		 for( int i = start; i < mMbBufLen; )
-		 {
-			 if( mMbBuf[i] < 0 )	//汉字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 2);
-				 
-				 boolean isBreak = false;
-				 char ch = PublicUtils.byte2char(mMbBuf, i);
-				 for( int k = 0; k < CN_SEPARATOR.length; k++ )
-				 {
-					 if( CN_SEPARATOR[k] == ch )
-					 {
-						 isBreak = true;
-						 break;
-					 }
-				 }	//如果一开始就是点符号则跳过反显这个点符号
-				 
-				 i += 2;
-				 if( isBreak )
-				 {
-					 continue;
-				 }
-				 
-				 for( int j = i; j < mMbBufLen; )
-				 {
-					 if( mMbBuf[j] < 0 )
-					 {
-						 ri.len += 2;
-						 ch = PublicUtils.byte2char(mMbBuf, j);
-						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
-						 {
-							 if( CN_SEPARATOR[k] == ch )
-							 {
-								 return ri;
-							 }
-						 }	//如果是点符号则返回前面的字符串
-						 
-						 j += 2;
-					 }
-					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
-					 {
-						 return ri;
-					 }
-					 else
-					 {
-						 ri.len++;
-						 
-						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
-						 {
-							 if( EN_SEPARATOR[k] == mMbBuf[j] )
-							 {
-								 return ri;
-							 }
-						 }
-						 
-						 if( ( 0x2E == mMbBuf[j] ) && ( j+1 < mMbBufLen ) && ( 0x20 == mMbBuf[j+1] ) )
-						 {
-							 return	ri;
-						 }
-						 
-						 j++;
-					 }
-				 }
-				 
-				 return ri;
-			 }
-			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] ) )	//英文或者数字
-			 {
-				 ReverseInfo ri = new ReverseInfo(i, 1);
-				 i++;
-				 for( int j = i; j < mMbBufLen; )
-				 {
-					 if( mMbBuf[j] < 0 )
-					 {
-						 ri.len += 2;
-						 
-						 char ch = PublicUtils.byte2char(mMbBuf, j);
-						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
-						 {
-							 if( CN_SEPARATOR[k] == ch )
-							 {
-								 return ri;
-							 }
-						 }	//如果是点符号则返回前面的字符串
-						 
-						 j += 2;
-					 }
-					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
-					 {
-						 return ri;
-					 }
-					 else
-					 {
-						 ri.len++;
-						 
-						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
-						 {
-							 if( EN_SEPARATOR[k] == mMbBuf[j] )
-							 {
-								 return ri;
-							 }
-						 }
-						 
-						 if( ( 0x2E == mMbBuf[j] ) && ( j+1 < mMbBufLen ) && ( 0x20 == mMbBuf[j+1] ) )
-						 {
-							 return	ri;
-						 }
-						 
-						 j++;
-					 }
-				 }
-				 
-				 return	ri;
-			 }
-			 else
-			 {
-				 i++;
-			 }
-		 }
-		 
-		 return	null;
+		 readReverseText(isSpeakPage);			//朗读反显文字
+		 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+		 this.invalidate();
 	 }
 	 
 	 //朗读反显文字
@@ -2088,44 +1231,23 @@ import android.view.View;
 			 }
 			 return;
 		 }
-		 
-		 Locale locale = mContext.getResources().getConfiguration().locale;
-		 String language = locale.getLanguage();
-		 
-		 char code = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
-		 String str = null;
-		 if( "en".equalsIgnoreCase(language) )	//英文
+		
+		 try 
 		 {
-			 str = CodeTableUtils.getEnString(code);
-		 }
-		 else
-		 {
-			 str = CodeTableUtils.getCnString(code);
-		 }
-		 
-		 if( null != str )
-		 {
-			 TTSUtils.getInstance().speakContent(str);
-		 }
-		 else
-		 {
-			 try 
+			 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+			 if( isSpeakPage )
 			 {
-				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
-				 if( isSpeakPage )
-				 {
-					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-					 TTSUtils.getInstance().speakContent(tips+text);
-				 }
-				 else
-				 {
-					 TTSUtils.getInstance().speakContent(text);
-				 }
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
+				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 TTSUtils.getInstance().speakContent(tips+text);
 			 }
+			 else
+			 {
+				 TTSUtils.getInstance().speakContent(text);
+			 }
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
 		 }
 	 }
 	 
@@ -2248,40 +1370,7 @@ import android.view.View;
 		 		break;
 		 }
 	 }
-	 
-	 //是否是英文字符
-	 private boolean isAlpha( byte ch )
-	 {
-		 if( ( ch >= 'a' && ch <= 'z' ) || ( ch >= 'A' && ch <= 'Z' ) )
-		 {
-			 return	true;
-		 }
-		 
-		 return	false;
-	 }
-	 
-	 //是否是数字字符
-	 private boolean isNumber( byte ch )
-	 {
-		 if( ch >= '0' && ch <= '9' )
-		 {
-			 return	true;
-		 }
-		 
-		 return	false;
-	 }
-	 
-	 //是否是特殊的转义字符，比如换行符/回车符/制表符
-	 private boolean isEscape( byte ch )
-	 {
-		 if( 0x07 == ch || 0x08 == ch || 0x09 == ch || 0x0a == ch || 0x0b == ch || 0x0c == ch || 0x0d == ch )
-		 {
-			 return	true;
-		 }
-		 
-		 return	false;
-	 }
-	 
+	
 	 private enum Action
 	 {
 		 NEXT_LINE, 	//下一行
@@ -2300,10 +1389,6 @@ import android.view.View;
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
 		 		nextSentence(false);
-		 		break;
-		 	case READ_MODE_WORD:		//逐词朗读
-		 		break;
-		 	case READ_MODE_CHARACTER:	//逐字朗读
 		 		break;
 		 	default:
 		 		break;
