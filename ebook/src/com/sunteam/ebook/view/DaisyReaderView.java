@@ -119,6 +119,7 @@ import android.view.View;
 	 private int mCheckSum = 0;				//当前buffer的checksum
 	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
 	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
+	 private ArrayList<DiasySentenceNode> mDiasySentenceNodeList = null;
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -351,6 +352,7 @@ import android.view.View;
 	  */
 	 public boolean openBook(ArrayList<DiasySentenceNode> list, int lineNumber, int startPos, int len, int checksum) 
 	 {
+		 mDiasySentenceNodeList = list;
 		 mMbBufLen = 0;
 		 int size = list.size();
 		 for( int i = 0; i < size; i++ )
@@ -691,12 +693,36 @@ import android.view.View;
 		 mCurPage = pi.page;
 	 }
 	 
+	 //得到当前页
+	 public int getCurPage()
+	 {
+		 return	mCurPage;
+	 }
+		 
 	 //得到总页数
 	 public int getPageCount()
 	 {
 		 return	( mSplitInfoList.size() + mLineCount - 1 ) / mLineCount;
 	 }
 	 
+	 //设置页码
+	 public boolean setCurPage( int page )
+	 {
+		 if( ( page < 1 ) || ( page > getPageCount() ) )
+		 {
+			 return	false;
+		 }
+		 
+		 TTSUtils.getInstance().stop();
+		 mCurPage = page;
+		 mLineNumber = (mCurPage-1)*mLineCount;
+		 mReverseInfo.startPos = 0;
+		 mReverseInfo.len = 0;
+		 this.invalidate();
+		 
+		 return	true;
+	 }
+		 
 	 /**
 	  * 向后翻行
 	  * 
@@ -831,13 +857,8 @@ import android.view.View;
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 	case READ_MODE_SENCENTE:	//逐句朗读
 		 		nextSentence(true);
-		 		break;
-		 	case READ_MODE_WORD:		//逐词朗读
-		 		nextWord(true);
-		 		break;
-		 	case READ_MODE_CHARACTER:	//逐字朗读
-		 		nextCharacter(true);
 		 		break;
 		 	default:
 		 		break;
