@@ -1004,136 +1004,32 @@ import android.view.View;
 		 return false;
 	 }
  
-	 //向前翻行
+	 //跳到上一句
 	 public void up()
 	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 if( preLine() )
-		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-		 }
-		 
-		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
-		 {
-			 nextSentence(false);
-		 }
-		 else
-		 {
-			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-			 TTSUtils.getInstance().speakTips(tips);
-		 }
+		 preSentence();
 	 }
 	 
-	 //向后翻行
+	 //跳到下一句
 	 public void down()
 	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 if( nextLine() )
-		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-			 
-			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
-			 {
-				 nextSentence(false);
-			 }
-			 else
-			 {
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-				 TTSUtils.getInstance().speakTips(tips);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
+		 nextSentence(false);
 	 }
 		 
-	 //向前翻页
+	 //跳到上一章节
 	 public void left()
 	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
-		  
-		 if( prePage() )
-		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToTop();
-			 }
-		 }
-		 
-		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
-		 {
-			 nextSentence(false);
-		 }
-		 else
-		 {
-			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-			 TTSUtils.getInstance().speakTips(tips);
-		 }
 	 }
 	 
-	 //向后翻页
+	 //跳到下一章节
 	 public void right()
 	 {
-		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
-	 
-		 if( nextPage() )
-		 {
-			 this.invalidate();
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
-			 }
-			 
-			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
-			 {
-				 nextSentence(false);
-			 }
-			 else
-			 {
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-				 TTSUtils.getInstance().speakTips(tips);
-			 }
-		 }
-		 else
-		 {
-			 if( mOnPageFlingListener != null )
-			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
-			 }
-		 }
 	 }
 	 
 	 //确定
@@ -1159,7 +1055,7 @@ import android.view.View;
 	 private void preSentence()
 	 {
 		 int position = getCurReversePosition();
-		 if( 0 == position )
+		 if( position <= 0 )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1191,7 +1087,11 @@ import android.view.View;
 	 private void nextSentence( boolean isSpeakPage )
 	 {
 		 int position = getCurReversePosition();
-		 if( position >= mDiasySentenceNodeList.size()-1 )
+		 if( !isSpeakPage )
+		 {
+			 position++;
+		 }
+		 if( position >= mDiasySentenceNodeList.size() )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1201,7 +1101,6 @@ import android.view.View;
 			 return;
 		 }
 		 
-		 position++;
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
 		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
