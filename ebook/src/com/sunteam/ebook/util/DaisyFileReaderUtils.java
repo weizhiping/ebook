@@ -3,6 +3,7 @@ package com.sunteam.ebook.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import android.text.TextUtils;
@@ -259,7 +260,29 @@ public class DaisyFileReaderUtils
 				}
 				
 				DiasySentenceNode node = new DiasySentenceNode();
-				node.sentence = getEscapeString(getDaisySentence( path, splitText[1], splitText[2] ));
+				String sentence = getEscapeString(getDaisySentence( path, splitText[1], splitText[2] ))+"\n";
+				try
+				{
+					byte[] byteSentence  = sentence.getBytes("GB18030");	//转换成指定编码
+					//别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
+					if( ( byteSentence.length >= 4 ) && ( -124 == byteSentence[0] ) && ( 49 == byteSentence[1] ) && ( -107 == byteSentence[2] ) && ( 51 == byteSentence[3] ) )
+					{
+						node.sentence = new byte[byteSentence.length-4];
+						for( int j = 0; j < node.sentence.length; j++ )
+						{
+							node.sentence[j] = byteSentence[j+4];
+						}
+					}
+					else
+					{
+						node.sentence = byteSentence;
+					}
+				}
+				catch (UnsupportedEncodingException e)
+				{
+					e.printStackTrace();
+				}
+				
 				start = getDaisySentenceAudioInfo(data, start, node);
 				
 				list.add(node);

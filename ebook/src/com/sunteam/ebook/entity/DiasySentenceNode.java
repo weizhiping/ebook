@@ -15,7 +15,7 @@ public class DiasySentenceNode implements Serializable
 	 */
 	private static final long serialVersionUID = -7359722933553886963L;
 	
-	public String sentence;		//句子
+	public byte[] sentence;		//句子
 	public String audioFile;	//音频文件
 	public long startTime;		//开始时间
 	public long endTime;		//结束时间

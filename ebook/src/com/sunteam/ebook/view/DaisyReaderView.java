@@ -45,7 +45,7 @@ import android.view.View;
 
  public class DaisyReaderView extends View implements OnGestureListener, OnDoubleTapListener, OnTTSListener
  {	 
-	 private static final String TAG = "TextReaderView";
+	 private static final String TAG = "DaisyReaderView";
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
 	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
@@ -351,31 +351,23 @@ import android.view.View;
 	  */
 	 public boolean openBook(ArrayList<DiasySentenceNode> list, int lineNumber, int startPos, int len, int checksum) 
 	 {
-		 String content = "";
+		 mMbBufLen = 0;
 		 int size = list.size();
 		 for( int i = 0; i < size; i++ )
 		 {
-			 content += list.get(i).sentence;
-			 content += "\n";
+			 mMbBufLen += list.get(i).sentence.length;
 		 }
 		 
-		 try 
+		 mMbBuf = new byte[mMbBufLen];
+		 int n = 0;
+		 for( int i = 0; i < size; i++ )
 		 {
-			 mMbBuf = content.getBytes(CHARSET_NAME);	//转换成指定编码
-		 } 
-		 catch (UnsupportedEncodingException e) 
-		 {
-			 e.printStackTrace();
+			 for( int j = 0; j < list.get(i).sentence.length; j++ )
+			 {
+				 mMbBuf[n++] = list.get(i).sentence[j];
+			 }
 		 }
 		 
-		 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
-		 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
-		 {
-			 mOffset = 4;
-			 mReverseInfo.startPos = mOffset;
-		 }
-		 
-		 mMbBufLen = (int)mMbBuf.length;
 		 mLineNumber = lineNumber;
 		 
 		 mCheckSum = 0;//calcCheckSum( mMbBuf );	//计算CheckSum
