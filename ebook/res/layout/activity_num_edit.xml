@@ -20,11 +20,15 @@
         android:layout_below="@id/title_menu"
         android:background="@color/space_line" />
 
-    <TextView
-        android:id="@+id/num_text"
+    <EditText
+        android:id="@+id/num_edit"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:background="@color/transparent"
+        android:layout_centerInParent="true"
         android:gravity="center" 
+        android:cursorVisible="false"
         android:textSize="@dimen/title_text_size"/>
 
 </RelativeLayout>
