@@ -216,7 +216,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			Log.e("menu", "------onreceive---:" + action);
 			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
 				int curPage = intent.getIntExtra("page", 1);
-				Log.e("menu", "------curPage---:" + curPage);
 				mTextReaderView.setCurPage(curPage);
 			}
 		}

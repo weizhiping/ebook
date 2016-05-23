@@ -14,32 +14,26 @@ import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
 /**
- * 功能菜单主界面
+ * 背景音乐详细界面
  * 
  * @author sylar
  */
-public class MenuActivity extends Activity implements OnEnterListener {
+public class MenuMusicDetailActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	private int currentPage;
-	private int totalPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
-		Intent intent = getIntent();
-		currentPage = intent.getIntExtra("page_cur", 1);
-		totalPage = intent.getIntExtra("page_count", 1);
 		initViews();
 	}
 
 	private void initViews() {
 		Resources res = getResources();
-		
-		String[] menus = res.getStringArray(R.array.array_menu);
+		String[] menus = res.getStringArray(R.array.array_menu_music_on);
 		int length = menus.length;
 		mMenuList = new ArrayList<String>();
 		for (int i = 0; i < length; i++) {
@@ -86,32 +80,17 @@ public class MenuActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) {
-		Intent intent = new Intent();
 		switch (selectItem) {
-		
 		case 0:
-			intent.setClass(this, MenuMarkActivity.class);
-			startActivity(intent);
+			
 			break;
 		case 1:
-			intent.putExtra("page", 1);
-			intent.putExtra("result", 10);
-			setResult(RESULT_OK,intent);
-			finish();
+			
 			break;
 		case 2:
-			intent.setClass(this, MenuPageEditActivity.class);
-			intent.putExtra("page_count", totalPage);
-			intent.putExtra("page_cur", currentPage);
+			Intent intent = new Intent(this,MenuNumEditActivity.class);
 			intent.putExtra("edit_name", mMenuList.get(selectItem));
-			startActivity(intent);
-			break;
-		case 3:
-			intent.setClass(this, MenuVoiceActivity.class);
-			startActivity(intent);
-			break;
-		case 4:
-			intent.setClass(this, MenuMusicActivity.class);
+			intent.putExtra("edit_max", 10);
 			startActivity(intent);
 			break;
 		}

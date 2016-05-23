@@ -3,12 +3,14 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -25,6 +27,7 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ScreenManager.getScreenManager().pushActivity(this);
 		initViews();
 	}
 
@@ -80,23 +83,21 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 	public void onEnterCompleted(int selectItem, String menu) {
 		switch (selectItem) {
 		case 0:
-			
-			break;
 		case 1:
-			
+			startToDetail(selectItem);
 			break;
 		case 2:
-			
-			break;
-		case 3:
-			
-			break;
-		case 4:
-			
-			break;
-		case 5:
-			
+			Intent intent = new Intent(this,MenuNumEditActivity.class);
+			intent.putExtra("edit_name", mMenuList.get(selectItem));
+			intent.putExtra("edit_max", 10);
+			startActivity(intent);
 			break;
 		}
+	}
+	
+	private void startToDetail(int flag){
+		Intent intent = new Intent(this,MenuMusicDetailActivity.class);
+		intent.putExtra("music_flag", flag);
+		startActivity(intent);
 	}
 }

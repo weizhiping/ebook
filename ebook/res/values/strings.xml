@@ -80,5 +80,8 @@
         <item>音乐选择</item>
         <item>背景音强度</item>
     </string-array>
-
+	<string-array name="array_menu_music_on">
+        <item>开启</item>
+        <item>关闭</item>
+    </string-array>
 </resources>
