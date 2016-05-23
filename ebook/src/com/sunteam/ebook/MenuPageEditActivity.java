@@ -54,6 +54,7 @@ public class MenuPageEditActivity extends Activity {
 		numView.setTextColor(getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
 		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
 		numView.setText(tips);
+		numView.setFocusable(false);
 	}
 
 	@Override
@@ -78,14 +79,55 @@ public class MenuPageEditActivity extends Activity {
 			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_RIGHT: // 右
-		//	Log.e("page", "--right------page--:" );
 			number = number*10;
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-		//	Log.e("page", "-----enter num--:" + number);
+			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
+			intent.putExtra("page", number);
+			sendBroadcast(intent);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
+		case KeyEvent.KEYCODE_5:
+		case KeyEvent.KEYCODE_NUMPAD_5:		
+			number = Integer.valueOf((String.valueOf(number)+5));
+			break;
+		case KeyEvent.KEYCODE_7:
+		case KeyEvent.KEYCODE_NUMPAD_7:		
+			number = Integer.valueOf((String.valueOf(number)+7));
+			break;
+		case KeyEvent.KEYCODE_9:
+		case KeyEvent.KEYCODE_NUMPAD_9:		
+			number = Integer.valueOf((String.valueOf(number)+9));
+			break;
+		case KeyEvent.KEYCODE_4:
+		case KeyEvent.KEYCODE_NUMPAD_4:		
+			number = Integer.valueOf((String.valueOf(number)+4));
+			break;
+		case KeyEvent.KEYCODE_6:
+		case KeyEvent.KEYCODE_NUMPAD_6:		
+			number = Integer.valueOf((String.valueOf(number)+6));
+			break;
+		case KeyEvent.KEYCODE_2:
+		case KeyEvent.KEYCODE_NUMPAD_2:		
+			number = Integer.valueOf((String.valueOf(number)+2));
+			break;
+		case KeyEvent.KEYCODE_8:
+		case KeyEvent.KEYCODE_NUMPAD_8:		
+			number = Integer.valueOf((String.valueOf(number)+8));
+			break;
+		case KeyEvent.KEYCODE_3:
+		case KeyEvent.KEYCODE_NUMPAD_3:		
+			number = Integer.valueOf((String.valueOf(number)+3));
+			break;
+		case KeyEvent.KEYCODE_0:
+		case KeyEvent.KEYCODE_NUMPAD_0:		
+			number = Integer.valueOf((String.valueOf(number)+0));
+			break;
+		case KeyEvent.KEYCODE_1:
+		case KeyEvent.KEYCODE_NUMPAD_1:		
+			number = Integer.valueOf((String.valueOf(number)+1));
+			break;
 		default:
 			break;
 		}

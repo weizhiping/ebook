@@ -23,7 +23,6 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
-	private int page;
 	private int currentPage;
 	private int totalPage;
 
@@ -96,8 +95,8 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			startActivity(intent);
 			break;
 		case 1:
-			Log.e("menu", "-----------------page---:" + page);
 			intent.putExtra("page", 1);
+			intent.putExtra("result", 10);
 			setResult(RESULT_OK,intent);
 			finish();
 			break;

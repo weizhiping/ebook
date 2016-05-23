@@ -1,7 +1,10 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -33,6 +36,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
 	private static final int MENU_CODE = 10;
+	private MenuBroadcastReceiver menuReceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +69,15 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
     		finish();
     	}
+    	registerReceiver();
 	}
 	
+	private void registerReceiver(){
+		menuReceiver = new MenuBroadcastReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.MENU_PAGE_EDIT);
+		registerReceiver(menuReceiver, filter);
+	}
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
@@ -144,14 +155,15 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("menu", "-----------------MENU_CODE---:" + requestCode);
 		if(RESULT_OK == resultCode){
-			switch(requestCode){
-			case MENU_CODE:
-				int page = data.getIntExtra("page", 1);
-				Log.e("menu", "-----------------MENU_CODE-page--:" + page);
-				mTextReaderView.setCurPage(page);
-				break;
+			if(null != data){
+				int result = data.getIntExtra("result", 0);
+				switch(result){
+				case 10:
+					int curPage = data.getIntExtra("page", 1);
+					mTextReaderView.setCurPage(curPage);
+					break;
+				}
 			}
 		}
 	}
@@ -160,7 +172,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onDestroy()
 	{
 		super.onDestroy();
-		
+		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 	}
@@ -194,5 +206,19 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		// TODO Auto-generated method stub
 		mTvPageCount.setText(pageCount+"");
 		mTvCurPage.setText(curPage+"");
+	}
+	
+	private class MenuBroadcastReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			Log.e("menu", "------onreceive---:" + action);
+			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
+				int curPage = intent.getIntExtra("page", 1);
+				Log.e("menu", "------curPage---:" + curPage);
+				mTextReaderView.setCurPage(curPage);
+			}
+		}
 	}
 }

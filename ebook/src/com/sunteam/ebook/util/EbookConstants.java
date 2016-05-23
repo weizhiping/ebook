@@ -76,6 +76,9 @@ public class EbookConstants
 	public static final String BOOK_DAISY_NCC = "ncc";
 	public static final String BOOK_DAISY_OPF = "OPF";
 	
+	//广播ACTION
+	public static final String MENU_PAGE_EDIT = "page_edit";
+	
 	public static final int BOOK_COLLECTION = 1;
 	public static final int BOOK_RECENT = 2;
 	
