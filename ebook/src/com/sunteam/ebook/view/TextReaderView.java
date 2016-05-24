@@ -34,7 +34,6 @@ import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * Txt电子书阅读器控件
@@ -204,7 +203,16 @@ import android.widget.Toast;
 	 //得到反显内容
 	 public String getReverseText()
 	 {
-		 return	"test";
+		 try 
+		 {
+			 return	new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
+		 }
+		 
+		 return	"";
 	 }
 	 
 	 //设置翻页监听器
