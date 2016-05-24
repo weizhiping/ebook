@@ -10,6 +10,7 @@ import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils.OnMediaPlayerListener;
 import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
@@ -78,7 +79,9 @@ import android.view.View;
 	 private ReverseInfo mReverseInfo = new ReverseInfo();	//反显信息
 
 	 private int mCheckSum = 0;				//当前buffer的checksum
-	 private ArrayList<DiasySentenceNode> mDiasySentenceNodeList = null;
+	 private ArrayList<DiasySentenceNode> mDaisySentenceNodeList = null;
+	 private String mDaisyPath = null;		//文件路径
+	 private int mChapterPosition = 0;		//当前章节位置
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -296,14 +299,14 @@ import android.view.View;
 	 private int getCurReversePosition()
 	 {
 		 int length = 0;
-		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 for( int i = 0; i < mDaisySentenceNodeList.size(); i++ )
 		 {
 			 if( mReverseInfo.startPos == length )
 			 {
 				 return	i;
 			 }	//查找反显开始的句子序号
 			 
-			 length += mDiasySentenceNodeList.get(i).sentence.length;
+			 length += mDaisySentenceNodeList.get(i).sentence.length;
 		 }
 		 
 		 return	0;
@@ -324,23 +327,32 @@ import android.view.View;
 	  * @param checksum
 	  *            校验值
 	  */
-	 public boolean openBook(ArrayList<DiasySentenceNode> list, int lineNumber, int startPos, int len, int checksum) 
+	 public boolean openBook(String path, int position, int lineNumber, int startPos, int len, int checksum) 
 	 {
-		 mDiasySentenceNodeList = list;
+		 ArrayList<DiasySentenceNode> list = DaisyFileReaderUtils.getInstance().getDiasySentenceNodeList(path, position);
+		 if( null == list )
+		 {
+			 mDaisySentenceNodeList = new ArrayList<DiasySentenceNode>();
+			 return	false;
+		 }
+		
+		 mDaisyPath = path;
+		 mDaisySentenceNodeList = list;		 
+		 mChapterPosition = position;
 		 mMbBufLen = 0;
-		 int size = list.size();
+		 int size = mDaisySentenceNodeList.size();
 		 for( int i = 0; i < size; i++ )
 		 {
-			 mMbBufLen += list.get(i).sentence.length;
+			 mMbBufLen += mDaisySentenceNodeList.get(i).sentence.length;
 		 }
 		 
 		 mMbBuf = new byte[mMbBufLen];
 		 int n = 0;
 		 for( int i = 0; i < size; i++ )
 		 {
-			 for( int j = 0; j < list.get(i).sentence.length; j++ )
+			 for( int j = 0; j < mDaisySentenceNodeList.get(i).sentence.length; j++ )
 			 {
-				 mMbBuf[n++] = list.get(i).sentence[j];
+				 mMbBuf[n++] = mDaisySentenceNodeList.get(i).sentence[j];
 			 }
 		 }
 		 
@@ -966,11 +978,11 @@ import android.view.View;
 		 
 		 if( e1.getX() - e2.getX() > FLING_MIN_DISTANCE_X )
 		 {
-			 right();	//向左滑动，向后翻页
+			 right();	//向左滑动，向后翻章
 		 }
 		 else if( e2.getX() - e1.getX() > FLING_MIN_DISTANCE_X )
 		 {
-			 left();	//向右滑动，向前翻页
+			 left();	//向右滑动，向前翻章
 		 }
 		 else if( e1.getY() - e2.getY() > FLING_MIN_DISTANCE_Y )
 		 {
@@ -1028,12 +1040,36 @@ import android.view.View;
 	 public void left()
 	 {
 		 MediaPlayerUtils.getInstance().stop();
+		 if( openBook(mDaisyPath, mChapterPosition-1, 0, 0, 0, 0) == false )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToTop();
+			 }
+			 
+			 return;
+		 }
+		 
+		 mSplitInfoList.clear();
+		 this.invalidate();
 	 }
 	 
 	 //跳到下一章节
 	 public void right()
 	 {
 		 MediaPlayerUtils.getInstance().stop();
+		 if( openBook(mDaisyPath, mChapterPosition+1, 0, 0, 0, 0) == false )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+			 
+			 return;
+		 }
+		 
+		 mSplitInfoList.clear();
+		 this.invalidate();
 	 }
 	 
 	 //确定
@@ -1072,14 +1108,14 @@ import android.view.View;
 		 position--;
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
-		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 for( int i = 0; i < mDaisySentenceNodeList.size(); i++ )
 		 {
 			 if( position == i )
 			 {
-				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
+				 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
 				 break;
 			 }
-			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
+			 mReverseInfo.startPos += mDaisySentenceNodeList.get(i).sentence.length;
 		 }
 		 
 		 readReverseText(false);				//朗读反显文字
@@ -1091,7 +1127,7 @@ import android.view.View;
 	 private void curSentence( boolean isSpeakPage )
 	 {
 		 int position = getCurReversePosition();
-		 if( position >= mDiasySentenceNodeList.size() )
+		 if( position >= mDaisySentenceNodeList.size() )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1103,14 +1139,14 @@ import android.view.View;
 		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
-		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 for( int i = 0; i < mDaisySentenceNodeList.size(); i++ )
 		 {
 			 if( position == i )
 			 {
-				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
+				 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
 				 break;
 			 }
-			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
+			 mReverseInfo.startPos += mDaisySentenceNodeList.get(i).sentence.length;
 		 }
 		 
 		 readReverseText(isSpeakPage);			//朗读反显文字
@@ -1123,7 +1159,7 @@ import android.view.View;
 	 {
 		 int position = getCurReversePosition();
 		 position++;
-		 if( position >= mDiasySentenceNodeList.size() )
+		 if( position >= mDaisySentenceNodeList.size() )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -1135,14 +1171,14 @@ import android.view.View;
 		 
 		 mReverseInfo.startPos = 0;
 		 mReverseInfo.len = 0;
-		 for( int i = 0; i < mDiasySentenceNodeList.size(); i++ )
+		 for( int i = 0; i < mDaisySentenceNodeList.size(); i++ )
 		 {
 			 if( position == i )
 			 {
-				 mReverseInfo.len = mDiasySentenceNodeList.get(i).sentence.length;
+				 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
 				 break;
 			 }
-			 mReverseInfo.startPos += mDiasySentenceNodeList.get(i).sentence.length;
+			 mReverseInfo.startPos += mDaisySentenceNodeList.get(i).sentence.length;
 		 }
 		 
 		 readReverseText(isSpeakPage);			//朗读反显文字
@@ -1164,7 +1200,7 @@ import android.view.View;
 		 }
 		 
 		 int postion = getCurReversePosition();
-		 DiasySentenceNode node = mDiasySentenceNodeList.get(postion);
+		 DiasySentenceNode node = mDaisySentenceNodeList.get(postion);
 		 if( isSpeakPage )
 		 {
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );

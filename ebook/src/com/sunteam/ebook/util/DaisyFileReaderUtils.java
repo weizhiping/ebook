@@ -82,6 +82,10 @@ public class DaisyFileReaderUtils
 		ArrayList<DiasyNode> list = new ArrayList<DiasyNode>();
 		
 		int size = mDiasyNodeList.size();
+		if( 0 == size )
+		{
+			return	list;
+		}
 		
 		if( -1 == fatherSeq )	//得到第一级别子节点
 		{	
@@ -167,6 +171,37 @@ public class DaisyFileReaderUtils
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	//得到所有节点句子列表
+	public ArrayList<DiasySentenceNode> getDiasySentenceAllNodeList( String path )
+	{
+		ArrayList<DiasySentenceNode> list = new ArrayList<DiasySentenceNode>();
+		
+		int size = mDiasyNodeList.size();
+		for( int i = 0; i < size; i++ )
+		{
+			list.addAll(getDiasySentenceNodeList(path, mDiasyNodeList.get(i).href, mDiasyNodeList.get(i).label) );
+		}
+		
+		return	list;
+	}
+	
+	/**
+	 * 得到某个叶子节点的全部句子信息
+	 * @param position：此叶子节点的序号
+	 * 
+	 * @return 所有句子节点列表
+	*/	
+	public ArrayList<DiasySentenceNode> getDiasySentenceNodeList( String path, int position )
+	{
+		int size = mDiasyNodeList.size();
+		if( ( position < 0 ) || ( position >= size ) )
+		{
+			return	null;
+		}
+		
+		return	getDiasySentenceNodeList(path, mDiasyNodeList.get(position).href, mDiasyNodeList.get(position).label); 
 	}
 	
 	/**

@@ -63,7 +63,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	mDaisyReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
     	mDaisyReaderView.setReverseColor(this.getResources().getColor(EbookConstants.SelectBkColorID[mColorSchemeIndex]));
     	mDaisyReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
-    	if( mDaisyReaderView.openBook(DaisyFileReaderUtils.getInstance().getDiasySentenceNodeList(path, mDiasyNode.href, mDiasyNode.label), 0, 0, 0, 0) == false )
+    	if( mDaisyReaderView.openBook(path, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
     		finish();
