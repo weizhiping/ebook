@@ -22,12 +22,14 @@ public class MenuMusicDetailActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private int flag;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
+		flag = getIntent().getIntExtra("music_flag", 0);
 		initViews();
 	}
 

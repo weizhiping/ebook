@@ -13,6 +13,7 @@ public class FileInfo implements Serializable{
 	public String name;
 	public String path;
 	public boolean isFolder;
+	public String diasyPath;//true为ncc.html,false为opf
 	public int catalog;//1为txt文档，2为word文档,3为disay
 	public int flag;//0为目录浏览，1为我的收藏，2为最近使用，3为目录浏览中文件
 	public int storage;//0为内置存储，1为外置存储
