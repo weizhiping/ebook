@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.sunteam.ebook.R;
+import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
@@ -85,10 +86,10 @@ import android.view.View;
 	 
 	 public interface OnPageFlingListener 
 	 {
-		 public void onLoadCompleted( int pageCount, int curPage );		//加载完成
+		 public void onLoadCompleted( String title, int pageCount, int curPage );		//加载完成
 		 public void onPageFlingToTop();	//翻到头了
 		 public void onPageFlingToBottom();	//翻到尾了
-		 public void onPageFlingCompleted( int curPage );	//翻页完成
+		 public void onPageFlingCompleted( String title, int curPage );	//翻页完成
 	 }
 	 
 	 public DaisyReaderView(Context context) 
@@ -751,7 +752,15 @@ import android.view.View;
 			 
 			 if( mOnPageFlingListener != null )
 			 {
-				 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
+				 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+				 if( null == node )
+				 {
+					 mOnPageFlingListener.onLoadCompleted("", getPageCount(), mCurPage);
+				 }
+				 else
+				 {
+					 mOnPageFlingListener.onLoadCompleted(node.name, getPageCount(), mCurPage);
+				 }
 			 }
 		 }
 	 }
@@ -1240,7 +1249,15 @@ import android.view.View;
 				 			{
 				 				if( mOnPageFlingListener != null )
 				 				{
-				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 					DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+				 					if( null == node )
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+				 					}
+				 					else
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+				 					}
 				 				}
 				 			}
 				 			else
@@ -1258,7 +1275,15 @@ import android.view.View;
 				 			{
 				 				if( mOnPageFlingListener != null )
 				 				{
-				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 					DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+				 					if( null == node )
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+				 					}
+				 					else
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+				 					}
 				 				}
 				 			}
 				 			else
@@ -1290,7 +1315,15 @@ import android.view.View;
 				 			{
 				 				if( mOnPageFlingListener != null )
 				 				{
-				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 					DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+				 					if( null == node )
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+				 					}
+				 					else
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+				 					}
 				 				}
 				 			}
 				 			else
@@ -1308,7 +1341,15 @@ import android.view.View;
 				 			{
 				 				if( mOnPageFlingListener != null )
 				 				{
-				 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+				 					DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+				 					if( null == node )
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+				 					}
+				 					else
+				 					{
+				 						mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+				 					}
 				 				}
 				 			}
 				 			else

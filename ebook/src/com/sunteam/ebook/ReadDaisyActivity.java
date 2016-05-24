@@ -138,16 +138,18 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	}
 
 	@Override
-	public void onPageFlingCompleted(int curPage) 
+	public void onPageFlingCompleted(String title, int curPage) 
 	{
 		// TODO Auto-generated method stub
+		mTvTitle.setText(title);
 		mTvCurPage.setText(curPage+"");
 	}
 
 	@Override
-	public void onLoadCompleted(int pageCount, int curPage) 
+	public void onLoadCompleted(String title, int pageCount, int curPage) 
 	{
 		// TODO Auto-generated method stub
+		mTvTitle.setText(title);
 		mTvPageCount.setText(pageCount+"");
 		mTvCurPage.setText(curPage+"");
 	}

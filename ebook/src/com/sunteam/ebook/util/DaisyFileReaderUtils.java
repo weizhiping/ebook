@@ -173,6 +173,18 @@ public class DaisyFileReaderUtils
 		}
 	}
 	
+	//得到某个节点信息
+	public DiasyNode getDiasyNode( int position )
+	{
+		int size = mDiasyNodeList.size();
+		if( ( position < 0 ) || ( position >= size ) )
+		{
+			return	null;
+		}
+		
+		return	mDiasyNodeList.get(position);	
+	}
+	
 	//得到所有节点句子列表
 	public ArrayList<DiasySentenceNode> getDiasySentenceAllNodeList( String path )
 	{
