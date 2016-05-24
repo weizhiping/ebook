@@ -1042,7 +1042,7 @@ import android.view.View;
 	 {
 		 MediaPlayerUtils.getInstance().stop();
 		 
-		 nextSentence(false);
+		 nextSentence(false, false);
 	 }
 		 
 	 //跳到上一章节
@@ -1096,7 +1096,7 @@ import android.view.View;
 		 }
 		 else if( status == PlayStatus.STOP )
 		 {
-			 nextSentence(false);
+			 nextSentence(false, false);
 		 }
 	 }
 
@@ -1164,17 +1164,23 @@ import android.view.View;
 	 }
 	 
 	 //到下一个句子
-	 private void nextSentence( boolean isSpeakPage )
+	 private void nextSentence( boolean isSpeakPage, boolean isAutoPlay )
 	 {
 		 int position = getCurReversePosition();
 		 position++;
 		 if( position >= mDaisySentenceNodeList.size() )
 		 {
-			 if( mOnPageFlingListener != null )
+			 if( isAutoPlay )
 			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
+				 right();	//到下一个章节
 			 }
-			 
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
 			 return;
 		 }
 		 
@@ -1414,7 +1420,7 @@ import android.view.View;
 		{
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextSentence(false);
+		 		nextSentence(false, true);
 		 		break;
 		 	default:
 		 		break;
