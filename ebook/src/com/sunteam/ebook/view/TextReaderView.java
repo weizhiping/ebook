@@ -724,6 +724,11 @@ import android.view.View;
 		 mReverseInfo.len = 0;
 		 this.invalidate();
 		 
+		 if( mOnPageFlingListener != null )
+		 {
+			 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
+		 }
+		 
 		 return	true;
 	 }
 	 
