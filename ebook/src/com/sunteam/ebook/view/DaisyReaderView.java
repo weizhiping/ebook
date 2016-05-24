@@ -1086,17 +1086,39 @@ import android.view.View;
 	 {
 		 PlayStatus status = MediaPlayerUtils.getInstance().getPlayStatus();
 		 
-		 if( status == PlayStatus.PLAY )
+		 switch( mReadMode )
 		 {
-			 MediaPlayerUtils.getInstance().pause();
-		 }
-		 else if( status == PlayStatus.PAUSE )
-		 {
-			 MediaPlayerUtils.getInstance().resume();
-		 }
-		 else if( status == PlayStatus.STOP )
-		 {
-			 nextSentence(false, false);
+			 case READ_MODE_ALL:		//全文朗读
+			 case READ_MODE_PARAGRAPH:	//逐段朗读
+				 if( status == PlayStatus.PLAY )
+				 {
+					 MediaPlayerUtils.getInstance().pause();
+				 }
+				 else if( status == PlayStatus.PAUSE )
+				 {
+					 MediaPlayerUtils.getInstance().resume();
+				 }
+				 else if( status == PlayStatus.STOP )
+				 {
+					 nextSentence(false, true);
+				 }
+				 break;
+			 case READ_MODE_SENCENTE:	//逐句朗读
+				 if( status == PlayStatus.PLAY )
+				 {
+					 MediaPlayerUtils.getInstance().pause();
+				 }
+				 else if( status == PlayStatus.PAUSE )
+				 {
+					 MediaPlayerUtils.getInstance().resume();
+				 }
+				 else if( status == PlayStatus.STOP )
+				 {
+					 curSentence(false);
+				 }
+				 break;
+			default:
+				break;
 		 }
 	 }
 
