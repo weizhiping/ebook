@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -126,6 +127,22 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_8:
 			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
 				mTextReaderView.nextParagraph(false);
+				return	true;
+			case KeyEvent.KEYCODE_1:
+			case KeyEvent.KEYCODE_NUMPAD_1:		//开始选词
+				mTextReaderView.startSelect();
+				return	true;
+			case KeyEvent.KEYCODE_3:
+			case KeyEvent.KEYCODE_NUMPAD_3:		//结束选词
+				mTextReaderView.endSelect();
+				return	true;
+			case KeyEvent.KEYCODE_0:
+			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
+				String content = mTextReaderView.getReverseText();	//得到当前反显内容
+				if( !TextUtils.isEmpty(content) )
+				{
+					Toast.makeText(this, this.getString(R.string.baike_search_fail), Toast.LENGTH_SHORT).show();
+				}
 				return	true;
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
 				insertToDb();

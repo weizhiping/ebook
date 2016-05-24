@@ -31,6 +31,7 @@
 	<string name="word_parse_fail">Word文档解析失败！</string>
 	<string name="checksum_error">CheckSum校验错误！</string>
 	<string name="page_read_tips2">第%1$s页</string>
+	<string name="baike_search_fail">无搜索结果</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>

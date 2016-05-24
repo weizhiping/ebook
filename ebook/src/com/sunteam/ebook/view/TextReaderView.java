@@ -34,6 +34,7 @@ import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Txt电子书阅读器控件
@@ -118,6 +119,7 @@ import android.view.View;
 	 private int mCheckSum = 0;				//当前buffer的checksum
 	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
 	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
+	 private ReverseInfo mSelectInfo = new ReverseInfo();	//选词
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -164,6 +166,45 @@ import android.view.View;
 		 mWordExplainUtils.init(mContext);			//初始化例句
 		 
 		 TTSUtils.getInstance().OnTTSListener(this);
+	 }
+	 
+	 //开始选词
+	 public void startSelect()
+	 {
+		 if( mReadMode != ReadMode.READ_MODE_CHARACTER )
+		 {
+			 return;
+		 }
+		 
+		 mSelectInfo.startPos = mReverseInfo.startPos;
+	 }
+	 
+	 //结束选词
+	 public void endSelect()
+	 {
+		 if( mReadMode != ReadMode.READ_MODE_CHARACTER )
+		 {
+			 return;
+		 }
+		 
+		 mSelectInfo.len = mReverseInfo.startPos+mReverseInfo.len-mSelectInfo.startPos;
+		 
+		 if( ( mSelectInfo.startPos >= 0 ) && ( mSelectInfo.len > 0 ) )
+		 {
+			 mReverseInfo.startPos = mSelectInfo.startPos;
+			 mReverseInfo.len = mSelectInfo.len;
+			 
+			 this.invalidate();
+		 }
+		 
+		 mSelectInfo.startPos = -1;
+		 mSelectInfo.len = -1;
+	 }
+	 
+	 //得到反显内容
+	 public String getReverseText()
+	 {
+		 return	"test";
 	 }
 	 
 	 //设置翻页监听器
@@ -385,6 +426,8 @@ import android.view.View;
 		 
 		 mReverseInfo.startPos = startPos;
 		 mReverseInfo.len = len;
+		 mSelectInfo.startPos = -1;
+		 mSelectInfo.len = -1;
 		 
 		 return	true;
 	 }
