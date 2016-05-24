@@ -29,6 +29,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private FileInfo remberFile;
 	private String path;
 	private int seq;
+	private boolean isDirectEntry = false;	//是否直接进入阅读界面
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +88,14 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			return true;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
+			isDirectEntry = false;
 			mMainView.enter();
 			return true;
+		case KeyEvent.KEYCODE_5:
+		case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
+			isDirectEntry = true;
+			mMainView.enter();
+			return	true;
 		default:
 			break;
 		}
@@ -100,13 +107,18 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		DiasyNode dias = diasList.get(selectItem);
 		ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 		int size = diaysList.size();
-		if(0 == size){
+		if( ( 0 == size ) || isDirectEntry )
+		{
+			isDirectEntry = false;
 			Intent intent = new Intent(this, ReadDaisyActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("path", path);
 			intent.putExtra("node",  dias);
 			this.startActivity(intent);
-		}else{
+		}
+		else
+		{
+			isDirectEntry = false;
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("seq", dias.seq);
