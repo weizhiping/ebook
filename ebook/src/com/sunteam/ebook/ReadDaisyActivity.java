@@ -1,6 +1,10 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -10,7 +14,7 @@ import android.widget.Toast;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
-import com.sunteam.ebook.util.DaisyFileReaderUtils;
+import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
@@ -33,7 +37,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
 	private DiasyNode mDiasyNode = null;	//叶子节点信息
-	
+	private MenuBroadcastReceiver menuReceiver;
+	private static final int MENU_DAISY_CODE = 11;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +73,14 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
     		finish();
     	}
+    	registerReceiver();
+	}
+	
+	private void registerReceiver(){
+		menuReceiver = new MenuBroadcastReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.MENU_PAGE_EDIT);
+		registerReceiver(menuReceiver, filter);
 	}
 	
 	@Override
@@ -94,6 +107,12 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
 				//insertToDb();
 				break;
+			case KeyEvent.KEYCODE_MENU:
+				Intent intent = new Intent(this, MenuDaisyActivity.class);
+				intent.putExtra("page_count", mDaisyReaderView.getPageCount());
+				intent.putExtra("page_cur", mDaisyReaderView.getCurPage());
+				startActivityForResult(intent, MENU_DAISY_CODE);
+				break;
 			default:
 				break;
 		}
@@ -110,10 +129,26 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	}
 	
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(RESULT_OK == resultCode){
+			if(null != data){
+				int result = data.getIntExtra("result", 0);
+				switch(result){
+				case MENU_DAISY_CODE:
+					int curPage = data.getIntExtra("page", 1);
+					mDaisyReaderView.setCurPage(curPage);
+					break;
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		
+		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 		
@@ -152,5 +187,34 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		mTvTitle.setText(title);
 		mTvPageCount.setText(pageCount+"");
 		mTvCurPage.setText(curPage+"");
+	}
+	
+	private class MenuBroadcastReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
+				int resultFlag = intent.getIntExtra("result_flag", 1);
+				if(1 == resultFlag){
+					int curPage = intent.getIntExtra("page", 1);
+					mDaisyReaderView.setCurPage(curPage);
+				}else if(2 == resultFlag){
+					int flag = intent.getIntExtra("flag", 0);
+					switch(flag){
+					case 0:
+						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_SENCENTE);	//设置逐句朗读
+						break;
+					case 1:
+						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_PARAGRAPH);	//设置章节朗读
+						break;
+					case 2:
+						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
+						break;
+					}
+				}
+				
+			}
+		}
 	}
 }

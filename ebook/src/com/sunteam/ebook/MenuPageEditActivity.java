@@ -83,6 +83,7 @@ public class MenuPageEditActivity extends Activity {
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
 			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
+			intent.putExtra("result_flag", 1);
 			intent.putExtra("page", number);
 			sendBroadcast(intent);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
