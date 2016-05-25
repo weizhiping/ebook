@@ -94,6 +94,14 @@
             android:name=".MenuMusicDetailActivity"
             android:screenOrientation="landscape" >
         </activity> 
+        <activity
+            android:name=".MenuDaisyActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
+         <activity
+            android:name=".MenuDaisyReadActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
     </application>
 
 </manifest>
