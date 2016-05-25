@@ -614,7 +614,7 @@ import android.view.View;
 	 
 	 //设置页码
 	 public boolean setCurPage( int page )
-	 {
+	 {		 
 		 if( ( page < 1 ) || ( page > getPageCount() ) )
 		 {
 			 return	false;
@@ -623,9 +623,41 @@ import android.view.View;
 		 MediaPlayerUtils.getInstance().stop();
 		 mCurPage = page;
 		 mLineNumber = (mCurPage-1)*mLineCount;
-		 mReverseInfo.startPos = 0;
-		 mReverseInfo.len = 0;
+		 
+		 SplitInfo si = mSplitInfoList.get(mLineNumber);	 
+		 int length = 0;
+		 for( int i = 0; i < mDaisySentenceNodeList.size(); i++ )
+		 {
+			 if( length == si.startPos )
+			 {
+				 mReverseInfo.startPos = length;
+				 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
+				 break;
+			 }
+			 else if( length > si.startPos )
+			 {
+				 mReverseInfo.startPos = length-mDaisySentenceNodeList.get(i).sentence.length;
+				 mReverseInfo.len = mDaisySentenceNodeList.get(i-1).sentence.length;
+				 break;
+			 }
+			 
+			 length += mDaisySentenceNodeList.get(i).sentence.length;
+		 }
+		 
 		 this.invalidate();
+		 
+		 if( mOnPageFlingListener != null )
+		 {
+			 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+			 if( null == node )
+			 {
+				 mOnPageFlingListener.onLoadCompleted("", getPageCount(), mCurPage);
+			 }
+			 else
+			 {
+				 mOnPageFlingListener.onLoadCompleted(node.name, getPageCount(), mCurPage);
+			 }
+		 }
 		 
 		 return	true;
 	 }
