@@ -177,6 +177,77 @@ public class MediaPlayerUtils
 		}
     }
 
+	/**
+     * 开始
+     *
+     * @param text
+     */
+	public void play( final String audioPath ) 
+	{
+		stop();	//先停止当前播放
+		init();
+		if( mMediaPlayer != null )
+		{
+			try 
+			{
+				mMediaPlayer.setDataSource(audioPath);
+				mMediaPlayer.prepare();
+				mMediaPlayer.start();
+				mPlayStatus = PlayStatus.PLAY;
+				
+				mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+					@Override
+					public void onCompletion(MediaPlayer mp) 
+					{										
+						// TODO Auto-generated method stub
+						mPlayStatus = PlayStatus.STOP;
+						mMediaPlayer.release();
+						mMediaPlayer = null;
+						if( mOnMediaPlayerListener != null )
+						{
+							mOnMediaPlayerListener.onPlayCompleted();
+						}
+					}
+				});	//播放完成
+				
+				mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+					@Override
+					public boolean onError(MediaPlayer mp, int what, int extra) {
+						// TODO Auto-generated method stub
+						mPlayStatus = PlayStatus.STOP;
+						mMediaPlayer.release();
+						mMediaPlayer = null;
+						if( mOnMediaPlayerListener != null )
+						{
+							mOnMediaPlayerListener.onPlayError();
+						}
+						return false;
+					}
+				});	//播放错误
+			} 
+			catch (IllegalArgumentException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			catch (SecurityException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IllegalStateException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+    }
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(android.os.Message msg) 
