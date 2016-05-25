@@ -195,11 +195,11 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
-				int resultFlag = intent.getIntExtra("result_flag", 1);
-				if(1 == resultFlag){
+				int resultFlag = intent.getIntExtra("result_flag", 0);
+				if(0 == resultFlag){
 					int curPage = intent.getIntExtra("page", 1);
 					mDaisyReaderView.setCurPage(curPage);
-				}else if(2 == resultFlag){
+				}else if(1 == resultFlag){
 					int flag = intent.getIntExtra("flag", 0);
 					switch(flag){
 					case 0:

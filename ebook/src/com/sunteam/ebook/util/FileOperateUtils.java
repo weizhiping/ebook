@@ -60,6 +60,12 @@ public class FileOperateUtils {
 		}
 		return dir;
 	}
+	
+	public static String getMusicPath() {
+		String musicPath = Environment.getExternalStorageDirectory().getPath()
+				+ "/book/music/";
+		return musicPath;
+	}
 
 	/**
 	 * @param filePath
@@ -185,6 +191,65 @@ public class FileOperateUtils {
 		return fileList;
 	}
 
+	/**
+	 * @ 遍历目录下的音频文件
+	 * 
+	 * @param path
+	 *            路径
+	 * @param suffix
+	 *            后缀名 保存目录下的所有文件
+	 * @return
+	 */
+	public static ArrayList<File> getMusicInDir() {
+		File dir = new File(getMusicPath());
+		ArrayList<File> fileList = new ArrayList<File>();
+		if (dir == null || !dir.isDirectory())
+			return null;
+		File[] files = dir.listFiles();
+		if (files == null)
+			return null;
+		if (!fileList.isEmpty())
+			fileList.clear();
+		for (File f : files) {
+			if (!isHideFile(f)) {
+				if (f.isDirectory()) {
+					
+				}else{
+					if(isMusic(f.getName())){
+						fileList.add(f);
+					}
+				}
+			}
+		}
+		return fileList;
+	}
+	/**
+	 * @ 获取目录下的音频第一个文件
+	 * 
+	 * @param path
+	 *            路径
+	 * @param suffix
+	 *            后缀名 保存目录下的所有文件
+	 * @return
+	 */
+	public static String getFirstMusicInDir() {
+		String musicPath = null;
+		File dir = new File(getMusicPath());
+		if (dir == null || !dir.isDirectory())
+			return null;
+		File[] files = dir.listFiles();
+		if (files == null)
+			return null;
+		for (File f : files) {
+			if (!isHideFile(f)) {
+				if (!f.isDirectory() && isMusic(f.getName())) {
+					musicPath = f.getPath();
+					return musicPath;
+				}
+			}
+		}
+		return musicPath;
+	}
 	/**
 	 * 判断是否为隐藏文件
 	 * 
@@ -400,5 +465,16 @@ public class FileOperateUtils {
 			}
 		}
 		return path;
+	}
+	
+	public static boolean isMusic(String fileName){
+		boolean bIsImageFile = false;
+		String strEx = getFileExtensions(fileName);
+		if(strEx.equalsIgnoreCase("mp3") ||strEx.equalsIgnoreCase("aac") ||strEx.equalsIgnoreCase("wav") ||
+				strEx.equalsIgnoreCase("wmv") ||strEx.equalsIgnoreCase("amr") ||strEx.equalsIgnoreCase("ogg") ||strEx.equalsIgnoreCase("mp2")
+				||strEx.equalsIgnoreCase("m4a")|| strEx.equalsIgnoreCase("flac") ||strEx.equalsIgnoreCase("MID")){
+			bIsImageFile = true;
+		}	
+		return bIsImageFile;
 	}
 }

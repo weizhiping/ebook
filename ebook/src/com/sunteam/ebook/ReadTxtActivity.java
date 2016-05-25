@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.FileOperateUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
@@ -38,12 +41,13 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private FileInfo fileInfo;
 	private static final int MENU_CODE = 10;
 	private MenuBroadcastReceiver menuReceiver;
+	private SharedPreferences shared;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_txt);
-		
+		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		int part = fileInfo.part;
 		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
@@ -71,6 +75,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     		finish();
     	}
     	registerReceiver();
+    	playMusic();
 	}
 	
 	private void registerReceiver(){
@@ -79,6 +84,20 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		filter.addAction(EbookConstants.MENU_PAGE_EDIT);
 		registerReceiver(menuReceiver, filter);
 	}
+	
+	private void playMusic(){
+		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		if(isMusic){
+			String path = shared.getString(EbookConstants.MUSICE_PATH, null);
+			if(null == path){
+				path = FileOperateUtils.getFirstMusicInDir();
+			}
+			if(null != path){
+				MediaPlayerUtils.getInstance().play(path);
+			}
+		}
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
@@ -189,6 +208,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onDestroy()
 	{
 		super.onDestroy();
+		MediaPlayerUtils.getInstance().stop();
 		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
@@ -232,8 +252,21 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			String action = intent.getAction();
 			Log.e("menu", "------onreceive---:" + action);
 			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
-				int curPage = intent.getIntExtra("page", 1);
-				mTextReaderView.setCurPage(curPage);
+				int resultFlag = intent.getIntExtra("result_flag", 0);
+				Log.e("menu", "------resultFlag---:" + resultFlag);
+				switch(resultFlag){
+				case 0://跳转到页码
+					int curPage = intent.getIntExtra("page", 1);
+					mTextReaderView.setCurPage(curPage);
+					break;
+				case 1://背景音乐开关
+					playMusic();
+					break;
+				case 2://背景音乐选择
+					playMusic();
+					break;
+				}
+				
 			}
 		}
 	}

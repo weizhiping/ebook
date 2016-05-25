@@ -83,7 +83,7 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) {
 		Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
-		intent.putExtra("result_flag", 2);
+		intent.putExtra("result_flag", 1);
 		intent.putExtra("flag", selectItem);
 		sendBroadcast(intent);
 		ScreenManager.getScreenManager().popAllActivityExceptOne();

@@ -76,6 +76,11 @@ public class EbookConstants
 	public static final String BOOK_DAISY_NCC = "ncc";
 	public static final String BOOK_DAISY_OPF = "OPF";
 	
+	//share字段
+	public static final String SETTINGS_TABLE = "settings";
+	public static final String MUSICE_STATE = "music_state";//背景音乐开关状态
+	public static final String MUSICE_PATH = "music_path";//背景音乐路径
+	
 	//广播ACTION
 	public static final String MENU_PAGE_EDIT = "page_edit";
 	
