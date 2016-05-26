@@ -192,6 +192,7 @@ public class MediaPlayerUtils
 			{
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
+				mMediaPlayer.setLooping(true);
 				mMediaPlayer.start();
 				mPlayStatus = PlayStatus.PLAY;
 				
