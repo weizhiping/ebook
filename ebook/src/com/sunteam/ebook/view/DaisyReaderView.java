@@ -636,7 +636,7 @@ import android.view.View;
 			 }
 			 else if( length > si.startPos )
 			 {
-				 mReverseInfo.startPos = length-mDaisySentenceNodeList.get(i).sentence.length;
+				 mReverseInfo.startPos = length-mDaisySentenceNodeList.get(i-1).sentence.length;
 				 mReverseInfo.len = mDaisySentenceNodeList.get(i-1).sentence.length;
 				 break;
 			 }
