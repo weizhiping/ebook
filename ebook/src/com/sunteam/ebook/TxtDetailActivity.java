@@ -18,7 +18,9 @@ import android.widget.PopupWindow;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.PublicUtils;
@@ -190,23 +192,39 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 		// 进入到selectItem对应的界面
 		FileInfo fileInfo = fileInfoList.get(selectItem);
-		if (fileInfo.isFolder) {
-			Intent intent = new Intent(this, TxtDetailActivity.class);
+		if(catalog != 1){
+			if (fileInfo.isFolder) {
+				Intent intent = new Intent(this, TxtDetailActivity.class);
+				intent.putExtra("path", fileInfo.path);
+				intent.putExtra("name", fileInfo.name);
+				intent.putExtra("flag", 10);
+				intent.putExtra("flagType", flagType);
+				intent.putExtra("catalogType", catalog);
+				intent.putExtra("file", remberFile);
+				this.startActivity(intent);
+			} else {
+				String name = FileOperateUtils.getFileExtensions(fileInfo.name);
+				if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)||
+						 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
+					new WordAsyncTask().execute(fileInfo);
+				}else{
+					showFiles(fileInfo, fileInfo.path);
+				}
+			}
+		}else{
+			DaisyFileReaderUtils.getInstance().init(fileInfo.diasyPath);
+			
+			ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
+					.getChildNodeList(-1);
+			Intent intent = new Intent(this, DaisyDetailActivity.class);;
+			if (null != diasList && diasList.size() > 0) {
+				intent.putExtra("diasys", diasList);
+			}
+			intent.putExtra("name", menu);
+			intent.putExtra("catalogType", fileInfo.catalog);
 			intent.putExtra("path", fileInfo.path);
-			intent.putExtra("name", fileInfo.name);
-			intent.putExtra("flag", 10);
-			intent.putExtra("flagType", flagType);
-			intent.putExtra("catalogType", catalog);
 			intent.putExtra("file", remberFile);
 			this.startActivity(intent);
-		} else {
-			String name = FileOperateUtils.getFileExtensions(fileInfo.name);
-			if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)||
-					 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
-				new WordAsyncTask().execute(fileInfo);
-			}else{
-				showFiles(fileInfo, fileInfo.path);
-			}
 		}
 	}
 
@@ -247,23 +265,27 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	// 初始化显示文件
 	private void initFiles() {
-		ArrayList<File> filesList;
-		if (catalog == 0) {
-			filesList = FileOperateUtils.getFilesInDir(rootPath,
-					EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
-		} else {
-			filesList = FileOperateUtils.getFilesInDir(rootPath,
-					EbookConstants.BOOK_WORD, EbookConstants.BOOK_WORDX);
-		}
-		if (null != filesList) {
-			FileInfo fileInfo;
-			for (File f: filesList) {
-				if (f.isDirectory()) {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType,storage);
-					fileInfoList.add(fileInfo);
-				} else {
-					fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType,storage);
-					fileInfoList.add(fileInfo);
+		if(catalog == 1){
+			fileInfoList = FileOperateUtils.getDaisyInDir(catalog);
+		}else{
+			ArrayList<File> filesList = null;
+			if (catalog == 0) {
+				filesList = FileOperateUtils.getFilesInDir(rootPath,
+						EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
+			} else if(catalog == 2){
+				filesList = FileOperateUtils.getFilesInDir(rootPath,
+						EbookConstants.BOOK_WORD, EbookConstants.BOOK_WORDX);
+			}
+			if (null != filesList) {
+				FileInfo fileInfo;
+				for (File f: filesList) {
+					if (f.isDirectory()) {
+						fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType,storage);
+						fileInfoList.add(fileInfo);
+					} else {
+						fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType,storage);
+						fileInfoList.add(fileInfo);
+					}
 				}
 			}
 		}

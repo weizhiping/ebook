@@ -19,7 +19,7 @@
 		android:ellipsize="end"
 		android:text=""
 		android:textColor="@color/text_black"
-		android:textSize="@dimen/file_text_size"
+		android:textSize="@dimen/title_text_size"
 		android:background="@color/transparent"
 		/>
 </LinearLayout>

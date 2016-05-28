@@ -82,9 +82,9 @@ public class MenuNumEditActivity extends Activity {
 			break;
 		}
 		if(number > maxNum){
-			number = maxNum;
-		}else if(number < 1){
 			number = 1;
+		}else if(number < 1){
+			number = maxNum;
 		}
 		numView.setText(number + "");
 		return super.onKeyDown(keyCode, event);

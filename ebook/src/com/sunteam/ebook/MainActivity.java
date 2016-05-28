@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements OnEnterListener
 				initToActivity(TxtActivity.class,0);
 				break;
 			case 1:
-				initToActivity(DaisyActivity.class,1);
+				initToActivity(TxtActivity.class,1);
 				break;
 			case 2:
 				initToActivity(TxtActivity.class,2);

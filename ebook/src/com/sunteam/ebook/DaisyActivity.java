@@ -1,15 +1,12 @@
 package com.sunteam.ebook;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.DiasyNode;
@@ -95,19 +92,13 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 	public void onEnterCompleted(int selectItem, String menu) {
 
 		FileInfo file = fileInfoList.get(selectItem);
-		Log.e("diasy", "diasy  path------------:" + file.diasyPath);
 		DaisyFileReaderUtils.getInstance().init(file.diasyPath);
 		
 		ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
 				.getChildNodeList(-1);
-		Intent intent = null;
+		Intent intent = new Intent(this, DaisyDetailActivity.class);;
 		if (null != diasList && diasList.size() > 0) {
-			intent = new Intent(this, DaisyDetailActivity.class);
 			intent.putExtra("diasys", diasList);
-		} else {
-			Toast.makeText(this, "-----需要进入阅读界面----", Toast.LENGTH_SHORT)
-					.show();
-			intent = new Intent(this, DaisyDetailActivity.class);
 		}
 		intent.putExtra("name", menu);
 		intent.putExtra("catalogType", file.catalog);
