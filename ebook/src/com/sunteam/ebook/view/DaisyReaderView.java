@@ -363,7 +363,7 @@ import android.view.View;
 		 
 		 if( ( checksum != 0 ) && ( mCheckSum != checksum ) )
 		 {
-			 return	false;
+			 //return	false;
 		 }
 		 
 		 mReverseInfo.startPos = startPos;
