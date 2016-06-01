@@ -6,8 +6,6 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/item_left_padding"
     android:paddingRight="@dimen/item_right_padding"
-    android:paddingTop="@dimen/item_top_padding"
-    android:paddingBottom="@dimen/item_bottom_padding"
     android:background="@drawable/list_item_bg"
     >
 
@@ -19,7 +17,7 @@
 		android:ellipsize="end"
 		android:text=""
 		android:textColor="@color/text_black"
-		android:textSize="@dimen/title_text_size"
+		android:textSize="24sp"
 		android:background="@color/transparent"
 		/>
 </LinearLayout>
