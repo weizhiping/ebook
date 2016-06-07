@@ -44,7 +44,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_daisy);
 		
-		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		mDiasyNode = (DiasyNode) getIntent().getSerializableExtra("node");
 		String path = getIntent().getStringExtra("path");
 		String name = getIntent().getStringExtra("name");
@@ -105,7 +105,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				mDaisyReaderView.enter();
 				return	true;
 			case KeyEvent.KEYCODE_BACK://返回保存最近使用
-				//insertToDb();
+				insertToDb();
 				break;
 			case KeyEvent.KEYCODE_MENU:
 				Intent intent = new Intent(this, MenuDaisyActivity.class);

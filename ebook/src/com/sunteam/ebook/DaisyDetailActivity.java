@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -21,12 +20,14 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class DaisyDetailActivity extends Activity implements OnEnterListener {
+	private static final String TAG = "DaisyDetailActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<DiasyNode> diasList;
 	private int catalog;// 1为txt文档，2为word文档,3为disay
 	private FileInfo remberFile;
+	private FileInfo fileInfo;
 	private String path;
 	private int seq;
 	private boolean isDirectEntry = false;	//是否直接进入阅读界面
@@ -41,9 +42,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		catalog = intent.getIntExtra("catalogType", 0);
 		seq = intent.getIntExtra("seq", -1);
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
-		
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		diasList = (ArrayList<DiasyNode>) intent.getSerializableExtra("diasys");
-		Log.e("diasy", "-------seq---:" + diasList);
 		
 		initViews(name);
 	}
@@ -114,6 +114,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("name", menu);
 			intent.putExtra("path", path);
 			intent.putExtra("node",  dias);
+			intent.putExtra("fileinfo", fileInfo);
 			this.startActivity(intent);
 		}
 		else
@@ -125,6 +126,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("catalogType", catalog);
 			intent.putExtra("path", path);
 			intent.putExtra("file", remberFile);
+			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("diasys",  diaysList);
 			this.startActivity(intent);
 		}

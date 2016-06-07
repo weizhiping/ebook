@@ -224,6 +224,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("catalogType", fileInfo.catalog);
 			intent.putExtra("path", fileInfo.path);
 			intent.putExtra("file", remberFile);
+			intent.putExtra("fileinfo", fileInfo);
 			this.startActivity(intent);
 		}
 	}
