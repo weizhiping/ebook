@@ -220,6 +220,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			if (null != diasList && diasList.size() > 0) {
 				intent.putExtra("diasys", diasList);
 			}
+			fileInfo.flag = flagType;
 			intent.putExtra("name", menu);
 			intent.putExtra("catalogType", fileInfo.catalog);
 			intent.putExtra("path", fileInfo.path);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -44,7 +45,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		diasList = (ArrayList<DiasyNode>) intent.getSerializableExtra("diasys");
-		
+		Log.e(TAG, "----file info flag--:" + fileInfo.flag);
 		initViews(name);
 	}
 
@@ -55,9 +56,9 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this,name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
-		if (null != remberFile) {
-			mMainView.setSelection(remberFile.flag);
-		}
+//		if (null != remberFile) {
+//			mMainView.setSelection(remberFile.flag);
+//		}
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class TxtActivity extends Activity implements OnEnterListener {
+	private static final String TAG = "TxtActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -52,6 +53,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
+		
 		if (null != remberFile) {
 			mMainView.setSelection(remberFile.flag);
 		}
