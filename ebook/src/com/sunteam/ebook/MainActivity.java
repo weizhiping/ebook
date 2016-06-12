@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -34,6 +35,15 @@ public class MainActivity extends Activity implements OnEnterListener
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+		if( !PublicUtils.checkSpeechServiceInstalled(this) ) 
+		{			
+			Toast.makeText(this, this.getString(R.string.install_tts_tips), Toast.LENGTH_LONG).show();
+			finish();
+			return;
+		}
+		
+		TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
         getRecentInfo();
         initViews();
     }

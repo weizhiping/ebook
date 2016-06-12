@@ -105,7 +105,7 @@
         </activity> 
         <provider
             android:name="com.iflytek.business.speech.SharedProvider"
-            android:authorities="com.example.speechserviceutildemo.provider" 
+            android:authorities="com.sunteam.ebook" 
 			/>
     </application>
 
