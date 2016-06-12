@@ -1,6 +1,8 @@
 package com.sunteam.ebook.util;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -17,6 +19,8 @@ public class MediaPlayerUtils
 	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
+	private Timer mTimer = null;
+	private TimerTask mTimerTask = null;
 	
 	public interface OnMediaPlayerListener 
 	{
@@ -90,7 +94,19 @@ public class MediaPlayerUtils
 	
 	//停止
 	public void stop()
-	{
+	{		
+		if( mTimer != null )
+		{
+			mTimer.cancel();
+			mTimer = null;
+		}
+		
+		if( mTimerTask != null )
+		{
+			mTimerTask.cancel();
+			mTimerTask = null;
+		}
+		
 		if( mMediaPlayer != null )
 		{
 			if( PlayStatus.STOP != mPlayStatus )
@@ -109,7 +125,7 @@ public class MediaPlayerUtils
      *
      * @param text
      */
-	public void play( final String audioPath, long startTime, long endTime ) 
+	public void play( final String audioPath, final long startTime, final long endTime ) 
 	{
 		stop();	//先停止当前播放
 		init();
@@ -122,13 +138,45 @@ public class MediaPlayerUtils
 				mMediaPlayer.seekTo((int)startTime);
 				mMediaPlayer.start();
 				mPlayStatus = PlayStatus.PLAY;
-				mHandler.sendEmptyMessageDelayed(MSG_PLAY_COMPLETION, (endTime-startTime));
+				
+				mTimer = new Timer();    
+				mTimerTask = new TimerTask() 
+				{
+					@Override    
+					public void run() 
+					{
+						try
+						{
+		            		int time = mMediaPlayer.getCurrentPosition();	//获得歌曲当前播放的位置
+		        			if( time >= endTime )
+		        			{
+		        				mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
+		        			}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+                    }    
+                };   
+                mTimer.schedule(mTimerTask, 0, 10);   
 				
 				mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
 					public void onCompletion(MediaPlayer mp) 
 					{										
 						// TODO Auto-generated method stub
+						if( mTimer != null )
+						{
+							mTimer.cancel();
+							mTimer = null;
+						}
+						
+						if( mTimerTask != null )
+						{
+							mTimerTask.cancel();
+							mTimerTask = null;
+						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -143,6 +191,17 @@ public class MediaPlayerUtils
 					@Override
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
+						if( mTimer != null )
+						{
+							mTimer.cancel();
+							mTimer = null;
+						}
+						
+						if( mTimerTask != null )
+						{
+							mTimerTask.cancel();
+							mTimerTask = null;
+						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -150,6 +209,7 @@ public class MediaPlayerUtils
 						{
 							mOnMediaPlayerListener.onPlayError();
 						}
+
 						return false;
 					}
 				});	//播放错误
@@ -201,6 +261,17 @@ public class MediaPlayerUtils
 					public void onCompletion(MediaPlayer mp) 
 					{										
 						// TODO Auto-generated method stub
+						if( mTimer != null )
+						{
+							mTimer.cancel();
+							mTimer = null;
+						}
+						
+						if( mTimerTask != null )
+						{
+							mTimerTask.cancel();
+							mTimerTask = null;
+						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -215,6 +286,17 @@ public class MediaPlayerUtils
 					@Override
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
+						if( mTimer != null )
+						{
+							mTimer.cancel();
+							mTimer = null;
+						}
+						
+						if( mTimerTask != null )
+						{
+							mTimerTask.cancel();
+							mTimerTask = null;
+						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;

@@ -1294,6 +1294,10 @@ import android.view.View;
 		 }
 		 
 		 int size = mSplitInfoList.size();
+		 if( size <= 0 )
+		 {
+			 return;
+		 }
 		 SplitInfo si = null;
 		 
 		 switch( action )
