@@ -1,16 +1,19 @@
 package com.sunteam.ebook.util;
 
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechSynthesizer;
-import com.iflytek.cloud.SynthesizerListener;
-import com.iflytek.cloud.util.ResourceUtil;
-import com.iflytek.cloud.util.ResourceUtil.RESOURCE_TYPE;
+import com.iflytek.business.speech.SpeechIntent;
+import com.iflytek.business.speech.SpeechServiceUtil;
+import com.iflytek.business.speech.SpeechServiceUtil.ISpeechInitListener;
+import com.iflytek.business.speech.SynthesizerListener;
+import com.iflytek.business.speech.TextToSpeech;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.RemoteException;
+import android.util.Log;
 
 /**
  * TTS工具类。
@@ -19,9 +22,13 @@ import android.os.Bundle;
  */
 public class TTSUtils
 {
+    private static final String TAG = "TTSUtils";
 	private static TTSUtils instance = null;
 	private Context mContext;
-	private SpeechSynthesizer mTts;		//语音合成对象
+	private SpeechServiceUtil mService;
+	private Intent ttsParamsIntent;	//合成参数设置Intent
+    private SharedPreferences mSharedPreferences;
+    private String resType = "";
 	private boolean isSuccess = false;
 	private OnTTSListener mOnTTSListener = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
@@ -69,31 +76,33 @@ public class TTSUtils
 	}
 	
 	//得到TTS对象
-	public SpeechSynthesizer getTextToSpeech()
+	public SpeechServiceUtil getTextToSpeech()
 	{
-		return	mTts;
+		return	mService;
 	}
 	
 	//初始化
 	public void init( Context context )
 	{
 		mContext = context.getApplicationContext();
-		mTts = SpeechSynthesizer.createSynthesizer( mContext, new InitListener() {
-			@Override
-			public void onInit(int code) 
-			{
-				if( ErrorCode.SUCCESS == code ) 
-				{
-					isSuccess = true;
-				}
-            }
-        });	//初始化合成对象
+		
+		mSharedPreferences = mContext.getSharedPreferences(EbookConstants.TTS_SETTINGS, Activity.MODE_PRIVATE);
+		resType = mSharedPreferences.getString("tts_resource", "0");
+        // 合成对象初始化
+        ttsParamsIntent = new Intent();
+        Intent serviceIntent = new Intent();
+        serviceIntent.putExtra(SpeechIntent.SERVICE_LOG_ENABLE, true);
+        mService = new SpeechServiceUtil(mContext, mInitListener, serviceIntent);
 	}
 	
 	//销毁
 	public void destroy()
 	{
-		mTts.destroy();
+		if(mService != null)
+		{
+			mService.destroy();
+			mService = null;
+		}
 	}
 
 	//是否初始化成功
@@ -105,11 +114,11 @@ public class TTSUtils
 	//暂停朗读
 	public void pause()
 	{
-		if( isSuccess && mTts != null )
+		if( isSuccess && mService != null )
 		{
 			if( SpeakStatus.SPEAK == mSpeakStatus )
 			{
-				mTts.pauseSpeaking();
+				//mService.pauseSpeaking();
 				mSpeakStatus = SpeakStatus.PAUSE;
 			}	//如果正在朗读，先暂停
 		}
@@ -118,11 +127,11 @@ public class TTSUtils
 	//恢复朗读
 	public void resume()
 	{
-		if( isSuccess && mTts != null )
+		if( isSuccess && mService != null )
 		{
 			if( SpeakStatus.PAUSE == mSpeakStatus )
 			{
-				mTts.resumeSpeaking();
+				//mService.resumeSpeaking();
 				mSpeakStatus = SpeakStatus.SPEAK;
 			}	//如果正在暂停，先恢复
 		}
@@ -131,11 +140,11 @@ public class TTSUtils
 	//停止朗读
 	public void stop()
 	{
-		if( isSuccess && mTts != null )
+		if( isSuccess && mService != null )
 		{
 			if( SpeakStatus.STOP != mSpeakStatus )
 			{
-				mTts.stopSpeaking();
+				mService.stopSpeak();
 				mSpeakStatus = SpeakStatus.STOP;
 			}	//如果正在朗读，先停止
 		}
@@ -148,19 +157,12 @@ public class TTSUtils
      */
 	public void speakContent( final String text ) 
 	{
-		if( isSuccess && mTts != null )
+		if( isSuccess && mService != null )
 		{
 	        setParam();	//设置参数
-	        int code = mTts.startSpeaking(text, mTtsListener);
-	        if( code != ErrorCode.SUCCESS ) 
-	        {
-	        	//Toast.makeText(mContext, "语音合成失败,错误码: " + code, Toast.LENGTH_SHORT).show();
-	        }
-	        else
-	        {
-	        	mSpeakStatus = SpeakStatus.SPEAK;
-	        	mSpeakForm = SpeakForm.CONTENT;
-	        }
+	        mService.speak(text, ttsParamsIntent);
+	        mSpeakStatus = SpeakStatus.SPEAK;
+	        mSpeakForm = SpeakForm.CONTENT;
 		}
     }
 	
@@ -171,68 +173,66 @@ public class TTSUtils
      */
 	public void speakTips( final String text ) 
 	{
-		if( isSuccess && mTts != null )
+		if( isSuccess && mService != null )
 		{
 	        setParam();	//设置参数
-	        int code = mTts.startSpeaking(text, mTtsListener);
-	        if( code != ErrorCode.SUCCESS ) 
-	        {
-	        	//Toast.makeText(mContext, "语音合成失败,错误码: " + code, Toast.LENGTH_SHORT).show();
-	        }
-	        else
-	        {
-	        	//用于提示信息朗读，不记录状态
-	        	mSpeakForm = SpeakForm.TIPS;
-	        }
+	        mService.speak(text, ttsParamsIntent);
+	        //用于提示信息朗读，不记录状态
+        	mSpeakForm = SpeakForm.TIPS;
 		}
     }
-	
+
     /**
-     * 合成回调监听。
+     * 参数设置
+     *
+     * @return
      */
-	private SynthesizerListener mTtsListener = new SynthesizerListener() 
-	{
-		//开始合成
-		@Override
-		public void onSpeakBegin() 
-		{
+    private void setParam() 
+    {
+    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ENGINE_TYPE, Integer.valueOf(mSharedPreferences.getString("engine_preference", "4097")));
+    	if(mSharedPreferences.getString("engine_preference", "4097").equals("4097"))
+    	{
+    		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_CN,"55");
+			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_CN,mSharedPreferences.getString("rolecn_preference", "3"));
 		}
-
-		//暂停合成
-		@Override
-		public void onSpeakPaused() 
-		{
+    	else
+    	{
+			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString("rolecn_preference", "vixx"));
 		}
+    	//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN,
+    	//Integer.valueOf(mSharedPreferences.getString("roleen_preference", "5")));
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT,Integer.valueOf(mSharedPreferences.getString("effect_preference", "6")));
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED,Integer.valueOf(mSharedPreferences.getString("speed_preference", "60")));
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH,Integer.valueOf(mSharedPreferences.getString("pitch_preference", "60")));
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME,Integer.valueOf(mSharedPreferences.getString("volume_preference", "60")));
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, Integer.valueOf(mSharedPreferences.getString("stream_preference", "3")));
+		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString("rolemsc_preference", "vixx"));
+		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ENGINE_TYPE, TextToSpeech.TTS_ENGINE_ONLINE);
 
-		//继续合成
-		@Override
-		public void onSpeakResumed() 
-		{
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PCM_LOG, true);
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "tts_test333");
+    }
+    
+    private SynthesizerListener.Stub ttsListener = new SynthesizerListener.Stub() 
+    {
+    	//合成进度回调
+    	@Override
+    	public void onProgressCallBack(int arg0) throws RemoteException 
+    	{
+			Log.d(TAG, "onProgressCallBack----arg0= " + arg0);
 		}
-
-		//传冲进度
-        @Override
-        public void onBufferProgress(int percent, int beginPos, int endPos, String info) 
-        {
-        }
-
-        //合成进度
-        @Override
-        public void onSpeakProgress(int percent, int beginPos, int endPos) 
-        {
-        }
-
-        //合成完成
-		@Override
-		public void onCompleted(SpeechError error) 
-		{
-			// TODO Auto-generated method stub
-			if( SpeakForm.TIPS == mSpeakForm )
+		
+    	//合成完成回调
+    	@Override
+    	public void onPlayCompletedCallBack(int arg0) throws RemoteException 
+    	{
+    		Log.d(TAG, "onPlayCompletedCallBack----arg0= " + arg0);
+    		if( SpeakForm.TIPS == mSpeakForm )
 			{
 				return;
 			}
 			mSpeakStatus = SpeakStatus.STOP;
-			if( null == error )
+			if( 0 == arg0 )
 			{
 				//合成完成
 				if( mOnTTSListener != null )
@@ -249,40 +249,66 @@ public class TTSUtils
 				}
 			}
 		}
+		
+    	//合成开始回调
+		@Override
+		public void onPlayBeginCallBack() throws RemoteException 
+		{
+			Log.d(TAG, "onPlayBeginCallBack");
+		}
+		
+		//合成中断回调
+		@Override
+		public void onInterruptedCallback() throws RemoteException 
+		{
+			Log.d(TAG, "onInterruptedCallback");
+		}
+		
+		//合成初始化回调
+		@Override
+		public void onInit(int arg0) throws RemoteException 
+		{
+			Log.d(TAG, "onInit");
+			if( 0 == arg0 )
+			{
+				isSuccess = true;
+			}	//初始化成功
+		}
+	};
+   
+    private ISpeechInitListener mInitListener = new ISpeechInitListener()
+    {
+    	@Override
+    	public void onSpeechInit(int arg0) 
+    	{
+    		Log.d(TAG, "onSpeechInit start----");
+    		Intent ttsIntent = new Intent();
+	        
+    		String str = mSharedPreferences.getString("tts_resource", "0");
+    		if( str.equals("0") )
+    		{
+    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_FROM_ASSETS);
+    		}
+    		else if( str.equals("1") )
+    		{
+    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_FROM_CLIENT);
+    			//ttsIntent.putExtra(SpeechIntent.ARG_RES_PROVIDER_AUTHORITY, "com.example.speechsuittest123123.provider");
+    			ttsIntent.putExtra(SpeechIntent.ARG_RES_FILE, "its/");
+    		}
+    		else if( str.equals("2") )
+    		{   			
+    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_SPECIFIED);
+    			String FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "Speechcloud"+"/";
+    			ttsIntent.putExtra(SpeechIntent.ARG_RES_FILE, FILE_PATH);
+    		}        	        	        
+	        mService.initSynthesizerEngine(ttsListener, ttsIntent);
+			Log.d(TAG, "onSpeechInit end-----------");
+		}
 
 		@Override
-		public void onEvent(int arg0, int arg1, int arg2, Bundle arg3) 
+		public void onSpeechUninit() 
 		{
-			// TODO Auto-generated method stub
+			Log.d(TAG, "onSpeechUninit");
 		}
-    };
-
-    /**
-     * 参数设置
-     *
-     * @return
-     */
-    private void setParam() 
-    {
-    	mTts.setParameter(SpeechConstant.PARAMS, null);								//清空参数
-        mTts.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);	//设置使用本地引擎
-        mTts.setParameter(ResourceUtil.TTS_RES_PATH, getResourcePath());			//设置发音人资源路径
-        mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaofeng");					//设置发音人
-        mTts.setParameter(SpeechConstant.SPEED, "50");								//设置语速
-        mTts.setParameter(SpeechConstant.PITCH, "50");								//设置音调
-        mTts.setParameter(SpeechConstant.VOLUME, "100");							//设置音量
-        mTts.setParameter(SpeechConstant.STREAM_TYPE, "3");							//设置播放器音频流类型
-    }
-
-	//获取发音人资源路径
-    private String getResourcePath() 
-    {
-    	StringBuffer tempBuffer = new StringBuffer();
-        
-        tempBuffer.append(ResourceUtil.generateResourcePath(mContext, RESOURCE_TYPE.assets, "tts/common.jet"));		//合成通用资源
-        tempBuffer.append(";");
-        tempBuffer.append(ResourceUtil.generateResourcePath(mContext, RESOURCE_TYPE.assets, "tts/xiaofeng.jet"));	//发音人资源
-        
-        return tempBuffer.toString();
-    }
+    };    
 }

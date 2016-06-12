@@ -65,7 +65,7 @@
 
 -libraryjars ./libs/android-support-v4.jar
 -libraryjars ./libs/jxl.jar
--libraryjars ./libs/Msc.jar
+-libraryjars ./libs/SpeechServiceLibUtil.jar
 -libraryjars ./libs/tm-extractors-0.4.jar
 
 -dontwarn android.support.v4.**

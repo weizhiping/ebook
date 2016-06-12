@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:name=".InitApplication"
         android:allowBackup="true"
@@ -102,6 +103,10 @@
             android:name=".MenuDaisyReadActivity"
             android:screenOrientation="landscape" >
         </activity> 
+        <provider
+            android:name="com.iflytek.business.speech.SharedProvider"
+            android:authorities="com.example.speechserviceutildemo.provider" 
+			/>
     </application>
 
 </manifest>
