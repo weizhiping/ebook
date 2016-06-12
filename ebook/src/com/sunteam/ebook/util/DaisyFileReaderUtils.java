@@ -307,7 +307,12 @@ public class DaisyFileReaderUtils
 				}
 				
 				DiasySentenceNode node = new DiasySentenceNode();
-				String sentence = getEscapeString(getDaisySentence( path, splitText[1], splitText[2] ))+"\n";
+				String sentence = getEscapeString(getDaisySentence( path, splitText[1], splitText[2] ));
+				if( TextUtils.isEmpty(sentence) )
+				{
+					continue;
+				}
+				sentence += "\n";
 				try
 				{
 					byte[] byteSentence  = sentence.getBytes("GB18030");	//转换成指定编码
