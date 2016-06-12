@@ -219,7 +219,7 @@ public class TTSUtils
     	@Override
     	public void onProgressCallBack(int arg0) throws RemoteException 
     	{
-			Log.d(TAG, "onProgressCallBack----arg0= " + arg0);
+			//Log.d(TAG, "onProgressCallBack----arg0= " + arg0);
 		}
 		
     	//合成完成回调

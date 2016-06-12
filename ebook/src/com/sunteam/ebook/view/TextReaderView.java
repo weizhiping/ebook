@@ -27,6 +27,8 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -45,6 +47,8 @@ import android.view.View;
  public class TextReaderView extends View implements OnGestureListener, OnDoubleTapListener, OnTTSListener
  {	 
 	 private static final String TAG = "TextReaderView";
+	 private static final int MSG_SPEAK_COMPLETED = 100;
+	 private static final int MSG_SPEAK_ERROR = 200;
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
 	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
@@ -2360,19 +2364,7 @@ import android.view.View;
 	public void onSpeakCompleted() 
 	{
 		// TODO Auto-generated method stub
-		switch( mReadMode )
-		{
-			case READ_MODE_ALL:			//全文朗读
-		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextSentence(false);
-		 		break;
-		 	case READ_MODE_WORD:		//逐词朗读
-		 		break;
-		 	case READ_MODE_CHARACTER:	//逐字朗读
-		 		break;
-		 	default:
-		 		break;
-		 }
+		mHandler.sendEmptyMessage(MSG_SPEAK_COMPLETED);
 	}
 
 	//朗读错误
@@ -2380,6 +2372,37 @@ import android.view.View;
 	public void onSpeakError() 
 	{
 		// TODO Auto-generated method stub
-		
+		mHandler.sendEmptyMessage(MSG_SPEAK_ERROR);
 	}
+	
+	private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) 
+        {
+            switch (msg.what) 
+            {
+                case MSG_SPEAK_COMPLETED:	//朗读完成
+                	switch( mReadMode )
+            		{
+            			case READ_MODE_ALL:			//全文朗读
+            		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+            		 		nextSentence(false);
+            		 		break;
+            		 	case READ_MODE_WORD:		//逐词朗读
+            		 		break;
+            		 	case READ_MODE_CHARACTER:	//逐字朗读
+            		 		break;
+            		 	default:
+            		 		break;
+            		 }
+                    break;
+                case MSG_SPEAK_ERROR:		//朗读错误
+                	
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });    	
 }
