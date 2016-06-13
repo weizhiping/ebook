@@ -1,14 +1,11 @@
 package com.sunteam.ebook.util;
 
-import java.util.Locale;
-
 import com.iflytek.business.speech.SpeechIntent;
 import com.iflytek.business.speech.SpeechServiceUtil;
 import com.iflytek.business.speech.SpeechServiceUtil.ISpeechInitListener;
 import com.iflytek.business.speech.SynthesizerListener;
 import com.iflytek.business.speech.TextToSpeech;
 import com.sunteam.ebook.R;
-import com.sunteam.ebook.entity.TTSRole;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +13,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
 import android.util.Log;
@@ -34,7 +30,6 @@ public class TTSUtils
 	private SpeechServiceUtil mService;
 	private Intent ttsParamsIntent;	//合成参数设置Intent
     private SharedPreferences mSharedPreferences;
-    private String resType = "";
 	private boolean isSuccess = false;
 	private OnTTSListener mOnTTSListener = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
@@ -136,7 +131,7 @@ public class TTSUtils
 		mContext = context.getApplicationContext();
 		
 		mSharedPreferences = mContext.getSharedPreferences(EbookConstants.TTS_SETTINGS, Activity.MODE_PRIVATE);
-		resType = mSharedPreferences.getString("tts_resource", "0");
+		//String resType = mSharedPreferences.getString("tts_resource", "0");
         // 合成对象初始化
         ttsParamsIntent = new Intent();
         Intent serviceIntent = new Intent();
