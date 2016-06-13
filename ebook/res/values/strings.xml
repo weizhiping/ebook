@@ -97,4 +97,44 @@
         <item>逐章朗读</item>
         <item>全文朗读</item>
     </string-array>
+    <string-array name="tts_role_cn">
+        <item>晓燕</item>
+		<item>晓峰</item>
+		<item>晓美</item>
+		
+		<item>许久</item>
+		<item>许多</item>
+		<item>晓萍</item>
+		<item>唐老鸭</item>
+		<item>许小宝</item>
+		<item>大龙</item>
+		
+        <item>楠楠</item>
+		<item>嘉嘉</item>
+		<item>小倩</item>
+		<item>晓蓉</item>
+		<item>晓琳</item>
+		<item>小强</item>
+		<item>小坤</item>
+    </string-array>
+    <string-array name="tts_role_en">
+        <item>凯瑟琳</item>
+        
+        <item>晓燕</item>
+		<item>晓峰</item>
+		<item>晓美</item>
+		
+		<item>许久</item>
+		<item>许多</item>
+		<item>晓萍</item>
+		<item>唐老鸭</item>
+		<item>许小宝</item>
+		<item>大龙</item>
+    </string-array>
+    <string-array name="tts_effect">
+        <item>原声</item>
+        <item>回声</item>
+		<item>机器人</item>
+		<item>阴阳怪气</item>
+    </string-array>
 </resources>

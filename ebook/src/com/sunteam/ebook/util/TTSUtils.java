@@ -1,15 +1,21 @@
 package com.sunteam.ebook.util;
 
+import java.util.Locale;
+
 import com.iflytek.business.speech.SpeechIntent;
 import com.iflytek.business.speech.SpeechServiceUtil;
 import com.iflytek.business.speech.SpeechServiceUtil.ISpeechInitListener;
 import com.iflytek.business.speech.SynthesizerListener;
 import com.iflytek.business.speech.TextToSpeech;
+import com.sunteam.ebook.R;
+import com.sunteam.ebook.entity.TTSRole;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.RemoteException;
@@ -33,6 +39,49 @@ public class TTSUtils
 	private OnTTSListener mOnTTSListener = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
 	private SpeakForm mSpeakForm = SpeakForm.TIPS;
+	
+	private static final int[] mRoleCn = {
+		3,	//晓燕
+		4,	//晓峰
+		15,	//晓美
+		
+		51,	//许久
+		52,	//许多
+		53,	//晓萍
+		54,	//唐老鸭
+		55,	//许小宝
+		56,	//大龙
+		
+		7,	//楠楠
+		9,	//嘉嘉
+		11,	//小倩
+		14,	//晓蓉
+		22,	//晓琳
+		24,	//小强
+		25,	//小坤
+	};	//中文发音人
+	
+	private static final int[] mRoleEn = {
+		20,	//凯瑟琳
+		
+		3,	//晓燕
+		4,	//晓峰
+		15,	//晓美
+		
+		51,	//许久
+		52,	//许多
+		53,	//晓萍
+		54,	//唐老鸭
+		55,	//许小宝
+		56,	//大龙
+	};	//英文发音人
+	
+	private static final int[] mEffect = {
+		0,	//原声	
+		2,	//回声
+		3,	//机器人
+		7,	//阴阳怪气
+	};	//音效
 	
 	public interface OnTTSListener 
 	{
@@ -181,7 +230,187 @@ public class TTSUtils
         	mSpeakForm = SpeakForm.TIPS;
 		}
     }
-
+	
+	//设置中文发音人
+	public boolean setRoleCn( String role )
+	{
+		Resources res = mContext.getResources();
+		String[] ttsRoleCn = res.getStringArray(R.array.tts_role_cn);
+		
+		for( int i = 0; i < ttsRoleCn.length; i++ )
+		{
+			if( ttsRoleCn[i].equals(role) )
+			{
+				Editor editor = mSharedPreferences.edit();
+				editor.putString( TextToSpeech.KEY_PARAM_ROLE_CN, mRoleCn[i]+"" );
+				editor.commit();
+				
+				return	true;
+			}
+		}
+		
+		return	false;
+	}
+	
+	//得到当前中文发音人
+	public String getCurRoleCn()
+	{
+		Resources res = mContext.getResources();
+		String[] ttsRoleCn = res.getStringArray(R.array.tts_role_cn);
+		
+		String role = mSharedPreferences.getString(TextToSpeech.KEY_PARAM_ROLE_CN, TextToSpeech.DEFAULT_ROLE_CN+"");
+		for( int i = 0; i < mRoleCn.length; i++ )
+		{
+			if( role.equals(mRoleCn[i]+"") )
+			{
+				return	ttsRoleCn[i];
+			}
+		}
+		
+		return	ttsRoleCn[0];
+	}
+	
+	//得到当前中文发音人列表
+	public String[] getRoleCnList()
+	{
+		Resources res = mContext.getResources();
+		return	res.getStringArray(R.array.tts_role_cn);
+	}
+	
+	//设置英文发音人
+	public boolean setRoleEn( String role )
+	{
+		Resources res = mContext.getResources();
+		String[] ttsRoleEn = res.getStringArray(R.array.tts_role_en);
+		
+		for( int i = 0; i < ttsRoleEn.length; i++ )
+		{
+			if( ttsRoleEn[i].equals(role) )
+			{
+				Editor editor = mSharedPreferences.edit();
+				editor.putString( TextToSpeech.KEY_PARAM_ROLE_EN, mRoleEn[i]+"" );
+				editor.commit();
+				
+				return	true;
+			}
+		}
+		
+		return	false;
+	}
+	
+	//得到当前英文发音人
+	public String getCurRoleEn()
+	{
+		Resources res = mContext.getResources();
+		String[] ttsRoleEn = res.getStringArray(R.array.tts_role_en);
+		
+		String role = mSharedPreferences.getString(TextToSpeech.KEY_PARAM_ROLE_EN, TextToSpeech.DEFAULT_ROLE_EN+"");
+		for( int i = 0; i < mRoleEn.length; i++ )
+		{
+			if( role.equals(mRoleEn[i]+"") )
+			{
+				return	ttsRoleEn[i];
+			}
+		}
+		
+		return	ttsRoleEn[0];
+	}
+	
+	//得到当前英文发音人列表
+	public String[] getRoleEnList()
+	{
+		Resources res = mContext.getResources();
+		return	res.getStringArray(R.array.tts_role_en);
+	}
+	
+	//设置语速
+	public void setSpeed( int speed )
+	{
+		Editor editor = mSharedPreferences.edit();
+		editor.putInt( TextToSpeech.KEY_PARAM_SPEED, speed );
+		editor.commit();
+	}
+	
+	//得到语速
+	public int getSpeed()
+	{
+		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, TextToSpeech.DEFAULT_SPEED);
+	}
+	
+	//设置语调
+	public void setPitch( int pitch )
+	{
+		Editor editor = mSharedPreferences.edit();
+		editor.putInt( TextToSpeech.KEY_PARAM_PITCH, pitch );
+		editor.commit();
+	}
+	
+	//得到语速
+	public int getPitch()
+	{
+		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE);
+	}
+	
+	//设置音量
+	public void setVolume( int volume )
+	{
+		Editor editor = mSharedPreferences.edit();
+		editor.putInt( TextToSpeech.KEY_PARAM_VOLUME, volume );
+		editor.commit();
+	}
+	
+	//得到音量
+	public int getVolume()
+	{
+		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME);
+	}
+	
+	//设置音效
+	public boolean setEffect( String effect )
+	{
+		Resources res = mContext.getResources();
+		String[] ttsEffect = res.getStringArray(R.array.tts_effect);
+		
+		for( int i = 0; i < ttsEffect.length; i++ )
+		{
+			if( ttsEffect[i].equals(effect) )
+			{
+				Editor editor = mSharedPreferences.edit();
+				editor.putInt( TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
+				editor.commit();
+				
+				return	true;
+			}
+		}
+		
+		return	false;
+	}
+	
+	//得到当前音效
+	public String getCurEffect()
+	{
+		Resources res = mContext.getResources();
+		String[] ttsEffect = res.getStringArray(R.array.tts_effect);
+		
+		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
+		for( int i = 0; i < mEffect.length; i++ )
+		{
+			if( effect == mEffect[i] )
+			{
+				return	ttsEffect[i];
+			}
+		}
+		
+		return	ttsEffect[0];
+	}
+	
+	//得到当前音效列表
+	public String[] getEffectList()
+	{
+		Resources res = mContext.getResources();
+		return	res.getStringArray(R.array.tts_effect);
+	}
+		
     /**
      * 参数设置
      *
@@ -189,28 +418,24 @@ public class TTSUtils
      */
     private void setParam() 
     {
-    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ENGINE_TYPE, Integer.valueOf(mSharedPreferences.getString("engine_preference", "4097")));
-    	if(mSharedPreferences.getString("engine_preference", "4097").equals("4097"))
+    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ENGINE_TYPE, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ENGINE_TYPE, TextToSpeech.TTS_ENGINE_LOCAL));	//TTS引擎类型，4097是本地 4098是网络
+    	if( mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ENGINE_TYPE, TextToSpeech.TTS_ENGINE_LOCAL) == TextToSpeech.TTS_ENGINE_LOCAL )
     	{
-    		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_CN,"55");
-			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_CN,mSharedPreferences.getString("rolecn_preference", "3"));
+			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_CN, mSharedPreferences.getString(TextToSpeech.KEY_PARAM_ROLE_CN, TextToSpeech.DEFAULT_ROLE_CN+""));//TTS中文发音人参数
 		}
     	else
     	{
-			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString("rolecn_preference", "vixx"));
+			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString(TextToSpeech.KEY_PARAM_MSC_ROLE, "vixx"));						//网络TTS角色
 		}
-    	//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN,
-    	//Integer.valueOf(mSharedPreferences.getString("roleen_preference", "5")));
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT,Integer.valueOf(mSharedPreferences.getString("effect_preference", "6")));
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED,Integer.valueOf(mSharedPreferences.getString("speed_preference", "60")));
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH,Integer.valueOf(mSharedPreferences.getString("pitch_preference", "60")));
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME,Integer.valueOf(mSharedPreferences.getString("volume_preference", "60")));
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, Integer.valueOf(mSharedPreferences.getString("stream_preference", "3")));
-		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString("rolemsc_preference", "vixx"));
-		//ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ENGINE_TYPE, TextToSpeech.TTS_ENGINE_ONLINE);
+    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ROLE_EN, TextToSpeech.DEFAULT_ROLE_EN));			//TTS英文发音人参数
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT));				//TTS音效参数
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, TextToSpeech.DEFAULT_SPEED));				//TTS语速参数
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE));					//TTS语调参数
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME));				//TTS音量参数
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_STREAM, TextToSpeech.DEFAULT_STREAM));				//TTS播放类型参数
 
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PCM_LOG, true);
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "tts_test333");
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PCM_LOG, false);																			//TTS是否保存录音
+		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "com.sunteam.ebook");																//TTS保存录音路径
     }
     
     private SynthesizerListener.Stub ttsListener = new SynthesizerListener.Stub() 
