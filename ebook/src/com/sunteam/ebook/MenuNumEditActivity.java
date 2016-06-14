@@ -1,6 +1,7 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 数字选择界面
@@ -20,6 +22,8 @@ import com.sunteam.ebook.util.PublicUtils;
 public class MenuNumEditActivity extends Activity {
 	private int number;
 	private int maxNum;
+	private int flage;//0 语速，1为语调
+	private String title;
 	private EditText numView;
 
 	@Override
@@ -31,9 +35,11 @@ public class MenuNumEditActivity extends Activity {
 	}
 
 	private void initViews() {
-
-		String title = getIntent().getStringExtra("edit_name");
-		maxNum = getIntent().getIntExtra("edit_max", 0);
+		Intent intent = getIntent();
+		title = intent.getStringExtra("edit_name");
+		maxNum = intent.getIntExtra("edit_max", 0);
+		number = intent.getIntExtra("edit_current", 0);
+		flage = intent.getIntExtra("edit_flage", 0);
 		RelativeLayout layout = (RelativeLayout) findViewById(R.id.menu_layout);
 		TextView titleView = (TextView) findViewById(R.id.title_menu);
 		numView = (EditText) findViewById(R.id.num_edit);
@@ -76,6 +82,11 @@ public class MenuNumEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
+			if(0 == flage){
+				TTSUtils.getInstance().setSpeed(number);
+			}else if(1 == flage){
+				TTSUtils.getInstance().setPitch(number);
+			}
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		default:
@@ -87,6 +98,7 @@ public class MenuNumEditActivity extends Activity {
 			number = maxNum;
 		}
 		numView.setText(number + "");
+		TTSUtils.getInstance().speakTips(title + number);
 		return super.onKeyDown(keyCode, event);
 	}
 }

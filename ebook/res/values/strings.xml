@@ -53,8 +53,7 @@
         <item>英文角色</item>
         <item>语速</item>
         <item>语调</item>
-        <item>语音风格</item>
-        <item>语音音效</item>
+        <item>语音音效</item><!-- <item>语音风格</item> -->
     </string-array>
     <string-array name="array_menu_voice_china">
         <item>国语男声</item>

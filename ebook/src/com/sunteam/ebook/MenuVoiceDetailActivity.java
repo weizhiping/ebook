@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -45,11 +46,11 @@ public class MenuVoiceDetailActivity extends Activity implements
 			menus = res.getStringArray(R.array.array_menu_voice_english);
 			break;
 		case 4:
-			menus = res.getStringArray(R.array.array_menu_voice_style);
+			menus = res.getStringArray(R.array.array_menu_voice_effect);		
 			break;
-		case 5:
-			menus = res.getStringArray(R.array.array_menu_voice_effect);
-			break;
+//		case 5:
+//			menus = res.getStringArray(R.array.array_menu_voice_style);
+//			break;
 		}
 		int length = menus.length;
 		mMenuList = new ArrayList<String>();
@@ -89,34 +90,27 @@ public class MenuVoiceDetailActivity extends Activity implements
 			return true;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
+			mMainView.enter();
 			return true;
 		default:
 			break;
 		}
+		
 		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu) {
-		switch (selectItem) {
+		String voice = mMenuList.get(selectItem);
+		switch (voiceFlag) {
 		case 0:
-			
+			TTSUtils.getInstance().setRoleCn(voice);
 			break;
 		case 1:
-
-			break;
-		case 2:
-
-			break;
-		case 3:
-
+			TTSUtils.getInstance().setRoleEn(voice);
 			break;
 		case 4:
-
-			break;
-		case 5:
-
+			TTSUtils.getInstance().setEffect(voice);
 			break;
 		}
 		ScreenManager.getScreenManager().popAllActivityExceptOne();

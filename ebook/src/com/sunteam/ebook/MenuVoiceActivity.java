@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -89,16 +90,16 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 			startToDetail(1);
 			break;
 		case 2://语速
-			startToNumEdit(mMenuList.get(selectItem));
+			startToNumEdit(mMenuList.get(selectItem),TTSUtils.getInstance().getSpeed(),0);
 			break;
 		case 3://语调
-			startToNumEdit(mMenuList.get(selectItem));
+			startToNumEdit(mMenuList.get(selectItem),TTSUtils.getInstance().getPitch(),1);
 			break;
-		case 4://语音风格
+//		case 4://语音风格
+//			startToDetail(4);
+//			break;
+		case 4://语音音效
 			startToDetail(4);
-			break;
-		case 5://语音音效
-			startToDetail(5);
 			break;
 		}
 	}
@@ -109,10 +110,12 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 		startActivity(intent);
 	}
 	
-	private void startToNumEdit(String name){
+	private void startToNumEdit(String name,int current,int flage){
 		Intent intent = new Intent(this,MenuNumEditActivity.class);
 		intent.putExtra("edit_name", name);
+		intent.putExtra("edit_current", current);
 		intent.putExtra("edit_max", 20);
+		intent.putExtra("edit_flage", flage);
 		startActivity(intent);
 	}
 }
