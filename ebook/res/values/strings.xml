@@ -33,6 +33,7 @@
 	<string name="page_read_tips2">第%1$s页</string>
 	<string name="baike_search_fail">无搜索结果</string>
 	<string name="install_tts_tips">请先安装讯飞语音+"</string>
+	<string name="setting_success">设定成功</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>
@@ -70,11 +71,9 @@
         <item>平铺直叙</item>
     </string-array>
      <string-array name="array_menu_voice_effect">
-        <item>正常</item>
-        <item>忽远忽近</item>
-         <item>回声</item>
-        <item>合唱</item>
-         <item>混响</item>
+        <item>原声</item>
+        <item>回声</item>
+         <item>机器人</item>
         <item>阴阳怪气</item>
     </string-array>
     <string-array name="array_menu_music">
@@ -96,45 +95,5 @@
         <item>逐句朗读</item>
         <item>逐章朗读</item>
         <item>全文朗读</item>
-    </string-array>
-    <string-array name="tts_role_cn">
-        <item>晓燕</item>
-		<item>晓峰</item>
-		<item>晓美</item>
-		
-		<item>许久</item>
-		<item>许多</item>
-		<item>晓萍</item>
-		<item>唐老鸭</item>
-		<item>许小宝</item>
-		<item>大龙</item>
-		
-        <item>楠楠</item>
-		<item>嘉嘉</item>
-		<item>小倩</item>
-		<item>晓蓉</item>
-		<item>晓琳</item>
-		<item>小强</item>
-		<item>小坤</item>
-    </string-array>
-    <string-array name="tts_role_en">
-        <item>凯瑟琳</item>
-        
-        <item>晓燕</item>
-		<item>晓峰</item>
-		<item>晓美</item>
-		
-		<item>许久</item>
-		<item>许多</item>
-		<item>晓萍</item>
-		<item>唐老鸭</item>
-		<item>许小宝</item>
-		<item>大龙</item>
-    </string-array>
-    <string-array name="tts_effect">
-        <item>原声</item>
-        <item>回声</item>
-		<item>机器人</item>
-		<item>阴阳怪气</item>
     </string-array>
 </resources>
