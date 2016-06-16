@@ -98,7 +98,7 @@ public class MenuNumEditActivity extends Activity {
 			number = maxNum;
 		}
 		numView.setText(number + "");
-		TTSUtils.getInstance().speakTips(title + number);
+		TTSUtils.getInstance().testSpeed(number,title + number);
 		return super.onKeyDown(keyCode, event);
 	}
 }
