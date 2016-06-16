@@ -34,6 +34,9 @@
 	<string name="baike_search_fail">无搜索结果</string>
 	<string name="install_tts_tips">请先安装讯飞语音+"</string>
 	<string name="setting_success">设定成功</string>
+	<string name="tts_speed">语速</string>
+	<string name="tts_pitch">语调</string>
+	<string name="tts_volume">音量</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>

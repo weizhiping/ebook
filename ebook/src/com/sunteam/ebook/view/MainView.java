@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.adapter.MainListAdapter;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.TTSSpeakMode;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
@@ -42,10 +43,8 @@ public class MainView extends View
 		return	mView;
 	}
 	
-	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList)
+	private void initView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList, TTSSpeakMode mode )
 	{
-		super(context);
-		
 		mContext = context;
 		mView = LayoutInflater.from(context).inflate( R.layout.view_main, null );
 		
@@ -60,9 +59,23 @@ public class MainView extends View
     	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);								//设置分割线的背景色
     	
     	mTvTitle.setText(title);
-    	mAdapter = new MainListAdapter( mContext, listener, menuList );
+    	mAdapter = new MainListAdapter( mContext, listener, menuList, mode );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点
+	}
+	
+	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList, TTSSpeakMode mode )
+	{
+		super(context);
+		
+		initView( context, listener, title, menuList, mode );
+	}
+	
+	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList)
+	{
+		super(context);
+		
+		initView( context, listener, title, menuList, TTSSpeakMode.READ_MODE_NORMAL );
 	}
 	
 	public void setSelection(int position){

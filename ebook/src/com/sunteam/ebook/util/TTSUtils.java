@@ -254,7 +254,7 @@ public class TTSUtils
 				editor.putString( TextToSpeech.KEY_PARAM_ROLE_CN, mRoleCn[i]+"" );
 				editor.commit();
 				
-				speakTips(mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -321,7 +321,7 @@ public class TTSUtils
 				editor.putString( TextToSpeech.KEY_PARAM_ROLE_EN, mRoleEn[i]+"" );
 				editor.commit();
 				
-				speakTips(mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -368,7 +368,7 @@ public class TTSUtils
 		editor.putInt( TextToSpeech.KEY_PARAM_SPEED, speed*5 );
 		editor.commit();
 		
-		speakTips(mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语速
@@ -390,7 +390,7 @@ public class TTSUtils
 		editor.putInt( TextToSpeech.KEY_PARAM_PITCH, pitch*5 );
 		editor.commit();
 		
-		speakTips(mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语调
@@ -412,7 +412,7 @@ public class TTSUtils
 		editor.putInt( TextToSpeech.KEY_PARAM_VOLUME, volume*5 );
 		editor.commit();
 		
-		speakTips(mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到音量
@@ -454,7 +454,7 @@ public class TTSUtils
 				editor.putInt( TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
 				editor.commit();
 				
-				speakTips(mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
