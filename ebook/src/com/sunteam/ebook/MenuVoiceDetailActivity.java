@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.entity.TTSSpeakMode;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
@@ -60,10 +61,19 @@ public class MenuVoiceDetailActivity extends Activity implements
 	}
 
 	private void initViews() {
-		
 		String title = this.getString(R.string.menu_function);
+		switch(voiceFlag){
+		case 0:
+			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_CN);
+			break;
+		case 1:
+			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_EN);
+			break;
+		case 4:
+			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_EFFECT);
+			break;
+		}
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
-		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 	}
