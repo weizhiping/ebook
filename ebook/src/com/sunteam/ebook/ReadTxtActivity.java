@@ -1,5 +1,7 @@
 package com.sunteam.ebook;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,6 +41,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private TextReaderView mTextReaderView = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
+	private ArrayList<FileInfo> fileInfoList = null;
 	private static final int MENU_CODE = 10;
 	private MenuBroadcastReceiver menuReceiver;
 	private SharedPreferences shared;
@@ -49,6 +52,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		setContentView(R.layout.activity_read_txt);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		int part = fileInfo.part;
 		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
     	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);

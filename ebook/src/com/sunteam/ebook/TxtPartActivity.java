@@ -23,6 +23,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private ArrayList<FileInfo> fileInfoList = null;
 	private FileInfo fileInfo;
 	
 	@Override
@@ -38,6 +39,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     {
 		Intent intent = getIntent();
 		fileInfo = (FileInfo) intent.getSerializableExtra("file");
+		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
     	int count = intent.getIntExtra("count", 0);
     	
     	mMenuList = new ArrayList<String>();
@@ -88,9 +90,8 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	{
 		fileInfo.part = selectItem;
 		Intent intent = new Intent(this,ReadTxtActivity.class);
-		Bundle bundle = new Bundle();
-		bundle.putSerializable("file", fileInfo);
-		intent.putExtras(bundle);
+		intent.putExtra("file", fileInfo);
+		intent.putExtra("file_list", fileInfoList);
 		this.startActivity(intent);
 	} 
 }

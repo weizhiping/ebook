@@ -144,7 +144,7 @@ public class FileOperateUtils {
 					if (suffix.equalsIgnoreCase(getFileExtensions(f))
 							|| getFileExtensions(f)
 									.equalsIgnoreCase(suffixDocx)) {
-						fileList.add(f);
+						fileList.add(0, f);
 					}
 				}
 			}
@@ -183,7 +183,7 @@ public class FileOperateUtils {
 						FileInfo info = new FileInfo(f.getName(), f.getPath(), true,
 								catalog, 0, 0);
 						info.diasyPath = path;
-						fileList.add(info);
+						fileList.add(0,info);
 					}
 				}
 			}

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -192,6 +193,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 		// 进入到selectItem对应的界面
 		FileInfo fileInfo = fileInfoList.get(selectItem);
+		fileInfo.item = selectItem;
 		if(catalog != 1){
 			if (fileInfo.isFolder) {
 				Intent intent = new Intent(this, TxtDetailActivity.class);
@@ -248,17 +250,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		else if (1 == count) // 只有一部分
 		{
 			Intent intent = new Intent(this, ReadTxtActivity.class);
-			Bundle bundle = new Bundle();
-			bundle.putSerializable("file", fileInfo);
-			intent.putExtras(bundle);
+			intent.putExtra("file", fileInfo);
+			intent.putExtra("file_list", fileInfoList);
 			this.startActivity(intent);
 //			manager.insertBookToDb(fileInfo, 2);
 		} else {
 			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
 			Intent intent = new Intent(this, TxtPartActivity.class);
-			Bundle bundle = new Bundle();
-			bundle.putSerializable("file", fileInfo);
-			intent.putExtras(bundle);
+			intent.putExtra("file", fileInfo);
+			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("count", count); // 第几部分
 			this.startActivity(intent);
 //			manager.insertBookToDb(fileInfo, 2);
