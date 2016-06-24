@@ -25,7 +25,7 @@ import android.util.Log;
 public class TTSUtils
 {
     private static final String TAG = "TTSUtils";
-    private static final int DEFAULT_ROLE_CN = 4;	//默认中文发音人
+    private static final int DEFAULT_ROLE_CN = 3;	//默认中文发音人
     private static final int DEFAULT_ROLE_EN = 17;	//默认英文发音人
     private static final int DEFAULT_SPEED = 65;	//默认语速
     
