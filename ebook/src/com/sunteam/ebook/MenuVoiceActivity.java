@@ -81,7 +81,7 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		switch (selectItem) {
 		case 0://中文角色
 			startToDetail(0);

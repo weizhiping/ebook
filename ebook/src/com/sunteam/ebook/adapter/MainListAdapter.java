@@ -33,7 +33,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	
 	public interface OnEnterListener 
 	{
-		public void onEnterCompleted( int selectItem, String menu );
+		public void onEnterCompleted( int selectItem, String menu, boolean isAuto );
 	}
 
 	//设置确定监听器
@@ -110,11 +110,11 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	}
 	
 	//按了确定键
-	public void enter()
+	public void enter(boolean isAuto)
 	{
 		if( mOnEnterListener != null )
 		{
-			mOnEnterListener.onEnterCompleted( this.selectItem, this.gListData.get(selectItem) );
+			mOnEnterListener.onEnterCompleted( this.selectItem, this.gListData.get(selectItem), isAuto );
 		}
 	}
 	
@@ -257,7 +257,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 				}
 				else
 				{
-					enter();	//进入下一级界面
+					enter(false);	//进入下一级界面
 				}
 				break;
 			default:

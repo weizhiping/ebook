@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements OnEnterListener
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) 
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) 
 	{
 		switch( selectItem )
 		{//0为txt文档，2为word文档,1为disay

@@ -104,7 +104,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		DiasyNode dias = diasList.get(selectItem);
 		ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 		int size = diaysList.size();

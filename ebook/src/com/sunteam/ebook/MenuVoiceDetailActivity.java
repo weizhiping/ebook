@@ -110,7 +110,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		String voice = mMenuList.get(selectItem);
 		switch (voiceFlag) {
 		case 0:

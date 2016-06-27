@@ -89,7 +89,7 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 
 		FileInfo file = fileInfoList.get(selectItem);
 		DaisyFileReaderUtils.getInstance().init(file.diasyPath);

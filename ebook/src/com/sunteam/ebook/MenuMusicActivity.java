@@ -80,7 +80,7 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		switch (selectItem) {
 		case 0:
 		case 1:

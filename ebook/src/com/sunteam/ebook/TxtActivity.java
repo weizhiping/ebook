@@ -87,7 +87,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		// TODO Auto-generated method stub
 		String name = menu;
 		Intent intent = new Intent(this, TxtDetailActivity.class);

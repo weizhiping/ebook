@@ -102,7 +102,12 @@ public class MainView extends View
 	
 	public void enter()
 	{
-		mAdapter.enter();
+		mAdapter.enter(false);
+	}
+
+	public void enter( boolean isAuto )
+	{
+		mAdapter.enter(isAuto);
 	}
 	
 	public void updateAdapter()

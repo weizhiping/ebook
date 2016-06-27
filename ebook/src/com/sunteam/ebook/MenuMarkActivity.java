@@ -77,7 +77,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		switch (selectItem) {
 		case 0:
 			

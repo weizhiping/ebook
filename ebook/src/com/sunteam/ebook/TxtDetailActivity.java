@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -167,7 +166,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		if(flag == 0){
 			String path;
 			if(0 == selectItem){
@@ -208,9 +207,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				String name = FileOperateUtils.getFileExtensions(fileInfo.name);
 				if(name.equalsIgnoreCase(EbookConstants.BOOK_WORD)||
 						 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
-					new WordAsyncTask().execute(fileInfo);
+					new WordAsyncTask(isAuto).execute(fileInfo);
 				}else{
-					showFiles(fileInfo, fileInfo.path);
+					showFiles(fileInfo, fileInfo.path, isAuto);
 				}
 			}
 		}else{
@@ -233,7 +232,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	// 显示文件内容
-	private void showFiles(FileInfo fileInfo, final String fullpath) {
+	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto) {
 		fileInfo.flag = flagType;
 		try {
 			TextFileReaderUtils.getInstance().init(fullpath);
@@ -261,6 +260,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("count", count); // 第几部分
+			intent.putExtra("isAuto", isAuto);
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 //			manager.insertBookToDb(fileInfo, 2);
 		}
@@ -305,6 +305,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	 */
 	private class WordAsyncTask extends AsyncTask<FileInfo, Void, String> {
 		private FileInfo fileInfo = null;
+		private boolean isAuto = false;
+		
+		public WordAsyncTask(boolean isAuto)
+		{
+			this.isAuto = isAuto;
+		}
 		
 		@Override
 		protected void onPreExecute() {
@@ -333,7 +339,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			PublicUtils.cancelProgress();
 			if( !TextUtils.isEmpty(result) )
 			{
-				showFiles(fileInfo, result);
+				showFiles(fileInfo, result, isAuto);
 			}
 			else
 			{
@@ -352,7 +358,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				if( RESULT_OK == resultCode )
 				{
 					mMainView.down();
-					mMainView.enter();
+					mMainView.enter(true);
 				}	//阅读下一本书
 				break;
 			default:

@@ -85,7 +85,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) {
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		Intent intent = new Intent();
 		switch (selectItem) {
 		

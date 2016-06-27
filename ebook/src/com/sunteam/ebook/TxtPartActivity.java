@@ -26,6 +26,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private FileInfo fileInfo;
+	private boolean isAuto = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -42,6 +43,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 		fileInfo = (FileInfo) intent.getSerializableExtra("file");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
     	int count = intent.getIntExtra("count", 0);
+    	isAuto = intent.getBooleanExtra("isAuto", false);
     	
     	mMenuList = new ArrayList<String>();
     	for( int i = 1; i <= count; i++ )
@@ -53,6 +55,11 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, fileInfo.name, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
+    	
+    	if( isAuto )
+    	{
+    		mMainView.enter();
+    	}
     }
 	
     @Override
@@ -87,7 +94,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu) 
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) 
 	{
 		fileInfo.part = selectItem;
 		Intent intent = new Intent(this,ReadTxtActivity.class);
