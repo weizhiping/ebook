@@ -76,7 +76,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
-    		finish();
+    		back();
     	}
     	registerReceiver();
     	playMusic();
@@ -212,10 +212,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onDestroy()
 	{
 		super.onDestroy();
-		MediaPlayerUtils.getInstance().stop();
-		unregisterReceiver(menuReceiver);
-		TTSUtils.getInstance().stop();
-		TTSUtils.getInstance().OnTTSListener(null);
 	}
 	
 	@Override
@@ -235,14 +231,14 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
 			setResult(RESULT_OK, intent);
-			finish();
+			back();
 		}
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
 			setResult(RESULT_OK, intent);
-			finish();
+			back();
 		}
 		else
 		{
@@ -291,4 +287,26 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			}
 		}
 	}
+	
+	//退出此界面
+	private void back()
+	{
+		MediaPlayerUtils.getInstance().stop();
+		unregisterReceiver(menuReceiver);
+		TTSUtils.getInstance().stop();
+		TTSUtils.getInstance().OnTTSListener(null);
+		finish();
+	}
+	
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) 
+	{  
+		if( event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN )
+		{
+			back();
+			return true;   
+		}     
+	     
+		return super.dispatchKeyEvent(event);
+	}	
 }
