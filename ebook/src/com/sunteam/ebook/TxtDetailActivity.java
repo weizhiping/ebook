@@ -241,7 +241,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			e.printStackTrace();
 		}
 		int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
-
+		fileInfo.count = count;
+		
 		if (0 == count) // 文件为空
 		{
 			// 提示一下（语音和文字）
@@ -252,7 +253,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
-			this.startActivity(intent);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 //			manager.insertBookToDb(fileInfo, 2);
 		} else {
 			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
@@ -260,7 +261,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("count", count); // 第几部分
-			this.startActivity(intent);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 //			manager.insertBookToDb(fileInfo, 2);
 		}
 	}
@@ -341,4 +342,21 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		}
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		switch (requestCode) 
+		{
+			case EbookConstants.REQUEST_CODE:		//阅读器返回
+				if( RESULT_OK == resultCode )
+				{
+					mMainView.down();
+					mMainView.enter();
+				}	//阅读下一本书
+				break;
+			default:
+				break;
+		} 	
+	}	
 }

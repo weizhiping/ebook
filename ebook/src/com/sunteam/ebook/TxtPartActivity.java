@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -92,6 +93,38 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 		Intent intent = new Intent(this,ReadTxtActivity.class);
 		intent.putExtra("file", fileInfo);
 		intent.putExtra("file_list", fileInfoList);
-		this.startActivity(intent);
+		startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 	} 
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		switch (requestCode) 
+		{
+			case EbookConstants.REQUEST_CODE:		//阅读器返回
+				if( RESULT_OK == resultCode )
+				{
+					int next = data.getIntExtra("next", EbookConstants.TO_NEXT_PART);
+					
+					switch( next )
+					{
+						case EbookConstants.TO_NEXT_PART:	//到下一个部分
+							mMainView.down();
+							mMainView.enter();
+							break;
+						case EbookConstants.TO_NEXT_BOOK:	//到下一本书
+							Intent intent = new Intent();
+							intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+							setResult(RESULT_OK, intent);
+							finish();
+							break;
+						default:
+							break;
+					}
+				}	//阅读下一个部分
+				break;
+			default:
+				break;
+		} 	
+	}	
 }

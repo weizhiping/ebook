@@ -23,6 +23,7 @@ public class FileInfo implements Serializable{
 	public int len;//长度
 	public int checksum;//校验
 	public int item;//文件列表中的位置
+	public int count;	//文件总部分数目
 	public FileInfo(){
 	
 	}

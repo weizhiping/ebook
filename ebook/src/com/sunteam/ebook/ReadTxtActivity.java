@@ -230,8 +230,25 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onPageFlingToBottom() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.to_bottom);
-		PublicUtils.showToast(this, tips);
+		if( fileInfo.part+1 < fileInfo.count )	//还有下一部分需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+			setResult(RESULT_OK, intent);
+			finish();
+		}
+		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+			setResult(RESULT_OK, intent);
+			finish();
+		}
+		else
+		{
+			String tips = this.getString(R.string.to_bottom);
+			PublicUtils.showToast(this, tips);
+		}
 	}
 
 	@Override
