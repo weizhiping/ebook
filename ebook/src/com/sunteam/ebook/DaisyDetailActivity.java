@@ -45,7 +45,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		diasList = (ArrayList<DiasyNode>) intent.getSerializableExtra("diasys");
-		Log.e(TAG, "----file info flag--:" + fileInfo.flag);
+		Log.e(TAG, "----file info flag--:" + fileInfo.flag + "---fileInfo.item--:" + fileInfo.item);
 		initViews(name);
 	}
 

@@ -28,7 +28,7 @@ public class DatabaseManager {
 
 	// 收藏和最近浏览数据库插入数据
 	public void insertBookToDb(FileInfo file,int type) {
-		boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path);
+		boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path,type);
 		if (!hasbook) {
 			db = helper.getWritableDatabase();
 			ContentValues newValues = new ContentValues();
@@ -70,7 +70,7 @@ public class DatabaseManager {
 						book.path = cursor.getString(cursor
 								.getColumnIndex(EbookConstants.BOOK_PATH));
 						book.diasyPath = cursor.getString(cursor
-								.getColumnIndex(EbookConstants.BOOK_DIASY_PATH));
+								.getColumnIndex(EbookConstants.BOOK_DIASY_PATH)); 
 						int folder = cursor.getInt(cursor
 								.getColumnIndex(EbookConstants.BOOK_FOLDER));
 						if(0 == folder){
@@ -147,10 +147,10 @@ public class DatabaseManager {
 			return book;
 		}
 	// 查找数据库中是否已经存在某一条数据
-	private boolean hasDataInBase(String table, String path) {
+	private boolean hasDataInBase(String table, String path,int type) {
 		Cursor cursor = null;
 		db = helper.getWritableDatabase();
-		cursor = db.query(table, null, "path=?", new String[] { path }, null,
+		cursor = db.query(table, null, "path=? and type=?", new String[] { path,String.valueOf(type) }, null,
 				null, null);
 		int count = 0;
 		if (null != cursor) {

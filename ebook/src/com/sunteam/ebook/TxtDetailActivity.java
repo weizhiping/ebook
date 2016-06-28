@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,7 +100,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				}
 			}
 		}
-
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
@@ -159,6 +159,11 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		case KeyEvent.KEYCODE_ENTER:
 			mMainView.enter();
 			return true;
+		case KeyEvent.KEYCODE_MENU:
+			if(0 != flag){
+				insertToDb();
+			}
+			break;
 		default:
 			break;
 		}
@@ -214,7 +219,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		}else{
 			DaisyFileReaderUtils.getInstance().init(fileInfo.diasyPath);
-			
 			ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
 					.getChildNodeList(-1);
 			Intent intent = new Intent(this, DaisyDetailActivity.class);;
@@ -230,7 +234,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			this.startActivity(intent);
 		}
 	}
-
+	
 	// 显示文件内容
 	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto) {
 		fileInfo.flag = flagType;
@@ -293,7 +297,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		}
 	}
-
+	//添加到收藏
+	private void insertToDb(){
+		FileInfo fileInfo = fileInfoList.get(0);
+		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
+	}
+	
 	// 初始化数据库文件
 	private void initDataFiles(int flag,int catalog) {
 		fileInfoList = manager.querybooks(flag,catalog);
