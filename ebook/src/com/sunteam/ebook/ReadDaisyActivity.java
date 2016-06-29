@@ -173,6 +173,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		{
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+			intent.putExtra("seq", mDiasyNode.seq);
 			setResult(RESULT_OK, intent);
 			back();
 		}

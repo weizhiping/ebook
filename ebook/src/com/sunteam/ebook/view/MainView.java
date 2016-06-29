@@ -119,4 +119,9 @@ public class MainView extends View
 	{
 		return	mAdapter.isDown();	
 	}
+	
+	public String getCurItem()
+	{
+		return	mAdapter.getCurItem();
+	}
 }

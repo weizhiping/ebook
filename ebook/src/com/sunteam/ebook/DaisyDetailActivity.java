@@ -137,6 +137,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("diasys",  diaysList);
 			intent.putExtra("file_list", fileInfoList);
+			intent.putExtra("isAuto", isAuto);
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
@@ -154,17 +155,55 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					switch( next )
 					{
 						case EbookConstants.TO_NEXT_PART:	//到下一个部分
-							if( mMainView.isDown() )
+							int seq = data.getIntExtra("seq", -1);
+							if( -1 == seq )
 							{
-								mMainView.down();
-								mMainView.enter(true);
+								if( mMainView.isDown() )
+								{
+									mMainView.down();
+									mMainView.enter(true);
+								}
+								else
+								{
+									Intent intent = new Intent();
+									intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+									setResult(RESULT_OK, intent);
+									finish();
+								}
 							}
 							else
 							{
-								Intent intent = new Intent();
-								intent.putExtra("next", EbookConstants.TO_NEXT_PART);
-								setResult(RESULT_OK, intent);
-								finish();
+								ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(seq);
+								
+								if( 0 == diaysList.size() )	//当前节点是叶子节点
+								{
+									if( mMainView.isDown() )
+									{
+										mMainView.down();
+										mMainView.enter(true);
+									}
+									else
+									{
+										Intent intent = new Intent();
+										intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+										setResult(RESULT_OK, intent);
+										finish();
+									}
+								}
+								else	//如果当前节点不是叶子节点，则直接进入
+								{
+									Intent intent = new Intent(this, DaisyDetailActivity.class);
+									intent.putExtra("name", mMainView.getCurItem());
+									intent.putExtra("seq", seq);
+									intent.putExtra("catalogType", catalog);
+									intent.putExtra("path", path);
+									intent.putExtra("file", remberFile);
+									intent.putExtra("fileinfo", fileInfo);
+									intent.putExtra("diasys",  diaysList);
+									intent.putExtra("file_list", fileInfoList);
+									intent.putExtra("isAuto", true);
+									startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+								}
 							}
 							break;
 						case EbookConstants.TO_NEXT_BOOK:	//到下一本书

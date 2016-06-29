@@ -122,6 +122,12 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		}
 	}
 	
+	//得到当前反显条目
+	public String getCurItem()
+	{
+		return	gListData.get(selectItem);
+	}
+	
 	//按了确定键
 	public void enter(boolean isAuto)
 	{
