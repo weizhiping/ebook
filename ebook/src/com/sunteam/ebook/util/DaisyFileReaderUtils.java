@@ -173,6 +173,12 @@ public class DaisyFileReaderUtils
 		}
 	}
 	
+	//得到节点总数
+	public int getDiasyNodeTotal()
+	{
+		return	mDiasyNodeList.size();
+	}
+	
 	//得到某个节点信息
 	public DiasyNode getDiasyNode( int position )
 	{

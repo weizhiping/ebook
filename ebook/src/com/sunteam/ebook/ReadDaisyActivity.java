@@ -1,5 +1,7 @@
 package com.sunteam.ebook;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +18,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ReadMode;
+import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
@@ -37,6 +40,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private DaisyReaderView mDaisyReaderView = null;
 	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
+	private ArrayList<FileInfo> fileInfoList = null;
 	private DiasyNode mDiasyNode = null;	//叶子节点信息
 	private MenuBroadcastReceiver menuReceiver;
 	private static final int MENU_DAISY_CODE = 11;
@@ -46,6 +50,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		setContentView(R.layout.activity_read_daisy);
 		
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
+		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		mDiasyNode = (DiasyNode) getIntent().getSerializableExtra("node");
 		String path = getIntent().getStringExtra("path");
 		String name = getIntent().getStringExtra("name");
@@ -72,7 +77,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	if( mDaisyReaderView.openBook(path, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
-    		finish();
+    		back();
     	}
     	registerReceiver();
 	}
@@ -150,12 +155,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	public void onDestroy()
 	{
 		super.onDestroy();
-		unregisterReceiver(menuReceiver);
-		TTSUtils.getInstance().stop();
-		TTSUtils.getInstance().OnTTSListener(null);
-		
-		MediaPlayerUtils.getInstance().stop();
-		MediaPlayerUtils.getInstance().OnMediaPlayerListener(null);
 	}
 	
 	@Override
@@ -170,8 +169,25 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	public void onPageFlingToBottom() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.to_bottom);
-		PublicUtils.showToast(this, tips);
+		if( mDiasyNode.seq+1 < DaisyFileReaderUtils.getInstance().getDiasyNodeTotal() )	//还有下一部分需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+			setResult(RESULT_OK, intent);
+			back();
+		}
+		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+			setResult(RESULT_OK, intent);
+			back();
+		}
+		else
+		{
+			String tips = this.getString(R.string.to_bottom);
+			PublicUtils.showToast(this, tips);
+		}
 	}
 
 	@Override
@@ -219,4 +235,29 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			}
 		}
 	}
+	
+	//退出此界面
+	private void back()
+	{
+		unregisterReceiver(menuReceiver);
+		TTSUtils.getInstance().stop();
+		TTSUtils.getInstance().OnTTSListener(null);
+		
+		MediaPlayerUtils.getInstance().stop();
+		MediaPlayerUtils.getInstance().OnMediaPlayerListener(null);
+		
+		finish();
+	}
+	
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) 
+	{  
+		if( event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN )
+		{
+			back();
+			return true;   
+		}     
+	     
+		return super.dispatchKeyEvent(event);
+	}	
 }

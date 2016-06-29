@@ -13,6 +13,7 @@ import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -29,9 +30,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private int catalog;// 1为txt文档，2为word文档,3为disay
 	private FileInfo remberFile;
 	private FileInfo fileInfo;
+	private ArrayList<FileInfo> fileInfoList = null;
 	private String path;
 	private int seq;
-	private boolean isDirectEntry = false;	//是否直接进入阅读界面
+	private boolean isAuto = false;			//是否自动进入阅读界面
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +47,16 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		diasList = (ArrayList<DiasyNode>) intent.getSerializableExtra("diasys");
+		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
+		isAuto = intent.getBooleanExtra("isAuto", false);
+		
 		Log.e(TAG, "----file info flag--:" + fileInfo.flag + "---fileInfo.item--:" + fileInfo.item);
 		initViews(name);
+		
+		if( isAuto )
+    	{
+    		mMainView.enter(isAuto);
+    	}
 	}
 
 	private void initViews(String name) {
@@ -89,13 +99,11 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			return true;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-			isDirectEntry = false;
-			mMainView.enter();
+			mMainView.enter(false);
 			return true;
 		case KeyEvent.KEYCODE_5:
 		case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
-			isDirectEntry = true;
-			mMainView.enter();
+			mMainView.enter(true);
 			return	true;
 		default:
 			break;
@@ -108,19 +116,18 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		DiasyNode dias = diasList.get(selectItem);
 		ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 		int size = diaysList.size();
-		if( ( 0 == size ) || isDirectEntry )
+		if( ( 0 == size ) || isAuto )
 		{
-			isDirectEntry = false;
 			Intent intent = new Intent(this, ReadDaisyActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("path", path);
 			intent.putExtra("node",  dias);
 			intent.putExtra("fileinfo", fileInfo);
-			this.startActivity(intent);
+			intent.putExtra("file_list", fileInfoList);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 		else
 		{
-			isDirectEntry = false;
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("seq", dias.seq);
@@ -129,7 +136,50 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("file", remberFile);
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("diasys",  diaysList);
-			this.startActivity(intent);
+			intent.putExtra("file_list", fileInfoList);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		switch (requestCode) 
+		{
+			case EbookConstants.REQUEST_CODE:		//阅读器返回
+				if( RESULT_OK == resultCode )
+				{
+					int next = data.getIntExtra("next", EbookConstants.TO_NEXT_PART);
+					
+					switch( next )
+					{
+						case EbookConstants.TO_NEXT_PART:	//到下一个部分
+							if( mMainView.isDown() )
+							{
+								mMainView.down();
+								mMainView.enter(true);
+							}
+							else
+							{
+								Intent intent = new Intent();
+								intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+								setResult(RESULT_OK, intent);
+								finish();
+							}
+							break;
+						case EbookConstants.TO_NEXT_BOOK:	//到下一本书
+							Intent intent = new Intent();
+							intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+							setResult(RESULT_OK, intent);
+							finish();
+							break;
+						default:
+							break;
+					}
+				}	//阅读下一个部分
+				break;
+			default:
+				break;
+		} 	
+	}	
 }

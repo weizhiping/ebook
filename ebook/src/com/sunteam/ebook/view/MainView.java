@@ -114,4 +114,9 @@ public class MainView extends View
 	{
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	public boolean isDown()
+	{
+		return	mAdapter.isDown();	
+	}
 }

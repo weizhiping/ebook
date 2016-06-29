@@ -109,6 +109,19 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		this.notifyDataSetChanged();
 	}
 	
+	//是否还有下一项
+	public boolean isDown()
+	{
+		if( this.selectItem < gListData.size() - 1 )
+		{
+			return	true;
+		}
+		else
+		{
+			return	false;
+		}
+	}
+	
 	//按了确定键
 	public void enter(boolean isAuto)
 	{

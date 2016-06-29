@@ -295,6 +295,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
+		
 		finish();
 	}
 	

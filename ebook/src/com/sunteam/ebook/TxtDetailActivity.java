@@ -231,7 +231,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("path", fileInfo.path);
 			intent.putExtra("file", remberFile);
 			intent.putExtra("fileinfo", fileInfo);
-			this.startActivity(intent);
+			intent.putExtra("file_list", fileInfoList);
+			intent.putExtra("isAuto", isAuto);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
 	

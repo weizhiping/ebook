@@ -18,7 +18,6 @@ import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
-import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -319,10 +318,10 @@ import android.view.View;
 	 
 	 /**
 	  * 
-	  * @param list
-	  * 			所有句子列表
-	  * @param charsetName
-	  * 			编码
+	  * @param path
+	  * 			书籍路径
+	  * @param position
+	  * 			章节序号
 	  * @param lineNumber
 	  *            表示书签记录的位置(行号)
 	  * @param startPos
@@ -1136,7 +1135,7 @@ import android.view.View;
 				 }
 				 else if( status == PlayStatus.STOP )
 				 {
-					 nextSentence(false, true);
+					 nextSentence(false, false);
 				 }
 				 break;
 			 case READ_MODE_SENCENTE:	//逐句朗读
@@ -1474,7 +1473,7 @@ import android.view.View;
 		{
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextSentence(false, true);
+		 		nextSentence(false, false);
 		 		break;
 		 	default:
 		 		break;
