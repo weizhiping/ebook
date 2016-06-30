@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
@@ -29,6 +30,7 @@ public class DatabaseManager {
 	// 收藏和最近浏览数据库插入数据
 	public void insertBookToDb(FileInfo file,int type) {
 		boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path,type);
+		Log.e("database", "-----------has book---:" + hasbook);
 		if (!hasbook) {
 			db = helper.getWritableDatabase();
 			ContentValues newValues = new ContentValues();
@@ -49,7 +51,7 @@ public class DatabaseManager {
 			db.insert(EbookConstants.BOOKS_TABLE, null, newValues);
 			db.close();
 		}else{
-			updateToDb(file.path,file.flag);
+			updateToDb(file.path,file.flag,type);
 		}
 	}
 
@@ -172,18 +174,18 @@ public class DatabaseManager {
 
 	}
 	//删除数据,Path为null表示删除所有数据
-	public void deleteFile(String table,String path,int flag){
+	public void deleteFile(String path,int flag){
 		db = helper.getWritableDatabase();
 		if(null != path){
-			db.delete(table, "path=? and type=?", new String[] { path,String.valueOf(flag)});
+			db.delete(EbookConstants.BOOKS_TABLE, "path=? and type=?", new String[] { path,String.valueOf(flag)});
 		}else{
-			Cursor cursor = db.query(table, null, "type=?", new String[] {String.valueOf(flag)}, null,
+			Cursor cursor = db.query(EbookConstants.BOOKS_TABLE, null, "type=?", new String[] {String.valueOf(flag)}, null,
 					null, null);
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
-					int type = cursor.getInt(cursor
-								.getColumnIndex(EbookConstants.BOOK_TYPE));
-					db.delete(table, "type=?", new String[] {String.valueOf(type)});
+//					int type = cursor.getInt(cursor
+//								.getColumnIndex(EbookConstants.BOOK_TYPE));
+					db.delete(EbookConstants.BOOKS_TABLE, "type=?", new String[] {String.valueOf(flag)});
 				}
 				cursor.close();
 			}
@@ -203,10 +205,9 @@ public class DatabaseManager {
 			cursor.close();
 		}
 		db.close();
-		
 	}
 //	 数据库更新数据
-	public void updateToDb(String path,int flag) {
+	public void updateToDb(String path,int flag,int type) {
 		db = helper.getWritableDatabase();
 		ContentValues newValues = new ContentValues();
 		newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());

@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,12 +10,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
-import android.widget.PopupWindow;
-
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
@@ -36,10 +30,9 @@ import com.sunteam.ebook.word.WordParseUtils;
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private static final String TAG = "TxtDetailActivity";
+	private static final int MENU_DATA = 10;
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
-	private View menuLayout;
-	private PopupWindow moreWindow;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private String rootPath; // 查找文件根路径
@@ -104,36 +97,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
-		if (flag == 1 || flag == 2) {
-		//	initPopu();
-		}
 		if(null != remberFile){
 			if(flag == 0){
 				mMainView.setSelection(storage);
-			}else{
+			}else if(mMenuList.size() > 0){
 				mMainView.setSelection(position);
 			}
 		}
-	}
-
-	private void initPopu() {
-		menuLayout = LayoutInflater.from(this).inflate(R.layout.activity_main,
-				null);
-		ArrayList<String> menuList = new ArrayList<String>();
-		menuList.add(getString(R.string.menu_delete_current));
-		menuList.add(getString(R.string.menu_delete_list));
-		if (2 == flag) {
-			menuList.add(getString(R.string.menu_add_fav));
-		}
-		MainView menuView = new MainView(this, this,
-				getString(R.string.menu_function), menuList);
-		FrameLayout menuContainer = (FrameLayout) this
-				.findViewById(R.id.fl_container);
-		menuContainer.removeAllViews();
-		menuContainer.addView(menuView.getView());
-		moreWindow = new PopupWindow(menuLayout, LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT, true);
-		// moreWindow.showAtLocation(menuLayout, Gravity.CENTER, 0, 0);
 	}
 	
     @Override
@@ -160,7 +130,11 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			mMainView.enter();
 			return true;
 		case KeyEvent.KEYCODE_MENU:
-			if(0 != flag){
+			if (1 == flag || 2 == flag) {
+				Intent intent = new Intent(this, MenuDatabaseActivity.class);
+				intent.putExtra("flag", flag);
+				startActivityForResult(intent, MENU_DATA);
+			} else if (0 != flag) {
 				insertToDb();
 			}
 			break;
@@ -361,19 +335,30 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 	
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
-	{
-		switch (requestCode) 
-		{
-			case EbookConstants.REQUEST_CODE:		//阅读器返回
-				if( RESULT_OK == resultCode )
-				{
-					mMainView.down();
-					mMainView.enter(true);
-				}	//阅读下一本书
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(RESULT_OK == resultCode){
+			switch (requestCode) {
+			case EbookConstants.REQUEST_CODE: // 阅读器返回
+				mMainView.down();
+				mMainView.enter(true);
+				 // 阅读下一本书
+				break;
+			case MENU_DATA:
+				int item = data.getIntExtra("data_item", 0);
+				Log.e(TAG, "------munu data item--:" + item + "--flag--:" + flag);
+				if(0 == item){
+					
+				}else if(1 == item){
+					mMenuList.clear();
+					mMainView.updateAdapter();
+					manager.deleteFile( null, flag);
+				}else{
+					insertToDb();
+				}
 				break;
 			default:
 				break;
-		} 	
-	}	
+			}
+		}
+	}
 }
