@@ -124,4 +124,9 @@ public class MainView extends View
 	{
 		return	mAdapter.getCurItem();
 	}
+	
+	public int getSelectItem()
+	{
+		return	mAdapter.getSelectItem();
+	}
 }
