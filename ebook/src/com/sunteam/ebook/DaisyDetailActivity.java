@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -50,7 +49,6 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		isAuto = intent.getBooleanExtra("isAuto", false);
 		
-		Log.e(TAG, "----file info flag--:" + fileInfo.flag + "---fileInfo.item--:" + fileInfo.item);
 		initViews(name);
 		
 		if( isAuto )

@@ -110,9 +110,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_ENTER:
 				mDaisyReaderView.enter();
 				return	true;
-			case KeyEvent.KEYCODE_BACK://返回保存最近使用
-				insertToDb();
-				break;
+//			case KeyEvent.KEYCODE_BACK://返回保存最近使用
+//				insertToDb();
+//				break;
 			case KeyEvent.KEYCODE_MENU:
 				Intent intent = new Intent(this, MenuDaisyActivity.class);
 				intent.putExtra("page_count", mDaisyReaderView.getPageCount());
@@ -246,7 +246,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		
 		MediaPlayerUtils.getInstance().stop();
 		MediaPlayerUtils.getInstance().OnMediaPlayerListener(null);
-		
+		insertToDb();
 		finish();
 	}
 	

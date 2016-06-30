@@ -167,10 +167,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					Toast.makeText(this, this.getString(R.string.baike_search_fail), Toast.LENGTH_SHORT).show();
 				}
 				return	true;
-			case KeyEvent.KEYCODE_BACK://返回保存最近使用
-				insertToDb();
-				break;
+//			case KeyEvent.KEYCODE_BACK://返回保存最近使用
+//				Log.e("read", "--------read back-------");
+//				insertToDb();
+//				break;
 			case KeyEvent.KEYCODE_MENU:
+				Log.e("read", "--------read menu-------");
 				Intent intent = new Intent(this, MenuActivity.class);
 				intent.putExtra("page_count", mTextReaderView.getPageCount());
 				intent.putExtra("page_cur", mTextReaderView.getCurPage());
@@ -295,7 +297,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
-		
+		insertToDb();
 		finish();
 	}
 	

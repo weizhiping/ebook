@@ -3,14 +3,15 @@ package com.sunteam.ebook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
+
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
@@ -275,7 +276,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 	//添加到收藏
 	private void insertToDb(){
-		FileInfo fileInfo = fileInfoList.get(0);
+		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
 	}
 	
@@ -345,9 +346,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				break;
 			case MENU_DATA:
 				int item = data.getIntExtra("data_item", 0);
-				Log.e(TAG, "------munu data item--:" + item + "--flag--:" + flag);
+				int select = mMainView.getSelectItem();
 				if(0 == item){
-					
+					FileInfo info = fileInfoList.get(select);
+					mMenuList.remove(select);
+					mMainView.updateAdapter();
+					manager.deleteFile(info.path , flag);
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();
