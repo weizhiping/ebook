@@ -339,7 +339,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if(RESULT_OK == resultCode){
 			switch (requestCode) {
-			case EbookConstants.REQUEST_CODE: // 阅读器返回
+			case EbookConstants.TO_NEXT_BOOK: // 阅读器返回
 				mMainView.down();
 				mMainView.enter(true);
 				 // 阅读下一本书

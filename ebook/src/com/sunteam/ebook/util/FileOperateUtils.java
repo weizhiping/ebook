@@ -177,13 +177,14 @@ public class FileOperateUtils {
 								catalog, 0, 0);
 						info.diasyPath = path;
 						fileList.add(info);
-					}
-					path = hasDaisyOpfFile(f);
-					if(null != path){
-						FileInfo info = new FileInfo(f.getName(), f.getPath(), true,
-								catalog, 0, 0);
-						info.diasyPath = path;
-						fileList.add(0,info);
+					}else{
+						path = hasDaisyOpfFile(f);
+						if(null != path){
+							FileInfo info = new FileInfo(f.getName(), f.getPath(), true,
+									catalog, 0, 0);
+							info.diasyPath = path;
+							fileList.add(0,info);
+						}
 					}
 				}
 			}
@@ -417,10 +418,6 @@ public class FileOperateUtils {
 	 * 获取是否包含diasy文件
 	 * 
 	 * @param file
-	 * @param suffix
-	 *            后缀名
-	 * @param suffixTwo
-	 *            后缀名
 	 * @return
 	 */
 	public static String hasDaisyNccFile(File file) {
@@ -430,11 +427,15 @@ public class FileOperateUtils {
 		for (File f : file.listFiles()) {
 			if (!f.isDirectory()) {
 				String name = f.getName();
+				
 				if (EbookConstants.BOOK_DAISY_NCC.equalsIgnoreCase(getFileExtensionsName(name))) {
 					return f.getPath();
 				}
 			} else {
-				hasDaisyNccFile(f);
+				String result = hasDaisyNccFile(f);
+				if( result != null ){
+					return	result;
+				}
 			}
 		}
 		return path;
@@ -444,10 +445,6 @@ public class FileOperateUtils {
 	 * 获取是否包含diasy文件
 	 * 
 	 * @param file
-	 * @param suffix
-	 *            后缀名
-	 * @param suffixTwo
-	 *            后缀名
 	 * @return
 	 */
 	public static String hasDaisyOpfFile(File file) {

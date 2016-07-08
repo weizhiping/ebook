@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
@@ -24,6 +25,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	private ArrayList<String> mMenuList = null;
 	private int currentPage;
 	private int totalPage;
+	private FileInfo fileInfo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		Intent intent = getIntent();
 		currentPage = intent.getIntExtra("page_cur", 1);
 		totalPage = intent.getIntExtra("page_count", 1);
+		fileInfo = (FileInfo) intent.getSerializableExtra("fileinfo");
 		initViews();
 	}
 
@@ -91,6 +94,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		
 		case 0:
 			intent.setClass(this, MenuMarkActivity.class);
+			intent.putExtra("fileinfo", fileInfo);
 			startActivity(intent);
 			break;
 		case 1:

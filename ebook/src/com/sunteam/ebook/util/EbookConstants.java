@@ -56,6 +56,7 @@ public class EbookConstants
 	};	//选中背景色
 	
 	//数据库表字段
+	public static final String MARKS_TABLE = "marks";
 	public static final String BOOKS_TABLE = "books";
 	public static final String BOOK_NAME = "name";
 	public static final String BOOK_PATH = "path";

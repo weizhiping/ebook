@@ -55,6 +55,26 @@ public class SQLHelper extends SQLiteOpenHelper {
 			createOrder.append(EbookConstants.BOOK_TYPE);
 			createOrder.append(" INTEGER);");
 			db.execSQL(createOrder.toString());
+			
+			StringBuilder createMark = new StringBuilder();
+			createMark.append("CREATE TABLE ");
+			createMark.append(EbookConstants.MARKS_TABLE);
+			createMark.append("(");
+			createMark.append("id");
+			createMark.append(" INTEGER PRIMARY KEY,");
+			createMark.append(EbookConstants.BOOK_NAME);
+			createMark.append(" TEXT,");
+			createMark.append(EbookConstants.BOOK_PATH);
+			createMark.append(" TEXT,");
+			createMark.append(EbookConstants.BOOK_DIASY_PATH);
+			createMark.append(" TEXT,");
+			createMark.append(EbookConstants.BOOK_PART);
+			createMark.append(" INTEGER,");
+			createMark.append(EbookConstants.BOOK_LEN);
+			createMark.append(" INTEGER,");
+			createMark.append(EbookConstants.BOOK_TIME);
+			createMark.append(" TEXT);");
+			db.execSQL(createMark.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -63,6 +83,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " +EbookConstants.BOOKS_TABLE);
+		db.execSQL("DROP TABLE IF EXISTS " +EbookConstants.MARKS_TABLE);
 		onCreate(db);
 	}
 }

@@ -216,4 +216,55 @@ public class DatabaseManager {
 				new String[] { path });
 		db.close();
 	}
+	
+	//删除数据,Path为null表示删除所有数据
+	public void deleteMarkFile(String path,String name){
+		db = helper.getWritableDatabase();
+		if(null != name){
+			db.delete(EbookConstants.MARKS_TABLE, "path=? and name=?", new String[] { path,name});
+		}else{
+			Cursor cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=?", new String[] {path}, null,
+					null, null);
+			if (null != cursor) {
+				while (cursor.moveToNext()) {
+					db.delete(EbookConstants.MARKS_TABLE, "path=?", new String[] {path});
+				}
+				cursor.close();
+			}
+		}
+			db.close();
+	}
+	
+	// 查询书签数据
+		public ArrayList<FileInfo> queryMarks(String path) {
+			db = helper.getWritableDatabase();
+			 String sql= "select * from " + EbookConstants.MARKS_TABLE +  " where path=" + path 
+					  + " order by " + EbookConstants.BOOK_TIME + " desc";  
+			 Cursor cursor = db.rawQuery(sql, null);
+			ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
+			try { 
+				if (null != cursor) {
+					if (cursor.getCount() > 0) {
+						while (cursor.moveToNext()) {
+							FileInfo book = new FileInfo();
+							book.name = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_NAME));
+							book.path = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_PATH));				
+							book.part = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_PART));
+							book.line = cursor.getInt(cursor.getColumnIndex(EbookConstants.BOOK_LINE));
+							orderList.add(book);
+						}
+					}
+				}
+			} finally {
+				if (null != cursor) {
+					cursor.close();
+				}
+				if (null != db) {
+					db.close();
+				}
+			}
+			return orderList;
+		}
 }

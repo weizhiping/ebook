@@ -167,15 +167,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					Toast.makeText(this, this.getString(R.string.baike_search_fail), Toast.LENGTH_SHORT).show();
 				}
 				return	true;
-//			case KeyEvent.KEYCODE_BACK://返回保存最近使用
-//				Log.e("read", "--------read back-------");
-//				insertToDb();
-//				break;
 			case KeyEvent.KEYCODE_MENU:
-				Log.e("read", "--------read menu-------");
 				Intent intent = new Intent(this, MenuActivity.class);
 				intent.putExtra("page_count", mTextReaderView.getPageCount());
 				intent.putExtra("page_cur", mTextReaderView.getCurPage());
+				intent.putExtra("fileinfo", fileInfo);
 				startActivityForResult(intent, MENU_CODE);
 				break;
 			default:
@@ -183,7 +179,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+	//插入到最近浏览
 	private void insertToDb(){
 		fileInfo.line = mTextReaderView.getLineNumber();
 		fileInfo.checksum = mTextReaderView.getCheckSum();
@@ -192,7 +188,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
-	
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

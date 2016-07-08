@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -16,15 +15,16 @@ import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
 
 /**
- * 书签管理界面
+ * 查看书签界面
  * 
  * @author sylar
  */
-public class MenuMarkActivity extends Activity implements OnEnterListener {
+public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private FileInfo fileInfo;
+	private boolean isDelete;
 	private DatabaseManager manager;
 
 	@Override
@@ -33,6 +33,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
+		isDelete = getIntent().getBooleanExtra("isdelete", false);
 		manager = new DatabaseManager(this);
 		initViews();
 	}
@@ -87,32 +88,10 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
-		switch (selectItem) {
-		case 0:
+		if(isDelete){
 			
-			break;
-		case 1:
-			Intent intentc = new Intent(this, MenuMarkCheckActivity.class);
-			intentc.putExtra("fileinfo", fileInfo);
-			intentc.putExtra("isdelete", false);
-			startActivity(intentc);
-			break;
-		case 2:
-			Intent intent = new Intent(this, MenuMarkCheckActivity.class);
-			intent.putExtra("fileinfo", fileInfo);
-			intent.putExtra("isdelete", true);
-			startActivity(intent);
-			break;
-		case 3:
-			manager.deleteMarkFile(fileInfo.path, null);
-			break;
+		}else{
+			
 		}
 	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-	}
-	
 }
