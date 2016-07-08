@@ -643,10 +643,12 @@ public class TTSUtils
     	public void onPlayCompletedCallBack(int arg0) throws RemoteException 
     	{
     		Log.d(TAG, "onPlayCompletedCallBack----arg0= " + arg0);
+    		/*
     		if( SpeakForm.TIPS == mSpeakForm )
 			{
 				return;
 			}
+			*/
 			mSpeakStatus = SpeakStatus.STOP;
 			if( 0 == arg0 )
 			{
