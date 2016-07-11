@@ -6,12 +6,14 @@ import com.sunteam.ebook.R;
 import com.sunteam.ebook.adapter.MainListAdapter;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.TTSSpeakMode;
+import com.sunteam.ebook.util.CallbackBundle;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -144,17 +146,28 @@ public class MainView extends View implements OnTTSListener
 	private boolean keyUpFlag = false;
 	private int longKeyCode = 0; //长按键值，0 表示没有按键; 只处理上键和下键
 	
-	public boolean isScanning() 
+	private boolean isScanning() 
 	{
 		return isScanning;
 	}
 
-	public void setScanning(boolean isScanning) 
+	private void setScanning(boolean isScanning) 
 	{
 		this.isScanning = isScanning;
 	}
 	
-	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event )
+	{
+		return	onKeyDown( keyCode, event, null, null );	
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event, int[] keyCodeList )
+	{
+		return	onKeyDown( keyCode, event, keyCodeList, null );	
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event, int[] keyCodeList, CallbackBundle callbackBundle) 
 	{
 		long time = event.getEventTime();
 
@@ -170,12 +183,12 @@ public class MainView extends View implements OnTTSListener
 			firstTime = time;
 			lastTime = time;
 			setScanning(false);
-			processKeyEnevt(keyCode, event);
+			processKeyEnevt(keyCode, event, keyCodeList, callbackBundle);
 		}
 		else if (time - lastTime >= 1000) 
 		{
 			lastTime = time;
-			processKeyEnevt(keyCode, event);
+			processKeyEnevt(keyCode, event, keyCodeList, callbackBundle);
 		}
 
 		if( (KeyEvent.KEYCODE_DPAD_UP == keyCode || KeyEvent.KEYCODE_DPAD_DOWN == keyCode) && time - firstTime >= 2000 ) 
@@ -190,6 +203,7 @@ public class MainView extends View implements OnTTSListener
 		return false;
 	}
 	
+	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) 
 	{
 		keyUpFlag = true;
@@ -197,7 +211,7 @@ public class MainView extends View implements OnTTSListener
 		return false;
 	}
 	
-	public boolean processKeyEnevt(int keyCode, KeyEvent event) 
+	private boolean processKeyEnevt(int keyCode, KeyEvent event, int[] keyCodeList, CallbackBundle callbackBundle) 
 	{
 		int action = event.getAction();
 
@@ -221,6 +235,38 @@ public class MainView extends View implements OnTTSListener
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 					mAdapter.down();
 					return true;
+				case KeyEvent.KEYCODE_5:
+				case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
+					if( keyCodeList != null )
+					{
+						for( int i = 0; i < keyCodeList.length; i++ )
+						{
+							if( keyCodeList[i] == keyCode )
+							{
+								mAdapter.enter(true);
+								return	true;
+							}
+						}
+					}
+					break;
+				case KeyEvent.KEYCODE_MENU:
+					if( keyCodeList != null )
+					{
+						for( int i = 0; i < keyCodeList.length; i++ )
+						{
+							if( keyCodeList[i] == keyCode )
+							{
+								if( callbackBundle != null )
+								{
+									Bundle bundle = new Bundle();
+									bundle.putInt("keyCode", keyCode);
+									callbackBundle.callback(bundle);
+									return	true;
+								}
+							}
+						}
+					}
+					break;
 				default:
 					break;
 			}
@@ -244,7 +290,7 @@ public class MainView extends View implements OnTTSListener
 		return false;
 	}
 	
-	public void processLongKey() 
+	private void processLongKey() 
 	{
 		if( KeyEvent.KEYCODE_DPAD_UP == longKeyCode ) 
 		{

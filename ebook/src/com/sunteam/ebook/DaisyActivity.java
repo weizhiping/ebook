@@ -51,14 +51,6 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 		}
 	}
 
-	@Override
-	public void onResume() {
-		if (mMainView != null) {
-			mMainView.onResume();
-		}
-		super.onResume();
-	}
-
 	// 初始化显示文件
 	private void initFiles() {
 		fileInfoList = FileOperateUtils.getDaisyInDir(catalog);
@@ -68,24 +60,37 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 			}
 		}
 	}
-
+    
+    @Override
+    public void onPause()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onPause();
+    	}
+    	super.onPause();
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onResume();
+    	}
+    	super.onResume();
+    }
+	 
+    @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{
+		return mMainView.onKeyDown(keyCode, event);
+	}
+	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_DPAD_UP: // 上
-			mMainView.up();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
-			mMainView.down();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
-		case KeyEvent.KEYCODE_ENTER:
-			mMainView.enter();
-			return true;
-		default:
-			break;
-		}
-		return super.onKeyDown(keyCode, event);
+	public boolean onKeyUp(int keyCode, KeyEvent event) 
+	{
+		return	mMainView.onKeyUp(keyCode, event);
 	}
 
 	@Override

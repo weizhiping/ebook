@@ -3,6 +3,7 @@ package com.sunteam.ebook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,12 +11,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.CallbackBundle;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -31,6 +34,7 @@ import com.sunteam.ebook.word.WordParseUtils;
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private static final String TAG = "TxtDetailActivity";
+	private static final int[] keyCodeList = { KeyEvent.KEYCODE_MENU };
 	private static final int MENU_DATA = 10;
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
@@ -106,7 +110,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		}
 	}
-	
+    
+    @Override
+    public void onPause()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onPause();
+    	}
+    	super.onPause();
+    }
+    
     @Override
     public void onResume()
     {
@@ -116,34 +130,45 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     	}
     	super.onResume();
     }
-    
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_DPAD_UP: // 上
-			mMainView.up();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
-			mMainView.down();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
-		case KeyEvent.KEYCODE_ENTER:
-			mMainView.enter();
-			return true;
-		case KeyEvent.KEYCODE_MENU:
-			if (1 == flag || 2 == flag) {
-				Intent intent = new Intent(this, MenuDatabaseActivity.class);
-				intent.putExtra("flag", flag);
-				startActivityForResult(intent, MENU_DATA);
-			} else if (0 != flag) {
-				insertToDb();
-			}
-			break;
-		default:
-			break;
-		}
-		return super.onKeyDown(keyCode, event);
+ 
+    @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{
+		return mMainView.onKeyDown(keyCode, event, keyCodeList, mCallbackBundle);
 	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) 
+	{
+		return	mMainView.onKeyUp(keyCode, event);
+	}
+	
+	//回调
+	private CallbackBundle mCallbackBundle = new CallbackBundle()
+	{
+		@Override
+		public void callback( final Bundle bundle )
+		{
+			if( bundle != null )
+			{
+				int keyCode = bundle.getInt("keyCode");
+				switch( keyCode )
+				{
+					case KeyEvent.KEYCODE_MENU:
+						if (1 == flag || 2 == flag) {
+							Intent intent = new Intent(TxtDetailActivity.this, MenuDatabaseActivity.class);
+							intent.putExtra("flag", flag);
+							startActivityForResult(intent, MENU_DATA);
+						} else if (0 != flag) {
+							insertToDb();
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	};
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {

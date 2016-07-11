@@ -22,6 +22,7 @@ import com.sunteam.ebook.view.MainView;
  */
 public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private static final String TAG = "DaisyDetailActivity";
+	private static final int[] keyCodeList = { KeyEvent.KEYCODE_5, KeyEvent.KEYCODE_NUMPAD_5 };
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -68,15 +69,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 //			mMainView.setSelection(remberFile.flag);
 //		}
 	}
-
-	@Override
-	public void onResume() {
-		if (mMainView != null) {
-			mMainView.onResume();
-		}
-		super.onResume();
-	}
-
+   
 	// 初始化显示文件
 	private void initFiles() {
 		if (null != diasList) {
@@ -85,28 +78,37 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			}
 		}
 	}
-
+	
+    @Override
+    public void onPause()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onPause();
+    	}
+    	super.onPause();
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	if( mMainView != null )
+    	{
+    		mMainView.onResume();
+    	}
+    	super.onResume();
+    }
+  	
+    @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) 
+	{
+		return mMainView.onKeyDown(keyCode, event, keyCodeList);
+	}
+	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_DPAD_UP: // 上
-			mMainView.up();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
-			mMainView.down();
-			return true;
-		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
-		case KeyEvent.KEYCODE_ENTER:
-			mMainView.enter(false);
-			return true;
-		case KeyEvent.KEYCODE_5:
-		case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
-			mMainView.enter(true);
-			return	true;
-		default:
-			break;
-		}
-		return super.onKeyDown(keyCode, event);
+	public boolean onKeyUp(int keyCode, KeyEvent event) 
+	{
+		return	mMainView.onKeyUp(keyCode, event);
 	}
 
 	@Override
