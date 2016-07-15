@@ -12,6 +12,7 @@ import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -225,6 +226,10 @@ public class MainView extends View implements OnTTSListener
 		{
 			switch (keyCode) 
 			{
+				case KeyEvent.KEYCODE_BACK:
+					Activity activity = (Activity)mContext;
+					activity.finish();
+					return	true;
 				case KeyEvent.KEYCODE_DPAD_CENTER:
 				case KeyEvent.KEYCODE_ENTER:
 					mAdapter.enter(false);
