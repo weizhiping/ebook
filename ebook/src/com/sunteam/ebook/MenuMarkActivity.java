@@ -93,6 +93,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 		case 0:
 			Intent intente = new Intent(this, MenuTextEditActivity.class);
 			intente.putExtra("fileinfo", fileInfo);
+			intente.putExtra("page_text", currentText);
 			intente.putExtra("edit_name", mMenuList.get(0));
 			startActivity(intente);
 			break;

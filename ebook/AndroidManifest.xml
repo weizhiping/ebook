@@ -95,6 +95,10 @@
             android:name=".MenuTextEditActivity"
             android:screenOrientation="landscape" >
         </activity> 
+         <activity
+            android:name=".MenuMarkCheckActivity"
+            android:screenOrientation="landscape" >
+        </activity>
         <activity
             android:name=".MenuMusicDetailActivity"
             android:screenOrientation="landscape" >

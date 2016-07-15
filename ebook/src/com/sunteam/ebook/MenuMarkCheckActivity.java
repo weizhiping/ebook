@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
@@ -23,6 +22,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private ArrayList<FileInfo> fileInfos;
 	private FileInfo fileInfo;
 	private boolean isDelete;
 	private DatabaseManager manager;
@@ -39,13 +39,11 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	}
 
 	private void initViews() {
-		Resources res = getResources();
-		
-		String[] menus = res.getStringArray(R.array.array_menu_mark);
-		int length = menus.length;
+		fileInfos = manager.queryMarks(fileInfo.path);
+		int size = fileInfos.size();
 		mMenuList = new ArrayList<String>();
-		for (int i = 0; i < length; i++) {
-			mMenuList.add(menus[i]);
+		for (int i = 0; i < size; i++) {
+			mMenuList.add(fileInfos.get(i).name);
 		}
 		String title = this.getString(R.string.menu_function);
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
