@@ -91,6 +91,10 @@
             android:name=".MenuPageEditActivity"
             android:screenOrientation="landscape" >
         </activity> 
+         <activity
+            android:name=".MenuTextEditActivity"
+            android:screenOrientation="landscape" >
+        </activity> 
         <activity
             android:name=".MenuMusicDetailActivity"
             android:screenOrientation="landscape" >

@@ -171,6 +171,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				Intent intent = new Intent(this, MenuActivity.class);
 				intent.putExtra("page_count", mTextReaderView.getPageCount());
 				intent.putExtra("page_cur", mTextReaderView.getCurPage());
+				intent.putExtra("page_text", mTextReaderView.getReverseText());
 				intent.putExtra("fileinfo", fileInfo);
 				startActivityForResult(intent, MENU_CODE);
 				break;

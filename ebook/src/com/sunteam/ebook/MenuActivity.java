@@ -26,6 +26,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	private int currentPage;
 	private int totalPage;
 	private FileInfo fileInfo;
+	private String currentText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		currentPage = intent.getIntExtra("page_cur", 1);
 		totalPage = intent.getIntExtra("page_count", 1);
 		fileInfo = (FileInfo) intent.getSerializableExtra("fileinfo");
+		currentText = intent.getStringExtra("page_text");
 		initViews();
 	}
 
@@ -95,6 +97,8 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		case 0:
 			intent.setClass(this, MenuMarkActivity.class);
 			intent.putExtra("fileinfo", fileInfo);
+			intent.putExtra("page_cur", currentPage);
+			intent.putExtra("page_text", currentText);
 			startActivity(intent);
 			break;
 		case 1:

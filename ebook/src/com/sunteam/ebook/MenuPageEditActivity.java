@@ -23,6 +23,7 @@ public class MenuPageEditActivity extends Activity {
 	private EditText numView;
 	private int currentPage;
 	private int totalPage;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

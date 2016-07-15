@@ -25,6 +25,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private FileInfo fileInfo;
+	private String currentText;
 	private DatabaseManager manager;
 
 	@Override
@@ -33,6 +34,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
+		currentText = getIntent().getStringExtra("page_text");
 		manager = new DatabaseManager(this);
 		initViews();
 	}
@@ -89,7 +91,10 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		switch (selectItem) {
 		case 0:
-			
+			Intent intente = new Intent(this, MenuTextEditActivity.class);
+			intente.putExtra("fileinfo", fileInfo);
+			intente.putExtra("edit_name", mMenuList.get(0));
+			startActivity(intente);
 			break;
 		case 1:
 			Intent intentc = new Intent(this, MenuMarkCheckActivity.class);

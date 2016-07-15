@@ -217,7 +217,44 @@ public class DatabaseManager {
 		db.close();
 	}
 	
-	//删除数据,Path为null表示删除所有数据
+
+	// 书签插入数据
+	public void insertMarkToDb(FileInfo file) {
+		boolean hasbook = hasMarkInBase(EbookConstants.MARKS_TABLE, file.path,file.name);
+		Log.e("database", "-----------has mark---:" + hasbook);
+		if (!hasbook) {
+			db = helper.getWritableDatabase();
+			ContentValues newValues = new ContentValues();
+			newValues.put(EbookConstants.BOOK_NAME, file.name);
+			newValues.put(EbookConstants.BOOK_PATH, file.path);
+			newValues.put(EbookConstants.BOOK_PART, file.part);
+			newValues.put(EbookConstants.BOOK_LINE, file.line);
+			newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
+			db.insert(EbookConstants.MARKS_TABLE, null, newValues);
+			db.close();
+		}else{
+//			updateToDb(file.path,file.flag,type);
+		}
+	}
+	// 查找数据库中是否已经存在某一条数据
+		private boolean hasMarkInBase(String table, String path,String name) {
+			Cursor cursor = null;
+			db = helper.getWritableDatabase();
+			cursor = db.query(table, null, "path=? and name=?", new String[] { path,name}, null,
+					null, null);
+			int count = 0;
+			if (null != cursor) {
+				count = cursor.getCount();
+				cursor.close();
+			}
+			db.close();
+			if (count != 0) {
+				return true;
+			}
+			return false;
+		}
+
+	//删除书签数据,Path为null表示删除所有数据
 	public void deleteMarkFile(String path,String name){
 		db = helper.getWritableDatabase();
 		if(null != name){
