@@ -274,9 +274,8 @@ public class DatabaseManager {
 	// 查询书签数据
 		public ArrayList<FileInfo> queryMarks(String path) {
 			db = helper.getWritableDatabase();
-			 String sql= "select * from " + EbookConstants.MARKS_TABLE +  " where path=" + path 
-					  + " order by " + EbookConstants.BOOK_TIME + " desc";  
-			 Cursor cursor = db.rawQuery(sql, null);
+			Cursor cursor = db.query( EbookConstants.MARKS_TABLE, null, "path=?", new String[] { path}, null,
+					null, null);
 			ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 			try { 
 				if (null != cursor) {

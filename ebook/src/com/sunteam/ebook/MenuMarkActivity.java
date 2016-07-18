@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -13,6 +14,7 @@ import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -98,16 +100,10 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			startActivity(intente);
 			break;
 		case 1:
-			Intent intentc = new Intent(this, MenuMarkCheckActivity.class);
-			intentc.putExtra("fileinfo", fileInfo);
-			intentc.putExtra("isdelete", false);
-			startActivity(intentc);
+			wantToCheckActivity(false);
 			break;
 		case 2:
-			Intent intent = new Intent(this, MenuMarkCheckActivity.class);
-			intent.putExtra("fileinfo", fileInfo);
-			intent.putExtra("isdelete", true);
-			startActivity(intent);
+			wantToCheckActivity(true);
 			break;
 		case 3:
 			manager.deleteMarkFile(fileInfo.path, null);
@@ -121,4 +117,16 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 		
 	}
 	
+	private void wantToCheckActivity(boolean isDelete){
+		ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
+		if(0 < fileInfos.size()){
+			Intent intent = new Intent(this, MenuMarkCheckActivity.class);
+			intent.putExtra("fileinfos", fileInfos);
+			intent.putExtra("isdelete", isDelete);
+			startActivity(intent);
+		}else{
+			PublicUtils.showToast(this, getString(R.string.menu_mark_tips));
+			ScreenManager.getScreenManager().popAllActivityExceptOne();
+		}
+	}
 }

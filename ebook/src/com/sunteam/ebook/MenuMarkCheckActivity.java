@@ -23,7 +23,6 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfos;
-	private FileInfo fileInfo;
 	private boolean isDelete;
 	private DatabaseManager manager;
 
@@ -32,14 +31,14 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
-		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
+		fileInfos =  (ArrayList<FileInfo>) getIntent().getSerializableExtra("fileinfos");
 		isDelete = getIntent().getBooleanExtra("isdelete", false);
 		manager = new DatabaseManager(this);
 		initViews();
 	}
 
 	private void initViews() {
-		fileInfos = manager.queryMarks(fileInfo.path);
+	//	fileInfos = manager.queryMarks(fileInfo.path);
 		int size = fileInfos.size();
 		mMenuList = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
