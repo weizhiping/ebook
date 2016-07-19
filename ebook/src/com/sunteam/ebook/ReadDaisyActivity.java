@@ -117,6 +117,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				Intent intent = new Intent(this, MenuDaisyActivity.class);
 				intent.putExtra("page_count", mDaisyReaderView.getPageCount());
 				intent.putExtra("page_cur", mDaisyReaderView.getCurPage());
+				intent.putExtra("page_text",mDiasyNode.name);
+				intent.putExtra("file", fileInfo);
 				startActivityForResult(intent, MENU_DAISY_CODE);
 				break;
 			default:
@@ -229,6 +231,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 						break;
 					case 2:
 						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
+						break;
+					case 3:
+						
 						break;
 					}
 				}

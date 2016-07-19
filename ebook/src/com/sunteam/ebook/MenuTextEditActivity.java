@@ -54,8 +54,11 @@ public class MenuTextEditActivity extends Activity {
 				EbookConstants.FontColorID[mColorSchemeIndex])); // 设置title的背景色
 		line.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
 		numView.setTextColor(getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-		
-		numView.setText(String.format(getResources().getString(R.string.menu_text_tips), currentPage)+" " + currentText);
+		if(null == info.diasyPath){
+			numView.setText(String.format(getResources().getString(R.string.menu_text_tips), currentPage)+" " + currentText);
+		}else{
+			numView.setText(currentText + " " + String.format(getResources().getString(R.string.menu_text_tips), currentPage));
+		}
 		numView.addTextChangedListener(watcher);
 	}
 
