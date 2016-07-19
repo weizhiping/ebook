@@ -3,6 +3,7 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
@@ -11,9 +12,10 @@ import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.SuperDialog;
-import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -96,7 +98,12 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			dialog.initeCallBack(this);
 			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete));
 		}else{
-			
+			FileInfo info = fileInfos.get(selectItem);
+			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
+			intent.putExtra("result_flag", 3);
+			intent.putExtra("line", info.line);
+			sendBroadcast(intent);
+			ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
 	}
 

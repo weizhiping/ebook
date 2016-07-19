@@ -43,6 +43,8 @@
 	<string name="dialog_no">否</string>
 	<string name="dialog_delete">确认删除</string>
 	<string name="dialog_delete_su">删除成功</string>
+	<string name="dialog_clear">确认清空</string>
+	<string name="dialog_clear_su">清空成功</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>

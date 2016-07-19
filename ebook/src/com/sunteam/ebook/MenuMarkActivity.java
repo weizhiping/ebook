@@ -12,6 +12,9 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.SuperDialog;
+import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -19,7 +22,7 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuMarkActivity extends Activity implements OnEnterListener {
+public class MenuMarkActivity extends Activity implements OnEnterListener,DialogCallBack {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -32,7 +35,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
-		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		currentText = getIntent().getStringExtra("page_text");
 		manager = new DatabaseManager(this);
 		initViews();
@@ -103,7 +106,10 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			wantToCheckActivity(true);
 			break;
 		case 3:
-			manager.deleteMarkFile(fileInfo.path, null);
+			SuperDialog dialog = new SuperDialog(this);
+			dialog.showSuperDialog(R.string.dialog_clear);
+			dialog.initeCallBack(this);
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear));
 			break;
 		}
 	}
@@ -125,5 +131,12 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			PublicUtils.showToast(this, getString(R.string.menu_mark_tips));
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
+	}
+
+	@Override
+	public void dialogConfrim() {
+		TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear_su));
+		manager.deleteMarkFile(fileInfo.path, null);
+		ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 }

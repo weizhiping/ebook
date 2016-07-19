@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -168,11 +167,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				}
 				return	true;
 			case KeyEvent.KEYCODE_MENU:
+				fileInfo.line = mTextReaderView.getLineNumber();
 				Intent intent = new Intent(this, MenuActivity.class);
 				intent.putExtra("page_count", mTextReaderView.getPageCount());
 				intent.putExtra("page_cur", mTextReaderView.getCurPage());
 				intent.putExtra("page_text", mTextReaderView.getReverseText());
-				intent.putExtra("fileinfo", fileInfo);
+				intent.putExtra("file", fileInfo);
 				startActivityForResult(intent, MENU_CODE);
 				break;
 			default:
@@ -265,10 +265,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			Log.e("menu", "------onreceive---:" + action);
 			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
 				int resultFlag = intent.getIntExtra("result_flag", 0);
-				Log.e("menu", "------resultFlag---:" + resultFlag);
 				switch(resultFlag){
 				case 0://跳转到页码
 					int curPage = intent.getIntExtra("page", 1);
@@ -279,6 +277,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					break;
 				case 2://背景音乐选择
 					playMusic();
+					break;
+				case 3:
+					int line = intent.getIntExtra("line", 0);
+					 mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(fileInfo.part)
+							 , TextFileReaderUtils.getInstance().getCharsetName(), line, 0, 0, 0);
 					break;
 				}
 				
