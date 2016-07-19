@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="270dp"
+    android:layout_height="180dp"
+    android:background="@drawable/folder_new_background"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="@dimen/frame_space"
+        android:visibility="gone"
+        android:textColor="@color/text_black"
+        android:textSize="@dimen/big_text_size" />
+
+    <TextView
+        android:id="@+id/dialog_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/text_black"
+        android:textSize="@dimen/big_text_size" />
+
+    <View
+        android:id="@+id/dialog_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/line_space"
+        android:layout_above="@+id/dialog_cancel"
+        android:background="@color/bottom_line" />
+
+    <View
+        android:layout_width="@dimen/line_space"
+        android:layout_height="match_parent"
+        android:layout_below="@id/dialog_line"
+        android:layout_centerHorizontal="true"
+        android:background="@color/bottom_line" />
+
+    <Button
+        android:id="@+id/dialog_cancel"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/dialog_bg"
+        android:padding="@dimen/item_space"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="2dp"
+        android:text="@string/dialog_no"
+        android:textColor="@color/text_blue"
+        android:textSize="@dimen/pub_text_size" />
+
+    <Button
+        android:id="@+id/dialog_confrim"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/dialog_bg"
+        android:padding="@dimen/item_space"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="2dp"
+        android:text="@string/dialog_yes"
+        android:textColor="@color/text_blue"
+        android:textSize="@dimen/pub_text_size" />
+
+</RelativeLayout>

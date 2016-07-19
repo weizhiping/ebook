@@ -11,6 +11,9 @@ import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.SuperDialog;
+import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -18,12 +21,13 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
+public class MenuMarkCheckActivity extends Activity implements OnEnterListener,DialogCallBack {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfos;
 	private boolean isDelete;
+	private int position;
 	private DatabaseManager manager;
 
 	@Override
@@ -85,10 +89,22 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		position = selectItem;
 		if(isDelete){
-			
+			SuperDialog dialog = new SuperDialog(this);
+			dialog.showSuperDialog(R.string.dialog_delete);
+			dialog.initeCallBack(this);
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete));
 		}else{
 			
 		}
+	}
+
+	@Override
+	public void dialogConfrim() {
+		TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete_su));
+		FileInfo info = fileInfos.get(position);
+		manager.deleteMarkFile(info.path, info.name);
+		ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 }

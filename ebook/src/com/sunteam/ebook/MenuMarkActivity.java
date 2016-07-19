@@ -1,15 +1,12 @@
 package com.sunteam.ebook;
 
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
-
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
