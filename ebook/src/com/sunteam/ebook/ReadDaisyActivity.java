@@ -42,6 +42,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private FileInfo fileInfo;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private DiasyNode mDiasyNode = null;	//叶子节点信息
+	private String diaPath;
 	private MenuBroadcastReceiver menuReceiver;
 	private static final int MENU_DAISY_CODE = 11;
 	@Override
@@ -52,7 +53,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		mDiasyNode = (DiasyNode) getIntent().getSerializableExtra("node");
-		String path = getIntent().getStringExtra("path");
+		diaPath = getIntent().getStringExtra("path");
 		String name = getIntent().getStringExtra("name");
 		
 		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
@@ -74,7 +75,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	mDaisyReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
     	mDaisyReaderView.setReverseColor(this.getResources().getColor(EbookConstants.SelectBkColorID[mColorSchemeIndex]));
     	mDaisyReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
-    	if( mDaisyReaderView.openBook(path, mDiasyNode.seq, 0, 0, 0, 0) == false )
+    	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
     		back();
@@ -233,7 +234,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
 						break;
 					case 3:
-						
+						int line = intent.getIntExtra("line", 0);
+						 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, 0, 0, 0);
 						break;
 					}
 				}
