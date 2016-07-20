@@ -233,11 +233,10 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 					case 2:
 						mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
 						break;
-					case 3:
-						int line = intent.getIntExtra("line", 0);
-						 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, 0, 0, 0);
-						break;
 					}
+				}else if(3 == resultFlag){
+					int line = intent.getIntExtra("line", 0);
+					 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, 0, 0, 0);
 				}
 				
 			}
