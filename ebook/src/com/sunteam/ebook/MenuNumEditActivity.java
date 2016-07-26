@@ -1,7 +1,9 @@
 package com.sunteam.ebook;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,15 +24,17 @@ import com.sunteam.ebook.util.TTSUtils;
 public class MenuNumEditActivity extends Activity {
 	private int number;
 	private int maxNum;
-	private int flage;//0 语速，1为语调
+	private int flage;//0 语速，1为语调,2为背景音乐强度
 	private String title;
 	private EditText numView;
+	private AudioManager mAudioManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
+		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		initViews();
 	}
 
@@ -52,7 +56,11 @@ public class MenuNumEditActivity extends Activity {
 				EbookConstants.FontColorID[mColorSchemeIndex])); // 设置title的背景色
 		line.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
 		numView.setTextColor(getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-		numView.setText(1+"");
+		if(2 == flage){
+			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_MUSIC );
+			number = (int)(currentMusic/1.5);
+		}
+		numView.setText(number + "");
 	}
 	
 
@@ -86,6 +94,9 @@ public class MenuNumEditActivity extends Activity {
 				TTSUtils.getInstance().setSpeed(number);
 			}else if(1 == flage){
 				TTSUtils.getInstance().setPitch(number);
+			}else if(2 == flage){
+				int volume = (int)(number * 1.5);
+				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
 			}
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
@@ -98,7 +109,9 @@ public class MenuNumEditActivity extends Activity {
 			number = maxNum;
 		}
 		numView.setText(number + "");
-		TTSUtils.getInstance().testSpeed(number,title + number);
+		if(2 != flage){
+			TTSUtils.getInstance().testSpeed(number,title + number);
+		}
 		return super.onKeyDown(keyCode, event);
 	}
 }
