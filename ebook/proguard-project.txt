@@ -64,12 +64,16 @@
 }
 
 -libraryjars ./libs/android-support-v4.jar
+-libraryjars ./libs/DictUtils.jar
 -libraryjars ./libs/jxl.jar
 -libraryjars ./libs/SpeechServiceLibUtil.jar
 -libraryjars ./libs/tm-extractors-0.4.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }
+
+-dontwarn com.sunteam.dict.utils.**
+-keep class com.sunteam.dict.utils.** {*; }
 
 -dontwarn common.**
 -keep class common.** {*; }
