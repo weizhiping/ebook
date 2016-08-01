@@ -5,15 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.entity.ScreenManager;
-import com.sunteam.ebook.util.EbookConstants;
-import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
@@ -50,12 +50,17 @@ public class MenuNumEditActivity extends Activity {
 		View line = findViewById(R.id.menu_line);
 		titleView.setText(title);
 		numView.setFocusable(false);
-		int mColorSchemeIndex = PublicUtils.getColorSchemeIndex(); // 得到系统配色索引
-		layout.setBackgroundResource(EbookConstants.ViewBkColorID[mColorSchemeIndex]); // 设置View的背景色
-		titleView.setTextColor(getResources().getColor(
-				EbookConstants.FontColorID[mColorSchemeIndex])); // 设置title的背景色
-		line.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
-		numView.setTextColor(getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
+		
+		Tools tools = new Tools(this);
+		
+		layout.setBackgroundColor(tools.getBackgroundColor());	// 设置View的背景色
+		titleView.setTextColor(tools.getFontColor());			// 设置title的背景色
+		line.setBackgroundColor(tools.getFontColor());			// 设置分割线的背景色
+		numView.setTextColor(tools.getFontColor());
+		
+		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()); // 设置title字号
+		numView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
+		
 		if(2 == flage){
 			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_MUSIC );
 			number = (int)(currentMusic/1.5);

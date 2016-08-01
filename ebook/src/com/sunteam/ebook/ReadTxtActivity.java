@@ -8,13 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
@@ -38,7 +41,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private TextView mTvCurPage = null;
 	private View mLine = null;
 	private TextReaderView mTextReaderView = null;
-	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private static final int MENU_CODE = 10;
@@ -49,29 +51,36 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_txt);
+		
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		int part = fileInfo.part;
-		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
-    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
+		
+		Tools tools = new Tools(this);
+		this.getWindow().setBackgroundDrawable(new ColorDrawable(tools.getBackgroundColor())); // 设置窗口背景色
     	mTvTitle = (TextView)this.findViewById(R.id.main_title);
     	mTvPageCount = (TextView)this.findViewById(R.id.pageCount);
     	mTvCurPage = (TextView)this.findViewById(R.id.curPage);
     	mLine = (View)this.findViewById(R.id.line);
     	
-    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mTvPageCount.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mTvCurPage.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
+    	mTvTitle.setTextColor(tools.getFontColor());
+    	mTvPageCount.setTextColor(tools.getFontColor());
+    	mTvCurPage.setTextColor(tools.getFontColor());
+    	mLine.setBackgroundColor(tools.getFontColor()); // 设置分割线的背景色
     	
     	mTvTitle.setText(fileInfo.name);
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
+    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
+    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
 				
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
-    	mTextReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mTextReaderView.setReverseColor(this.getResources().getColor(EbookConstants.SelectBkColorID[mColorSchemeIndex]));
-    	mTextReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
+    	mTextReaderView.setTextColor(tools.getFontColor());
+    	mTextReaderView.setReverseColor(tools.getHighlightColor());
+    	mTextReaderView.setBackgroundColor(tools.getBackgroundColor());
+    	//mTextReaderView.setTextSize(tools.getFontSize());
+    	
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();

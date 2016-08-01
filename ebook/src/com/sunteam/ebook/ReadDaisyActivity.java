@@ -7,13 +7,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
@@ -38,7 +41,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private TextView mTvCurPage = null;
 	private View mLine = null;
 	private DaisyReaderView mDaisyReaderView = null;
-	private int mColorSchemeIndex = 0;	//系统配色索引
 	private FileInfo fileInfo;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private DiasyNode mDiasyNode = null;	//叶子节点信息
@@ -56,25 +58,30 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		diaPath = getIntent().getStringExtra("path");
 		String name = getIntent().getStringExtra("name");
 		
-		mColorSchemeIndex = PublicUtils.getColorSchemeIndex();
-    	this.getWindow().setBackgroundDrawableResource(EbookConstants.ViewBkDrawable[mColorSchemeIndex]);
+		Tools tools = new Tools(this);
+		this.getWindow().setBackgroundDrawable(new ColorDrawable(tools.getBackgroundColor())); // 设置窗口背景色
     	mTvTitle = (TextView)this.findViewById(R.id.main_title);
     	mTvPageCount = (TextView)this.findViewById(R.id.pageCount);
     	mTvCurPage = (TextView)this.findViewById(R.id.curPage);
     	mLine = (View)this.findViewById(R.id.line);
     	
-    	mTvTitle.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mTvPageCount.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mTvCurPage.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);
+    	mTvTitle.setTextColor(tools.getFontColor());
+    	mTvPageCount.setTextColor(tools.getFontColor());
+    	mTvCurPage.setTextColor(tools.getFontColor());
+    	mLine.setBackgroundColor(tools.getFontColor()); // 设置分割线的背景色
     	
     	mTvTitle.setText(name);
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
+    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
+    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
 				
     	mDaisyReaderView = (DaisyReaderView) findViewById(R.id.read_daisy_view);
-    	mDaisyReaderView.setOnPageFlingListener(this);
-    	mDaisyReaderView.setTextColor(this.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));
-    	mDaisyReaderView.setReverseColor(this.getResources().getColor(EbookConstants.SelectBkColorID[mColorSchemeIndex]));
-    	mDaisyReaderView.setBackgroundColor(this.getResources().getColor(EbookConstants.ViewBkColorID[mColorSchemeIndex]));
+    	mDaisyReaderView.setOnPageFlingListener(this);    	
+    	mDaisyReaderView.setTextColor(tools.getFontColor());
+    	mDaisyReaderView.setReverseColor(tools.getHighlightColor());
+    	mDaisyReaderView.setBackgroundColor(tools.getBackgroundColor());
+    	//mDaisyReaderView.setTextSize(tools.getFontSize());
+    	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();

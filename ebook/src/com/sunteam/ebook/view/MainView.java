@@ -2,13 +2,12 @@ package com.sunteam.ebook.view;
 
 import java.util.ArrayList;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.adapter.MainListAdapter;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.TTSSpeakMode;
 import com.sunteam.ebook.util.CallbackBundle;
-import com.sunteam.ebook.util.EbookConstants;
-import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 
@@ -17,6 +16,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +40,6 @@ public class MainView extends View implements OnTTSListener
 	private TextView mTvTitle = null;
 	private View mLine = null;
 	private ListView mLvMenu = null;
-	private int mColorSchemeIndex = 0;	//系统配色索引
 	private MainListAdapter mAdapter = null;
 	
 	public View getView()
@@ -57,13 +56,15 @@ public class MainView extends View implements OnTTSListener
     	mLine = (View)mView.findViewById(R.id.line);				//分割线
     	mLvMenu = (ListView)mView.findViewById(R.id.menu_list);		//listview
     	
-    	mColorSchemeIndex = PublicUtils.getColorSchemeIndex();		//得到系统配色索引
+    	Tools tools = new Tools(context);
     	
-    	mView.setBackgroundResource(EbookConstants.ViewBkColorID[mColorSchemeIndex]);							//设置View的背景色
-    	mTvTitle.setTextColor(mContext.getResources().getColor(EbookConstants.FontColorID[mColorSchemeIndex]));	//设置title的背景色
-    	mLine.setBackgroundResource(EbookConstants.FontColorID[mColorSchemeIndex]);								//设置分割线的背景色
+    	mView.setBackgroundColor(tools.getBackgroundColor());		//设置View的背景色
+    	mTvTitle.setTextColor(tools.getFontColor());				//设置title的背景色
+    	mLine.setBackgroundColor(tools.getFontColor());				//设置分割线的背景色
     	
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()); // 设置title字号 
     	mTvTitle.setText(title);
+    	
     	mAdapter = new MainListAdapter( mContext, listener, menuList, mode );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点

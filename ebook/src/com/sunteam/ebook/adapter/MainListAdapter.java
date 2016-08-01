@@ -3,7 +3,9 @@ package com.sunteam.ebook.adapter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,9 +13,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.TTSSpeakMode;
-import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
@@ -30,6 +32,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	private int selectItem = 0;	//当前选中的项，默认是第一项
 	private OnEnterListener mOnEnterListener = null;
 	private TTSSpeakMode mode;
+	private Tools mTools;
 	
 	public interface OnEnterListener 
 	{
@@ -49,6 +52,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		this.selectItem = 0;
 		this.mOnEnterListener = listener;
 		this.mode = mode;
+		this.mTools = new Tools(mContext);
 	}
 
 	public void setSelectItem( int selectItem )
@@ -233,15 +237,13 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         
         vh.tvMenu.setTag(String.valueOf(position));
         
-        int index = PublicUtils.getColorSchemeIndex();	//配色方案
-        
         if( selectItem == position )	//选中
 		{
-        	convertView.setBackgroundResource(EbookConstants.SelectBkColorID[index]);
+        	convertView.setBackgroundColor(mTools.getHighlightColor());
 		}
 		else
 		{
-			convertView.setBackgroundResource(R.color.transparent);
+			convertView.setBackgroundColor(Color.TRANSPARENT);
 		}
 		
     	if( !TextUtils.isEmpty( gListData.get(position) ) )
@@ -252,7 +254,8 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
     	{
     		vh.tvMenu.setText( "" );
     	}
-    	vh.tvMenu.setTextColor(mContext.getResources().getColor(EbookConstants.FontColorID[index]));
+    	vh.tvMenu.setTextColor(mTools.getFontColor());	//设置字体颜色
+    	vh.tvMenu.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTools.getFontSize());	//设置字体大小
                 
         return convertView;
 	}
