@@ -68,6 +68,7 @@
 -libraryjars ./libs/jxl.jar
 -libraryjars ./libs/SpeechServiceLibUtil.jar
 -libraryjars ./libs/tm-extractors-0.4.jar
+-libraryjars ./libs/Tools.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }
@@ -87,6 +88,9 @@
 -keep class org.apache.poi.** {*; }
 -dontwarn org.textmining.text.extraction.**
 -keep class org.textmining.text.extraction.** {*; }
+
+-dontwarn com.sunteam.common.utils.**
+-keep class com.sunteam.common.utils.** {*; }
 
 -keep class **.R$* {   
 *;   
