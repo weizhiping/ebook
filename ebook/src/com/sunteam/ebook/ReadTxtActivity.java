@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.dict.utils.DBUtil;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
@@ -170,9 +171,27 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
 				String content = mTextReaderView.getReverseText();	//得到当前反显内容
-				if( !TextUtils.isEmpty(content) )
+				if( TextUtils.isEmpty(content) )
 				{
-					Toast.makeText(this, this.getString(R.string.baike_search_fail), Toast.LENGTH_SHORT).show();
+					PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
+				}
+				else
+				{
+					DBUtil dbUtils = new DBUtil();
+					String result = dbUtils.search(content);
+					if( TextUtils.isEmpty(result) )
+					{
+						PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
+					}
+					else
+					{
+						TTSUtils.getInstance().stop();
+						TTSUtils.getInstance().OnTTSListener(null);
+						Intent intent = new Intent( this, WordSearchResultActivity.class );
+						intent.putExtra("word", content);
+						intent.putExtra("explain", result);
+						this.startActivity(intent);
+					}
 				}
 				return	true;
 			case KeyEvent.KEYCODE_MENU:
@@ -183,6 +202,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				intent.putExtra("page_text", mTextReaderView.getReverseText());
 				intent.putExtra("file", fileInfo);
 				startActivityForResult(intent, MENU_CODE);
+				break;
+			case KeyEvent.KEYCODE_STAR:			//反查
 				break;
 			default:
 				break;

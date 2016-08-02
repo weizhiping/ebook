@@ -115,6 +115,10 @@
             android:name=".MenuDatabaseActivity"
             android:screenOrientation="landscape" >
         </activity> 
+        <activity
+            android:name=".WordSearchResultActivity"
+            android:screenOrientation="landscape" >
+        </activity>
         <provider
             android:name="com.iflytek.business.speech.SharedProvider"
             android:authorities="com.sunteam.ebook" 

@@ -386,6 +386,21 @@ import android.view.View;
 		 return	"";
 	 }
 	 
+	 public boolean openBook( String content ) 
+	 {
+		 byte[] buf = null;
+		 try
+		 {
+			 buf = content.getBytes(CHARSET_NAME);
+		 }
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
+		 }
+		 
+		 return	openBook( buf, CHARSET_NAME, 0, 0, 0, 0 );
+	 }
+	 
 	 /**
 	  * 
 	  * @param buffer
@@ -1628,8 +1643,16 @@ import android.view.View;
 			 }
 			 else if( ri.startPos >= mReverseInfo.startPos )
 			 {
-				 mReverseInfo.startPos = oldReverseInfo.startPos;
-				 mReverseInfo.len = oldReverseInfo.len;
+				 if( null == oldReverseInfo )
+				 {
+					 mReverseInfo.startPos = 0;
+					 mReverseInfo.len = 0;
+				 }
+				 else
+				 {
+					 mReverseInfo.startPos = oldReverseInfo.startPos;
+					 mReverseInfo.len = oldReverseInfo.len;
+				 }
 				 readReverseText(false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
