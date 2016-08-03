@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
@@ -135,10 +136,33 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				return	true;
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
-				break;
+				String content = mTextReaderView.getReverseText();	//得到当前反显内容
+				if( TextUtils.isEmpty(content) )
+				{
+					PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
+				}
+				else
+				{
+					DBUtil dbUtils = new DBUtil();
+					String result = dbUtils.search(content);
+					if( TextUtils.isEmpty(result) )
+					{
+						PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
+					}
+					else
+					{
+						TTSUtils.getInstance().stop();
+						TTSUtils.getInstance().OnTTSListener(null);
+						Intent intent = new Intent( this, WordSearchResultActivity.class );
+						intent.putExtra("word", content);
+						intent.putExtra("explain", result);
+						this.startActivity(intent);
+					}
+				}
+				return	true;
 			case KeyEvent.KEYCODE_MENU:			//加入生词库
 				saveWord();
-				break;
+				return	true;
 			case KeyEvent.KEYCODE_STAR:			//反查
 				break;
 			default:
