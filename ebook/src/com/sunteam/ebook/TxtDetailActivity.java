@@ -177,7 +177,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			if(0 == selectItem){
 				path = FileOperateUtils.getSDPath();
 			}else{
-				path = FileOperateUtils.getTFDirectory();
+				path = FileOperateUtils.getTFDirectory(this);
 			}
 			if(null != path){
 				Intent intent = new Intent(this, TxtDetailActivity.class);
