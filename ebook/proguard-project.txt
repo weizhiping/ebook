@@ -64,14 +64,20 @@
 }
 
 -libraryjars ./libs/android-support-v4.jar
+-libraryjars ./libs/CommonMenu.jar
 -libraryjars ./libs/DictUtils.jar
 -libraryjars ./libs/jxl.jar
+-libraryjars ./libs/Msc.jar
 -libraryjars ./libs/SpeechServiceLibUtil.jar
 -libraryjars ./libs/tm-extractors-0.4.jar
 -libraryjars ./libs/Tools.jar
+-libraryjars ./libs/TtsUtils.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }
+
+-dontwarn com.sunteam.common.menu.**
+-keep class com.sunteam.common.menu.** {*; }
 
 -dontwarn com.sunteam.dict.utils.**
 -keep class com.sunteam.dict.utils.** {*; }
@@ -84,6 +90,9 @@
 -dontwarn com.iflytek.**
 -keep class com.iflytek.** {*; }
 
+-dontwarn com.iflytek.**
+-keep class com.iflytek.** {*; }
+
 -dontwarn org.apache.poi.**
 -keep class org.apache.poi.** {*; }
 -dontwarn org.textmining.text.extraction.**
@@ -91,6 +100,9 @@
 
 -dontwarn com.sunteam.common.utils.**
 -keep class com.sunteam.common.utils.** {*; }
+
+-dontwarn com.sunteam.common.tts.**
+-keep class com.sunteam.common.tts.** {*; }
 
 -keep class **.R$* {   
 *;   
