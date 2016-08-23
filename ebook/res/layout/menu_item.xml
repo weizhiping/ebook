@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/menu_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textSize="@dimen/item_text_size" />
+    <!--
+		android:ellipsize="marquee"
+		android:marqueeRepeatLimit="marquee_forever" 
+		android:clickable="true"
+		android:focusable="true"
+		android:focusableInTouchMode="trueas
+    -->
+
+</LinearLayout>
