@@ -102,7 +102,7 @@ public class MainView extends View implements OnTTSListener
 		TTSUtils.getInstance().OnTTSListener(this);
 		if( mAdapter != null )
 		{
-			TTSUtils.getInstance().speakTips(mAdapter.getSelectItemContent());
+			TTSUtils.getInstance().speakTips(mTvTitle.getText()+"，"+mAdapter.getSelectItemContent());
 		}
 	}
 	
