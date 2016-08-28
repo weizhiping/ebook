@@ -56,6 +56,7 @@ public class MainView extends View implements OnTTSListener
 		mTvTitle = (TextView)mView.findViewById(R.id.title);		//标题栏
     	mLine = (View)mView.findViewById(R.id.line);				//分割线
     	mLvMenu = (ListView)mView.findViewById(R.id.menu_list);		//listview
+    	mLvMenu.setSelected(true);
     	
     	Tools tools = new Tools(context);
     	
@@ -69,7 +70,7 @@ public class MainView extends View implements OnTTSListener
     	mTvTitle.setHeight((int)fontSize); // 设置控件高度
     	mTvTitle.setText(title);
     	
-    	mAdapter = new MainListAdapter( mContext, listener, menuList, mode );
+    	mAdapter = new MainListAdapter( mContext, mLvMenu, listener, menuList, mode );
     	mLvMenu.setAdapter(mAdapter);
     	mLvMenu.setFocusable(false);	//不获取焦点
 	}

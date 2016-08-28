@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
@@ -28,6 +29,7 @@ import com.sunteam.ebook.util.TTSUtils;
 public class MainListAdapter extends BaseAdapter implements OnClickListener
 {
 	private Context mContext = null;
+	private ListView mLv = null;
 	private ArrayList<String> gListData = null;
 	private int selectItem = 0;	//当前选中的项，默认是第一项
 	private OnEnterListener mOnEnterListener = null;
@@ -46,9 +48,10 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		mOnEnterListener = listener;
 	}
 	
-	public MainListAdapter( Context context, OnEnterListener listener, ArrayList<String> list, TTSSpeakMode mode )
+	public MainListAdapter( Context context, ListView lv, OnEnterListener listener, ArrayList<String> list, TTSSpeakMode mode )
 	{
 		this.mContext = context;
+		this.mLv = lv;
 		this.gListData = list;
 		this.selectItem = 0;
 		this.mOnEnterListener = listener;
@@ -95,6 +98,17 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
+		int first = mLv.getFirstVisiblePosition();
+		if( selectItem < first )
+		{
+			int select = mLv.getSelectedItemPosition();
+			mLv.setSelection(--select);
+		}
+		else if( selectItem == gListData.size() - 1 )
+		{
+			mLv.setSelection(selectItem);
+		}
+		
 		this.notifyDataSetChanged();
 	}
 	
@@ -111,6 +125,17 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		}
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		
+		int last = mLv.getLastVisiblePosition();
+		if( selectItem > last )
+		{
+			int select = mLv.getSelectedItemPosition();
+			mLv.setSelection(++select);
+		}
+		else if( 0 == selectItem )
+		{
+			mLv.setSelection(0);
+		}
 		
 		this.notifyDataSetChanged();
 	}
@@ -242,12 +267,10 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         if( selectItem == position )	//选中
 		{
         	convertView.setBackgroundColor(mTools.getHighlightColor());
-        	//convertView.setSelected(true);
 		}
 		else
 		{
 			convertView.setBackgroundColor(Color.TRANSPARENT);
-			//convertView.setSelected(false);
 		}
 		
         float fontSize = mTools.getFontSize()*mScale;
