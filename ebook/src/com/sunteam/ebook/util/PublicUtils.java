@@ -2,12 +2,10 @@ package com.sunteam.ebook.util;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.iflytek.business.speech.UtilityConfig;
+import com.iflytek.cloud.SpeechUtility;
 import com.sunteam.ebook.R;
 
 /**
@@ -150,20 +148,6 @@ public class PublicUtils
 	//检查讯飞语音服务是否安装
 	public static boolean checkSpeechServiceInstalled(Context context)
 	{
-		final String packageName = UtilityConfig.DEFAULT_COMPONENT_NAME;
-		try 
-		{
-			PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
-			if(null != packageInfo)
-			{
-				return true;
-			}
-		} 
-		catch (NameNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return false;
+		return SpeechUtility.getUtility().checkServiceInstalled();
 	}	
 }	

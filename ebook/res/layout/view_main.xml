@@ -1,34 +1,40 @@
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <TextView
-        android:id="@+id/title"
+    android:orientation="vertical" >
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-        android:gravity="center"
-        android:textSize="@dimen/title_text_size"
-        android:background="@color/transparent"
-        />
-    <View
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:layout_below="@id/title"
-        android:background="@color/space_line"
-        />
-   <ListView 
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textSize="@dimen/title_text_size" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_gravity="bottom"
+            android:background="@android:color/black" />
+    </FrameLayout>
+
+    <ListView
         android:id="@+id/menu_list"
-        android:layout_width="fill_parent" 
-		android:layout_height="fill_parent"
-		android:background="@color/transparent"
-		android:cacheColorHint="@color/transparent"
-		android:listSelector="@android:color/transparent"
-		android:divider="@color/transparent" 
-		android:dividerHeight="0dip"
-		android:drawSelectorOnTop="false"
-        android:layout_below="@id/line"
-        />
-</RelativeLayout>
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:dividerHeight="0dip"
+        android:drawSelectorOnTop="false"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none" />
+
+</LinearLayout>

@@ -53,8 +53,11 @@ public class MenuPageEditActivity extends Activity {
 		line.setBackgroundColor(tools.getFontColor());			// 设置分割线的背景色
 		numView.setTextColor(tools.getFontColor());
 		
-		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()); // 设置title字号
-		numView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
+		final float scale = this.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数;
+		float fontSize = tools.getFontSize() * scale;
+		titleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale); // 设置title字号
+		numView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale);		
+		titleView.setHeight((int)fontSize); // 设置控件高度
 		
 		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
 		numView.setText(tips);

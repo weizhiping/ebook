@@ -1,62 +1,72 @@
-<RelativeLayout 
+<LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}" 
+    android:orientation="vertical" 
     >
-    <TextView
-        android:id="@+id/main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/title_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="@dimen/item_left_padding"
-        android:gravity="left|center_vertical"
-        android:text="@string/main_title" 
-        android:textSize="@dimen/file_text_size"
-        android:background="@color/transparent"
-        />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/title_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/item_right_padding"
-        android:background="@color/transparent"
-        android:orientation="vertical"
-        >
-        <TextView
-	        android:id="@+id/pageCount"
-	        android:layout_width="wrap_content"
-	        android:layout_height="0dip"
-	        android:layout_weight="1"
-	        android:gravity="right|center_vertical"
-	        android:textSize="@dimen/number_text_size"
-	        android:background="@color/transparent"
-	        />
-        <TextView
-	        android:id="@+id/curPage"
-	        android:layout_width="wrap_content"
-	        android:layout_height="0dip"
-	        android:layout_weight="1"
-	        android:gravity="right|center_vertical"
-	        android:textSize="@dimen/number_text_size"
-	        android:background="@color/transparent"
-	        />
-	</LinearLayout>
-    <View
-        android:id="@+id/line"
+    <FrameLayout
+        android:id="@+id/rl_title"
         android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:layout_below="@id/main_title"
-        android:background="@color/space_line"
-        />
-    <com.sunteam.ebook.view.DaisyReaderView
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+            >
+            <LinearLayout
+                android:id="@+id/ll_page"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:layout_alignParentRight="true"
+		        android:background="@color/transparent"
+		        android:orientation="vertical"
+		        >
+		        <TextView
+			        android:id="@+id/pageCount"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:gravity="right|center_vertical"
+			        android:textSize="@dimen/number_text_size"
+			        android:background="@color/transparent"
+			        />
+		        <TextView
+			        android:id="@+id/curPage"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:gravity="right|center_vertical"
+			        android:textSize="@dimen/number_text_size"
+			        android:background="@color/transparent"
+			        />
+			</LinearLayout>   
+			<TextView
+		        android:id="@+id/main_title"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:layout_alignParentLeft="true"
+		        android:layout_toRightOf="@id/ll_page"
+		        android:layout_marginRight="@dimen/item_right_padding"
+		        android:gravity="left|center_vertical"
+		        android:text="@string/main_title" 
+		        android:textSize="@dimen/file_text_size"
+		        android:background="@color/transparent"
+		        android:includeFontPadding="false"
+		        android:maxLength="8"
+		        />      
+        </RelativeLayout>
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_gravity="bottom"
+            android:background="@android:color/black" />
+    </FrameLayout> 
+	<com.sunteam.ebook.view.DiasyReaderView
         android:id="@+id/read_daisy_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/line"
         android:background="@color/transparent"
         />
-</RelativeLayout>
+</LinearLayout>

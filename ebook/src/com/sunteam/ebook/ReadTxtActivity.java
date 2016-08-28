@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,11 +71,16 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTvCurPage.setTextColor(tools.getFontColor());
     	mLine.setBackgroundColor(tools.getFontColor()); // 设置分割线的背景色
     	
+    	final float scale = this.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数;
+		float fontSize = tools.getFontSize() * scale;
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale);
+    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, (fontSize-3*EbookConstants.LINE_SPACE)/2*scale);
+    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_PX, (fontSize-3*EbookConstants.LINE_SPACE)/2*scale);
+    	mTvTitle.setHeight((int)fontSize); // 设置控件高度
     	mTvTitle.setText(fileInfo.name);
-    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
-    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
-    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
-				
+    	mTvPageCount.setHeight((int)(fontSize/2));
+    	mTvCurPage.setHeight((int)(fontSize/2));
+    	
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
     	mTextReaderView.setTextColor(tools.getFontColor());

@@ -8,6 +8,7 @@ import com.sunteam.ebook.adapter.MainListAdapter;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.TTSSpeakMode;
 import com.sunteam.ebook.util.CallbackBundle;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 
@@ -62,7 +63,10 @@ public class MainView extends View implements OnTTSListener
     	mTvTitle.setTextColor(tools.getFontColor());				//设置title的背景色
     	mLine.setBackgroundColor(tools.getFontColor());				//设置分割线的背景色
     	
-    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()); // 设置title字号 
+    	final float scale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数;
+    	float fontSize = tools.getFontSize() * scale;
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale); // 设置title字号 
+    	mTvTitle.setHeight((int)fontSize); // 设置控件高度
     	mTvTitle.setText(title);
     	
     	mAdapter = new MainListAdapter( mContext, listener, menuList, mode );

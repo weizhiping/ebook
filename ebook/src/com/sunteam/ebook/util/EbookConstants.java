@@ -96,4 +96,6 @@ public class EbookConstants
 	public static final int TO_NEXT_BOOK = 1;			//到下一本书
 	
 	public static final String NEW_WORD_BOOK = "new_word";
+	
+	public static final int LINE_SPACE = 2;
 }

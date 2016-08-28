@@ -4,8 +4,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"    
     android:orientation="vertical"
-    android:paddingLeft="@dimen/item_left_padding"
-    android:paddingRight="@dimen/item_right_padding"
     android:background="@drawable/list_item_bg"
     >
 
@@ -13,11 +11,13 @@
 		android:id="@+id/menu"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
 		android:singleLine="true"
 		android:ellipsize="end"
 		android:text=""
 		android:textColor="@color/text_black"
-		android:textSize="24sp"
+		android:textSize="@dimen/item_text_size"
 		android:background="@color/transparent"
+		android:includeFontPadding="false"
 		/>
 </LinearLayout>

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.TTSSpeakMode;
-import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
@@ -33,6 +33,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	private OnEnterListener mOnEnterListener = null;
 	private TTSSpeakMode mode;
 	private Tools mTools;
+	private float mScale = 1.0f;
 	
 	public interface OnEnterListener 
 	{
@@ -53,6 +54,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		this.mOnEnterListener = listener;
 		this.mode = mode;
 		this.mTools = new Tools(mContext);
+		this.mScale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数
 	}
 
 	public void setSelectItem( int selectItem )
@@ -240,12 +242,18 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         if( selectItem == position )	//选中
 		{
         	convertView.setBackgroundColor(mTools.getHighlightColor());
+        	//convertView.setSelected(true);
 		}
 		else
 		{
 			convertView.setBackgroundColor(Color.TRANSPARENT);
+			//convertView.setSelected(false);
 		}
 		
+        float fontSize = mTools.getFontSize()*mScale;
+    	vh.tvMenu.setTextColor(mTools.getFontColor());	//设置字体颜色
+    	vh.tvMenu.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*mScale);	//设置字体大小
+    	vh.tvMenu.setHeight((int)fontSize); 		// 设置控件高度
     	if( !TextUtils.isEmpty( gListData.get(position) ) )
     	{
     		vh.tvMenu.setText( gListData.get(position) );
@@ -254,9 +262,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
     	{
     		vh.tvMenu.setText( "" );
     	}
-    	vh.tvMenu.setTextColor(mTools.getFontColor());	//设置字体颜色
-    	vh.tvMenu.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTools.getFontSize());	//设置字体大小
-                
+    	
         return convertView;
 	}
 

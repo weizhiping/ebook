@@ -58,10 +58,13 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     	mTvCurPage.setTextColor(tools.getFontColor());
     	mLine.setBackgroundColor(tools.getFontColor()); // 设置分割线的背景色
     	
+    	final float scale = this.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数;
+		float fontSize = tools.getFontSize() * scale;
+    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale);
+    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, (fontSize-2*EbookConstants.LINE_SPACE)/2*scale);
+    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_PX, (fontSize-2*EbookConstants.LINE_SPACE)/2*scale);
+    	mTvTitle.setHeight((int)fontSize); // 设置控件高度
     	mTvTitle.setText(word);
-    	mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
-    	mTvPageCount.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
-    	mTvCurPage.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()/2);
 				
     	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);

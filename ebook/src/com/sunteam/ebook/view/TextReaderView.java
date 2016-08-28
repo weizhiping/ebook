@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.CodeTableUtils;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
@@ -161,6 +163,8 @@ import android.view.View;
 		 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);	//画笔
 		 mPaint.setTextAlign(Align.LEFT);			//做对齐
 		 
+		 final float fontSize = new Tools(context).getFontSize();
+		 mTextSize = fontSize-2*EbookConstants.LINE_SPACE;
 		 final float scale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数
 		 
 		 mLineSpace *= scale;		//行间距

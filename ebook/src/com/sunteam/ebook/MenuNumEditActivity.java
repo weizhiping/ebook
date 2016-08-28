@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
@@ -58,8 +59,11 @@ public class MenuNumEditActivity extends Activity {
 		line.setBackgroundColor(tools.getFontColor());			// 设置分割线的背景色
 		numView.setTextColor(tools.getFontColor());
 		
-		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize()); // 设置title字号
-		numView.setTextSize(TypedValue.COMPLEX_UNIT_SP, tools.getFontSize());
+		final float scale = this.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数;
+		float fontSize = tools.getFontSize() * scale;
+		titleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale); // 设置title字号
+		numView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale);		
+		titleView.setHeight((int)fontSize); // 设置控件高度
 		
 		if(2 == flage){
 			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_MUSIC );

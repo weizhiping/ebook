@@ -1,21 +1,18 @@
 package com.sunteam.ebook.util;
 
-import com.iflytek.business.speech.SpeechIntent;
-import com.iflytek.business.speech.SpeechServiceUtil;
-import com.iflytek.business.speech.SpeechServiceUtil.ISpeechInitListener;
-import com.iflytek.business.speech.SynthesizerListener;
-import com.iflytek.business.speech.TextToSpeech;
-import com.sunteam.ebook.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.os.Environment;
-import android.os.RemoteException;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+
+import com.iflytek.cloud.SpeechConstant;
+import com.sunteam.common.tts.TtsUtils;
+import com.sunteam.common.tts.TtsUtils.TtsListener;
+import com.sunteam.ebook.R;
 
 /**
  * TTS工具类。
@@ -25,17 +22,24 @@ import android.util.Log;
 public class TTSUtils
 {
     private static final String TAG = "TTSUtils";
+	private static final String ROLE_EN = "VOICE_EN";
+
     private static final int DEFAULT_ROLE_CN = 3;	//默认中文发音人
     private static final int DEFAULT_ROLE_EN = 17;	//默认英文发音人
     private static final int DEFAULT_SPEED = 65;	//默认语速
+    private static final int DEFAULT_TONE = 65;	//默认语调
+    private static final int DEFAULT_VOLUME = 80;	//默认音量
+    
     
 	private static TTSUtils instance = null;
 	private Context mContext;
-	private SpeechServiceUtil mService;	
+//	private SpeechServiceUtil mService;	
+	private TtsUtils mTtsUtils;
     private SharedPreferences mSharedPreferences;
 	private boolean isSuccess = false;
 	private OnTTSListener mOnTTSListener = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
+	@SuppressWarnings("unused")
 	private SpeakForm mSpeakForm = SpeakForm.TIPS;
 	
 	private static final int[] mRoleCn = {
@@ -99,10 +103,11 @@ public class TTSUtils
 	}
 	
 	//得到TTS对象
-	public SpeechServiceUtil getTextToSpeech()
-	{
+	/*public SpeechServiceUtil getTextToSpeech()
+	{	
 		return	mService;
-	}
+		
+	}*/
 	
 	//初始化
 	public void init( Context context )
@@ -112,18 +117,19 @@ public class TTSUtils
 		mSharedPreferences = mContext.getSharedPreferences(EbookConstants.TTS_SETTINGS, Activity.MODE_PRIVATE);
 		//String resType = mSharedPreferences.getString("tts_resource", "0");
         // 合成对象初始化
-        Intent serviceIntent = new Intent();
-        serviceIntent.putExtra(SpeechIntent.SERVICE_LOG_ENABLE, true);
-        mService = new SpeechServiceUtil(mContext, mInitListener, serviceIntent);
+//        Intent serviceIntent = new Intent();
+//        serviceIntent.putExtra(SpeechIntent.SERVICE_LOG_ENABLE, true);
+//        mService = new SpeechServiceUtil(mContext, mInitListener, serviceIntent);
+        mTtsUtils = new TtsUtils(context, ttsListener);
 	}
 	
-	//销毁
+	//销毁； 暂时不要销毁，因为讯飞TTS语音合成类是单例类，销毁了需要重新初始化，影响响应速度。
 	public void destroy()
 	{
-		if(mService != null)
+		if(mTtsUtils != null)
 		{
-			mService.destroy();
-			mService = null;
+			/*mTtsUtils.destroy();
+			mTtsUtils = null;*/
 		}
 	}
 
@@ -136,11 +142,11 @@ public class TTSUtils
 	//暂停朗读
 	public void pause()
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
 			if( SpeakStatus.SPEAK == mSpeakStatus )
 			{
-				//mService.pauseSpeaking();
+				mTtsUtils.pause();
 				mSpeakStatus = SpeakStatus.PAUSE;
 			}	//如果正在朗读，先暂停
 		}
@@ -149,11 +155,11 @@ public class TTSUtils
 	//恢复朗读
 	public void resume()
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
 			if( SpeakStatus.PAUSE == mSpeakStatus )
 			{
-				//mService.resumeSpeaking();
+				mTtsUtils.resume();
 				mSpeakStatus = SpeakStatus.SPEAK;
 			}	//如果正在暂停，先恢复
 		}
@@ -162,11 +168,11 @@ public class TTSUtils
 	//停止朗读
 	public void stop()
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
 			if( SpeakStatus.STOP != mSpeakStatus )
 			{
-				mService.stopSpeak();
+				mTtsUtils.stop();
 				mSpeakStatus = SpeakStatus.STOP;
 			}	//如果正在朗读，先停止
 		}
@@ -179,10 +185,10 @@ public class TTSUtils
      */
 	public void speakContent( final String text ) 
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
-			Intent intent = setContentParam();	//设置参数
-	        mService.speak(text, intent);
+			setContentParam();	//设置参数
+			mTtsUtils.speak(text);
 	        mSpeakStatus = SpeakStatus.SPEAK;
 	        mSpeakForm = SpeakForm.CONTENT;
 		}
@@ -195,10 +201,10 @@ public class TTSUtils
      */
 	public void speakTips( final String text ) 
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
-			Intent intent = setTipsParam();	//设置参数
-	        mService.speak(text, intent);
+			setTipsParam();	//设置参数
+			mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
 		}
@@ -212,10 +218,10 @@ public class TTSUtils
      */
 	public void speakTest( final String text, String key, int value ) 
 	{
-		if( isSuccess && mService != null )
+		if( isSuccess && mTtsUtils != null )
 		{
-	        Intent intent = setTestParam(key, value);	//设置参数
-	        mService.speak(text, intent);
+	        setTestParam(key, value);	//设置参数
+	        mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
 		}
@@ -231,7 +237,7 @@ public class TTSUtils
 		{
 			if( ttsRoleCn[i].equals(role) )
 			{
-				speakTest( text, TextToSpeech.KEY_PARAM_ROLE_CN, mRoleCn[i] );
+				speakTest( text, SpeechConstant.VOICE_NAME, mRoleCn[i] ); // 暂时未区分中文发音人和英文发音人
 				
 				return	true;
 			}
@@ -251,7 +257,7 @@ public class TTSUtils
 			if( ttsRoleCn[i].equals(role) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putString( TextToSpeech.KEY_PARAM_ROLE_CN, mRoleCn[i]+"" );
+				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
 				editor.commit();
 				
 				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -269,7 +275,7 @@ public class TTSUtils
 		Resources res = mContext.getResources();
 		String[] ttsRoleCn = res.getStringArray(R.array.array_menu_voice_china);
 		
-		String role = mSharedPreferences.getString(TextToSpeech.KEY_PARAM_ROLE_CN, DEFAULT_ROLE_CN+"");
+		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+"");
 		for( int i = 0; i < mRoleCn.length; i++ )
 		{
 			if( role.equals(mRoleCn[i]+"") )
@@ -298,7 +304,7 @@ public class TTSUtils
 		{
 			if( ttsRoleEn[i].equals(role) )
 			{
-				speakTest( text, TextToSpeech.KEY_PARAM_ROLE_EN, mRoleEn[i] );
+				speakTest( text, ROLE_EN, mRoleEn[i] );
 				
 				return	true;
 			}
@@ -318,7 +324,7 @@ public class TTSUtils
 			if( ttsRoleEn[i].equals(role) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putString( TextToSpeech.KEY_PARAM_ROLE_EN, mRoleEn[i]+"" );
+				editor.putString( ROLE_EN, mRoleEn[i]+"" );
 				editor.commit();
 				
 				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -336,7 +342,7 @@ public class TTSUtils
 		Resources res = mContext.getResources();
 		String[] ttsRoleEn = res.getStringArray(R.array.array_menu_voice_english);
 		
-		String role = mSharedPreferences.getString(TextToSpeech.KEY_PARAM_ROLE_EN, DEFAULT_ROLE_EN+"");
+		String role = mSharedPreferences.getString(ROLE_EN, DEFAULT_ROLE_EN+"");
 		for( int i = 0; i < mRoleEn.length; i++ )
 		{
 			if( role.equals(mRoleEn[i]+"") )
@@ -358,14 +364,14 @@ public class TTSUtils
 	//测试语速
 	public void testSpeed( int speed, final String text )
 	{
-		speakTest( text, TextToSpeech.KEY_PARAM_SPEED, speed*5 );
+		speakTest( text, SpeechConstant.SPEED, speed*5 );
 	}
 		
 	//设置语速
 	public void setSpeed( int speed )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( TextToSpeech.KEY_PARAM_SPEED, speed*5 );
+		editor.putInt( SpeechConstant.SPEED, speed*5 );
 		editor.commit();
 		
 		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -374,20 +380,20 @@ public class TTSUtils
 	//得到语速
 	public int getSpeed()
 	{
-		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, DEFAULT_SPEED)/5;
+		return	mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED)/5;
 	}
 	
 	//测试语调
 	public void testPitch( int pitch, final String text )
 	{
-		speakTest( text, TextToSpeech.KEY_PARAM_PITCH, pitch*5 );
+		speakTest( text, SpeechConstant.PITCH, pitch*5 );
 	}
 		
 	//设置语调
 	public void setPitch( int pitch )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( TextToSpeech.KEY_PARAM_PITCH, pitch*5 );
+		editor.putInt( SpeechConstant.PITCH, pitch*5 );
 		editor.commit();
 		
 		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -396,20 +402,20 @@ public class TTSUtils
 	//得到语调
 	public int getPitch()
 	{
-		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE)/5;
+		return	mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE)/5;
 	}
 	
 	//测试音量
 	public void testVolume( int volume, final String text )
 	{
-		speakTest( text, TextToSpeech.KEY_PARAM_VOLUME, volume*5 );
+		speakTest( text, SpeechConstant.VOLUME, volume*5 );
 	}
 		
 	//设置音量
 	public void setVolume( int volume )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( TextToSpeech.KEY_PARAM_VOLUME, volume*5 );
+		editor.putInt( SpeechConstant.VOLUME, volume*5 );
 		editor.commit();
 		
 		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -418,13 +424,13 @@ public class TTSUtils
 	//得到音量
 	public int getVolume()
 	{
-		return	mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME)/5;
+		return	mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)/5;
 	}
 	
 	//测试音效
 	public boolean testEffect( String effect, final String text )
 	{
-		Resources res = mContext.getResources();
+		/*Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
@@ -435,7 +441,7 @@ public class TTSUtils
 
 				return	true;
 			}
-		}
+		}*/
 		
 		return	false;
 	}
@@ -443,7 +449,7 @@ public class TTSUtils
 	//设置音效
 	public boolean setEffect( String effect )
 	{
-		Resources res = mContext.getResources();
+		/*Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
@@ -458,7 +464,7 @@ public class TTSUtils
 				
 				return	true;
 			}
-		}
+		}*/
 		
 		return	false;
 	}
@@ -466,7 +472,7 @@ public class TTSUtils
 	//得到当前音效
 	public String getCurEffect()
 	{
-		Resources res = mContext.getResources();
+		/*Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
 		
 		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
@@ -478,7 +484,8 @@ public class TTSUtils
 			}
 		}
 		
-		return	ttsEffect[0];
+		return	ttsEffect[0];*/
+		return "";
 	}
 	
 	//得到当前音效列表
@@ -493,7 +500,7 @@ public class TTSUtils
      *
      * @return
      */
-    private Intent setContentParam() 
+	/*private Intent setContentParam() 
     {
     	Intent ttsParamsIntent = new Intent();	//合成参数设置Intent
     	
@@ -506,25 +513,48 @@ public class TTSUtils
     	{
 			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString(TextToSpeech.KEY_PARAM_MSC_ROLE, "vixx"));						//网络TTS角色
 		}
-    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ROLE_EN, DEFAULT_ROLE_EN));						//TTS英文发音人参数
+    	ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, DEFAULT_ROLE_EN));						//TTS英文发音人参数
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT));				//TTS音效参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, DEFAULT_SPEED));								//TTS语速参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE));					//TTS语调参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME));				//TTS音量参数
+		ttsParamsIntent.putExtra(SpeechConstant.SPEED, mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));								//TTS语速参数
+		ttsParamsIntent.putExtra(SpeechConstant.PITCH, mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));					//TTS语调参数
+		ttsParamsIntent.putExtra(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME));				//TTS音量参数
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_STREAM, TextToSpeech.DEFAULT_STREAM));				//TTS播放类型参数
 
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PCM_LOG, false);																			//TTS是否保存录音
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "com.sunteam.ebook");																//TTS保存录音路径
 		
 		return	ttsParamsIntent;
+    }*/
+	
+    private void setContentParam() 
+    {	
+    	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
+
+		// 设置发音人
+    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+""));
+
+		// 设置合成语速
+    	mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+
+		// 设置合成音调
+    	mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+
+		// 设置合成音量; 使用语记中的默认音量即可
+		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+
+		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
+
+		// mTtsUtils.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "false"); // 设置播放合成音频打断音乐播放，默认为true;
+		
     }
+		
 	
     /**
      * 参数设置(对菜单朗读有效)
      *
      * @return
      */
-    private Intent setTipsParam() 
+    /*private Intent setTipsParam() 
     {
     	Intent ttsParamsIntent = new Intent();	//合成参数设置Intent
     	
@@ -537,17 +567,38 @@ public class TTSUtils
     	{
 			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString(TextToSpeech.KEY_PARAM_MSC_ROLE, "vixx"));						//网络TTS角色
 		}
-    	ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ROLE_EN, DEFAULT_ROLE_EN));						//TTS英文发音人参数
+    	ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, DEFAULT_ROLE_EN));						//TTS英文发音人参数
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT));				//TTS音效参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, DEFAULT_SPEED));								//TTS语速参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE));					//TTS语调参数
-		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME));				//TTS音量参数
+		ttsParamsIntent.putExtra(SpeechConstant.SPEED, mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));								//TTS语速参数
+		ttsParamsIntent.putExtra(SpeechConstant.PITCH, mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));					//TTS语调参数
+		ttsParamsIntent.putExtra(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME));				//TTS音量参数
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_STREAM, TextToSpeech.DEFAULT_STREAM));				//TTS播放类型参数
 
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PCM_LOG, false);																			//TTS是否保存录音
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "com.sunteam.ebook");																//TTS保存录音路径
 		
 		return	ttsParamsIntent;
+    }*/
+    
+    private void setTipsParam() 
+    {
+    	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
+
+		// 设置发音人
+    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+""));
+
+		// 设置合成语速
+    	mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+
+		// 设置合成音调
+    	mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+
+		// 设置合成音量; 使用语记中的默认音量即可
+		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+
+		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
+
+		// mTtsUtils.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "false"); // 设置播放合成音频打断音乐播放，默认为true;
     }
 	
     /**
@@ -555,7 +606,7 @@ public class TTSUtils
      *
      * @return
      */
-    private Intent setTestParam( String key, int value ) 
+    /*private Intent setTestParam( String key, int value ) 
     {
     	Intent ttsParamsIntent = new Intent();	//合成参数设置Intent
     	
@@ -576,13 +627,13 @@ public class TTSUtils
 			ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_MSC_ROLE, mSharedPreferences.getString(TextToSpeech.KEY_PARAM_MSC_ROLE, "vixx"));						//网络TTS角色
 		}
     	
-    	if( TextToSpeech.KEY_PARAM_ROLE_EN.equals(key) )
+    	if( ROLE_EN.equals(key) )
     	{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ROLE_EN, value));								//TTS英文发音人参数
+    		ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, value));								//TTS英文发音人参数
     	}
     	else
     	{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_ROLE_EN, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_ROLE_EN, DEFAULT_ROLE_EN));					//TTS英文发音人参数
+    		ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, DEFAULT_ROLE_EN));					//TTS英文发音人参数
     	}
     	
     	if( TextToSpeech.KEY_PARAM_EFFECT.equals(key) )
@@ -594,31 +645,31 @@ public class TTSUtils
     		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT));			//TTS音效参数
     	}
     	
-    	if( TextToSpeech.KEY_PARAM_SPEED.equals(key) )
+    	if( SpeechConstant.SPEED.equals(key) )
 		{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, value));									//TTS语速参数
+    		ttsParamsIntent.putExtra(SpeechConstant.SPEED, mSharedPreferences.getInt(SpeechConstant.SPEED, value));									//TTS语速参数
 		}
     	else
     	{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_SPEED, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_SPEED, DEFAULT_SPEED));							//TTS语速参数
+    		ttsParamsIntent.putExtra(SpeechConstant.SPEED, mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));							//TTS语速参数
     	}
     	
-    	if( TextToSpeech.KEY_PARAM_PITCH.equals(key) )
+    	if( SpeechConstant.PITCH.equals(key) )
 		{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, value));									//TTS语调参数
+    		ttsParamsIntent.putExtra(SpeechConstant.PITCH, mSharedPreferences.getInt(SpeechConstant.PITCH, value));									//TTS语调参数
 		}
     	else
     	{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_PITCH, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_PITCH, TextToSpeech.DEFAULT_TONE));				//TTS语调参数
+    		ttsParamsIntent.putExtra(SpeechConstant.PITCH, mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));				//TTS语调参数
     	}
     	
-    	if( TextToSpeech.KEY_PARAM_VOLUME.equals(key) )
+    	if( SpeechConstant.VOLUME.equals(key) )
 		{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, value));								//TTS音量参数
+    		ttsParamsIntent.putExtra(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, value));								//TTS音量参数
 		}
     	else
     	{
-    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_VOLUME, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_VOLUME, TextToSpeech.DEFAULT_VOLUME));			//TTS音量参数
+    		ttsParamsIntent.putExtra(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME));			//TTS音量参数
     	}
     	
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_STREAM, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_STREAM, TextToSpeech.DEFAULT_STREAM));				//TTS播放类型参数
@@ -627,106 +678,106 @@ public class TTSUtils
 		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_DEST_LOG, "com.sunteam.ebook");																//TTS保存录音路径
 		
 		return	ttsParamsIntent;
+    }*/
+    private void setTestParam( String key, int value ) {
+		// TTS中文发音人参数
+		if (SpeechConstant.VOICE_NAME.equals(key)) {
+			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, value + ""));
+		} else {
+			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN + ""));
+		}
+    	
+    	/*if( ROLE_EN.equals(key) )
+    	{
+    		ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, value));								//TTS英文发音人参数
+    	}
+    	else
+    	{
+    		ttsParamsIntent.putExtra(ROLE_EN, mSharedPreferences.getInt(ROLE_EN, DEFAULT_ROLE_EN));					//TTS英文发音人参数
+    	}*/
+    	
+		/*if (TextToSpeech.KEY_PARAM_EFFECT.equals(key)) {
+    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, value));								//TTS音效参数
+		} else {
+    		ttsParamsIntent.putExtra(TextToSpeech.KEY_PARAM_EFFECT, mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT));			//TTS音效参数
+    	}*/
+    	
+    	// 设置合成语速
+		if (SpeechConstant.SPEED.equals(key)) {
+			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, value));
+		} else {
+			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+		}
+    	
+		// 设置合成音调
+		if (SpeechConstant.PITCH.equals(key)) {
+			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, value));
+		} else {
+			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+		}
+
+		// 设置合成音量
+		if (SpeechConstant.VOLUME.equals(key)) {
+    		mTtsUtils.setParameter(SpeechConstant.VOLUME, "" + mSharedPreferences.getInt(SpeechConstant.VOLUME, value));
+		} else {
+    		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+    	}
+
     }
       
-    private SynthesizerListener.Stub ttsListener = new SynthesizerListener.Stub() 
-    {
-    	//合成进度回调
-    	@Override
-    	public void onProgressCallBack(int arg0) throws RemoteException 
-    	{
-			//Log.d(TAG, "onProgressCallBack----arg0= " + arg0);
+    private TtsListener ttsListener = new TtsListener() {
+    	// 初始化
+		public void onInit(int code) {
+			if (0 == code) {
+				isSuccess = true;
+			} // 初始化成功
 		}
-		
-    	//合成完成回调
-    	@Override
-    	public void onPlayCompletedCallBack(int arg0) throws RemoteException 
-    	{
-    		Log.d(TAG, "onPlayCompletedCallBack----arg0= " + arg0);
-    		/*
-    		if( SpeakForm.TIPS == mSpeakForm )
-			{
-				return;
-			}
-			*/
+
+		// 发音开始
+		public void onSpeakBegin() {
+
+		}
+
+		// 暂停合成
+		public void onSpeakPaused() {
+
+		}
+
+		// 恢复合成
+		public void onSpeakResumed() {
+
+		}
+
+		// 合成进度
+		public void onBufferProgress(int percent, int beginPos, int endPos, String info) {
+
+		}
+
+		// 发音进度
+		public void onSpeakProgress(int percent, int beginPos, int endPos) {
+
+		}
+
+		// 发音结束
+		public void onCompleted(String error) {
+			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
+			/*
+			 * if( SpeakForm.TIPS == mSpeakForm ) { return; }
+			 */
 			mSpeakStatus = SpeakStatus.STOP;
-			if( 0 == arg0 )
-			{
-				//合成完成
-				if( mOnTTSListener != null )
-				{
+			if (null == error) {
+				// 合成完成
+				if (mOnTTSListener != null) {
 					mOnTTSListener.onSpeakCompleted();
 				}
-			}
-			else
-			{
-				//合成错误
-				if( mOnTTSListener != null )
-				{
+			} else {
+				// 合成错误
+				if (mOnTTSListener != null) {
 					mOnTTSListener.onSpeakError();
 				}
 			}
 		}
 		
-    	//合成开始回调
-		@Override
-		public void onPlayBeginCallBack() throws RemoteException 
-		{
-			Log.d(TAG, "onPlayBeginCallBack");
-		}
-		
-		//合成中断回调
-		@Override
-		public void onInterruptedCallback() throws RemoteException 
-		{
-			Log.d(TAG, "onInterruptedCallback");
-		}
-		
-		//合成初始化回调
-		@Override
-		public void onInit(int arg0) throws RemoteException 
-		{
-			Log.d(TAG, "onInit");
-			if( 0 == arg0 )
-			{
-				isSuccess = true;
-			}	//初始化成功
-		}
 	};
-   
-    private ISpeechInitListener mInitListener = new ISpeechInitListener()
-    {
-    	@Override
-    	public void onSpeechInit(int arg0) 
-    	{
-    		Log.d(TAG, "onSpeechInit start----");
-    		Intent ttsIntent = new Intent();
-	        
-    		String str = mSharedPreferences.getString("tts_resource", "0");
-    		if( str.equals("0") )
-    		{
-    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_FROM_ASSETS);
-    		}
-    		else if( str.equals("1") )
-    		{
-    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_FROM_CLIENT);
-    			//ttsIntent.putExtra(SpeechIntent.ARG_RES_PROVIDER_AUTHORITY, "com.example.speechsuittest123123.provider");
-    			ttsIntent.putExtra(SpeechIntent.ARG_RES_FILE, "its/");
-    		}
-    		else if( str.equals("2") )
-    		{   			
-    			ttsIntent.putExtra(SpeechIntent.ARG_RES_TYPE, SpeechIntent.RES_SPECIFIED);
-    			String FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "Speechcloud"+"/";
-    			ttsIntent.putExtra(SpeechIntent.ARG_RES_FILE, FILE_PATH);
-    		}        	        	        
-	        mService.initSynthesizerEngine(ttsListener, ttsIntent);
-			Log.d(TAG, "onSpeechInit end-----------");
-		}
 
-		@Override
-		public void onSpeechUninit() 
-		{
-			Log.d(TAG, "onSpeechUninit");
-		}
-    };    
 }
