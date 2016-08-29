@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,6 +94,21 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	}
     	registerReceiver();
     	playMusic();
+    	
+//    	mTvTitle.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				fileInfo.line = mTextReaderView.getLineNumber();
+//				Intent intent = new Intent(ReadTxtActivity.this, MenuActivity.class);
+//				intent.putExtra("page_count", mTextReaderView.getPageCount());
+//				intent.putExtra("page_cur", mTextReaderView.getCurPage());
+//				intent.putExtra("page_text", mTextReaderView.getReverseText());
+//				intent.putExtra("file", fileInfo);
+//				startActivityForResult(intent, MENU_CODE);
+//			}
+//		});
 	}
 	
 	private void registerReceiver(){

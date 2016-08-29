@@ -23,6 +23,7 @@ import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
 import com.sunteam.ebook.word.WordParseUtils;
@@ -303,6 +304,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private void insertToDb(){
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
+		String title = getResources().getString(R.string.add_fav_success);
+		TTSUtils.getInstance().speakTips(title);
 	}
 	
 	// 初始化数据库文件

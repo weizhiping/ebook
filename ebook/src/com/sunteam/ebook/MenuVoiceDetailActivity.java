@@ -61,7 +61,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	}
 
 	private void initViews() {
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		switch(voiceFlag){
 		case 0:
 			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_CN);

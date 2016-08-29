@@ -40,7 +40,7 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
@@ -81,14 +81,15 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		String title = mMenuList.get(selectItem);
 		switch (selectItem) {
 		case 0:
 		case 1:
-			startToDetail(selectItem);
+			startToDetail(title,selectItem);
 			break;
 		case 2:
 			Intent intent = new Intent(this,MenuNumEditActivity.class);
-			intent.putExtra("edit_name", mMenuList.get(selectItem));
+			intent.putExtra("edit_name", title);
 			intent.putExtra("edit_max", 10);
 			intent.putExtra("edit_flage", 2);
 			startActivity(intent);
@@ -96,9 +97,10 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 		}
 	}
 	
-	private void startToDetail(int flag){
+	private void startToDetail(String title,int flag){
 		Intent intent = new Intent(this,MenuMusicDetailActivity.class);
 		intent.putExtra("music_flag", flag);
+		intent.putExtra("title", title);
 		startActivity(intent);
 	}
 }

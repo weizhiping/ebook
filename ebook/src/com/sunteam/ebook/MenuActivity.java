@@ -92,6 +92,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		Intent intent = new Intent();
+		String title = mMenuList.get(selectItem);
 		switch (selectItem) {
 		
 		case 0:
@@ -99,6 +100,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("page_cur", currentPage);
 			intent.putExtra("page_text", currentText);
+			intent.putExtra("title", title);
 			startActivity(intent);
 			break;
 		case 1:
@@ -116,10 +118,12 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			break;
 		case 3:
 			intent.setClass(this, MenuVoiceActivity.class);
+			intent.putExtra("title", title);
 			startActivity(intent);
 			break;
 		case 4:
 			intent.setClass(this, MenuMusicActivity.class);
+			intent.putExtra("title", title);
 			startActivity(intent);
 			break;
 		}

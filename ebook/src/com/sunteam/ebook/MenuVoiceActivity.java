@@ -41,7 +41,7 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
@@ -82,31 +82,33 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		String title = mMenuList.get(selectItem);
 		switch (selectItem) {
 		case 0://中文角色
-			startToDetail(0);
+			startToDetail(title,0);
 			break;
 		case 1://英文角色
-			startToDetail(1);
+			startToDetail(title,1);
 			break;
 		case 2://语速
-			startToNumEdit(mMenuList.get(selectItem),TTSUtils.getInstance().getSpeed(),0);
+			startToNumEdit(title,TTSUtils.getInstance().getSpeed(),0);
 			break;
 		case 3://语调
-			startToNumEdit(mMenuList.get(selectItem),TTSUtils.getInstance().getPitch(),1);
+			startToNumEdit(title,TTSUtils.getInstance().getPitch(),1);
 			break;
 //		case 4://语音风格
 //			startToDetail(4);
 //			break;
 		case 4://语音音效
-			startToDetail(4);
+			startToDetail(title,4);
 			break;
 		}
 	}
 	
-	private void startToDetail(int flag){
+	private void startToDetail(String title,int flag){
 		Intent intent = new Intent(this,MenuVoiceDetailActivity.class);
 		intent.putExtra("voice_flag", flag);
+		intent.putExtra("title", title);
 		startActivity(intent);
 	}
 	

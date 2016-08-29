@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 选择页码界面
@@ -62,6 +63,7 @@ public class MenuPageEditActivity extends Activity {
 		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
 		numView.setText(tips);
 		numView.setFocusable(false);
+		TTSUtils.getInstance().speakTips(title+"，"+ tips);
 	}
 
 	@Override
@@ -140,11 +142,12 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		}
 		if(number > totalPage){
-			number = totalPage;
-		}else if(number < 1){
 			number = 1;
+		}else if(number < 1){
+			number = totalPage;
 		}
 		numView.setText(number + "");
+		TTSUtils.getInstance().speakTips(number+"");
 		return super.onKeyDown(keyCode, event);
 	}
 }

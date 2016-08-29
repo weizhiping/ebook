@@ -57,7 +57,7 @@ public class MenuMusicDetailActivity extends Activity implements OnEnterListener
 		}else{
 			initFiles();
 		}
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();

@@ -70,6 +70,7 @@ public class MenuNumEditActivity extends Activity {
 			number = (int)(currentMusic/1.5);
 		}
 		numView.setText(number + "");
+		TTSUtils.getInstance().speakTips(title+"，"+ number);
 	}
 	
 

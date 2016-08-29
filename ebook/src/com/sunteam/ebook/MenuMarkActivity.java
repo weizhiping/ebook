@@ -52,7 +52,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
