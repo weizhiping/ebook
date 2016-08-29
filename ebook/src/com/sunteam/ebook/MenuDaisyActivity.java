@@ -92,6 +92,7 @@ public class MenuDaisyActivity extends Activity implements OnEnterListener {
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		Intent intent = new Intent();
+		String title = mMenuList.get(selectItem);
 		switch (selectItem) {
 		
 		case 0:
@@ -99,10 +100,12 @@ public class MenuDaisyActivity extends Activity implements OnEnterListener {
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("page_cur", currentPage);
 			intent.putExtra("page_text", currentText);
+			intent.putExtra("title", title);
 			startActivity(intent);
 			break;
 		case 1:
 			intent.setClass(this, MenuDaisyReadActivity.class);
+			intent.putExtra("title", title);
 			startActivity(intent);
 			break;
 		case 2:
@@ -115,7 +118,7 @@ public class MenuDaisyActivity extends Activity implements OnEnterListener {
 			intent.setClass(this, MenuPageEditActivity.class);
 			intent.putExtra("page_count", totalPage);
 			intent.putExtra("page_cur", currentPage);
-			intent.putExtra("edit_name", mMenuList.get(selectItem));
+			intent.putExtra("edit_name", title);
 			startActivity(intent);
 			break;
 		}

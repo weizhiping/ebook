@@ -39,7 +39,7 @@
         android:background="@color/bottom_line" />
 
     <Button
-        android:id="@+id/dialog_cancel"
+        android:id="@+id/dialog_confrim"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -48,12 +48,12 @@
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
-        android:text="@string/dialog_no"
+        android:text="@string/dialog_yes"
         android:textColor="@color/text_blue"
         android:textSize="@dimen/pub_text_size" />
 
     <Button
-        android:id="@+id/dialog_confrim"
+        android:id="@+id/dialog_cancel"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -62,7 +62,7 @@
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
-        android:text="@string/dialog_yes"
+        android:text="@string/dialog_no"
         android:textColor="@color/text_blue"
         android:textSize="@dimen/pub_text_size" />
 

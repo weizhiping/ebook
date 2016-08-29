@@ -113,7 +113,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 			intent.setClass(this, MenuPageEditActivity.class);
 			intent.putExtra("page_count", totalPage);
 			intent.putExtra("page_cur", currentPage);
-			intent.putExtra("edit_name", mMenuList.get(selectItem));
+			intent.putExtra("edit_name", title);
 			startActivity(intent);
 			break;
 		case 3:

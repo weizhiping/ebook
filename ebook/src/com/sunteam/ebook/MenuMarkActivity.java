@@ -111,7 +111,8 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			SuperDialog dialog = new SuperDialog(this);
 			dialog.showSuperDialog(R.string.dialog_clear);
 			dialog.initeCallBack(this);
-			TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear));
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear)
+					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 			break;
 		}
 	}

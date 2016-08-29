@@ -10,6 +10,9 @@ import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.SuperDialog;
+import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
+import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -17,11 +20,12 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuDatabaseActivity extends Activity implements OnEnterListener {
+public class MenuDatabaseActivity extends Activity implements OnEnterListener,DialogCallBack {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private int flag;//1为收藏，2为最近使用
+	private int item;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +84,29 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		item = selectItem;
+		SuperDialog dialog = new SuperDialog(this);
+		dialog.initeCallBack(this);
+		if( 0 == selectItem){
+			dialog.showSuperDialog(R.string.dialog_delete);
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete)
+					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+		}else if(1 == selectItem){
+			dialog.showSuperDialog(R.string.dialog_clear);
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear)
+					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+		}else{
+			Intent intent = new Intent();
+			intent.putExtra("data_item", selectItem);
+			setResult(RESULT_OK, intent);
+			finish();
+		}
+	}
+
+	@Override
+	public void dialogConfrim() {
 		Intent intent = new Intent();
-		intent.putExtra("data_item", selectItem);
+		intent.putExtra("data_item", item);
 		setResult(RESULT_OK, intent);
 		finish();
 	}

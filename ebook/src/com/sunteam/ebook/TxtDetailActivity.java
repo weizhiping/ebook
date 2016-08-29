@@ -3,15 +3,14 @@ package com.sunteam.ebook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
@@ -125,9 +124,21 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
+    	
     	if( mMainView != null )
     	{
     		mMainView.onResume();
+    	}
+    	if(0 != flag && 0 == fileInfoList.size()){
+    		TTSUtils.getInstance().speakTips(getResources().getString(R.string.no_file));
+        	Handler handler = new Handler();
+        	handler.postDelayed(new Runnable() {
+    			
+    			@Override
+    			public void run() {
+    				finish();
+    			}
+    		}, 500);
     	}
     	super.onResume();
     }
@@ -380,10 +391,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
+					TTSUtils.getInstance().speakTips(getResources().getString(R.string.dialog_delete_su));
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
+					TTSUtils.getInstance().speakTips(getResources().getString(R.string.dialog_clear_su));
 				}else{
 					insertToDb();
 				}
