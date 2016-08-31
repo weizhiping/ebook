@@ -63,7 +63,7 @@
             android:layout_gravity="bottom"
             android:background="@android:color/black" />
     </FrameLayout> 
-	<com.sunteam.ebook.view.DiasyReaderView
+	<com.sunteam.ebook.view.DaisyReaderView
         android:id="@+id/read_daisy_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

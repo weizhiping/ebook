@@ -559,6 +559,11 @@ import android.view.View;
 		 }
 		 
 		 int size = mSplitInfoList.size();
+		 if( 0 == size )
+		 {
+			 mCurPage = 0;
+			 return;
+		 }
 		 int maxLine = Math.min( size, mLineNumber+mLineCount );
 		 HashMap<Integer, PageInfo> pageMap = new HashMap<Integer, PageInfo>();
 		 
