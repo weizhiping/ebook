@@ -30,6 +30,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 	private ArrayList<String> mMenuList = null;
 	private FileInfo fileInfo;
 	private String currentText;
+	private int currentPage;
 	private DatabaseManager manager;
 
 	@Override
@@ -39,6 +40,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 		ScreenManager.getScreenManager().pushActivity(this);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		currentText = getIntent().getStringExtra("page_text");
+		currentPage = getIntent().getIntExtra("page_cur", 1);
 		manager = new DatabaseManager(this);
 		initViews();
 	}
@@ -98,6 +100,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			Intent intente = new Intent(this, MenuTextEditActivity.class);
 			intente.putExtra("fileinfo", fileInfo);
 			intente.putExtra("page_text", currentText);
+			intente.putExtra("page_cur", currentPage);
 			intente.putExtra("edit_name", mMenuList.get(0));
 			startActivity(intente);
 			break;

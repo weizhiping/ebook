@@ -59,7 +59,7 @@ public class FileOperateUtils {
 	
 	public static String getMusicPath() {
 		String musicPath = Environment.getExternalStorageDirectory().getPath()
-				+ "/book/music/";
+				+ "/book/背景音乐/";
 		return musicPath;
 	}
 
