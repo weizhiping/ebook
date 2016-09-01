@@ -48,6 +48,8 @@
 	<string name="dialog_clear">确认清空</string>
 	<string name="dialog_clear_su">清空成功</string>
 	<string name="no_file">无文件</string>
+	<string name="add_mark_su">添加书签成功</string>
+	<string name="add_mark_has">书签名已存在</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>

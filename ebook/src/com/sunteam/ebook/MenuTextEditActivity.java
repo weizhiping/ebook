@@ -3,13 +3,11 @@ package com.sunteam.ebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,6 +17,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.TTSUtils;
 
 /**
  * 增加书签界面
@@ -68,55 +67,30 @@ public class MenuTextEditActivity extends Activity {
 		}else{
 			numView.setText(currentText + " " + String.format(getResources().getString(R.string.menu_text_tips), currentPage));
 		}
-		numView.addTextChangedListener(watcher);
-	}
-
-	private TextWatcher watcher = new TextWatcher() {
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			Log.e("mark", "-------beforeTextChanged------------");
-			numView.setFocusable(true);
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		numView.setOnKeyListener(new OnKeyListener() {
 			
-		}
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			Log.e("mark", "-------afterTextChanged------------");
-			numView.setFocusable(false);
-		}
-
-	};
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if(keyCode == KeyEvent.KEYCODE_DPAD_CENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+					if(!TextUtils.isEmpty(numView.getText())){
+						info.name = numView.getText().toString();
+						boolean hasMark = manager.insertMarkToDb(info);
+						if(!hasMark){
+							TTSUtils.getInstance().speakTips(getResources().getString(R.string.add_mark_su));
+						}else{
+							TTSUtils.getInstance().speakTips(getResources().getString(R.string.add_mark_has));
+						}
+					}
+					ScreenManager.getScreenManager().popAllActivityExceptOne();
+				}
+				return false;
+			}
+		});
+	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-		case KeyEvent.KEYCODE_BACK:// 返回
-
-			break;
-		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
-		case KeyEvent.KEYCODE_ENTER:
-			Log.e("mark", "-------entrty-------------");
-			if(!TextUtils.isEmpty(numView.getText())){
-				info.name = numView.getText().toString();
-				manager.insertMarkToDb(info);
-			}
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
-			return true;
-		default:
-			break;
-		}
-		
-		return super.onKeyDown(keyCode, event);
 	}
 }

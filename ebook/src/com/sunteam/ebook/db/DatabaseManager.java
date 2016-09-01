@@ -219,7 +219,7 @@ public class DatabaseManager {
 	
 
 	// 书签插入数据
-	public void insertMarkToDb(FileInfo file) {
+	public boolean insertMarkToDb(FileInfo file) {
 		boolean hasbook = hasMarkInBase(EbookConstants.MARKS_TABLE, file.path,file.name);
 		Log.e("database", "-----------has mark---:" + hasbook);
 		if (!hasbook) {
@@ -234,6 +234,7 @@ public class DatabaseManager {
 		}else{
 //			updateToDb(file.path,file.flag,type);
 		}
+		return hasbook;
 	}
 	// 查找数据库中是否已经存在某一条数据
 		private boolean hasMarkInBase(String table, String path,String name) {
