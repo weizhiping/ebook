@@ -24,6 +24,7 @@ public class FileInfo implements Serializable{
 	public int checksum;//校验
 	public int item;//文件列表中的位置
 	public int count;	//文件总部分数目
+	public boolean hasDaisy;//判断是否有daisy的二级目录
 	public FileInfo(){
 	
 	}

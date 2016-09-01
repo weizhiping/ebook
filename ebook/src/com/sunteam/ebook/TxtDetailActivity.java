@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -229,6 +230,16 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					showFiles(fileInfo, fileInfo.path, isAuto);
 				}
 			}
+		}else if (fileInfo.hasDaisy){
+			Log.e(TAG, "----path-------:" + fileInfo.path);
+			Intent intent = new Intent(this, TxtDetailActivity.class);
+			intent.putExtra("path", fileInfo.path);
+			intent.putExtra("name", fileInfo.name);
+			intent.putExtra("flag", 10);
+			intent.putExtra("flagType", flagType);
+			intent.putExtra("catalogType", catalog);
+			intent.putExtra("file", remberFile);
+			this.startActivity(intent);
 		}else{
 			DaisyFileReaderUtils.getInstance().init(fileInfo.diasyPath);
 			ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
@@ -287,7 +298,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// 初始化显示文件
 	private void initFiles() {
 		if(catalog == 1){
-			fileInfoList = FileOperateUtils.getDaisyInDir(catalog);
+			fileInfoList = FileOperateUtils.getDaisyInDir(catalog,rootPath);
 		}else{
 			ArrayList<File> filesList = null;
 			if (catalog == 0) {

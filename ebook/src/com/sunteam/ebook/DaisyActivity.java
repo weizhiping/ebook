@@ -53,7 +53,7 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 
 	// 初始化显示文件
 	private void initFiles() {
-		fileInfoList = FileOperateUtils.getDaisyInDir(catalog);
+		fileInfoList = FileOperateUtils.getDaisyInDir(catalog,null);
 		if (null != fileInfoList) {
 			for (FileInfo f : fileInfoList) {
 				mMenuList.add(f.name);
@@ -97,18 +97,21 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 
 		FileInfo file = fileInfoList.get(selectItem);
-		DaisyFileReaderUtils.getInstance().init(file.diasyPath);
-		
-		ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
-				.getChildNodeList(-1);
-		Intent intent = new Intent(this, DaisyDetailActivity.class);;
-		if (null != diasList && diasList.size() > 0) {
-			intent.putExtra("diasys", diasList);
+		if(file.hasDaisy){
+			
+		}else{
+			DaisyFileReaderUtils.getInstance().init(file.diasyPath);
+			ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
+					.getChildNodeList(-1);
+			Intent intent = new Intent(this, DaisyDetailActivity.class);
+			if (null != diasList && diasList.size() > 0) {
+				intent.putExtra("diasys", diasList);
+			}
+			intent.putExtra("name", menu);
+			intent.putExtra("catalogType", file.catalog);
+			intent.putExtra("path", file.path);
+			intent.putExtra("file", remberFile);
+			this.startActivity(intent);
 		}
-		intent.putExtra("name", menu);
-		intent.putExtra("catalogType", file.catalog);
-		intent.putExtra("path", file.path);
-		intent.putExtra("file", remberFile);
-		this.startActivity(intent);
 	}
 }

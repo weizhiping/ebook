@@ -1,9 +1,6 @@
 package com.sunteam.ebook.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,8 +154,8 @@ public class FileOperateUtils {
 	 * @param path 路径
 	 * @return
 	 */
-	public static ArrayList<FileInfo> getDaisyInDir(int catalog) {
-		File dir = new File(FileOperateUtils.getSDPath());
+	public static ArrayList<FileInfo> getDaisyInDir(int catalog,String dirPath) {
+		File dir = new File(dirPath);
 		ArrayList<FileInfo> fileList = new ArrayList<FileInfo>();
 		if (dir == null || !dir.isDirectory())
 			return null;
@@ -175,6 +172,13 @@ public class FileOperateUtils {
 						FileInfo info = new FileInfo(f.getName(), f.getPath(), true,
 								catalog, 0, 0);
 						info.diasyPath = path;
+					int nccLen = path.split("/").length;
+					int fileLen = f.getPath().split("/").length;
+					if((nccLen - fileLen) > 1){
+						info.hasDaisy = true;
+					}else{
+						info.hasDaisy = false;
+					}
 						fileList.add(info);
 					}else{
 						path = hasDaisyOpfFile(f);
