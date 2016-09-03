@@ -798,6 +798,8 @@ import android.view.View;
 		 mReverseInfo.len = 0;
 		 this.invalidate();
 		 
+		 initReverseInfo();	//初始化反显信息
+		 
 		 if( mOnPageFlingListener != null )
 		 {
 			 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
@@ -997,6 +999,7 @@ import android.view.View;
 		 // TODO Auto-generated method stub
 		 super.onDraw(canvas);
 		 
+		 TTSUtils.getInstance().OnTTSListener(this);
 		 init(mContext);
 
 		 mCurPageCanvas.drawColor(mBkColor);	//先显示背景色

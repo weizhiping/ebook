@@ -658,6 +658,8 @@ import android.view.View;
 		 
 		 this.invalidate();
 		 
+		 initReverseInfo();	//初始化反显信息
+		 
 		 if( mOnPageFlingListener != null )
 		 {
 			 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
@@ -868,6 +870,8 @@ import android.view.View;
 		 // TODO Auto-generated method stub
 		 super.onDraw(canvas);
 		 
+		 TTSUtils.getInstance().OnTTSListener(this);
+		 MediaPlayerUtils.getInstance().OnMediaPlayerListener(this);
 		 init(mContext);
 
 		 mCurPageCanvas.drawColor(mBkColor);	//先显示背景色
