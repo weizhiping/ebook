@@ -75,7 +75,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     	
     	if( mTextReaderView.openBook(explain) == false )
     	{
-    		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
+    		PublicUtils.showToast(this, this.getString(R.string.checksum_error));
     		back();
     	}
 	}

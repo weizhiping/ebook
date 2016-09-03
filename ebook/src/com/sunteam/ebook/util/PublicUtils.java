@@ -142,7 +142,7 @@ public class PublicUtils
 	public static void showToast( Context context, String tips )
 	{
 		TTSUtils.getInstance().speakTips(tips);
-		Toast.makeText(context, tips, Toast.LENGTH_SHORT).show();
+		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 	}
 	
 	//检查讯飞语音服务是否安装

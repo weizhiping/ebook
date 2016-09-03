@@ -89,7 +89,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
-    		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
+    		PublicUtils.showToast(this, this.getString(R.string.checksum_error));
     		back();
     	}
     	registerReceiver();

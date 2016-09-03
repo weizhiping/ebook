@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
@@ -39,7 +40,7 @@ public class MainActivity extends Activity implements OnEnterListener
         TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
 		if( !PublicUtils.checkSpeechServiceInstalled(this) ) 
 		{			
-			Toast.makeText(this, this.getString(R.string.install_tts_tips), Toast.LENGTH_LONG).show();
+			CustomToast.showToast(this, this.getString(R.string.install_tts_tips), Toast.LENGTH_LONG);
 			finish();
 			return;
 		}
