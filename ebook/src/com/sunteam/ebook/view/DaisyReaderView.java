@@ -376,6 +376,10 @@ import android.view.View;
 		 mReverseInfo.startPos = startPos;
 		 mReverseInfo.len = len;
 		 
+		 mSplitInfoList.clear();
+		 
+		 this.invalidate();
+		 
 		 return	true;
 	 }
 

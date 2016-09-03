@@ -460,6 +460,10 @@ import android.view.View;
 		 mSelectInfo.startPos = -1;
 		 mSelectInfo.len = -1;
 		 
+		 mSplitInfoList.clear();
+		 
+		 this.invalidate();
+		 
 		 return	true;
 	 }
 
