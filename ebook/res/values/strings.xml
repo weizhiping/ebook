@@ -11,7 +11,7 @@
     <string name="txt_menu_recent">最近使用文件</string>
     <string name="txt_menu_part">第%1$s部分</string>
     <string name="txt_menu_null">文件内容为空</string>
-    <string name="external_storage">内储</string>
+    <string name="external_storage">内存</string>
     <string name="tf_storage">存储卡</string>
     <string name="tf_does_not_exist">存储卡不存在，请插入！</string>
     <string name="external_catalog">内储根目录</string>

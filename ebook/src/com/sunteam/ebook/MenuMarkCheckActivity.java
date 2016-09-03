@@ -96,7 +96,8 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			SuperDialog dialog = new SuperDialog(this);
 			dialog.showSuperDialog(R.string.dialog_delete);
 			dialog.initeCallBack(this);
-			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete));
+			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete)
+					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 		}else{
 			FileInfo info = fileInfos.get(selectItem);
 			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
@@ -111,7 +112,9 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 	public void dialogConfrim() {
 		TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete_su));
 		FileInfo info = fileInfos.get(position);
+		mMenuList.remove(position);
+		mMainView.updateAdapter();
 		manager.deleteMarkFile(info.path, info.name);
-		ScreenManager.getScreenManager().popAllActivityExceptOne();
+	//	ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 }

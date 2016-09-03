@@ -30,7 +30,7 @@ public class MenuMusicDetailActivity extends Activity implements OnEnterListener
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileList = null;
-	private int flag;
+	private int flag;//0开关 1 音乐选择
 	private SharedPreferences shared;
 
 	@Override

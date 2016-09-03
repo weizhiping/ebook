@@ -216,8 +216,10 @@ public class FileOperateUtils {
 	public static ArrayList<File> getMusicInDir() {
 		File dir = new File(getMusicPath());
 		ArrayList<File> fileList = new ArrayList<File>();
-		if (dir == null || !dir.isDirectory())
+		if (dir == null || !dir.isDirectory()){
+			dir.mkdir();
 			return null;
+		}
 		File[] files = dir.listFiles();
 		if (files == null)
 			return null;
