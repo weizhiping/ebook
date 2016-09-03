@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.sunteam.ebook.entity.FileInfo;
 
@@ -54,7 +55,15 @@ public class FileOperateUtils {
         	break;
         }
         
-        return	path;
+        if( !TextUtils.isEmpty(path) )
+        {
+        	if( android.os.Environment.getStorageState(new File(path)).equals(android.os.Environment.MEDIA_MOUNTED) )
+        	{
+        		return	path;
+        	}
+        }
+        
+        return	null;
 	}
 	
 	public static String getMusicPath() {
@@ -158,10 +167,10 @@ public class FileOperateUtils {
 		File dir = new File(dirPath);
 		ArrayList<FileInfo> fileList = new ArrayList<FileInfo>();
 		if (dir == null || !dir.isDirectory())
-			return null;
+			return fileList;
 		File[] files = dir.listFiles();
 		if (files == null)
-			return null;
+			return fileList;
 		if (!fileList.isEmpty())
 			fileList.clear();
 		for (File f : files) {
