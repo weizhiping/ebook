@@ -68,6 +68,8 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
 		
+		mLv.setSelection(selectItem);
+		
 		this.notifyDataSetChanged();
 	}
 	
