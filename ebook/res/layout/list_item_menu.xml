@@ -7,13 +7,14 @@
     android:background="@drawable/list_item_bg"
     >
 
-	<TextView
+	<com.sunteam.ebook.view.ScrollForeverTextView
 		android:id="@+id/menu"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
 		android:singleLine="true"
 		android:ellipsize="end"
+		android:marqueeRepeatLimit="marquee_forever"
 		android:text=""
 		android:textColor="@color/text_black"
 		android:textSize="@dimen/item_text_size"

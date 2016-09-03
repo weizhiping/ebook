@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.sunteam.ebook.R;
 import com.sunteam.ebook.entity.TTSSpeakMode;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.view.ScrollForeverTextView;
 
 /**
  * 主列表类
@@ -252,7 +254,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         	vh = new ViewHolder();
         	convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_menu, null);
         	
-        	vh.tvMenu = (TextView)convertView.findViewById(R.id.menu);    		
+        	vh.tvMenu = (ScrollForeverTextView)convertView.findViewById(R.id.menu);    		
     		vh.tvMenu.setOnClickListener(this);
 
         	convertView.setTag(vh);
@@ -267,10 +269,12 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         if( selectItem == position )	//选中
 		{
         	convertView.setBackgroundColor(mTools.getHighlightColor());
+        	vh.tvMenu.setEllipsize(TruncateAt.MARQUEE);
 		}
 		else
 		{
 			convertView.setBackgroundColor(Color.TRANSPARENT);
+			vh.tvMenu.setEllipsize(TruncateAt.END);
 		}
 		
         float fontSize = mTools.getFontSize()*mScale;
@@ -318,6 +322,6 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	
 	private class ViewHolder
 	{
-		TextView tvMenu = null;				//菜单名称
+		ScrollForeverTextView tvMenu = null;				//菜单名称
 	}
 }
