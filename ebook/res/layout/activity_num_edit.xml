@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/title_menu"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
+        android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:gravity="center"
         android:textSize="@dimen/title_text_size"

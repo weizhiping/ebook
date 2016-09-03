@@ -119,8 +119,12 @@ public class MenuNumEditActivity extends Activity {
 			number = maxNum;
 		}
 		numView.setText(number + "");
-		if(2 != flage){
+		if(0 == flage){
 			TTSUtils.getInstance().testSpeed(number,title + number);
+		}else if(1 == flage){
+			TTSUtils.getInstance().testPitch(number,title + number);
+		}else{
+			TTSUtils.getInstance().speakTips(title + "，" + number);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
