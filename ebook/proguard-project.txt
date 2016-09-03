@@ -90,8 +90,8 @@
 -dontwarn com.iflytek.**
 -keep class com.iflytek.** {*; }
 
--dontwarn com.iflytek.**
--keep class com.iflytek.** {*; }
+#-dontwarn com.iflytek.**
+#-keep class com.iflytek.** {*; }
 
 -dontwarn org.apache.poi.**
 -keep class org.apache.poi.** {*; }
