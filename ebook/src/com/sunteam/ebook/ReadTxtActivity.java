@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -330,7 +331,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					break;
 				case 3:
 					int line = intent.getIntExtra("line", 0);
-					 mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(fileInfo.part)
+					int part = intent.getIntExtra("part", 0);
+					 mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part)
 							 , TextFileReaderUtils.getInstance().getCharsetName(), line, 0, 0, 0);
 					break;
 				}

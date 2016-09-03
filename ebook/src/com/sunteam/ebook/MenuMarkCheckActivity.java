@@ -103,6 +103,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
 			intent.putExtra("result_flag", 3);
 			intent.putExtra("line", info.line);
+			intent.putExtra("part", info.part);
 			sendBroadcast(intent);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
