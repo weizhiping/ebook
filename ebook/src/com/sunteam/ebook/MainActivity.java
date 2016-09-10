@@ -1,5 +1,6 @@
 package com.sunteam.ebook;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -14,6 +15,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
@@ -70,6 +72,10 @@ public class MainActivity extends Activity implements OnEnterListener
     private void getRecentInfo(){
     	DatabaseManager manager = new DatabaseManager(this);
     	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+    	File dir = new File(FileOperateUtils.getMusicPath());
+		if (null == dir || !dir.isDirectory()){
+			dir.mkdir();
+		}
     }
     
     @Override

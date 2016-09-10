@@ -124,9 +124,13 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
 		if(isMusic){
 			String path = shared.getString(EbookConstants.MUSICE_PATH, null);
-			File file = new File(path);
-			if(null == path || !file.exists()){
+			if(null == path){
 				path = FileOperateUtils.getFirstMusicInDir();
+			}else{
+				File file = new File(path);
+				if(!file.exists()){
+					path = FileOperateUtils.getFirstMusicInDir();
+				}
 			}
 			if(null != path){
 				MediaPlayerUtils.getInstance().play(path);

@@ -17,6 +17,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
@@ -67,6 +68,7 @@ public class MenuTextEditActivity extends Activity {
 		}else{
 			numView.setText(currentText + " " + String.format(getResources().getString(R.string.menu_text_tips), currentPage));
 		}
+		TTSUtils.getInstance().speakTips(title + "，" + numView.getText().toString());
 		numView.setOnKeyListener(new OnKeyListener() {
 			
 			@Override
@@ -76,9 +78,11 @@ public class MenuTextEditActivity extends Activity {
 						info.name = numView.getText().toString();
 						boolean hasMark = manager.insertMarkToDb(info);
 						if(!hasMark){
-							TTSUtils.getInstance().speakTips(getResources().getString(R.string.add_mark_su));
+							PublicUtils.showToast(MenuTextEditActivity.this
+									, getResources().getString(R.string.add_mark_su));
 						}else{
-							TTSUtils.getInstance().speakTips(getResources().getString(R.string.add_mark_has));
+							PublicUtils.showToast(MenuTextEditActivity.this
+									, getResources().getString(R.string.add_mark_has));
 						}
 					}
 					ScreenManager.getScreenManager().popAllActivityExceptOne();

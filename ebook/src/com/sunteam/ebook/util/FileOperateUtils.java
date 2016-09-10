@@ -481,9 +481,9 @@ public class FileOperateUtils {
 	public static boolean isMusic(String fileName){
 		boolean bIsImageFile = false;
 		String strEx = getFileExtensions(fileName);
-		if(strEx.equalsIgnoreCase("mp3") ||strEx.equalsIgnoreCase("aac") ||strEx.equalsIgnoreCase("wav") ||
+		if(strEx.equalsIgnoreCase("mp3") ||strEx.equalsIgnoreCase("aac") ||strEx.equalsIgnoreCase("wav") || strEx.equalsIgnoreCase("wma") ||
 				strEx.equalsIgnoreCase("wmv") ||strEx.equalsIgnoreCase("amr") ||strEx.equalsIgnoreCase("ogg") ||strEx.equalsIgnoreCase("mp2")
-				||strEx.equalsIgnoreCase("m4a")|| strEx.equalsIgnoreCase("flac") ||strEx.equalsIgnoreCase("MID")){
+				||strEx.equalsIgnoreCase("m4r") ||strEx.equalsIgnoreCase("m4a")|| strEx.equalsIgnoreCase("flac") ||strEx.equalsIgnoreCase("MID")){
 			bIsImageFile = true;
 		}	
 		return bIsImageFile;

@@ -95,20 +95,21 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		String title =  mMenuList.get(selectItem);
 		switch (selectItem) {
 		case 0:
 			Intent intente = new Intent(this, MenuTextEditActivity.class);
 			intente.putExtra("fileinfo", fileInfo);
 			intente.putExtra("page_text", currentText);
 			intente.putExtra("page_cur", currentPage);
-			intente.putExtra("edit_name", mMenuList.get(0));
+			intente.putExtra("edit_name",title);
 			startActivity(intente);
 			break;
 		case 1:
-			wantToCheckActivity(false);
+			wantToCheckActivity(false,title);
 			break;
 		case 2:
-			wantToCheckActivity(true);
+			wantToCheckActivity(true,title);
 			break;
 		case 3:
 			SuperDialog dialog = new SuperDialog(this);
@@ -126,12 +127,13 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 		
 	}
 	
-	private void wantToCheckActivity(boolean isDelete){
+	private void wantToCheckActivity(boolean isDelete,String title){
 		ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
 		if(0 < fileInfos.size()){
 			Intent intent = new Intent(this, MenuMarkCheckActivity.class);
 			intent.putExtra("fileinfos", fileInfos);
 			intent.putExtra("isdelete", isDelete);
+			intent.putExtra("title", title);
 			startActivity(intent);
 		}else{
 			PublicUtils.showToast(this, getString(R.string.menu_mark_tips));
@@ -141,7 +143,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 
 	@Override
 	public void dialogConfrim() {
-		TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear_su));
+		PublicUtils.showToast(this, getString(R.string.dialog_clear_su));
 		manager.deleteMarkFile(fileInfo.path, null);
 		ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}

@@ -13,6 +13,7 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.SuperDialog;
 import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
 import com.sunteam.ebook.util.TTSUtils;
@@ -50,7 +51,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 		for (int i = 0; i < size; i++) {
 			mMenuList.add(fileInfos.get(i).name);
 		}
-		String title = this.getString(R.string.menu_function);
+		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
@@ -111,7 +112,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 
 	@Override
 	public void dialogConfrim() {
-		TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete_su));
+		PublicUtils.showToast(this, getString(R.string.dialog_delete_su));
 		FileInfo info = fileInfos.get(position);
 		mMenuList.remove(position);
 		mMainView.updateAdapter();
