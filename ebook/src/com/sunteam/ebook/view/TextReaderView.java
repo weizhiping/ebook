@@ -433,21 +433,16 @@ import android.view.View;
 		 {
 			 try 
 			 {
-				 byte[] buf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
 				 
 				 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
-				 if( ( buf.length >= 4 ) && ( -124 == buf[0] ) && ( 49 == buf[1] ) && ( -107 == buf[2] ) && ( 51 == buf[3] ) )
+				 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
 				 {
-					 mMbBuf = new byte[buf.length];
-					 
-					 for( int i = 4; i < buf.length; i++ )
+					 mOffset = 4;
+					 if( mReverseInfo.startPos < mOffset )
 					 {
-						 mMbBuf[i-4] = buf[i];
+						 mReverseInfo.startPos = mOffset;
 					 }
-				 }
-				 else
-				 {
-					 mMbBuf = buf;
 				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 
@@ -532,7 +527,7 @@ import android.view.View;
 		 else 
 		 {
 			 i = nEnd - 1;
-			 while( i > 0 )
+			 while( i > mOffset )
 			 {
 				 b0 = mMbBuf[i];
 				 //if( b0 == 0x0a && i != nEnd - 1 ) 
