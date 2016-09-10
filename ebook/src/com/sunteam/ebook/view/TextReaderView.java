@@ -196,7 +196,7 @@ import android.view.View;
 		 
 		 mSelectInfo.len = mReverseInfo.startPos+mReverseInfo.len-mSelectInfo.startPos;
 		 
-		 if( ( mSelectInfo.startPos >= 0 ) && ( mSelectInfo.len > 0 ) )
+		 if( ( mSelectInfo.startPos >= mOffset ) && ( mSelectInfo.len > 0 ) )
 		 {
 			 mReverseInfo.startPos = mSelectInfo.startPos;
 			 mReverseInfo.len = mSelectInfo.len;
@@ -422,6 +422,9 @@ import android.view.View;
 	  */
 	 public boolean openBook(byte[] buffer, String charsetName, int lineNumber, int startPos, int len, int checksum) 
 	 {
+		 mOffset = 0;
+		 mReverseInfo.startPos = startPos;
+		 
 		 if( CHARSET_NAME.equalsIgnoreCase(charsetName) )
 		 {
 			 mMbBuf = buffer;
@@ -430,18 +433,26 @@ import android.view.View;
 		 {
 			 try 
 			 {
-				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 byte[] buf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
+				 
+				 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
+				 if( ( buf.length >= 4 ) && ( -124 == buf[0] ) && ( 49 == buf[1] ) && ( -107 == buf[2] ) && ( 51 == buf[3] ) )
+				 {
+					 mMbBuf = new byte[buf.length];
+					 
+					 for( int i = 4; i < buf.length; i++ )
+					 {
+						 mMbBuf[i-4] = buf[i];
+					 }
+				 }
+				 else
+				 {
+					 mMbBuf = buf;
+				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 
 			 {
 				 e.printStackTrace();
-			 }
-			 
-			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
-			 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
-			 {
-				 mOffset = 4;
-				 mReverseInfo.startPos = mOffset;
 			 }
 		 }
 		 
@@ -455,7 +466,6 @@ import android.view.View;
 			 //return	false;
 		 }
 		 
-		 mReverseInfo.startPos = startPos;
 		 mReverseInfo.len = len;
 		 mSelectInfo.startPos = -1;
 		 mSelectInfo.len = -1;
@@ -798,7 +808,7 @@ import android.view.View;
 		 TTSUtils.getInstance().stop();
 		 mCurPage = page;
 		 mLineNumber = (mCurPage-1)*mLineCount;
-		 mReverseInfo.startPos = 0;
+		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
 		 this.invalidate();
 		 
@@ -1217,7 +1227,7 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = 0;
+		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
 		 
 		 if( preLine() )
@@ -1256,7 +1266,7 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = 0;
+		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
 		 
 		 if( nextLine() )
@@ -1295,7 +1305,7 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = 0;
+		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
 		 
 		 if( prePage() )
@@ -1334,7 +1344,7 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = 0;
+		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
 		 
 		 if( nextPage() )
@@ -1656,7 +1666,7 @@ import android.view.View;
 			 {
 				 if( null == oldReverseInfo )
 				 {
-					 mReverseInfo.startPos = 0;
+					 mReverseInfo.startPos = mOffset;
 					 mReverseInfo.len = 0;
 				 }
 				 else
@@ -1707,7 +1717,7 @@ import android.view.View;
 		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
 		 
 		 int end = mReverseInfo.startPos;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
 		 {
 			 end = mSplitInfoList.get(mLineNumber).startPos;
 		 }
@@ -1728,7 +1738,7 @@ import android.view.View;
 			 {
 				 if( mSplitInfoList.get(i).startPos == end )
 				 {
-					 mReverseInfo.startPos = 0;
+					 mReverseInfo.startPos = mOffset;
 					 mReverseInfo.len = 0;
 					 mLineNumber = i;
 					 mParagraphStartPos = end;
@@ -1753,7 +1763,7 @@ import android.view.View;
 		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
 		 
 		 int start = mReverseInfo.startPos;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
 		 {
 			 start = mSplitInfoList.get(mLineNumber).startPos;
 		 }
@@ -1774,7 +1784,7 @@ import android.view.View;
 			 {
 				 if( mSplitInfoList.get(i).startPos == start )
 				 {
-					 mReverseInfo.startPos = 0;
+					 mReverseInfo.startPos = mOffset;
 					 mReverseInfo.len = 0;
 					 mLineNumber = i;
 					 mParagraphStartPos = start;
@@ -1846,7 +1856,7 @@ import android.view.View;
 	 private void nextSentence( boolean isSpeakPage )
 	 {
 		 int start = mReverseInfo.startPos + mReverseInfo.len;
-		 if( ( 0 == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
 		 {
 			 start = mSplitInfoList.get(mLineNumber).startPos;
 		 }
