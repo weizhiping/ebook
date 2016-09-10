@@ -2298,6 +2298,11 @@ import android.view.View;
 			 		}
 			 		else
 			 		{
+			 			calcCurPage();	//计算当前屏位置
+			 			if( mOnPageFlingListener != null )
+		 				{
+		 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 				}
 			 			break;
 			 		}
 		 		}
@@ -2348,6 +2353,11 @@ import android.view.View;
 			 		}
 			 		else
 			 		{
+			 			calcCurPage();	//计算当前屏位置
+			 			if( mOnPageFlingListener != null )
+		 				{
+		 					mOnPageFlingListener.onPageFlingCompleted(mCurPage);
+		 				}
 			 			break;
 			 		}
 		 		}
