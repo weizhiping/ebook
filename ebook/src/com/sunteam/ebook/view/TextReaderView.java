@@ -1074,12 +1074,12 @@ import android.view.View;
 						 
 						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
 						 {
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top)-1, getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top)+1 );
 							 mCurPageCanvas.drawRect(rect, paint);
 						 }
 						 else
 						 {
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top)-1, (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top)+1 );
 							 mCurPageCanvas.drawRect(rect, paint);
 						 }
 					 }
@@ -1101,12 +1101,12 @@ import android.view.View;
 						 
 						 if( "\r\n".equals(str) || "\n".equals(str) )	//如果是回车换行，则需要反显到行尾
 						 {
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top) );
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top)-1, getWidth()-MARGIN_WIDTH, y+(fontMetrics.descent-fontMetrics.top)+1 );
 							 mCurPageCanvas.drawRect(rect, paint);
 						 }
 						 else
 						 {
-							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top), (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top) );
+							 RectF rect = new RectF(xx, y+(fontMetrics.ascent-fontMetrics.top)-1, (xx+mPaint.measureText(str)), y+(fontMetrics.descent-fontMetrics.top)+1 );
 							 mCurPageCanvas.drawRect(rect, paint);
 						 }
 					 }
