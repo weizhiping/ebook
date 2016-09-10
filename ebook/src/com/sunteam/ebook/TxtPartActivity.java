@@ -58,7 +58,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	
     	if( isAuto )
     	{
-    		mMainView.enter();
+    		mMainView.enter(isAuto);
     	}
     }
     
@@ -118,8 +118,8 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 					switch( next )
 					{
 						case EbookConstants.TO_NEXT_PART:	//到下一个部分
-							mMainView.down();
-							mMainView.enter();
+							mMainView.down(true);
+							mMainView.enter(true);
 							break;
 						case EbookConstants.TO_NEXT_BOOK:	//到下一本书
 							Intent intent = new Intent();

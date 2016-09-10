@@ -396,7 +396,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					int next = data.getIntExtra("next", -1);
 					if( EbookConstants.TO_NEXT_BOOK == next )
 					{
-						mMainView.down();
+						mMainView.down(true);
 						mMainView.enter(true);
 						 // 阅读下一本书
 					}

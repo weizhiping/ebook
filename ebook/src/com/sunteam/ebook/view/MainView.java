@@ -112,9 +112,14 @@ public class MainView extends View implements OnTTSListener
 		mAdapter.up();
 	}
 	
+	public void down( boolean isAuto )
+	{
+		mAdapter.down(isAuto);
+	}
+	
 	public void down()
 	{
-		mAdapter.down();
+		mAdapter.down(false);
 	}
 	
 	public void enter()
@@ -244,7 +249,7 @@ public class MainView extends View implements OnTTSListener
 					mAdapter.up();
 					return true;
 				case KeyEvent.KEYCODE_DPAD_DOWN:
-					mAdapter.down();
+					mAdapter.down(false);
 					return true;
 				case KeyEvent.KEYCODE_5:
 				case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
@@ -309,7 +314,7 @@ public class MainView extends View implements OnTTSListener
 		} 
 		else if (KeyEvent.KEYCODE_DPAD_DOWN == longKeyCode) 
 		{
-			mAdapter.down();
+			mAdapter.down(false);
 		} 
 		else 
 		{
