@@ -24,11 +24,11 @@ public class TTSUtils
     private static final String TAG = "TTSUtils";
 	private static final String ROLE_EN = "VOICE_EN";
 
-    private static final int DEFAULT_ROLE_CN = 3;	//默认中文发音人
-    private static final int DEFAULT_ROLE_EN = 17;	//默认英文发音人
-    private static final int DEFAULT_SPEED = 65;	//默认语速
-    private static final int DEFAULT_TONE = 65;	//默认语调
-    private static final int DEFAULT_VOLUME = 80;	//默认音量
+    private static final String DEFAULT_ROLE_CN = "xiaofeng";	//默认中文发音人
+    private static final String DEFAULT_ROLE_EN = "catherine";	//默认英文发音人
+    private static final String DEFAULT_SPEED = "65";	//默认语速
+    private static final String DEFAULT_TONE = "65";	//默认语调
+    private static final String DEFAULT_VOLUME = "80";	//默认音量
     
     
 	private static TTSUtils instance = null;
@@ -42,16 +42,16 @@ public class TTSUtils
 	@SuppressWarnings("unused")
 	private SpeakForm mSpeakForm = SpeakForm.TIPS;
 	
-	private static final int[] mRoleCn = {
-		4,	//晓峰，国语男声
-		3,	//晓燕，国语女声
-		15,	//晓美，粤语女声
-		55,	//许小宝，童声
+	private static final String[] mRoleCn = {
+		"xiaofeng",	//晓峰，国语男声
+		"xiaoyan",	//晓燕，国语女声
+		"xiaomei",	//晓美，粤语女声
+		"nannan",	//许小宝，童声
 	};	//中文发音人
 	
-	private static final int[] mRoleEn = {
-		17,	//John，英语男声
-		20,	//凯瑟琳，英语女声
+	private static final String[] mRoleEn = {
+		"catherine",	//John，英语男声
+		"catherine",	//凯瑟琳，英语女声
 	};	//英文发音人
 	
 	private static final int[] mEffect = {
@@ -216,7 +216,7 @@ public class TTSUtils
      *
      * @param text
      */
-	public void speakTest( final String text, String key, int value ) 
+	public void speakTest( final String text, String key, String value ) 
 	{
 		if( isSuccess && mTtsUtils != null )
 		{
@@ -364,7 +364,7 @@ public class TTSUtils
 	//测试语速
 	public void testSpeed( int speed, final String text )
 	{
-		speakTest( text, SpeechConstant.SPEED, speed*5 );
+		speakTest( text, SpeechConstant.SPEED, (speed*5)+"" );
 	}
 		
 	//设置语速
@@ -380,13 +380,14 @@ public class TTSUtils
 	//得到语速
 	public int getSpeed()
 	{
-		return	mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED)/5;
+		String speed = mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED);
+		return	Integer.parseInt(speed)/5;
 	}
 	
 	//测试语调
 	public void testPitch( int pitch, final String text )
 	{
-		speakTest( text, SpeechConstant.PITCH, pitch*5 );
+		speakTest( text, SpeechConstant.PITCH, (pitch*5)+"" );
 	}
 		
 	//设置语调
@@ -402,13 +403,14 @@ public class TTSUtils
 	//得到语调
 	public int getPitch()
 	{
-		return	mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE)/5;
+		String pitch = mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE);
+		return	Integer.parseInt(pitch)/5;
 	}
 	
 	//测试音量
 	public void testVolume( int volume, final String text )
 	{
-		speakTest( text, SpeechConstant.VOLUME, volume*5 );
+		speakTest( text, SpeechConstant.VOLUME, (volume*5)+"" );
 	}
 		
 	//设置音量
@@ -424,7 +426,8 @@ public class TTSUtils
 	//得到音量
 	public int getVolume()
 	{
-		return	mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)/5;
+		String volume = mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME);
+		return	Integer.parseInt(volume)/5;
 	}
 	
 	//测试音效
@@ -531,16 +534,16 @@ public class TTSUtils
     	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
 
 		// 设置发音人
-    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+""));
+    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN));
 
 		// 设置合成语速
-    	mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+    	mTtsUtils.setParameter(SpeechConstant.SPEED, mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED));
 
 		// 设置合成音调
-    	mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+    	mTtsUtils.setParameter(SpeechConstant.PITCH, mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE));
 
 		// 设置合成音量; 使用语记中的默认音量即可
-		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME));
 
 		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
 
@@ -585,16 +588,16 @@ public class TTSUtils
     	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
 
 		// 设置发音人
-    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+""));
+    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN));
 
 		// 设置合成语速
-    	mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+    	mTtsUtils.setParameter(SpeechConstant.SPEED, mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED));
 
 		// 设置合成音调
-    	mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+    	mTtsUtils.setParameter(SpeechConstant.PITCH, mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE));
 
 		// 设置合成音量; 使用语记中的默认音量即可
-		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME));
 
 		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
 
@@ -679,7 +682,7 @@ public class TTSUtils
 		
 		return	ttsParamsIntent;
     }*/
-    private void setTestParam( String key, int value ) {
+    private void setTestParam( String key, String value ) {
 		// TTS中文发音人参数
 		if (SpeechConstant.VOICE_NAME.equals(key)) {
 			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, value + ""));
@@ -704,23 +707,23 @@ public class TTSUtils
     	
     	// 设置合成语速
 		if (SpeechConstant.SPEED.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, value));
+			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getString(SpeechConstant.SPEED, value));
 		} else {
-			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getInt(SpeechConstant.SPEED, DEFAULT_SPEED));
+			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED));
 		}
     	
 		// 设置合成音调
 		if (SpeechConstant.PITCH.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, value));
+			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getString(SpeechConstant.PITCH, value));
 		} else {
-			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getInt(SpeechConstant.PITCH, DEFAULT_TONE));
+			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE));
 		}
 
 		// 设置合成音量
 		if (SpeechConstant.VOLUME.equals(key)) {
-    		mTtsUtils.setParameter(SpeechConstant.VOLUME, "" + mSharedPreferences.getInt(SpeechConstant.VOLUME, value));
+    		mTtsUtils.setParameter(SpeechConstant.VOLUME, "" + mSharedPreferences.getString(SpeechConstant.VOLUME, value));
 		} else {
-    		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getInt(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
+    		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
     	}
 
     }
