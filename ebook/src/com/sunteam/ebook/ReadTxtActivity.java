@@ -49,12 +49,14 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private static final int MENU_CODE = 10;
 	private MenuBroadcastReceiver menuReceiver;
 	private SharedPreferences shared;
+	private boolean isAuto = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_read_txt);
 		
+		isAuto = this.getIntent().getBooleanExtra("isAuto", false);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
@@ -89,7 +91,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	mTextReaderView.setBackgroundColor(tools.getBackgroundColor());
     	//mTextReaderView.setTextSize(tools.getFontSize());
     	
-    	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum) == false )
+    	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
     		back();
@@ -339,7 +341,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					int line = intent.getIntExtra("line", 0);
 					int part = intent.getIntExtra("part", 0);
 					 mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part)
-							 , TextFileReaderUtils.getInstance().getCharsetName(), line, 0, 0, 0);
+							 , TextFileReaderUtils.getInstance().getCharsetName(), line, 0, 0, 0, false, fileInfo.name);
 					break;
 				}
 				

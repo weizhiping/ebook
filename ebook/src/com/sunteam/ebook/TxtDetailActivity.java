@@ -281,6 +281,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
+			intent.putExtra("isAuto", isAuto);
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 //			manager.insertBookToDb(fileInfo, 2);
 		} else {
@@ -389,10 +390,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if(RESULT_OK == resultCode){
 			switch (requestCode) {
-			case EbookConstants.TO_NEXT_BOOK: // 阅读器返回
-				mMainView.down();
-				mMainView.enter(true);
-				 // 阅读下一本书
+			case EbookConstants.REQUEST_CODE: // 阅读器返回
+				if( data != null )
+				{
+					int next = data.getIntExtra("next", -1);
+					if( EbookConstants.TO_NEXT_BOOK == next )
+					{
+						mMainView.down();
+						mMainView.enter(true);
+						 // 阅读下一本书
+					}
+				}
 				break;
 			case MENU_DATA:
 				int item = data.getIntExtra("data_item", 0);

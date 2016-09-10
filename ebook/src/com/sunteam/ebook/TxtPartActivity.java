@@ -101,6 +101,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 		Intent intent = new Intent(this,ReadTxtActivity.class);
 		intent.putExtra("file", fileInfo);
 		intent.putExtra("file_list", fileInfoList);
+		intent.putExtra("isAuto", isAuto);
 		startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 	} 
 	

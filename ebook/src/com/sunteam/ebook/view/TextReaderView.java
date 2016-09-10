@@ -125,6 +125,8 @@ import android.view.View;
 	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
 	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
 	 private ReverseInfo mSelectInfo = new ReverseInfo();	//选词
+	 private String mFilename = null;		//文件名
+	 private boolean mIsAuto = false;		//是否是自动朗读进入的，如果是还需要读文件名称。
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -402,7 +404,7 @@ import android.view.View;
 			 e.printStackTrace();
 		 }
 		 
-		 return	openBook( buf, CHARSET_NAME, 0, 0, 0, 0 );
+		 return	openBook( buf, CHARSET_NAME, 0, 0, 0, 0, false, "" );
 	 }
 	 
 	 /**
@@ -420,8 +422,10 @@ import android.view.View;
 	  * @param checksum
 	  *            校验值
 	  */
-	 public boolean openBook(byte[] buffer, String charsetName, int lineNumber, int startPos, int len, int checksum) 
+	 public boolean openBook(byte[] buffer, String charsetName, int lineNumber, int startPos, int len, int checksum, boolean isAuto, String filename) 
 	 {
+		 mFilename = filename;
+		 mIsAuto = isAuto;
 		 mOffset = 0;
 		 mReverseInfo.startPos = startPos;
 		 
@@ -2192,6 +2196,12 @@ import android.view.View;
 			 if( isSpeakPage )
 			 {
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 if( mIsAuto && !TextUtils.isEmpty(mFilename))
+				 {
+					 mIsAuto = false;
+					 tips = mFilename+"，"+tips;
+				 }
+				 
 				 TTSUtils.getInstance().speakTips(tips);
 			 }
 			 return;
@@ -2222,8 +2232,13 @@ import android.view.View;
 				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
 				 if( isSpeakPage )
 				 {
-					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-					 TTSUtils.getInstance().speakContent(tips+text);
+					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() )+text;
+					 if( mIsAuto && !TextUtils.isEmpty(mFilename))
+					 {
+						 mIsAuto = false;
+						 tips = mFilename+"，"+tips;
+					 }
+					 TTSUtils.getInstance().speakContent(tips);
 				 }
 				 else
 				 {
