@@ -1,5 +1,6 @@
 package com.sunteam.ebook;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -96,20 +97,20 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	registerReceiver();
     	playMusic();
     	
-//    	mTvTitle.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				fileInfo.line = mTextReaderView.getLineNumber();
-//				Intent intent = new Intent(ReadTxtActivity.this, MenuActivity.class);
-//				intent.putExtra("page_count", mTextReaderView.getPageCount());
-//				intent.putExtra("page_cur", mTextReaderView.getCurPage());
-//				intent.putExtra("page_text", mTextReaderView.getReverseText());
-//				intent.putExtra("file", fileInfo);
-//				startActivityForResult(intent, MENU_CODE);
-//			}
-//		});
+    	mTvTitle.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				fileInfo.line = mTextReaderView.getLineNumber();
+				Intent intent = new Intent(ReadTxtActivity.this, MenuActivity.class);
+				intent.putExtra("page_count", mTextReaderView.getPageCount());
+				intent.putExtra("page_cur", mTextReaderView.getCurPage());
+				intent.putExtra("page_text", mTextReaderView.getReverseText());
+				intent.putExtra("file", fileInfo);
+				startActivityForResult(intent, MENU_CODE);
+			}
+		});
 	}
 	
 	private void registerReceiver(){
@@ -123,7 +124,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
 		if(isMusic){
 			String path = shared.getString(EbookConstants.MUSICE_PATH, null);
-			if(null == path){
+			File file = new File(path);
+			if(null == path || !file.exists()){
 				path = FileOperateUtils.getFirstMusicInDir();
 			}
 			if(null != path){
