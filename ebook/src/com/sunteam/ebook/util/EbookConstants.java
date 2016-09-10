@@ -89,8 +89,7 @@ public class EbookConstants
 	public static final int BOOK_COLLECTION = 1;
 	public static final int BOOK_RECENT = 2;
 	
-	//public static final int MAX_PARAGRAPH = 0x400000;	//最大段落长度
-	public static final int MAX_PARAGRAPH = 128;	//最大段落长度
+	public static final int MAX_PARAGRAPH = 0x400000;	//最大段落长度
 	
 	public static final int REQUEST_CODE = 100;
 	public static final int TO_NEXT_PART = 0;			//到下一个部分

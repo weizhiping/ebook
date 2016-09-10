@@ -764,9 +764,8 @@ public class TTSUtils
 		// 发音结束
 		public void onCompleted(String error) {
 			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
-			/*
-			 * if( SpeakForm.TIPS == mSpeakForm ) { return; }
-			 */
+			if( SpeakForm.TIPS == mSpeakForm ) { return; }
+			 
 			mSpeakStatus = SpeakStatus.STOP;
 			if (null == error) {
 				// 合成完成
