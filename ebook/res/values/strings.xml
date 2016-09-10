@@ -22,7 +22,7 @@
     <string name="menu_add_fav">添加到我的收藏</string>
      <string name="add_fav_success">成功添加到我的收藏</string>
     <string name="page_read_tips">第%1$s页 总共%2$s页</string>
-    <string name="no_explain">无例句</string>
+    <string name="no_explain">无例词</string>
     <string name="en_explain_tips">字母表中的第 %1$s个字母</string>
     <string name="cn_explain_tips">的</string>
     <string name="to_top">已经到开头</string>
