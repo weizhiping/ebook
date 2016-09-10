@@ -89,6 +89,7 @@
 
 -dontwarn com.iflytek.**
 -keep class com.iflytek.** {*; }
+-keepattributes Signature
 
 #-dontwarn com.iflytek.**
 #-keep class com.iflytek.** {*; }
