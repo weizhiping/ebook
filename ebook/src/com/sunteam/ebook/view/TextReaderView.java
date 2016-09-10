@@ -203,11 +203,11 @@ import android.view.View;
 			 mReverseInfo.startPos = mSelectInfo.startPos;
 			 mReverseInfo.len = mSelectInfo.len;
 			 
+			 mSelectInfo.startPos = -1;
+			 mSelectInfo.len = -1;
+			 
 			 this.invalidate();
 		 }
-		 
-		 mSelectInfo.startPos = -1;
-		 mSelectInfo.len = -1;
 	 }
 	 
 	 //得到反显内容
