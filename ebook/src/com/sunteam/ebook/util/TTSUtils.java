@@ -304,7 +304,7 @@ public class TTSUtils
 		{
 			if( ttsRoleEn[i].equals(role) )
 			{
-				speakTest( text, ROLE_EN, mRoleEn[i] );
+				speakTest( text, SpeechConstant.VOICE_NAME, mRoleEn[i] );
 				
 				return	true;
 			}
@@ -324,7 +324,7 @@ public class TTSUtils
 			if( ttsRoleEn[i].equals(role) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putString( ROLE_EN, mRoleEn[i]+"" );
+				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
 				editor.commit();
 				
 				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
@@ -342,7 +342,7 @@ public class TTSUtils
 		Resources res = mContext.getResources();
 		String[] ttsRoleEn = res.getStringArray(R.array.array_menu_voice_english);
 		
-		String role = mSharedPreferences.getString(ROLE_EN, DEFAULT_ROLE_EN+"");
+		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_EN+"");
 		for( int i = 0; i < mRoleEn.length; i++ )
 		{
 			if( role.equals(mRoleEn[i]+"") )
@@ -685,7 +685,7 @@ public class TTSUtils
     private void setTestParam( String key, String value ) {
 		// TTS中文发音人参数
 		if (SpeechConstant.VOICE_NAME.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, value + ""));
+			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, value);
 		} else {
 			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN + ""));
 		}
@@ -707,21 +707,21 @@ public class TTSUtils
     	
     	// 设置合成语速
 		if (SpeechConstant.SPEED.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getString(SpeechConstant.SPEED, value));
+			mTtsUtils.setParameter(SpeechConstant.SPEED, value);
 		} else {
 			mTtsUtils.setParameter(SpeechConstant.SPEED, "" + mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED));
 		}
     	
 		// 设置合成音调
 		if (SpeechConstant.PITCH.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getString(SpeechConstant.PITCH, value));
+			mTtsUtils.setParameter(SpeechConstant.PITCH, value);
 		} else {
 			mTtsUtils.setParameter(SpeechConstant.PITCH, "" + mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE));
 		}
 
 		// 设置合成音量
 		if (SpeechConstant.VOLUME.equals(key)) {
-    		mTtsUtils.setParameter(SpeechConstant.VOLUME, "" + mSharedPreferences.getString(SpeechConstant.VOLUME, value));
+    		mTtsUtils.setParameter(SpeechConstant.VOLUME, value);
 		} else {
     		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
     	}
