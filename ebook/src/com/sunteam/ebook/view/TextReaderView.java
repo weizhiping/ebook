@@ -1253,6 +1253,20 @@ import android.view.View;
 		 }
 		 else
 		 {
+			 ReverseInfo ri = getNextReverseCharacterInfo( mSplitInfoList.get(mLineNumber).startPos );
+			 if( null == ri )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
+			 else
+			 {
+				 mReverseInfo.startPos = ri.startPos;
+				 mReverseInfo.len = ri.len;
+			 }	//反显当前页第一行第一个字
+			 
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
 			 TTSUtils.getInstance().speakTips(tips);
 		 }
@@ -1284,6 +1298,20 @@ import android.view.View;
 			 }
 			 else
 			 {
+				 ReverseInfo ri = getNextReverseCharacterInfo( mSplitInfoList.get(mLineNumber).startPos );
+				 if( null == ri )
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom();
+					 }
+				 }
+				 else
+				 {
+					 mReverseInfo.startPos = ri.startPos;
+					 mReverseInfo.len = ri.len;
+				 }	//反显当前页第一行第一个字
+				 
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
 				 TTSUtils.getInstance().speakTips(tips);
 			 }
@@ -1331,6 +1359,20 @@ import android.view.View;
 		 }
 		 else
 		 {
+			 ReverseInfo ri = getNextReverseCharacterInfo( mSplitInfoList.get(mLineNumber).startPos );
+			 if( null == ri )
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
+			 else
+			 {
+				 mReverseInfo.startPos = ri.startPos;
+				 mReverseInfo.len = ri.len;
+			 }	//反显当前页第一行第一个字
+			 
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
 			 TTSUtils.getInstance().speakTips(tips);
 		 }
@@ -1362,6 +1404,20 @@ import android.view.View;
 			 }
 			 else
 			 {
+				 ReverseInfo ri = getNextReverseCharacterInfo( mSplitInfoList.get(mLineNumber).startPos );
+				 if( null == ri )
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom();
+					 }
+				 }
+				 else
+				 {
+					 mReverseInfo.startPos = ri.startPos;
+					 mReverseInfo.len = ri.len;
+				 }	//反显当前页第一行第一个字
+				 
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
 				 TTSUtils.getInstance().speakTips(tips);
 			 }
