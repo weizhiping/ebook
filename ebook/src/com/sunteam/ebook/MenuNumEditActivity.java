@@ -77,7 +77,16 @@ public class MenuNumEditActivity extends Activity {
 			playMusic();
 		}
 		numView.setText(number + "");
-		TTSUtils.getInstance().speakMenu(title+"，"+ number);
+		
+		String str = title+"，"+ number;
+		
+		if(0 == flage){
+			TTSUtils.getInstance().testSpeed(number,str);
+		}else if(1 == flage){
+			TTSUtils.getInstance().testPitch(number,str);
+		}else{
+			TTSUtils.getInstance().speakMenu(str);
+		}
 	}
 	
 

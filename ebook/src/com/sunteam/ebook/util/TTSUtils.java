@@ -41,6 +41,7 @@ public class TTSUtils
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
 	@SuppressWarnings("unused")
 	private SpeakForm mSpeakForm = SpeakForm.TIPS;
+	private String mStrContent = null;
 	
 	private static final String[] mRoleCn = {
 		"xiaofeng",	//晓峰，国语男声
@@ -71,6 +72,7 @@ public class TTSUtils
 	{
 		TIPS,	//提示
 		CONTENT,//内容
+		TIPS_CONTENT,	//先提示后内容
 	}	//朗读形式
 	
 	public enum SpeakStatus
@@ -187,7 +189,7 @@ public class TTSUtils
 	{
 		if( isSuccess && mTtsUtils != null )
 		{
-			mTtsUtils.restoreSettingParameters();;	//设置参数
+			mTtsUtils.restoreSettingParameters();	//设置参数
 			mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
@@ -215,6 +217,23 @@ public class TTSUtils
      *
      * @param text
      */
+	public void speakTipsAndContent( final String tips, final String content ) 
+	{
+		if( isSuccess && mTtsUtils != null )
+		{
+			mStrContent = content;
+			setTipsParam();	//设置参数
+			mTtsUtils.speak(tips);
+	        mSpeakStatus = SpeakStatus.SPEAK;
+	        mSpeakForm = SpeakForm.TIPS_CONTENT;
+		}
+    }
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
 	public void speakTips( final String text ) 
 	{
 		if( isSuccess && mTtsUtils != null )
@@ -226,6 +245,22 @@ public class TTSUtils
 		}
     }	
 
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	public void speakTipsEx( final String text ) 
+	{
+		if( isSuccess && mTtsUtils != null )
+		{
+			setTipsParam();	//设置参数
+			mTtsUtils.speak(text);
+	        //用于提示信息朗读，不记录状态
+        	mSpeakForm = SpeakForm.CONTENT;
+		}
+    }
 	
 	/**
      * 开始语音合成
@@ -417,7 +452,7 @@ public class TTSUtils
 	public void setSpeed( int speed )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( SpeechConstant.SPEED, speed*5 );
+		editor.putString( SpeechConstant.SPEED, (speed*5)+"" );
 		editor.commit();
 		
 		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
@@ -440,7 +475,7 @@ public class TTSUtils
 	public void setPitch( int pitch )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( SpeechConstant.PITCH, pitch*5 );
+		editor.putString( SpeechConstant.PITCH, (pitch*5)+"" );
 		editor.commit();
 		
 		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
@@ -463,7 +498,7 @@ public class TTSUtils
 	public void setVolume( int volume )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putInt( SpeechConstant.VOLUME, volume*5 );
+		editor.putString( SpeechConstant.VOLUME, (volume*5)+"" );
 		editor.commit();
 		
 		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
@@ -647,6 +682,9 @@ public class TTSUtils
     
     private void setTipsParam() 
     {
+    	mTtsUtils.restoreSettingParameters();	//设置参数
+    	
+    	/*
     	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
 
 		// 设置发音人
@@ -664,6 +702,7 @@ public class TTSUtils
 		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
 
 		// mTtsUtils.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "false"); // 设置播放合成音频打断音乐播放，默认为true;
+   		*/
     }
 	
     /**
@@ -826,7 +865,16 @@ public class TTSUtils
 		// 发音结束
 		public void onCompleted(String error) {
 			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
-			if( SpeakForm.TIPS == mSpeakForm ) { return; }
+			if( SpeakForm.TIPS == mSpeakForm )
+			{ 
+				return; 
+			}
+			
+			if( ( SpeakForm.TIPS_CONTENT == mSpeakForm ) && ( mStrContent != null ) )
+			{
+				speakContent(mStrContent);
+				return;
+			}
 			 
 			mSpeakStatus = SpeakStatus.STOP;
 			if (null == error) {

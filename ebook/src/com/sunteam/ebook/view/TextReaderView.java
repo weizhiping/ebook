@@ -2232,13 +2232,13 @@ import android.view.View;
 				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
 				 if( isSpeakPage )
 				 {
-					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() )+text;
+					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
 					 if( mIsAuto && !TextUtils.isEmpty(mFilename))
 					 {
 						 mIsAuto = false;
 						 tips = mFilename+"，"+tips;
 					 }
-					 TTSUtils.getInstance().speakContent(tips);
+					 TTSUtils.getInstance().speakTipsAndContent(tips, text);
 				 }
 				 else
 				 {
