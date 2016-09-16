@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -28,6 +30,7 @@ import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
@@ -37,7 +40,7 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
  * 
  * @author sylar
  */
-public class ReadTxtActivity extends Activity implements OnPageFlingListener 
+public class ReadTxtActivity extends Activity implements OnPageFlingListener, OnTTSListener
 {
 	private TextView mTvTitle = null;
 	private TextView mTvPageCount = null;
@@ -292,10 +295,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
-			Intent intent = new Intent();
-			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
-			setResult(RESULT_OK, intent);
-			back();
+			TTSUtils.getInstance().OnTTSListener(ReadTxtActivity.this);
+			TTSUtils.getInstance().speakContent(ReadTxtActivity.this.getString(R.string.already_read));
 		}
 		else
 		{
@@ -370,5 +371,54 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}     
 	     
 		return super.dispatchKeyEvent(event);
-	}	
+	}
+
+
+	//朗读完成
+	@Override
+	public void onSpeakCompleted() 
+	{
+		// TODO Auto-generated method stub
+		mHandler.sendEmptyMessage(0);
+	}
+
+	//朗读错误
+	@Override
+	public void onSpeakError() 
+	{
+		// TODO Auto-generated method stub
+		mHandler.sendEmptyMessage(1);
+	}
+	
+	private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) 
+        {
+            switch (msg.what) 
+            {
+                case 0:		//朗读完成
+                case 1:		//朗读错误
+                	Intent intent = new Intent();
+        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+        			setResult(RESULT_OK, intent);
+        			back();
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+
+	@Override
+	public void onSpeakCompleted(String content) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpeakError(String content) {
+		// TODO Auto-generated method stub
+		
+	}  
 }

@@ -51,6 +51,7 @@ import android.view.View;
 	 private static final String TAG = "TextReaderView";
 	 private static final int MSG_SPEAK_COMPLETED = 100;
 	 private static final int MSG_SPEAK_ERROR = 200;
+	 private static final int MSG_SPEAK_CONTINUE = 300;
 	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
 	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
@@ -2438,6 +2439,24 @@ import android.view.View;
 		// TODO Auto-generated method stub
 		mHandler.sendEmptyMessage(MSG_SPEAK_ERROR);
 	}
+
+	@Override
+	public void onSpeakCompleted(String content) {
+		// TODO Auto-generated method stub
+		Message msg = mHandler.obtainMessage();
+		msg.what = MSG_SPEAK_CONTINUE;
+		msg.obj = content;
+		mHandler.sendMessage(msg);
+	}
+
+	@Override
+	public void onSpeakError(String content) {
+		// TODO Auto-generated method stub
+		Message msg = mHandler.obtainMessage();
+		msg.what = MSG_SPEAK_CONTINUE;
+		msg.obj = content;
+		mHandler.sendMessage(msg);
+	} 
 	
 	private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -2463,10 +2482,13 @@ import android.view.View;
                 case MSG_SPEAK_ERROR:		//朗读错误
                 	
                     break;
+                case MSG_SPEAK_CONTINUE:	//继续朗读
+                	TTSUtils.getInstance().speakContent(msg.obj.toString());
+                	break;
                 default:
                     break;
             }
             return false;
         }
-    });    	
+    });  	
 }

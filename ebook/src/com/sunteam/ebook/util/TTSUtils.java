@@ -66,6 +66,9 @@ public class TTSUtils
 	{
 		public void onSpeakCompleted();		//朗读完成
 		public void onSpeakError();			//朗读错误
+		
+		public void onSpeakCompleted(String content);		//朗读完成
+		public void onSpeakError(String content);			//朗读错误
 	}
 	
 	public enum SpeakForm
@@ -870,22 +873,33 @@ public class TTSUtils
 				return; 
 			}
 			
+			mSpeakStatus = SpeakStatus.STOP;
 			if( ( SpeakForm.TIPS_CONTENT == mSpeakForm ) && ( mStrContent != null ) )
 			{
-				speakContent(mStrContent);
-				return;
-			}
-			 
-			mSpeakStatus = SpeakStatus.STOP;
-			if (null == error) {
-				// 合成完成
-				if (mOnTTSListener != null) {
-					mOnTTSListener.onSpeakCompleted();
+				if (null == error) {
+					// 合成完成
+					if (mOnTTSListener != null) {
+						mOnTTSListener.onSpeakCompleted(mStrContent);
+					}
+				} else {
+					// 合成错误
+					if (mOnTTSListener != null) {
+						mOnTTSListener.onSpeakError(mStrContent);
+					}
 				}
-			} else {
-				// 合成错误
-				if (mOnTTSListener != null) {
-					mOnTTSListener.onSpeakError();
+			}
+			else
+			{
+				if (null == error) {
+					// 合成完成
+					if (mOnTTSListener != null) {
+						mOnTTSListener.onSpeakCompleted();
+					}
+				} else {
+					// 合成错误
+					if (mOnTTSListener != null) {
+						mOnTTSListener.onSpeakError();
+					}
 				}
 			}
 		}
