@@ -300,7 +300,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		}
 		else
 		{
-			String tips = this.getString(R.string.to_bottom);
+			String tips = this.getString(R.string.has_finished_reading_the_last_book);
 			PublicUtils.showToast(this, tips);
 		}
 	}
