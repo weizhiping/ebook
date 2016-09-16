@@ -97,7 +97,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			SuperDialog dialog = new SuperDialog(this);
 			dialog.showSuperDialog(R.string.dialog_delete);
 			dialog.initeCallBack(this);
-			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete)
+			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_delete)
 					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 		}else{
 			FileInfo info = fileInfos.get(selectItem);

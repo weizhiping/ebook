@@ -68,7 +68,7 @@ public class MenuTextEditActivity extends Activity {
 		}else{
 			numView.setText(currentText + " " + String.format(getResources().getString(R.string.menu_text_tips), currentPage));
 		}
-		TTSUtils.getInstance().speakTips(title + "，" + numView.getText().toString());
+		TTSUtils.getInstance().speakMenu(title + "，" + numView.getText().toString());
 		numView.setOnKeyListener(new OnKeyListener() {
 			
 			@Override

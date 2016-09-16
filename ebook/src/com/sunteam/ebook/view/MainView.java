@@ -103,7 +103,39 @@ public class MainView extends View implements OnTTSListener
 		TTSUtils.getInstance().OnTTSListener(this);
 		if( mAdapter != null )
 		{
-			TTSUtils.getInstance().speakTips(mTvTitle.getText()+"，"+mAdapter.getSelectItemContent());
+			String str = mTvTitle.getText()+"，"+mAdapter.getSelectItemContent();
+			ArrayList<String> gListData = mAdapter.getListData();
+			int selectItem =mAdapter.getSelectItem();
+			
+			switch( mAdapter.getTTSSpeakMode() )
+			{
+				case READ_MODE_NORMAL:		//普通模式
+					TTSUtils.getInstance().speakMenu(str);
+					break;
+				case READ_MODE_CN:			//中文模式
+					TTSUtils.getInstance().testRoleCn(gListData.get(selectItem), str);
+					break;
+				case READ_MODE_EN:			//英文模式
+					TTSUtils.getInstance().testRoleEn(gListData.get(selectItem), str);
+					break;
+				case READ_MODE_SPEED:		//语速模式
+					int speed = Integer.parseInt(gListData.get(selectItem));
+					TTSUtils.getInstance().testSpeed(speed, mContext.getString(R.string.tts_speed)+speed);
+					break;
+				case READ_MODE_PITCH:		//语调模式
+					int pitch = Integer.parseInt(gListData.get(selectItem));
+					TTSUtils.getInstance().testPitch(pitch, mContext.getString(R.string.tts_pitch)+pitch);
+					break;
+				case READ_MODE_VOLUME:		//音量模式
+					int volume = Integer.parseInt(gListData.get(selectItem));
+					TTSUtils.getInstance().testVolume(volume, mContext.getString(R.string.tts_volume)+volume);
+					break;
+				case READ_MODE_EFFECT:		//音效模式
+					TTSUtils.getInstance().testEffect(gListData.get(selectItem), gListData.get(selectItem));
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	

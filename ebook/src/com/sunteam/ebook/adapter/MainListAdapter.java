@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.R;
@@ -60,6 +59,11 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		this.mode = mode;
 		this.mTools = new Tools(mContext);
 		this.mScale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数
+	}
+	
+	public TTSSpeakMode getTTSSpeakMode()
+	{
+		return	this.mode;
 	}
 
 	public void setSelectItem( int selectItem )
@@ -181,7 +185,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		switch( this.mode )
 		{
 			case READ_MODE_NORMAL:		//普通模式
-				TTSUtils.getInstance().speakTips(gListData.get(selectItem));
+				TTSUtils.getInstance().speakMenu(gListData.get(selectItem));
 				break;
 			case READ_MODE_CN:			//中文模式
 				TTSUtils.getInstance().testRoleCn(gListData.get(selectItem), gListData.get(selectItem));

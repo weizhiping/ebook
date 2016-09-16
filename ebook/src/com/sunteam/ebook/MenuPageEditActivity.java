@@ -63,7 +63,7 @@ public class MenuPageEditActivity extends Activity {
 		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
 		numView.setText(tips);
 		numView.setFocusable(false);
-		TTSUtils.getInstance().speakTips(title+"，"+ tips);
+		TTSUtils.getInstance().speakMenu(title+"，"+ tips);
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class MenuPageEditActivity extends Activity {
 			number = totalPage;
 		}
 		numView.setText(number + "");
-		TTSUtils.getInstance().speakTips(number+"");
+		TTSUtils.getInstance().speakMenu(number+"");
 		return super.onKeyDown(keyCode, event);
 	}
 }

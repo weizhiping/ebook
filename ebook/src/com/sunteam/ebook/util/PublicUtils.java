@@ -110,7 +110,7 @@ public class PublicUtils
 		TextView tvInfo = (TextView) progress.findViewById(R.id.tv_info);
 		tvInfo.setText(info);
 		
-		TTSUtils.getInstance().speakTips(info);
+		TTSUtils.getInstance().speakMenu(info);
 	}
 	
 	/**
@@ -141,10 +141,16 @@ public class PublicUtils
 	//显示提示信息并朗读
 	public static void showToast( Context context, String tips )
 	{
-		TTSUtils.getInstance().speakTips(tips);
+		TTSUtils.getInstance().speakMenu(tips);
 		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 	}
 	
+	//显示提示信息并朗读，用于语言设置
+	public static void showToastEx( Context context, String tips )
+	{
+		TTSUtils.getInstance().speakTips(tips);
+		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
+	}	
 	//检查讯飞语音服务是否安装
 	public static boolean checkSpeechServiceInstalled(Context context)
 	{

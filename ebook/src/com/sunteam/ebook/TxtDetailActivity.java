@@ -131,7 +131,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     		mMainView.onResume();
     	}
     	if(0 != flag && 0 == fileInfoList.size()){
-    		TTSUtils.getInstance().speakTips(getResources().getString(R.string.no_file));
+    		TTSUtils.getInstance().speakMenu(getResources().getString(R.string.no_file));
         	Handler handler = new Handler();
         	handler.postDelayed(new Runnable() {
     			
@@ -328,7 +328,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
 		String title = getResources().getString(R.string.add_fav_success);
-		TTSUtils.getInstance().speakTips(title);
+		TTSUtils.getInstance().speakMenu(title);
 	}
 	
 	// 初始化数据库文件
@@ -410,12 +410,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
-					TTSUtils.getInstance().speakTips(getResources().getString(R.string.dialog_delete_su));
+					TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_delete_su));
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
-					TTSUtils.getInstance().speakTips(getResources().getString(R.string.dialog_clear_su));
+					TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_clear_su));
 				}else{
 					insertToDb();
 				}

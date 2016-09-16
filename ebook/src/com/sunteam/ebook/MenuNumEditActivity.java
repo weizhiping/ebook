@@ -77,7 +77,7 @@ public class MenuNumEditActivity extends Activity {
 			playMusic();
 		}
 		numView.setText(number + "");
-		TTSUtils.getInstance().speakTips(title+"，"+ number);
+		TTSUtils.getInstance().speakMenu(title+"，"+ number);
 	}
 	
 
@@ -148,7 +148,7 @@ public class MenuNumEditActivity extends Activity {
 		}else if(1 == flage){
 			TTSUtils.getInstance().testPitch(number,number+"");
 		}else{
-			TTSUtils.getInstance().speakTips(number +"");
+			TTSUtils.getInstance().speakMenu(number +"");
 		}
 		return super.onKeyDown(keyCode, event);
 	}

@@ -89,11 +89,11 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener,Di
 		dialog.initeCallBack(this);
 		if( 0 == selectItem){
 			dialog.showSuperDialog(R.string.dialog_delete);
-			TTSUtils.getInstance().speakTips(getString(R.string.dialog_delete)
+			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_delete)
 					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 		}else if(1 == selectItem){
 			dialog.showSuperDialog(R.string.dialog_clear);
-			TTSUtils.getInstance().speakTips(getString(R.string.dialog_clear)
+			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_clear)
 					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 		}else{
 			Intent intent = new Intent();

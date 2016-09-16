@@ -65,12 +65,15 @@ public class MenuVoiceDetailActivity extends Activity implements
 		switch(voiceFlag){
 		case 0:
 			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_CN);
+			mMainView.setSelection(TTSUtils.getInstance().getCurRoleCnIndex());
 			break;
 		case 1:
 			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_EN);
+			mMainView.setSelection(TTSUtils.getInstance().getCurRoleEnIndex());
 			break;
 		case 4:
 			mMainView = new MainView(this, this, title, mMenuList,TTSSpeakMode.READ_MODE_EFFECT);
+			mMainView.setSelection(TTSUtils.getInstance().getCurEffectIndex());
 			break;
 		}
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);

@@ -177,7 +177,23 @@ public class TTSUtils
 			}	//如果正在朗读，先停止
 		}
 	}
-
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	public void speakMenu( final String text ) 
+	{
+		if( isSuccess && mTtsUtils != null )
+		{
+			mTtsUtils.restoreSettingParameters();;	//设置参数
+			mTtsUtils.speak(text);
+	        //用于提示信息朗读，不记录状态
+        	mSpeakForm = SpeakForm.TIPS;
+		}
+    }
+	
 	/**
      * 开始语音合成
      *
@@ -260,7 +276,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -285,6 +301,21 @@ public class TTSUtils
 		}
 		
 		return	ttsRoleCn[0];
+	}
+	
+	//得到当前中文发音人序号
+	public int getCurRoleCnIndex()
+	{
+		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+"");
+		for( int i = 0; i < mRoleCn.length; i++ )
+		{
+			if( role.equals(mRoleCn[i]+"") )
+			{
+				return	i;
+			}
+		}
+		
+		return	0;
 	}
 	
 	//得到当前中文发音人列表
@@ -327,7 +358,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -354,6 +385,21 @@ public class TTSUtils
 		return	ttsRoleEn[0];
 	}
 	
+	//得到当前英文发音人序号
+	public int getCurRoleEnIndex()
+	{
+		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_EN+"");
+		for( int i = 0; i < mRoleEn.length; i++ )
+		{
+			if( role.equals(mRoleEn[i]+"") )
+			{
+				return	i;
+			}
+		}
+		
+		return	0;
+	}
+	
 	//得到当前英文发音人列表
 	public String[] getRoleEnList()
 	{
@@ -374,7 +420,7 @@ public class TTSUtils
 		editor.putInt( SpeechConstant.SPEED, speed*5 );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语速
@@ -397,7 +443,7 @@ public class TTSUtils
 		editor.putInt( SpeechConstant.PITCH, pitch*5 );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语调
@@ -420,7 +466,7 @@ public class TTSUtils
 		editor.putInt( SpeechConstant.VOLUME, volume*5 );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到音量
@@ -463,7 +509,7 @@ public class TTSUtils
 				editor.putInt( TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -489,6 +535,22 @@ public class TTSUtils
 		
 		return	ttsEffect[0];*/
 		return "";
+	}
+	
+	//得到当前音效序号
+	public int getCurEffectIndex()
+	{
+		/*
+		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
+		for( int i = 0; i < mEffect.length; i++ )
+		{
+			if( effect == mEffect[i] )
+			{
+				return	i;
+			}
+		}
+		*/
+		return	0;
 	}
 	
 	//得到当前音效列表
