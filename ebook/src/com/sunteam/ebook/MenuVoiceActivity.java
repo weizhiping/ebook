@@ -1,6 +1,7 @@
 package com.sunteam.ebook;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -79,7 +80,7 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 	{
 		return	mMainView.onKeyUp(keyCode, event);
 	}
-
+/*
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		String title = mMenuList.get(selectItem);
@@ -100,6 +101,37 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 //			startToDetail(4);
 //			break;
 		case 4://语音音效
+			startToDetail(title,4);
+			break;
+		}
+	}
+*/
+	@Override
+	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		String title = mMenuList.get(selectItem);
+		switch (selectItem) {
+		case 0://中文角色，英文角色
+			Locale locale = this.getResources().getConfiguration().locale;
+			String language = locale.getLanguage();
+			if( "en".equalsIgnoreCase(language) )	//英文
+			{
+				startToDetail(title,1);
+			}
+			else
+			{
+				startToDetail(title,0);
+			}
+			break;
+		case 1://语速
+			startToNumEdit(title,TTSUtils.getInstance().getSpeed(),0);
+			break;
+		case 2://语调
+			startToNumEdit(title,TTSUtils.getInstance().getPitch(),1);
+			break;
+//		case 3://语音风格
+//			startToDetail(4);
+//			break;
+		case 3://语音音效
 			startToDetail(title,4);
 			break;
 		}

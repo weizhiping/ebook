@@ -67,8 +67,8 @@
         <item>清空书签</item>
     </string-array>
     <string-array name="array_menu_voice">
-        <item>中文角色</item>
-        <!-- <item>英文角色</item>-->
+        <!-- <item>中文角色</item>-->
+        <item>英文角色</item>
         <item>语速</item>
         <item>语调</item>
         <item>语音音效</item><!-- <item>语音风格</item> -->
