@@ -2078,6 +2078,13 @@ import android.view.View;
 					 }
 					 else
 					 {
+						 for( int k = 0; k < CodeTableUtils.PunctuationEn.length; k++ )
+						 {
+							 if( CodeTableUtils.PunctuationEn[k] == mMbBuf[j] )
+							 {
+								 return	ri;
+							 }	//如果是标点符号则返回前面的字符串
+						 }
 						 ri.len++;
 					 }
 				 }
