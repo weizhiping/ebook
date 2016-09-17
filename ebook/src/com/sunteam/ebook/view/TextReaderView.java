@@ -955,7 +955,20 @@ import android.view.View;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
+		 		mParagraphStartPos = 0;
+		 		mParagraphLength = 0;
+		 		nextSentence(true);
+		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+		 		int start = mReverseInfo.startPos;
+		 		if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 		{
+		 			start = mSplitInfoList.get(mLineNumber).startPos;
+		 		}
+				 
+		 		int len = getNextParagraphLength( start );
+		 		mParagraphStartPos = start;
+		 		mParagraphLength = len;
 		 		nextSentence(true);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
