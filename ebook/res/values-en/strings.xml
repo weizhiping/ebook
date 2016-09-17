@@ -68,7 +68,7 @@
     </string-array>
     <string-array name="array_menu_voice">
         <!-- <item>中文角色</item>-->
-        <item>英文角色</item>
+        <item>English Role</item>
         <item>语速</item>
         <item>语调</item>
         <item>语音音效</item><!-- <item>语音风格</item> -->
@@ -80,8 +80,8 @@
         <item>童声</item>
     </string-array>
     <string-array name="array_menu_voice_english">
-        <item>英语男声</item>
-        <item>英语女声</item>
+        <item>Englise male voice</item>
+        <item>English female voice</item>
     </string-array>
     <string-array name="array_menu_voice_style">
         <item>一字一顿</item>
