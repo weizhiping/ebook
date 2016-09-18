@@ -283,6 +283,12 @@ public class MainView extends View implements OnTTSListener
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 					mAdapter.down(false);
 					return true;
+				case KeyEvent.KEYCODE_DPAD_LEFT:
+					mAdapter.left();
+					break;
+				case KeyEvent.KEYCODE_DPAD_RIGHT:
+					mAdapter.right();
+					break;
 				case KeyEvent.KEYCODE_5:
 				case KeyEvent.KEYCODE_NUMPAD_5:		//直接进入阅读器界面
 					if( keyCodeList != null )
