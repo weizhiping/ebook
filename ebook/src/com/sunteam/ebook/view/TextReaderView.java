@@ -2008,7 +2008,7 @@ import android.view.View;
 	 //得到下一个字符反显信息
 	 private ReverseInfo getNextReverseCharacterInfo( int start )
 	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
+		 if( start == mMbBufLen )	//已经到底了
 		 {
 			 return	null;
 		 }
@@ -2063,7 +2063,7 @@ import android.view.View;
 	 //得到下一个词反显信息(逐词模式)
 	 private ReverseInfo getNextReverseWordInfo( int start )
 	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
+		 if( start == mMbBufLen )	//已经到底了
 		 {
 			 return	null;
 		 }
@@ -2184,7 +2184,7 @@ import android.view.View;
 	 //得到下一个句子反显信息(逐段和全文模式)
 	 private ReverseInfo getNextReverseSentenceInfo( int start )
 	 {
-		 if( start == mMbBufLen-1 )	//已经到底了
+		 if( start == mMbBufLen )	//已经到底了
 		 {
 			 return	null;
 		 }
