@@ -1724,28 +1724,56 @@ import android.view.View;
 			 }
 			 else if( ri.startPos + ri.len == mReverseInfo.startPos )
 			 {
-				 mReverseInfo.startPos = ri.startPos;
-				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
+				 if( ( mOffset == ri.startPos ) && ( 0 == mReverseInfo.len ) )
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToTop();
+					 }
+				 }
+				 else
+				 {
+					 mReverseInfo.startPos = ri.startPos;
+					 mReverseInfo.len = ri.len;
+					 readReverseText(false);			//朗读反显文字
+					 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+					 this.invalidate();
+				 }
 				 break;
 			 }
 			 else if( ri.startPos >= mReverseInfo.startPos )
 			 {
 				 if( null == oldReverseInfo )
 				 {
+					 /*
 					 mReverseInfo.startPos = mOffset;
 					 mReverseInfo.len = 0;
+					 */
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToTop();
+					 }
 				 }
 				 else
 				 {
-					 mReverseInfo.startPos = oldReverseInfo.startPos;
-					 mReverseInfo.len = oldReverseInfo.len;
+					 if( ( mOffset == ri.startPos ) && ( 0 == mReverseInfo.len ) )
+					 {
+						 if( mOnPageFlingListener != null )
+						 {
+							 mOnPageFlingListener.onPageFlingToTop();
+						 }
+					 }
+					 else
+					 {
+						 mReverseInfo.startPos = oldReverseInfo.startPos;
+						 mReverseInfo.len = oldReverseInfo.len;
+						 
+						 readReverseText(false);			//朗读反显文字
+						 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+						 this.invalidate();
+					 }
 				 }
-				 readReverseText(false);			//朗读反显文字
-				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
-				 this.invalidate();
+				 
 				 break;
 			 }
 			 
@@ -1801,19 +1829,31 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 end -= len;
+			 int newEnd = end-len;
 			 
 			 for( int i = 0; i < mSplitInfoList.size(); i++ )
 			 {
-				 if( mSplitInfoList.get(i).startPos == end )
+				 if( mSplitInfoList.get(i).startPos == newEnd )
 				 {
 					 mReverseInfo.startPos = mOffset;
 					 mReverseInfo.len = 0;
 					 mLineNumber = i;
-					 mParagraphStartPos = end;
+					 mParagraphStartPos = newEnd;
 					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
 					 
-					 nextSentence( false );
+					 if( mParagraphStartPos+mParagraphLength > end )
+					 {
+						 mParagraphStartPos = 0;
+						 mParagraphLength = 0;
+						 if( mOnPageFlingListener != null )
+						 {
+							 mOnPageFlingListener.onPageFlingToTop();
+						 }
+					 }
+					 else
+					 {
+						 nextSentence( false );
+					 }
 					 return;
 				 }
 			 }
