@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,6 +43,8 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
  */
 public class ReadTxtActivity extends Activity implements OnPageFlingListener, OnTTSListener
 {
+	private static final String TAG = "ReadTxtActivity";
+	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
 	private TextView mTvTitle = null;
 	private TextView mTvPageCount = null;
 	private TextView mTvCurPage = null;
@@ -51,8 +54,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	private ArrayList<FileInfo> fileInfoList = null;
 	private static final int MENU_CODE = 10;
 	private MenuBroadcastReceiver menuReceiver;
+	private ShutdownBroadcastReceiver shutReceiver;
 	private SharedPreferences shared;
 	private boolean isAuto = false;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	mTextReaderView.setReverseColor(tools.getHighlightColor());
     	mTextReaderView.setBackgroundColor(tools.getBackgroundColor());
     	//mTextReaderView.setTextSize(tools.getFontSize());
-    	
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
     		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
@@ -123,6 +127,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(EbookConstants.MENU_PAGE_EDIT);
 		registerReceiver(menuReceiver, filter);
+		
+		shutReceiver = new ShutdownBroadcastReceiver();
+		IntentFilter shutFilter = new IntentFilter();
+		shutFilter.addAction(ACTION_SHUTDOWN);
+		registerReceiver(shutReceiver, shutFilter);
+		 
 	}
 	
 	private void playMusic(){
@@ -271,6 +281,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	@Override
 	public void onDestroy()
 	{
+		unregisterReceiver(menuReceiver);
+		unregisterReceiver(shutReceiver);
 		super.onDestroy();
 	}
 	
@@ -354,7 +366,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	private void back()
 	{
 		MediaPlayerUtils.getInstance().stop();
-		unregisterReceiver(menuReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 		insertToDb();
@@ -421,4 +432,17 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		// TODO Auto-generated method stub
 		
 	}  
+	
+	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
+	      
+	    @Override  
+	    public void onReceive(Context context, Intent intent) {  
+	        Log.e(TAG, "Shut down this system, ShutdownBroadcastReceiver onReceive()");  
+	          
+	        if (intent.getAction().equals(ACTION_SHUTDOWN)) {  
+	            insertToDb();
+	        }  
+	    } 
+	}
+
 }

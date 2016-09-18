@@ -16,7 +16,6 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -39,11 +38,13 @@ import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
  */
 public class ReadDaisyActivity extends Activity implements OnPageFlingListener, OnTTSListener 
 {
+	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
 	private TextView mTvTitle = null;
 	private TextView mTvPageCount = null;
 	private TextView mTvCurPage = null;
 	private View mLine = null;
 	private DaisyReaderView mDaisyReaderView = null;
+	private ShutdownBroadcastReceiver shutReceiver;
 	private FileInfo fileInfo;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private DiasyNode mDiasyNode = null;	//叶子节点信息
@@ -103,6 +104,11 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(EbookConstants.MENU_PAGE_EDIT);
 		registerReceiver(menuReceiver, filter);
+		
+		shutReceiver = new ShutdownBroadcastReceiver();
+		IntentFilter shutFilter = new IntentFilter();
+		shutFilter.addAction(ACTION_SHUTDOWN);
+		registerReceiver(shutReceiver, shutFilter);
 	}
 	
 	@Override
@@ -172,6 +178,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	@Override
 	public void onDestroy()
 	{
+		unregisterReceiver(menuReceiver);
+		unregisterReceiver(shutReceiver);
 		super.onDestroy();
 	}
 	
@@ -328,5 +336,16 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	public void onSpeakError(String content) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
+	      
+	    @Override  
+	    public void onReceive(Context context, Intent intent) {  
+	          
+	        if (intent.getAction().equals(ACTION_SHUTDOWN)) {  
+	            insertToDb();
+	        }  
+	    } 
 	}
 }

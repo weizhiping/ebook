@@ -117,6 +117,9 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 		mMenuList.remove(position);
 		mMainView.updateAdapter();
 		manager.deleteMarkFile(info.path, info.name);
-	//	ScreenManager.getScreenManager().popAllActivityExceptOne();
+		if(0 == mMenuList.size()){
+			PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null));
+			ScreenManager.getScreenManager().popAllActivityExceptOne();
+		}
 	}
 }
