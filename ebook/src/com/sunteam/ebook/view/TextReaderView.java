@@ -2324,18 +2324,23 @@ import android.view.View;
 			 return;
 		 }
 		 
-		 Locale locale = mContext.getResources().getConfiguration().locale;
-		 String language = locale.getLanguage();
-		 
-		 char code = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
 		 String str = null;
-		 if( "en".equalsIgnoreCase(language) )	//英文
+		 
+		 if( ( ( mMbBuf[mReverseInfo.startPos] >= 0 ) && ( 1 == mReverseInfo.len ) ) ||		//英文
+				 ( ( mMbBuf[mReverseInfo.startPos] < 0 ) && ( 2 == mReverseInfo.len ) ) )	//中文
 		 {
-			 str = CodeTableUtils.getEnString(code);
-		 }
-		 else
-		 {
-			 str = CodeTableUtils.getCnString(code);
+			 Locale locale = mContext.getResources().getConfiguration().locale;
+			 String language = locale.getLanguage();
+			 
+			 char code = PublicUtils.byte2char(mMbBuf, mReverseInfo.startPos);
+			 if( "en".equalsIgnoreCase(language) )	//英文
+			 {
+				 str = CodeTableUtils.getEnString(code);
+			 }
+			 else
+			 {
+				 str = CodeTableUtils.getCnString(code);
+			 }
 		 }
 		 
 		 if( null != str )
