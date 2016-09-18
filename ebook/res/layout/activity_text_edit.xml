@@ -21,8 +21,8 @@
         android:layout_below="@id/title_menu"
         android:background="@color/space_line" />
 
-    <EditText
-        android:id="@+id/text_edit"
+    <TextView
+        android:id="@+id/text_mark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/menu_line"

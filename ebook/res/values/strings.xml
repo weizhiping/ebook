@@ -20,7 +20,8 @@
     <string name="menu_delete_current">删除当前</string>
     <string name="menu_delete_list">清空列表</string>
     <string name="menu_add_fav">添加到我的收藏</string>
-     <string name="add_fav_success">成功添加到我的收藏</string>
+    <string name="menu_muisc_null">背景音乐目录，没有音乐文件</string>
+    <string name="add_fav_success">成功添加到我的收藏</string>
     <string name="page_read_tips">第%1$s页 总共%2$s页</string>
     <string name="no_explain">无例词</string>
     <string name="en_explain_tips">字母表中的第 %1$s个字母</string>
@@ -38,7 +39,7 @@
 	<string name="tts_speed">语速</string>
 	<string name="tts_pitch">语调</string>
 	<string name="tts_volume">音量</string>
-	<string name="menu_text_tips">第 %1$s页</string>
+	<string name="menu_text_tips">第%1$s页</string>
 	<string name="menu_mark_tips">当前尚未创建书签</string>
 	<string name="dialog_yes">是</string>
 	<string name="dialog_no">否</string>
