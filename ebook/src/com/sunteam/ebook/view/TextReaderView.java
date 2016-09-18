@@ -1899,6 +1899,13 @@ import android.view.View;
 					 mParagraphStartPos = start;
 					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
 					 
+					 if( ( ( 1 == mParagraphLength) && ( 0x0a == mMbBuf[mParagraphStartPos] ) ) ||
+							 ( ( 2 == mParagraphLength) && ( 0x0d == mMbBuf[mParagraphStartPos] ) && ( 0x0a == mMbBuf[mParagraphStartPos+1] ) ) )
+					 {
+						 nextParagraph( isSpeakPage );	
+						 return;
+					 }	//跳过空行
+					 
 					 nextSentence( isSpeakPage );
 					 return;
 				 }
