@@ -38,7 +38,7 @@
 	<string name="tts_speed">语速</string>
 	<string name="tts_pitch">语调</string>
 	<string name="tts_volume">音量</string>
-	<string name="menu_text_tips">第 %1$s页</string>
+	<string name="menu_text_tips">第%1$s页</string>
 	<string name="menu_mark_tips">当前尚未创建书签</string>
 	<string name="dialog_yes">是</string>
 	<string name="dialog_no">否</string>
