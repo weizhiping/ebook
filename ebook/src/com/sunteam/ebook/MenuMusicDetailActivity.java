@@ -33,6 +33,7 @@ public class MenuMusicDetailActivity extends Activity implements
 	private ArrayList<FileInfo> fileList = null;
 	private int flag;// 0开关 1 音乐选择
 	private SharedPreferences shared;
+	private int musicPosition = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,8 @@ public class MenuMusicDetailActivity extends Activity implements
 			}else{
 				mMainView.setSelection(1);
 			}
+		}else if(0 < musicPosition){
+			mMainView.setSelection(musicPosition);	
 		}
 	}
 
@@ -127,14 +130,19 @@ public class MenuMusicDetailActivity extends Activity implements
 
 	// 初始化显示文件
 	private void initFiles() {
+		String path = shared.getString(EbookConstants.MUSICE_PATH, null);
 		ArrayList<File> filesList = FileOperateUtils.getMusicInDir();
 		if (null != filesList && 0 < filesList.size()) {
-			for (File f : filesList) {
+			for (int i=0; i< filesList.size(); i++) {
+				File f = filesList.get(i);
 				FileInfo info = new FileInfo();
 				info.name = f.getName();
 				info.path = f.getPath();
 				mMenuList.add(info.name);
 				fileList.add(info);
+				if(f.getPath().equals(path)){
+					musicPosition = i;
+				}
 			}
 		}else{
 			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null));
