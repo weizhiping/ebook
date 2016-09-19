@@ -421,18 +421,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
         }
     });
 
-	@Override
-	public void onSpeakCompleted(String content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSpeakError(String content) {
-		// TODO Auto-generated method stub
-		
-	}  
-	
 	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
 	      
 	    @Override  

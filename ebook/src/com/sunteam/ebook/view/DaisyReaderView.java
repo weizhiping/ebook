@@ -1293,7 +1293,7 @@ import android.view.View;
 		 if( isSpeakPage )
 		 {
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-			 TTSUtils.getInstance().speakTipsEx(tips);
+			 TTSUtils.getInstance().speakTips(tips);
 		 }
 		 else
 		 {
@@ -1529,17 +1529,5 @@ import android.view.View;
             }
             return false;
         }
-    });
-
-	@Override
-	public void onSpeakCompleted(String content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSpeakError(String content) {
-		// TODO Auto-generated method stub
-		
-	}  	
+    }); 	
 }

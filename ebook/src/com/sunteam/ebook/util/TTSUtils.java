@@ -2,11 +2,9 @@ package com.sunteam.ebook.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
 import com.iflytek.cloud.SpeechConstant;
@@ -66,16 +64,12 @@ public class TTSUtils
 	{
 		public void onSpeakCompleted();		//朗读完成
 		public void onSpeakError();			//朗读错误
-		
-		public void onSpeakCompleted(String content);		//朗读完成
-		public void onSpeakError(String content);			//朗读错误
 	}
 	
 	public enum SpeakForm
 	{
 		TIPS,	//提示
 		CONTENT,//内容
-		TIPS_CONTENT,	//先提示后内容
 	}	//朗读形式
 	
 	public enum SpeakStatus
@@ -220,23 +214,6 @@ public class TTSUtils
      *
      * @param text
      */
-	public void speakTipsAndContent( final String tips, final String content ) 
-	{
-		if( isSuccess && mTtsUtils != null )
-		{
-			mStrContent = content;
-			setTipsParam();	//设置参数
-			mTtsUtils.speak(tips);
-	        mSpeakStatus = SpeakStatus.SPEAK;
-	        mSpeakForm = SpeakForm.TIPS_CONTENT;
-		}
-    }
-	
-	/**
-     * 开始语音合成
-     *
-     * @param text
-     */
 	public void speakTips( final String text ) 
 	{
 		if( isSuccess && mTtsUtils != null )
@@ -245,23 +222,6 @@ public class TTSUtils
 			mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
-		}
-    }	
-
-	
-	/**
-     * 开始语音合成
-     *
-     * @param text
-     */
-	public void speakTipsEx( final String text ) 
-	{
-		if( isSuccess && mTtsUtils != null )
-		{
-			setTipsParam();	//设置参数
-			mTtsUtils.speak(text);
-	        //用于提示信息朗读，不记录状态
-        	mSpeakForm = SpeakForm.CONTENT;
 		}
     }
 	
@@ -314,7 +274,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -396,7 +356,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 				
 				return	true;
 			}
@@ -458,7 +418,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.SPEED, (speed*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语速
@@ -481,7 +441,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.PITCH, (pitch*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到语调
@@ -504,7 +464,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.VOLUME, (volume*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
 	}
 	
 	//得到音量
@@ -874,36 +834,23 @@ public class TTSUtils
 			}
 			
 			mSpeakStatus = SpeakStatus.STOP;
-			if( ( SpeakForm.TIPS_CONTENT == mSpeakForm ) && ( mStrContent != null ) )
+			
+			if (null == error)
 			{
-				if (null == error) {
-					// 合成完成
-					if (mOnTTSListener != null) {
-						mOnTTSListener.onSpeakCompleted(mStrContent);
-					}
-				} else {
-					// 合成错误
-					if (mOnTTSListener != null) {
-						mOnTTSListener.onSpeakError(mStrContent);
-					}
+				// 合成完成
+				if (mOnTTSListener != null) 
+				{
+					mOnTTSListener.onSpeakCompleted();
 				}
 			}
-			else
+			else 
 			{
-				if (null == error) {
-					// 合成完成
-					if (mOnTTSListener != null) {
-						mOnTTSListener.onSpeakCompleted();
-					}
-				} else {
-					// 合成错误
-					if (mOnTTSListener != null) {
-						mOnTTSListener.onSpeakError();
-					}
+				// 合成错误
+				if (mOnTTSListener != null) 
+				{
+					mOnTTSListener.onSpeakError();
 				}
 			}
-		}
-		
+		}		
 	};
-
 }

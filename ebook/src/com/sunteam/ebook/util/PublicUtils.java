@@ -145,12 +145,6 @@ public class PublicUtils
 		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 	}
 	
-	//显示提示信息并朗读，用于语言设置
-	public static void showToastEx( Context context, String tips )
-	{
-		TTSUtils.getInstance().speakTips(tips);
-		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
-	}	
 	//检查讯飞语音服务是否安装
 	public static boolean checkSpeechServiceInstalled(Context context)
 	{

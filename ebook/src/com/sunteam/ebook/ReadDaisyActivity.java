@@ -325,18 +325,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
             return false;
         }
     });
-
-	@Override
-	public void onSpeakCompleted(String content) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSpeakError(String content) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
 	      
