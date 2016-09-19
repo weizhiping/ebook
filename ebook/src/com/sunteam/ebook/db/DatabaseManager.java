@@ -217,9 +217,7 @@ public class DatabaseManager {
 				cursor.close();
 			}
 		}
-
 		db.close();
-
 	}
 
 	// 删除所有相关数据

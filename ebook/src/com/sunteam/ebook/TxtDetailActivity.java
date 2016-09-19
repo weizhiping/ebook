@@ -407,6 +407,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				int select = mMainView.getSelectItem();
 				if(0 == item){
 					FileInfo info = fileInfoList.get(select);
+					fileInfoList.remove(info);
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
