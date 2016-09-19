@@ -26,6 +26,7 @@ import com.sunteam.common.utils.Tools;
 import com.sunteam.dict.utils.DBUtil;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils;
@@ -290,8 +291,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
+		/*
 		String tips = this.getString(R.string.to_top);
 		PublicUtils.showToast(this, tips);
+		*/
+		CustomToast.showToast(this, this.getString(R.string.to_top), Toast.LENGTH_SHORT);
 	}
 
 	@Override

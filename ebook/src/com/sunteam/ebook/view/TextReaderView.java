@@ -956,7 +956,7 @@ import android.view.View;
 		 	case READ_MODE_ALL:			//全文朗读
 		 		mParagraphStartPos = 0;
 		 		mParagraphLength = 0;
-		 		nextSentence(true);
+		 		nextSentence(true, false, false);
 		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
 		 		int start = mReverseInfo.startPos;
@@ -968,7 +968,7 @@ import android.view.View;
 		 		int len = getNextParagraphLength( start );
 		 		mParagraphStartPos = start;
 		 		mParagraphLength = len;
-		 		nextSentence(true);
+		 		nextSentence(true, false, false);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
 		 		nextWord(true);
@@ -1241,6 +1241,7 @@ import android.view.View;
 		 
 		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
+		 boolean isTop = false;	//是否到头了
 		 
 		 if( preLine() )
 		 {
@@ -1250,19 +1251,22 @@ import android.view.View;
 			 {
 				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
 			 }
+			 
+			 isTop = false;
 		 }
 		 else
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 return;
 			 }
+			 
+			 isTop = true;
 		 }
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence(false);
+			 nextSentence(false, isTop, false);
 		 }
 		 else
 		 {
@@ -1281,6 +1285,10 @@ import android.view.View;
 			 }	//反显当前页第一行第一个字
 			 
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 if( isTop )
+			 {
+				 tips = mContext.getString(R.string.to_top1) + tips;
+			 }
 			 TTSUtils.getInstance().speakTips(tips);
 		 }
 	 }
@@ -1307,7 +1315,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence(false);
+				 nextSentence(false, false, false);
 			 }
 			 else
 			 {
@@ -1348,6 +1356,7 @@ import android.view.View;
 		 
 		 mReverseInfo.startPos = mOffset;
 		 mReverseInfo.len = 0;
+		 boolean isTop = false;	//是否到头了
 		 
 		 if( prePage() )
 		 {
@@ -1357,6 +1366,8 @@ import android.view.View;
 			 {
 				 mOnPageFlingListener.onPageFlingCompleted(mCurPage);
 			 }
+			 
+			 isTop = false;
 		 }
 		 else
 		 {
@@ -1365,12 +1376,12 @@ import android.view.View;
 				 mOnPageFlingListener.onPageFlingToTop();
 			 }
 			 
-			 return;
+			 isTop = true;
 		 }
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence(false);
+			 nextSentence(false, isTop, false);
 		 }
 		 else
 		 {
@@ -1389,6 +1400,10 @@ import android.view.View;
 			 }	//反显当前页第一行第一个字
 			 
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 if( isTop )
+			 {
+				 tips = mContext.getString(R.string.to_top1) + tips;
+			 }
 			 TTSUtils.getInstance().speakTips(tips);
 		 }
 	 }
@@ -1415,7 +1430,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence(false);
+				 nextSentence(false, false, false);
 			 }
 			 else
 			 {
@@ -1463,7 +1478,7 @@ import android.view.View;
 			 }
 			 else if( status == SpeakStatus.STOP )
 			 {
-				 nextSentence(false);
+				 nextSentence(false, false, false);
 			 }
 		 }
 		 else
@@ -1471,7 +1486,7 @@ import android.view.View;
 			 setReadMode(ReadMode.READ_MODE_ALL);
 			 if( status == SpeakStatus.STOP )
 			 {
-				 nextSentence(false);
+				 nextSentence(false, false, false);
 			 }
 			 else
 			 {
@@ -1498,7 +1513,7 @@ import android.view.View;
 			 {
 			 	case READ_MODE_ALL:			//全文朗读
 			 	case READ_MODE_PARAGRAPH:	//逐段朗读
-			 		nextSentence(false);
+			 		nextSentence(false, false, false);
 			 		break;
 			 	case READ_MODE_WORD:		//逐词朗读
 			 		nextWord(false);
@@ -1628,6 +1643,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
+				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -1642,6 +1658,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
+					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -1649,7 +1666,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
+				 readReverseText(false, false, false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1658,7 +1675,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = oldReverseInfo.startPos;
 				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);			//朗读反显文字
+				 readReverseText(false, false, false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1688,7 +1705,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
+			 readReverseText(isSpeakPage, false, false);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1707,6 +1724,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
+				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -1721,6 +1739,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
+					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -1731,13 +1750,14 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
+						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 					 }
 				 }
 				 else
 				 {
 					 mReverseInfo.startPos = ri.startPos;
 					 mReverseInfo.len = ri.len;
-					 readReverseText(false);			//朗读反显文字
+					 readReverseText(false, false, false);			//朗读反显文字
 					 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 					 this.invalidate();
 				 }
@@ -1754,6 +1774,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
+						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 					 }
 				 }
 				 else
@@ -1763,6 +1784,7 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
+							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 						 }
 					 }
 					 else
@@ -1770,7 +1792,7 @@ import android.view.View;
 						 mReverseInfo.startPos = oldReverseInfo.startPos;
 						 mReverseInfo.len = oldReverseInfo.len;
 						 
-						 readReverseText(false);			//朗读反显文字
+						 readReverseText(false, false, false);			//朗读反显文字
 						 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 						 this.invalidate();
 					 }
@@ -1803,7 +1825,7 @@ import android.view.View;
 		 {
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
+			 readReverseText(isSpeakPage, false, false);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -1827,6 +1849,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
+				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 			 }
 		 }
 		 else
@@ -1850,11 +1873,12 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
+							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 						 }
 					 }
 					 else
 					 {
-						 nextSentence( false );
+						 nextSentence( false, false, false );
 					 }
 					 return;
 				 }
@@ -1863,6 +1887,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
+				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 			 }
 		 }
 	 }
@@ -1908,7 +1933,7 @@ import android.view.View;
 						 return;
 					 }	//跳过空行
 					 
-					 nextSentence( isSpeakPage );
+					 nextSentence( isSpeakPage, false, false );
 					 return;
 				 }
 			 }
@@ -1929,6 +1954,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
+				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -1943,6 +1969,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
+					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -1950,7 +1977,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = ri.startPos;
 				 mReverseInfo.len = ri.len;
-				 readReverseText(false);			//朗读反显文字
+				 readReverseText(false, false, false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1959,7 +1986,7 @@ import android.view.View;
 			 {
 				 mReverseInfo.startPos = oldReverseInfo.startPos;
 				 mReverseInfo.len = oldReverseInfo.len;
-				 readReverseText(false);			//朗读反显文字
+				 readReverseText(false, false, false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
 				 this.invalidate();
 				 break;
@@ -1971,7 +1998,7 @@ import android.view.View;
 	 }	 
 	 
 	 //到下一个句子
-	 private void nextSentence( boolean isSpeakPage )
+	 private void nextSentence( boolean isSpeakPage, boolean isTop, boolean isBottom )
 	 {
 		 int start = mReverseInfo.startPos + mReverseInfo.len;
 		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
@@ -2001,7 +2028,7 @@ import android.view.View;
 			 
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage);			//朗读反显文字
+			 readReverseText(isSpeakPage, isTop, isBottom);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 this.invalidate();
 		 }
@@ -2315,7 +2342,7 @@ import android.view.View;
 	 }
 	 
 	 //朗读反显文字
-	 private void readReverseText( boolean isSpeakPage )
+	 private void readReverseText( boolean isSpeakPage, boolean isTop, boolean isBottom )
 	 {
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
@@ -2326,6 +2353,29 @@ import android.view.View;
 				 {
 					 mIsAuto = false;
 					 tips = mFilename+"，"+tips;
+				 }
+				 
+				 if( isTop )
+				 {
+					 tips = mContext.getString(R.string.to_top1) + tips;
+				 }
+				 else if( isBottom )
+				 {
+					 tips = mContext.getString(R.string.to_bottom1) + tips;
+				 }
+				 
+				 TTSUtils.getInstance().speakTips(tips);
+			 }
+			 else
+			 {
+				 String tips = "";
+				 if( isTop )
+				 {
+					 tips = mContext.getString(R.string.to_top1) + tips;
+				 }
+				 else if( isBottom )
+				 {
+					 tips = mContext.getString(R.string.to_bottom1) + tips;
 				 }
 				 
 				 TTSUtils.getInstance().speakTips(tips);
@@ -2354,6 +2404,14 @@ import android.view.View;
 		 
 		 if( null != str )
 		 {
+			 if( isTop )
+			 {
+				 str = mContext.getString(R.string.to_top1) + str;
+			 }
+			 else if( isBottom )
+			 {
+				 str = mContext.getString(R.string.to_bottom1) + str;
+			 }
 			 TTSUtils.getInstance().speakContent(str);
 		 }
 		 else
@@ -2369,10 +2427,29 @@ import android.view.View;
 						 mIsAuto = false;
 						 tips = mFilename+"，"+tips;
 					 }
-					 TTSUtils.getInstance().speakContent(tips+text);
+					 
+					 String content = tips+text;
+					 if( isTop )
+					 {
+						 content = mContext.getString(R.string.to_top1) + content;
+					 }
+					 else if( isBottom )
+					 {
+						 content = mContext.getString(R.string.to_bottom1) + content;
+					 }
+					 
+					 TTSUtils.getInstance().speakContent(content);
 				 }
 				 else
 				 {
+					 if( isTop )
+					 {
+						 text = mContext.getString(R.string.to_top1) + text;
+					 }
+					 else if( isBottom )
+					 {
+						 text = mContext.getString(R.string.to_bottom1) + text;
+					 }
 					 TTSUtils.getInstance().speakContent(text);
 				 }
 			 } 
@@ -2474,6 +2551,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
+				 					TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2492,6 +2570,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
+				 					TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2581,7 +2660,7 @@ import android.view.View;
             		{
             			case READ_MODE_ALL:			//全文朗读
             		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-            		 		nextSentence(false);
+            		 		nextSentence(false, false, false);
             		 		break;
             		 	case READ_MODE_WORD:		//逐词朗读
             		 		break;
