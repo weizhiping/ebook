@@ -151,6 +151,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 			if(null != path){
 				MediaPlayerUtils.getInstance().play(path);
 			}
+		}else{
+			MediaPlayerUtils.getInstance().stop();
 		}
 	}
 	

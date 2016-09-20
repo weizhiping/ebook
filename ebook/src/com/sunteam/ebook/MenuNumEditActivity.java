@@ -116,7 +116,9 @@ public class MenuNumEditActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
-
+			if(2 == flage){
+				MediaPlayerUtils.getInstance().stop();
+			}
 			break;
 		case KeyEvent.KEYCODE_DPAD_UP: // 上
 			number--;
@@ -140,6 +142,7 @@ public class MenuNumEditActivity extends Activity {
 				int volume = (int)(number * 1.5);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
 				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.setting_success));
+				MediaPlayerUtils.getInstance().stop();
 			}
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
