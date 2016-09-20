@@ -142,7 +142,8 @@ public class FileOperateUtils {
 		for (File f : files) {
 			if (!isHideFile(f)) {
 				if (f.isDirectory()) {
-					if (hasSuffixFile(f, suffix, suffixDocx)) {
+					boolean hasFile = hasSuffixFile(f, suffix, suffixDocx);
+					if (hasFile) {
 						fileList.add(f);
 					}
 				} else {
@@ -417,12 +418,12 @@ public class FileOperateUtils {
 			return bIsFilter;
 		for (File f : file.listFiles()) {
 			if (!f.isDirectory()) {
-				if (suffix.equalsIgnoreCase(getFileExtensions(f))
-						|| getFileExtensions(f).equalsIgnoreCase(suffixTwo)) {
+				if ((suffix.equalsIgnoreCase(getFileExtensions(f))
+						|| getFileExtensions(f).equalsIgnoreCase(suffixTwo))&& !isHideFile(f)) {
 					return true;
 				}
 			} else {
-				hasSuffixFile(f, suffix, suffixTwo);
+				bIsFilter = hasSuffixFile(f, suffix, suffixTwo);
 			}
 		}
 		return bIsFilter;
@@ -472,7 +473,7 @@ public class FileOperateUtils {
 					return f.getPath();
 				}
 			} else {
-				hasDaisyOpfFile(f);
+				path = hasDaisyOpfFile(f);
 			}
 		}
 		return path;
