@@ -2386,7 +2386,8 @@ import android.view.View;
 		 String str = null;
 		 
 		 if( ( ( mMbBuf[mReverseInfo.startPos] >= 0 ) && ( 1 == mReverseInfo.len ) ) ||		//英文
-				 ( ( mMbBuf[mReverseInfo.startPos] < 0 ) && ( 2 == mReverseInfo.len ) ) )	//中文
+				 ( ( mMbBuf[mReverseInfo.startPos] < 0 ) && ( 2 == mReverseInfo.len ) ) ||	//中文
+				 ( ( 2 == mReverseInfo.len ) && ( 0x0d == mMbBuf[mReverseInfo.startPos] ) && ( 0x0a == mMbBuf[mReverseInfo.startPos+1] ) ) )	
 		 {
 			 Locale locale = mContext.getResources().getConfiguration().locale;
 			 String language = locale.getLanguage();
