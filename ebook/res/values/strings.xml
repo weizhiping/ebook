@@ -56,7 +56,7 @@
 	<string name="add_mark_has">书签名已存在</string>
 	<string name="already_read">已经读完</string>
 	<string name="has_finished_reading_the_last_book">已经读完最后一本书</string>
-	
+	<string name="input_page_num">请输入页码</string>
     <string-array name="array_menu">
         <item>书签管理</item>
         <item>跳至开头</item>
