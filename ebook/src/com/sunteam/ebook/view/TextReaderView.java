@@ -2284,7 +2284,7 @@ import android.view.View;
 				 
 				 return ri;
 			 }
-			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] ) )	//英文或者数字
+			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] ) || isEnSeparator( mMbBuf[i] ) )	//英文或者数字或者英文符号
 			 {
 				 ReverseInfo ri = new ReverseInfo(i, 1);
 				 i++;
@@ -2758,6 +2758,20 @@ import android.view.View;
 		 if( 0x07 == ch || 0x08 == ch || 0x09 == ch || 0x0a == ch || 0x0b == ch || 0x0c == ch || 0x0d == ch )
 		 {
 			 return	true;
+		 }
+		 
+		 return	false;
+	 }
+	 
+	 //是否是英文符号
+	 private boolean isEnSeparator( byte ch)
+	 {
+		 for( int k = 0; k < EN_SEPARATOR.length; k++ )
+		 {
+			 if( EN_SEPARATOR[k] == ch )
+			 {
+				 return true;
+			 }
 		 }
 		 
 		 return	false;
