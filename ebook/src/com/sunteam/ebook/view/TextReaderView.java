@@ -1464,34 +1464,20 @@ import android.view.View;
 	 //确定
 	 public void enter()
 	 {
+		 setReadMode(ReadMode.READ_MODE_ALL);
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 
-		 if( ReadMode.READ_MODE_ALL == mReadMode )	//如果当前是全文朗读模式
+		 if( status == SpeakStatus.SPEAK )
 		 {
-			 if( status == SpeakStatus.SPEAK )
-			 {
-				 TTSUtils.getInstance().pause();
-			 }
-			 else if( status == SpeakStatus.PAUSE )
-			 {
-				 TTSUtils.getInstance().resume();
-			 }
-			 else if( status == SpeakStatus.STOP )
-			 {
-				 nextSentence(false, false, false);
-			 }
+			 TTSUtils.getInstance().pause();
 		 }
-		 else
+		 else if( status == SpeakStatus.PAUSE )
 		 {
-			 setReadMode(ReadMode.READ_MODE_ALL);
-			 if( status == SpeakStatus.STOP )
-			 {
-				 nextSentence(false, false, false);
-			 }
-			 else
-			 {
-				 TTSUtils.getInstance().stop();
-			 }
+			 TTSUtils.getInstance().resume();
+		 }
+		 else if( status == SpeakStatus.STOP )
+		 {
+			 nextSentence(false, false, false);
 		 }
 	 }
 	 
