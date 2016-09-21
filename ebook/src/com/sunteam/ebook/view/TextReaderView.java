@@ -2603,6 +2603,11 @@ import android.view.View;
 			 return;
 		 }
 		 
+		 if( mSplitInfoList.isEmpty() )
+		 {
+			 return;
+		 }
+		 
 		 /*
 		 后鼎当时是在语点中测试停止时，发音进度百分比与要发音的字符串长度乘积得到停止发音位置：
 		 int l = speakText.length;
