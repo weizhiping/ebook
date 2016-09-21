@@ -374,6 +374,13 @@ public class MainView extends View implements OnTTSListener
 		// TODO Auto-generated method stub	
 	}
 	
+	//发音进度
+	@Override
+	public void onSpeakProgress(int percent, int beginPos, int endPos) 
+	{
+		// TODO Auto-generated method stub	
+	}
+		
 	private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) 

@@ -1480,7 +1480,14 @@ import android.view.View;
 		// TODO Auto-generated method stub
 		mHandler.sendEmptyMessage(MSG_SPEAK_ERROR);
 	}
-
+	
+	//发音进度
+	@Override
+	public void onSpeakProgress(int percent, int beginPos, int endPos) 
+	{
+		// TODO Auto-generated method stub	
+	}
+	
 	//播放完成
 	@Override
 	public void onPlayCompleted() 

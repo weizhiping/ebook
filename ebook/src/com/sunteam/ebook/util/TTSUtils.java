@@ -64,6 +64,7 @@ public class TTSUtils
 	{
 		public void onSpeakCompleted();		//朗读完成
 		public void onSpeakError();			//朗读错误
+		public void onSpeakProgress(int percent, int beginPos, int endPos);	//发音进度
 	}
 	
 	public enum SpeakForm
@@ -822,7 +823,10 @@ public class TTSUtils
 
 		// 发音进度
 		public void onSpeakProgress(int percent, int beginPos, int endPos) {
-
+			if (mOnTTSListener != null) 
+			{
+				mOnTTSListener.onSpeakProgress(percent, beginPos, endPos);
+			}
 		}
 
 		// 发音结束
