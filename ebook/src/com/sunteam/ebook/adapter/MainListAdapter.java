@@ -95,13 +95,20 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//按了左键
 	public void left()
 	{
-		int first = mLv.getFirstVisiblePosition();
-		int last = mLv.getLastVisiblePosition();	//得到当前屏最后一条记录的序号
-		this.selectItem = first-(last-first+1);
-		
-		if( this.selectItem < 0 )
+		if( this.selectItem == 0 )
 		{
-			this.selectItem = 0;
+			this.selectItem = gListData.size() - 1;
+		}
+		else
+		{
+			int first = mLv.getFirstVisiblePosition();
+			int last = mLv.getLastVisiblePosition();	//得到当前屏最后一条记录的序号
+			this.selectItem = first-(last-first+1);
+			
+			if( this.selectItem < 0 )
+			{
+				this.selectItem = 0;
+			}
 		}
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
@@ -114,12 +121,19 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//按了右键
 	public void right()
 	{
-		int last = mLv.getLastVisiblePosition();	//得到当前屏最后一条记录的序号
-		this.selectItem = last+1;
-		
-		if( this.selectItem >= gListData.size() )
+		if( this.selectItem == gListData.size() - 1 )
 		{
-			this.selectItem = gListData.size()-1;
+			this.selectItem = 0;
+		}
+		else
+		{
+			int last = mLv.getLastVisiblePosition();	//得到当前屏最后一条记录的序号
+			this.selectItem = last+1;
+			
+			if( this.selectItem >= gListData.size() )
+			{
+				this.selectItem = gListData.size()-1;
+			}
 		}
 		
 		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
