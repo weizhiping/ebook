@@ -849,6 +849,11 @@ import android.view.View;
 		 }
 		 
 		 mCurPage = pi.page;
+		 
+		 if( mOnPageFlingListener != null )
+		 {
+			 mOnPageFlingListener.onLoadCompleted(getPageCount(), mCurPage);
+		 }
 	 }
 	 
 	 //得到当前页
@@ -2046,6 +2051,7 @@ import android.view.View;
 				 mReverseInfo.len = oldReverseInfo.len;
 				 readReverseText(false, false, false);			//朗读反显文字
 				 recalcLineNumber(Action.PRE_LINE);	//重新计算当前页起始位置(行号)
+				 calcCurPage();
 				 this.invalidate();
 				 break;
 			 }
@@ -2088,6 +2094,7 @@ import android.view.View;
 			 mReverseInfo.len = ri.len;
 			 readReverseText(isSpeakPage, isTop, isBottom);			//朗读反显文字
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 calcCurPage();
 			 this.invalidate();
 		 }
 	 }
