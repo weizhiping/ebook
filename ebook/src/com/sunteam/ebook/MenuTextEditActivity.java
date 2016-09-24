@@ -112,6 +112,8 @@ public class MenuTextEditActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
+			PublicUtils.showToast(MenuTextEditActivity.this, getResources()
+					.getString(R.string.add_mark_cancel));
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:

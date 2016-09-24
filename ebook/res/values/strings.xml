@@ -53,6 +53,7 @@
 	<string name="dialog_clear_su">清空成功</string>
 	<string name="no_file">无文件</string>
 	<string name="add_mark_su">添加书签成功</string>
+	<string name="add_mark_cancel">取消增加书签</string>
 	<string name="add_mark_has">书签名已存在</string>
 	<string name="already_read">已经读完</string>
 	<string name="has_finished_reading_the_last_book">已经读完最后一本书</string>

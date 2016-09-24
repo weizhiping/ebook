@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
@@ -201,7 +202,7 @@ public class MenuPageEditActivity extends Activity {
 			setPage();
 			break;
 		default:
-			TTSUtils.getInstance().speakMenu(getResources().getString(R.string.input_page_num) + "，" + number);
+			PublicUtils.showToast(this, getResources().getString(R.string.input_page_num)+ "，" + number);
 			break;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -210,7 +211,7 @@ public class MenuPageEditActivity extends Activity {
 	private void setPage(){
 		if(0 == number){
 			numView.setText("");
-			TTSUtils.getInstance().speakMenu(getResources().getString(R.string.input_page_num));
+			PublicUtils.showToast(this, getResources().getString(R.string.input_page_num));
 		}else{
 			if(number > totalPage){
 				number = 1;
