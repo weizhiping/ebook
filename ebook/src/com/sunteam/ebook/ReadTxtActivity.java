@@ -252,6 +252,9 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 				break;
 			case KeyEvent.KEYCODE_STAR:			//反查
 				break;
+			case KeyEvent.KEYCODE_POUND:		//#号键
+				mTextReaderView.readPage();			//朗读页码
+				break;
 			default:
 				break;
 		}

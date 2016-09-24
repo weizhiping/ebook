@@ -125,8 +125,9 @@ import android.view.View;
 	 private int mParagraphStartPos = 0;	//逐段朗读模式下段落开始位置
 	 private int mParagraphLength = 0;		//逐段朗读模式下段落长度
 	 private ReverseInfo mSelectInfo = new ReverseInfo();	//选词
-	 private String mFilename = null;		//文件名
+	 private String mFilename = null;			//文件名
 	 private boolean mIsAuto = false;		//是否是自动朗读进入的，如果是还需要读文件名称。
+	 private int mPercent = 0;					//当前朗读进度
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -217,6 +218,63 @@ import android.view.View;
 			 
 			 this.invalidate();
 		 }
+	 }
+	 
+	 //朗读页码
+	 public void readPage()
+	 {
+		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
+		 TTSUtils.getInstance().stop();
+		 
+		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+		 {
+			 if( mReverseInfo != null && mReverseInfo.len > 0 )
+			 {
+				 int length = (mReverseInfo.len * mPercent + 50)/ 100;
+				 if( length < mReverseInfo.len )
+				 {
+					 int i = mReverseInfo.startPos;
+					 for( ;i < mReverseInfo.startPos+length;  )	//需要判断当前位置是否为汉字的第二个字节
+					 {
+						 if( mMbBuf[i] < 0 )	//汉字
+						 {
+							 i += 2;
+						 }
+						 else
+						 {
+							 i++;
+						 }
+						 
+						 if( i > mReverseInfo.startPos+length )
+						 {
+							 length++;
+						 }
+					 }
+					 
+					 if( length < mReverseInfo.len )
+					 {
+						 try 
+						 {
+							 String str = new String(mMbBuf, mReverseInfo.startPos+length, mReverseInfo.len-length, CHARSET_NAME);	//转换成指定编码
+							 if( !TextUtils.isEmpty(str))
+							 {
+								 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+								 TTSUtils.getInstance().speakContent(tips+"，"+str);
+								 
+								 return;
+							 }
+						 } 
+						 catch (UnsupportedEncodingException e) 
+						 {
+							 e.printStackTrace();
+						 }
+					 }
+				 }
+			 }
+		 }
+
+		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+		 TTSUtils.getInstance().speakTips(tips);
 	 }
 	 
 	 //得到反显内容
@@ -2857,6 +2915,7 @@ import android.view.View;
 	public void onSpeakProgress(int percent, int beginPos, int endPos) 
 	{
 		// TODO Auto-generated method stub	
+		mPercent = percent;
 		recalcLineNumberEx( percent, beginPos, endPos );
 	}
 		
