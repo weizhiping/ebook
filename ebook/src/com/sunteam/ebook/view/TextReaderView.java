@@ -1873,6 +1873,12 @@ import android.view.View;
 					 }
 					 else
 					 {
+						 if( isFilterParagraph( mParagraphStartPos, mParagraphLength ) )
+						 {
+							 preParagraph();	
+							 return;
+						 }	//跳过空行
+						 
 						 nextSentence( false, false, false );
 					 }
 					 return;
@@ -1921,8 +1927,7 @@ import android.view.View;
 					 mParagraphStartPos = start;
 					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
 					 
-					 if( ( ( 1 == mParagraphLength) && ( 0x0a == mMbBuf[mParagraphStartPos] ) ) ||
-							 ( ( 2 == mParagraphLength) && ( 0x0d == mMbBuf[mParagraphStartPos] ) && ( 0x0a == mMbBuf[mParagraphStartPos+1] ) ) )
+					 if( isFilterParagraph( mParagraphStartPos, mParagraphLength ) )
 					 {
 						 nextParagraph( isSpeakPage );	
 						 return;
@@ -2204,6 +2209,57 @@ import android.view.View;
 		 
 		 return	null;
 	 }	 
+	 
+	 //是否要过滤掉此段
+	 private boolean isFilterParagraph( int start, int len )
+	 {
+		 if( start == mMbBufLen )	//已经到底了
+		 {
+			 return	false;
+		 }
+		 
+		 int end = start + len;
+		 
+		 for( int i  = start; i < end;  )
+		 {
+			 if( mMbBuf[i] < 0 )	//汉字
+			 {
+				 boolean isBreak = false;
+				 char ch = PublicUtils.byte2char(mMbBuf, i);
+				 if(  0xA1A1 == ch )
+				 {
+					 i += 2;
+					 continue;
+				 }
+				 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+				 {
+					 if( CN_SEPARATOR[k] == ch )
+					 {
+						 isBreak = true;
+						 break;
+					 }
+				 }	//此为汉字符号
+				 
+				 i += 2;
+				 if( isBreak )
+				 {
+					 continue;
+				 }
+				 
+				 return	false;	//证明此段中有可以朗读的汉字
+			 }
+			 else if( isAlpha( mMbBuf[i] ) || isNumber( mMbBuf[i] )  )	//英文或者数字
+			 {
+				 return	false;	//证明此段中有可以朗读的英文或者数字
+			 }
+			 else
+			 {
+				 i++;
+			 }
+		 }
+		 
+		 return	true;
+	 }
 	 
 	 //得到下一个句子反显信息(逐段和全文模式)
 	 private ReverseInfo getNextReverseSentenceInfo( int start )
