@@ -208,10 +208,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 			case KeyEvent.KEYCODE_1:
 			case KeyEvent.KEYCODE_NUMPAD_1:		//开始选词
 				mTextReaderView.startSelect();
+				PublicUtils.showToast(this, this.getString(R.string.select_start));
 				return	true;
 			case KeyEvent.KEYCODE_3:
 			case KeyEvent.KEYCODE_NUMPAD_3:		//结束选词
 				mTextReaderView.endSelect();
+				PublicUtils.showToast(this, this.getString(R.string.select_end));
 				return	true;
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询

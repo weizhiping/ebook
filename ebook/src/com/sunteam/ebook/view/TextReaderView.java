@@ -186,6 +186,7 @@ import android.view.View;
 		 }
 		 
 		 mSelectInfo.startPos = mReverseInfo.startPos;
+		 mSelectInfo.len = mReverseInfo.len;
 	 }
 	 
 	 //结束选词
@@ -196,7 +197,15 @@ import android.view.View;
 			 return;
 		 }
 		 
-		 mSelectInfo.len = mReverseInfo.startPos+mReverseInfo.len-mSelectInfo.startPos;
+		 if( mReverseInfo.startPos >= mSelectInfo.startPos )
+		 {
+			 mSelectInfo.len = mReverseInfo.startPos + mReverseInfo.len - mSelectInfo.startPos;
+		 }
+		 else
+		 {
+			 mSelectInfo.len = mSelectInfo.startPos + mSelectInfo.len - mReverseInfo.startPos;
+			 mSelectInfo.startPos = mReverseInfo.startPos;
+		 }
 		 
 		 if( ( mSelectInfo.startPos >= mOffset ) && ( mSelectInfo.len > 0 ) )
 		 {
