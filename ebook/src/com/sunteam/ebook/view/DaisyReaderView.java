@@ -1283,7 +1283,7 @@ import android.view.View;
 			 if( isSpeakPage )
 			 {
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-				 TTSUtils.getInstance().speakTips(tips);
+				 TTSUtils.getInstance().speakContent(tips);
 			 }
 			 return;
 		 }
@@ -1293,7 +1293,7 @@ import android.view.View;
 		 if( isSpeakPage )
 		 {
 			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
-			 TTSUtils.getInstance().speakTips(tips);
+			 TTSUtils.getInstance().speakContent(tips);
 		 }
 		 else
 		 {

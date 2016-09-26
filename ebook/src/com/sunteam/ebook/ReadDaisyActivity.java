@@ -91,12 +91,13 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
     	mDaisyReaderView.setBackgroundColor(tools.getBackgroundColor());
     	//mDaisyReaderView.setTextSize(tools.getFontSize());
     	
+    	registerReceiver();
+    	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		PublicUtils.showToast(this, this.getString(R.string.checksum_error));
     		back();
     	}
-    	registerReceiver();
 	}
 	
 	private void registerReceiver(){
@@ -173,14 +174,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 				}
 			}
 		}
-	}
-	
-	@Override
-	public void onDestroy()
-	{
-		unregisterReceiver(menuReceiver);
-		unregisterReceiver(shutReceiver);
-		super.onDestroy();
 	}
 	
 	@Override
@@ -268,6 +261,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	private void back()
 	{
 		unregisterReceiver(menuReceiver);
+		unregisterReceiver(shutReceiver);
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 		
