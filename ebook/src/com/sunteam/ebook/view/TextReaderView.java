@@ -1031,16 +1031,9 @@ import android.view.View;
 		 		nextSentence(true, false, false);
 		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		int start = mReverseInfo.startPos;
-		 		if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
-		 		{
-		 			start = mSplitInfoList.get(mLineNumber).startPos;
-		 		}
-				 
-		 		int len = getNextParagraphLength( start );
-		 		mParagraphStartPos = start;
-		 		mParagraphLength = len;
-		 		nextSentence(true, false, false);
+		 		mParagraphStartPos = 0;
+		 		mParagraphLength = 0;
+		 		nextParagraph(true);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
 		 		nextWord(true);
