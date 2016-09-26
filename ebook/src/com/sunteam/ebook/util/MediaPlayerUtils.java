@@ -19,8 +19,6 @@ public class MediaPlayerUtils
 	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
-	private Timer mTimer = null;
-	private TimerTask mTimerTask = null;
 	
 	public interface OnMediaPlayerListener 
 	{
@@ -94,19 +92,7 @@ public class MediaPlayerUtils
 	
 	//停止
 	public void stop()
-	{		
-		if( mTimer != null )
-		{
-			mTimer.cancel();
-			mTimer = null;
-		}
-		
-		if( mTimerTask != null )
-		{
-			mTimerTask.cancel();
-			mTimerTask = null;
-		}
-		
+	{
 		if( mMediaPlayer != null )
 		{
 			if( PlayStatus.STOP != mPlayStatus )
@@ -139,44 +125,32 @@ public class MediaPlayerUtils
 				mMediaPlayer.start();
 				mPlayStatus = PlayStatus.PLAY;
 				
-				mTimer = new Timer();    
-				mTimerTask = new TimerTask() 
+				new android.os.CountDownTimer( endTime-startTime, 1000 )
 				{
-					@Override    
-					public void run() 
+					@Override
+					public void onTick(long millisUntilFinished) 
 					{
-						try
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onFinish() 
+					{
+						// TODO Auto-generated method stub
+						if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
 						{
-		            		int time = mMediaPlayer.getCurrentPosition();	//获得歌曲当前播放的位置
-		        			if( time >= endTime )
-		        			{
-		        				mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
-		        			}
+							mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
 						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-                    }    
-                };   
-                mTimer.schedule(mTimerTask, 0, 10);   
+					}
+					
+				}.start();  
 				
 				mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
 					public void onCompletion(MediaPlayer mp) 
 					{										
 						// TODO Auto-generated method stub
-						if( mTimer != null )
-						{
-							mTimer.cancel();
-							mTimer = null;
-						}
-						
-						if( mTimerTask != null )
-						{
-							mTimerTask.cancel();
-							mTimerTask = null;
-						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -191,17 +165,6 @@ public class MediaPlayerUtils
 					@Override
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
-						if( mTimer != null )
-						{
-							mTimer.cancel();
-							mTimer = null;
-						}
-						
-						if( mTimerTask != null )
-						{
-							mTimerTask.cancel();
-							mTimerTask = null;
-						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -261,17 +224,6 @@ public class MediaPlayerUtils
 					public void onCompletion(MediaPlayer mp) 
 					{										
 						// TODO Auto-generated method stub
-						if( mTimer != null )
-						{
-							mTimer.cancel();
-							mTimer = null;
-						}
-						
-						if( mTimerTask != null )
-						{
-							mTimerTask.cancel();
-							mTimerTask = null;
-						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;
@@ -286,17 +238,6 @@ public class MediaPlayerUtils
 					@Override
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
-						if( mTimer != null )
-						{
-							mTimer.cancel();
-							mTimer = null;
-						}
-						
-						if( mTimerTask != null )
-						{
-							mTimerTask.cancel();
-							mTimerTask = null;
-						}
 						mPlayStatus = PlayStatus.STOP;
 						mMediaPlayer.release();
 						mMediaPlayer = null;

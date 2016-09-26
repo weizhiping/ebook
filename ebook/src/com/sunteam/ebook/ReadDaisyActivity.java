@@ -95,7 +95,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
     	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
-    		PublicUtils.showToast(this, this.getString(R.string.checksum_error));
+    		//PublicUtils.showToast(this, this.getString(R.string.checksum_error));
     		back();
     	}
 	}
@@ -260,8 +260,16 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	//退出此界面
 	private void back()
 	{
-		unregisterReceiver(menuReceiver);
-		unregisterReceiver(shutReceiver);
+		if( menuReceiver != null )
+		{
+			unregisterReceiver(menuReceiver);
+			menuReceiver = null;
+		}
+		if( shutReceiver != null )
+		{
+			unregisterReceiver(shutReceiver);
+			shutReceiver = null;
+		}
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 		
