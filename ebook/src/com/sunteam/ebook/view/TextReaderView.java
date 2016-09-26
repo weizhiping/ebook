@@ -2429,11 +2429,19 @@ import android.view.View;
 					 {
 						 ri.len++;
 						 
-						 for( int k = 0; k < EN_SEPARATOR.length; k++ )
+						 if( ( 0x3A == mMbBuf[j] ) && ( j+1 < mMbBufLen ) && isNumber( mMbBuf[j-1] ) && isNumber( mMbBuf[j+1] ) )	//是数字
 						 {
-							 if( EN_SEPARATOR[k] == mMbBuf[j] )
+							 
+						 }
+						 else
+						 {
+							 for( int k = 0; k < EN_SEPARATOR.length; k++ )
 							 {
-								 return ri;
+								 if( EN_SEPARATOR[k] == mMbBuf[j] )
+								 {
+									 
+									 return ri;
+								 }
 							 }
 						 }
 						 
