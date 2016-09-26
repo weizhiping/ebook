@@ -112,11 +112,18 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			wantToCheckActivity(true,title);
 			break;
 		case 3:
-			SuperDialog dialog = new SuperDialog(this);
-			dialog.showSuperDialog(R.string.dialog_clear);
-			dialog.initeCallBack(this);
-			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_clear)
-					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+			ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
+			if(0 < fileInfos.size()){
+				SuperDialog dialog = new SuperDialog(this);
+				dialog.showSuperDialog(R.string.dialog_clear);
+				dialog.initeCallBack(this);
+				TTSUtils.getInstance().speakMenu(getString(R.string.dialog_clear)
+						+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+			}else{
+				PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null));
+				ScreenManager.getScreenManager().popAllActivityExceptOne();
+			}
+			
 			break;
 		}
 	}

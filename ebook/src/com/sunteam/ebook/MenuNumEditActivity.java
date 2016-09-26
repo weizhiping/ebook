@@ -161,6 +161,8 @@ public class MenuNumEditActivity extends Activity {
 			TTSUtils.getInstance().testPitch(number,number+"");
 		}else{
 			TTSUtils.getInstance().speakMenu(number +"");
+			int volume = (int)(number * 1.5);
+			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
 		}
 		return super.onKeyDown(keyCode, event);
 	}

@@ -68,6 +68,7 @@ public class MenuMusicDetailActivity extends Activity implements
 			}
 		}else if(0 < musicPosition){
 			mMainView.setSelection(musicPosition);	
+			
 		}
 	}
 

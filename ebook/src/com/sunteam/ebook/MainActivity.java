@@ -73,8 +73,8 @@ public class MainActivity extends Activity implements OnEnterListener
     	DatabaseManager manager = new DatabaseManager(this);
     	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
     	File dir = new File(FileOperateUtils.getMusicPath());
-		if (null == dir || !dir.isDirectory()){
-			dir.mkdir();
+		if (!dir.exists() && !dir.isDirectory()){
+			dir.mkdirs();
 		}
     }
     

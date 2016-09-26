@@ -389,7 +389,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if(RESULT_OK == resultCode){
-			switch (requestCode) {
+			switch (requestCode) { 
 			case EbookConstants.REQUEST_CODE: // 阅读器返回
 				if( data != null )
 				{
@@ -417,6 +417,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
 					TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_clear_su));
+					finish();
 				}else{
 					insertToDb();
 				}
