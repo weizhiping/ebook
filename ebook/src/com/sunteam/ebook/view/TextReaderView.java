@@ -879,7 +879,7 @@ import android.view.View;
 		 TTSUtils.getInstance().stop();
 		 mCurPage = page;
 		 mLineNumber = (mCurPage-1)*mLineCount;
-		 mReverseInfo.startPos = mOffset;
+		 mReverseInfo.startPos = mSplitInfoList.get(mLineNumber).startPos;
 		 mReverseInfo.len = 0;
 		 this.invalidate();
 		 
