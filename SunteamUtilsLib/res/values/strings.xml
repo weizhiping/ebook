@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="speech_app_id">577ddcf7</string>
+
+    <string-array name="langtype_list">
+        <item>zh_cn</item>
+        <item>zh_big5</item>
+        <item>en_us</item>
+    </string-array>
+
+</resources>

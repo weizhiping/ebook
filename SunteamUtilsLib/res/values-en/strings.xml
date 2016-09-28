@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    <string name="ok">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <string-array name="commoncmd_list">
+        <item>up</item>
+        <item>down</item>
+        <item>confirm</item>
+        <item>quit</item>
+    </string-array>
+
+</resources>
