@@ -16,6 +16,7 @@ import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
+import com.sunteam.ebook.util.TTSUtils.SpeakForm;
 import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.util.WordExplainUtils;
 
@@ -127,7 +128,8 @@ import android.view.View;
 	 private ReverseInfo mSelectInfo = new ReverseInfo();	//选词
 	 private String mFilename = null;			//文件名
 	 private boolean mIsAuto = false;		//是否是自动朗读进入的，如果是还需要读文件名称。
-	 private int mPercent = 0;					//当前朗读进度
+	 private int mPercent = 0;				//当前朗读进度
+	 private String mSpeakText = null;		//当前朗读内容
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -226,55 +228,56 @@ import android.view.View;
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
+		 if( ( SpeakStatus.SPEAK == status ) && ( TTSUtils.getInstance().getSpeakForm() == SpeakForm.CONTENT ) )	//如果中断前是内容朗读状态
 		 {
-			 if( mReverseInfo != null && mReverseInfo.len > 0 )
+			 if( mSpeakText != null && mSpeakText.length() > 0 )
 			 {
-				 int length = (mReverseInfo.len * mPercent + 50)/ 100;
-				 if( length < mReverseInfo.len )
+				 int speakTextLen = mSpeakText.length();
+				 int length = (speakTextLen * mPercent + 50)/ 100;
+				 if( length < speakTextLen )
 				 {
-					 int i = mReverseInfo.startPos;
-					 for( ;i < mReverseInfo.startPos+length;  )	//需要判断当前位置是否为汉字的第二个字节
+					 try 
 					 {
-						 if( mMbBuf[i] < 0 )	//汉字
+						 byte[] buffer = mSpeakText.getBytes(CHARSET_NAME);	//转换成指定编码
+						 for( int i = 0; i < length;  )	//需要判断当前位置是否为汉字的第二个字节
 						 {
-							 i += 2;
-						 }
-						 else
-						 {
-							 i++;
-						 }
-						 
-						 if( i > mReverseInfo.startPos+length )
-						 {
-							 length++;
-						 }
-					 }
-					 
-					 if( length < mReverseInfo.len )
-					 {
-						 try 
-						 {
-							 String str = new String(mMbBuf, mReverseInfo.startPos+length, mReverseInfo.len-length, CHARSET_NAME);	//转换成指定编码
-							 if( !TextUtils.isEmpty(str))
+							 if( buffer[i] < 0 )	//汉字
 							 {
-								 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-								 TTSUtils.getInstance().speakContent(tips+"，"+str);
-								 
-								 return;
+								 i += 2;
 							 }
-						 } 
-						 catch (UnsupportedEncodingException e) 
-						 {
-							 e.printStackTrace();
+							 else
+							 {
+								 i++;
+							 }
+							 
+							 if( i > length )
+							 {
+								 length++;
+							 }
+							 
+							 if( length < speakTextLen )
+							 {
+								 String str = new String(buffer, length, speakTextLen-length, CHARSET_NAME);	//转换成指定编码
+								 if( !TextUtils.isEmpty(str))
+								 {
+									 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+									 speakContent(tips+"，"+str);
+										 
+									 return;
+								 }
+							 }
 						 }
+					 } 
+					 catch (UnsupportedEncodingException e) 
+					 {
+						 e.printStackTrace();
 					 }
 				 }
 			 }
 		 }
 
 		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-		 TTSUtils.getInstance().speakTips(tips);
+		 speakTips(tips);
 	 }
 	 
 	 //得到反显内容
@@ -1354,7 +1357,7 @@ import android.view.View;
 			 {
 				 tips = mContext.getString(R.string.to_top1) + tips;
 			 }
-			 TTSUtils.getInstance().speakTips(tips);
+			 speakTips(tips);
 		 }
 	 }
 	 
@@ -1399,7 +1402,7 @@ import android.view.View;
 				 }	//反显当前页第一行第一个字
 				 
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-				 TTSUtils.getInstance().speakTips(tips);
+				 speakTips(tips);
 			 }
 		 }
 		 else
@@ -1469,7 +1472,7 @@ import android.view.View;
 			 {
 				 tips = mContext.getString(R.string.to_top1) + tips;
 			 }
-			 TTSUtils.getInstance().speakTips(tips);
+			 speakTips(tips);
 		 }
 	 }
 	 
@@ -1514,7 +1517,7 @@ import android.view.View;
 				 }	//反显当前页第一行第一个字
 				 
 				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
-				 TTSUtils.getInstance().speakTips(tips);
+				 speakTips(tips);
 			 }
 		 }
 		 else
@@ -1605,7 +1608,7 @@ import android.view.View;
 				 
 				 if( null == explain )
 				 {
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
+					 speakTips(mContext.getString(R.string.no_explain));
 					 return;
 				 }
 				 else
@@ -1623,7 +1626,7 @@ import android.view.View;
 					 
 					 if( TextUtils.isEmpty(txt) )
 					 {
-						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
+						 speakTips(mContext.getString(R.string.no_explain));
 						 return;
 					 }
 					 else
@@ -1631,14 +1634,14 @@ import android.view.View;
 						 String[] str = txt.split("=");
 						 if( ( null == str ) || ( str.length < 2 ) )
 						 {
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
+							 speakTips(mContext.getString(R.string.no_explain));
 							 return;
 						 }
 						 
 						 String[] strExplain = str[1].split(" ");
 						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
 						 {
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.no_explain));
+							 speakTips(mContext.getString(R.string.no_explain));
 							 return;
 						 }
 						 
@@ -1668,7 +1671,7 @@ import android.view.View;
 			 list = mMapWordExplain.get(ch);
 			 if( ( list != null ) && ( list.size() > 0 ) )
 			 {
-				 TTSUtils.getInstance().speakTips(list.get(mCurReadExplainIndex));
+				 speakTips(list.get(mCurReadExplainIndex));
 				 if( mCurReadExplainIndex == list.size()-1 )
 				 {
 					 mCurReadExplainIndex = 0;
@@ -1694,7 +1697,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -1709,7 +1712,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -1775,7 +1778,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -1790,7 +1793,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -1801,7 +1804,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.to_top1));
 					 }
 				 }
 				 else
@@ -1825,7 +1828,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.to_top1));
 					 }
 				 }
 				 else
@@ -1835,7 +1838,7 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+							 speakTips(mContext.getString(R.string.to_top1));
 						 }
 					 }
 					 else
@@ -1900,7 +1903,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.to_top1));
 			 }
 		 }
 		 else
@@ -1924,7 +1927,7 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
-							 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+							 speakTips(mContext.getString(R.string.to_top1));
 						 }
 					 }
 					 else
@@ -1944,7 +1947,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.to_top1));
 			 }
 		 }
 	 }
@@ -2010,7 +2013,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.to_top1));
 			 }
 			 return;
 		 }
@@ -2025,7 +2028,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.to_top1));
 				 }
 				 break;
 			 }
@@ -2481,7 +2484,7 @@ import android.view.View;
 					 tips = mContext.getString(R.string.to_bottom1) + tips;
 				 }
 				 
-				 TTSUtils.getInstance().speakTips(tips);
+				 speakTips(tips);
 			 }
 			 else
 			 {
@@ -2495,7 +2498,7 @@ import android.view.View;
 					 tips = mContext.getString(R.string.to_bottom1) + tips;
 				 }
 				 
-				 TTSUtils.getInstance().speakTips(tips);
+				 speakTips(tips);
 			 }
 			 return;
 		 }
@@ -2530,7 +2533,7 @@ import android.view.View;
 			 {
 				 str = mContext.getString(R.string.to_bottom1) + str;
 			 }
-			 TTSUtils.getInstance().speakContent(str);
+			 speakContent(str);
 		 }
 		 else
 		 {
@@ -2556,7 +2559,7 @@ import android.view.View;
 						 content = mContext.getString(R.string.to_bottom1) + content;
 					 }
 					 
-					 TTSUtils.getInstance().speakContent(content);
+					 speakContent(content);
 				 }
 				 else
 				 {
@@ -2568,7 +2571,7 @@ import android.view.View;
 					 {
 						 text = mContext.getString(R.string.to_bottom1) + text;
 					 }
-					 TTSUtils.getInstance().speakContent(text);
+					 speakContent(text);
 				 }
 			 } 
 			 catch (UnsupportedEncodingException e) 
@@ -2670,7 +2673,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
-				 					TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 					speakTips(mContext.getString(R.string.to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2689,7 +2692,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
-				 					TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+				 					speakTips(mContext.getString(R.string.to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2777,7 +2780,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.to_top1));
 				 }
 			 }
 		 }
@@ -2798,7 +2801,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 TTSUtils.getInstance().speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.to_top1));
 					 }
 				 }
 			 }
@@ -2956,4 +2959,29 @@ import android.view.View;
             return false;
         }
     });
+	
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	private void speakContent( final String text ) 
+	{
+		mPercent = 0;
+		mSpeakText = text;
+		TTSUtils.getInstance().speakContent(text);
+    }
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	private void speakTips( final String text ) 
+	{
+		mPercent = 0;
+		mSpeakText = null;
+		TTSUtils.getInstance().speakTips(text);
+    }
 }
