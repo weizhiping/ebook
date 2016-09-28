@@ -8,8 +8,8 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.iflytek.cloud.SpeechConstant;
+import com.sunteam.common.tts.TtsListener;
 import com.sunteam.common.tts.TtsUtils;
-import com.sunteam.common.tts.TtsUtils.TtsListener;
 import com.sunteam.ebook.R;
 
 /**
