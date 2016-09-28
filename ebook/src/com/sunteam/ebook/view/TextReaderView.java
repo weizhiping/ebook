@@ -228,6 +228,7 @@ import android.view.View;
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
+		 /*
 		 if( ( SpeakStatus.SPEAK == status ) && ( TTSUtils.getInstance().getSpeakForm() == SpeakForm.CONTENT ) )	//如果中断前是内容朗读状态
 		 {
 			 if( mSpeakText != null && mSpeakText.length() > 0 )
@@ -275,7 +276,8 @@ import android.view.View;
 				 }
 			 }
 		 }
-
+		 */	//不论当前是否是播放状态，都停止播放。
+		 
 		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
 		 speakTips(tips);
 	 }
