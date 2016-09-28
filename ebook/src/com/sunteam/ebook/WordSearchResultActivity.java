@@ -139,34 +139,16 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				return	true;
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
-				String content = mTextReaderView.getReverseText();	//得到当前反显内容
-				if( TextUtils.isEmpty(content) )
-				{
-					PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
-				}
-				else
-				{
-					DBUtil dbUtils = new DBUtil();
-					String result = dbUtils.search(content);
-					if( TextUtils.isEmpty(result) )
-					{
-						PublicUtils.showToast( this, this.getString(R.string.baike_search_fail) );
-					}
-					else
-					{
-						TTSUtils.getInstance().stop();
-						TTSUtils.getInstance().OnTTSListener(null);
-						Intent intent = new Intent( this, WordSearchResultActivity.class );
-						intent.putExtra("word", content);
-						intent.putExtra("explain", result);
-						this.startActivity(intent);
-					}
-				}
 				return	true;
 			case KeyEvent.KEYCODE_MENU:			//加入生词库
 				saveWord();
 				return	true;
 			case KeyEvent.KEYCODE_STAR:			//反查
+				String content = mTextReaderView.getReverseText();	//得到当前反显内容
+				PublicUtils.jumpFanCha(this, content);
+				break;
+			case KeyEvent.KEYCODE_POUND:		//#号键
+				mTextReaderView.readPage();		//朗读页码
 				break;
 			default:
 				break;

@@ -2,11 +2,16 @@ package com.sunteam.ebook.util;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iflytek.cloud.SpeechUtility;
+import com.sunteam.dict.utils.DBUtil;
 import com.sunteam.ebook.R;
+import com.sunteam.ebook.WordSearchResultActivity;
+import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 
 /**
  * 可重用的方法工具类。
@@ -138,16 +143,75 @@ public class PublicUtils
 		}
 	}
 	
-	//显示提示信息并朗读
+	//显示提示信息并朗读(不需要接收TTS结束回调)
 	public static void showToast( Context context, String tips )
 	{
 		TTSUtils.getInstance().speakMenu(tips);
 		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 	}
+
 	
+	//显示提示信息并朗读(需要接收TTS结束回调)
+	public static void showToast( Context context, String tips, OnTTSListener listener )
+	{
+		TTSUtils.getInstance().speakMenu(tips, listener);
+		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
+	}
+
 	//检查讯飞语音服务是否安装
 	public static boolean checkSpeechServiceInstalled(Context context)
 	{
 		return SpeechUtility.getUtility().checkServiceInstalled();
-	}	
+	}
+	
+	//跳到反查
+	public static void jumpFanCha(final Context context, final String content)
+	{
+		if( TextUtils.isEmpty(content) )
+		{
+			PublicUtils.showToast( context, context.getString(R.string.search_fail) );
+		}
+		else
+		{
+			DBUtil dbUtils = new DBUtil();
+			final String result = dbUtils.search(content);
+			if( TextUtils.isEmpty(result) )
+			{
+				PublicUtils.showToast( context, context.getString(R.string.search_fail) );
+			}
+			else
+			{
+				TTSUtils.getInstance().stop();
+				TTSUtils.getInstance().OnTTSListener(null);
+				PublicUtils.showToast( context, context.getString(R.string.dict_search_success), new OnTTSListener() {
+					@Override
+					public void onSpeakCompleted() 
+					{
+						// TODO Auto-generated method stub
+						Intent intent = new Intent( context, WordSearchResultActivity.class );
+						intent.putExtra("word", content);
+						intent.putExtra("explain", result);
+						context.startActivity(intent);
+					}
+
+					@Override
+					public void onSpeakError() 
+					{
+						// TODO Auto-generated method stub
+						Intent intent = new Intent( context, WordSearchResultActivity.class );
+						intent.putExtra("word", content);
+						intent.putExtra("explain", result);
+						context.startActivity(intent);
+					}
+
+					@Override
+					public void onSpeakProgress(int percent, int beginPos, int endPos) 
+					{
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			}
+		}
+	}
 }	

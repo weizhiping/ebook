@@ -35,7 +35,9 @@
 	<string name="word_parse_fail">Word文档解析失败！</string>
 	<string name="checksum_error">CheckSum校验错误！</string>
 	<string name="page_read_tips2">第%1$s页</string>
-	<string name="baike_search_fail">无搜索结果</string>
+	<string name="baike_search_success">百科查询</string>
+	<string name="dict_search_success">词典查询</string>
+	<string name="search_fail">无搜索结果</string>
 	<string name="install_tts_tips">请先安装讯飞语音+"</string>
 	<string name="setting_success">设定成功</string>
 	<string name="tts_speed">语速</string>

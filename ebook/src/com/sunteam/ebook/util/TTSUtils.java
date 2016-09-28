@@ -36,6 +36,7 @@ public class TTSUtils
     private SharedPreferences mSharedPreferences;
 	private boolean isSuccess = false;
 	private OnTTSListener mOnTTSListener = null;
+	private OnTTSListener mOnTTSListenerTips = null;
 	private SpeakStatus mSpeakStatus = SpeakStatus.STOP;
 	@SuppressWarnings("unused")
 	private SpeakForm mSpeakForm = SpeakForm.TIPS;
@@ -191,6 +192,24 @@ public class TTSUtils
 			mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
+        	mOnTTSListenerTips = null;
+		}
+    }
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	public void speakMenu( final String text, OnTTSListener listener ) 
+	{
+		if( isSuccess && mTtsUtils != null )
+		{
+			mTtsUtils.restoreSettingParameters();	//设置参数
+			mTtsUtils.speak(text);
+	        //用于提示信息朗读，不记录状态
+        	mSpeakForm = SpeakForm.TIPS;
+        	mOnTTSListenerTips = listener;
 		}
     }
 	
@@ -833,26 +852,39 @@ public class TTSUtils
 		// 发音结束
 		public void onCompleted(String error) {
 			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
-			if( SpeakForm.TIPS == mSpeakForm )
-			{ 
-				return; 
-			}
 			
 			mSpeakStatus = SpeakStatus.STOP;
 			
-			if (null == error)
+			if( SpeakForm.TIPS == mSpeakForm )
 			{
-				// 合成完成
-				if (mOnTTSListener != null) 
+				if( mOnTTSListenerTips != null )
 				{
+					if (null == error)
+					{
+						// 合成完成
+						mOnTTSListenerTips.onSpeakCompleted();
+					}
+					else 
+					{
+						// 合成错误
+						mOnTTSListenerTips.onSpeakError();
+					}
+					mOnTTSListenerTips = null;
+				}
+				
+				return; 
+			}
+			
+			if( mOnTTSListener != null )
+			{
+				if (null == error)
+				{
+					// 合成完成
 					mOnTTSListener.onSpeakCompleted();
 				}
-			}
-			else 
-			{
-				// 合成错误
-				if (mOnTTSListener != null) 
+				else 
 				{
+					// 合成错误
 					mOnTTSListener.onSpeakError();
 				}
 			}
