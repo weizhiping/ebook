@@ -219,7 +219,8 @@ public class TTSUtils
 	{
 		if( isSuccess && mTtsUtils != null )
 		{
-			setTipsParam();	//设置参数
+			//setTipsParam();	//设置参数
+			setContentParam();	//设置参数
 			mTtsUtils.speak(text);
 	        //用于提示信息朗读，不记录状态
         	mSpeakForm = SpeakForm.TIPS;
