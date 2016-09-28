@@ -22,7 +22,7 @@ public class ScrollForeverTextView extends TextView implements Runnable
 	private boolean isStop = true;
 	private int textWidth;
 	private int mWidth=0; //控件宽度
-	private int speed=5;
+	private int speed=2;
 	private int delayed=100;
 	private int startDelayed = 100;
 	private int endX; //滚动到哪个位置
