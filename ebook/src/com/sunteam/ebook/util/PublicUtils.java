@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.iflytek.cloud.SpeechUtility;
 import com.sunteam.common.utils.PromptDialog;
@@ -13,7 +12,7 @@ import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.dict.utils.DBUtil;
 import com.sunteam.ebook.R;
 import com.sunteam.ebook.WordSearchResultActivity;
-import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
+import com.sunteam.ebook.entity.ScreenManager;
 
 /**
  * 可重用的方法工具类。
@@ -145,6 +144,21 @@ public class PublicUtils
 		}
 	}
 	
+	//显示提示信息并朗读(不需要接收TTS结束回调)
+	public static void showToast( Context context, String tips,final boolean isFinish )
+	{		
+		//用后鼎提供的系统提示对话框
+		PromptDialog pd = new PromptDialog(context, tips);
+		pd.setPromptListener( new PromptListener() 
+		{
+			public void onComplete() 
+			{
+				ScreenManager.getScreenManager().popAllActivityExceptOne();
+			}
+		});
+		pd.show();
+	}
+		
 	//显示提示信息并朗读(不需要接收TTS结束回调)
 	public static void showToast( Context context, String tips )
 	{

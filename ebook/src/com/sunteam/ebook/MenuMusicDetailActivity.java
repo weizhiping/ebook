@@ -116,8 +116,8 @@ public class MenuMusicDetailActivity extends Activity implements
 		}
 		edit.commit();
 		sendBroadcast(intent);
-		PublicUtils.showToast(MenuMusicDetailActivity.this, getResources().getString(R.string.setting_success));
-		ScreenManager.getScreenManager().popAllActivityExceptOne();
+		PublicUtils.showToast(MenuMusicDetailActivity.this, getResources().getString(R.string.setting_success),true);
+		//ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 
 	// 初始化开关
@@ -146,8 +146,8 @@ public class MenuMusicDetailActivity extends Activity implements
 				}
 			}
 		}else{
-			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null));
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
+			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null),true);
+			//ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
 	}
 }

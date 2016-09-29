@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.ConfirmDialog;
+import com.sunteam.common.utils.dialog.ConfirmListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
-import com.sunteam.ebook.util.SuperDialog;
 import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
-import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -85,16 +85,11 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener,Di
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		item = selectItem;
-		SuperDialog dialog = new SuperDialog(this);
-		dialog.initeCallBack(this);
+		
 		if( 0 == selectItem){
-			dialog.showSuperDialog(R.string.dialog_delete);
-			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_delete)
-					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+			dialog(getResources().getString(R.string.dialog_delete));
 		}else if(1 == selectItem){
-			dialog.showSuperDialog(R.string.dialog_clear);
-			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_clear)
-					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+			dialog(getResources().getString(R.string.dialog_clear));
 		}else{
 			Intent intent = new Intent();
 			intent.putExtra("data_item", selectItem);
@@ -109,5 +104,31 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener,Di
 		intent.putExtra("data_item", item);
 		setResult(RESULT_OK, intent);
 		finish();
+	}
+	
+	private void dialog(String content){
+		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this, content
+				 ,getResources().getString(R.string.dialog_yes), getResources().getString(R.string.dialog_no));
+		 
+		mConfirmDialog.setConfirmListener(new ConfirmListener() {
+			
+			@Override
+			public void doConfirm() {
+			
+				Intent intent = new Intent();
+				intent.putExtra("data_item", item);
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+			
+			@Override
+			public void doCancel() {
+				if( mMainView != null ){
+		    		mMainView.onResume();
+		    	}
+			}
+		});
+		mConfirmDialog.show();
+
 	}
 }

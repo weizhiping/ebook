@@ -136,15 +136,16 @@ public class MenuNumEditActivity extends Activity {
 		case KeyEvent.KEYCODE_ENTER:
 			if(0 == flage){
 				TTSUtils.getInstance().setSpeed(number);
+				ScreenManager.getScreenManager().popAllActivityExceptOne();
 			}else if(1 == flage){
 				TTSUtils.getInstance().setPitch(number);
+				ScreenManager.getScreenManager().popAllActivityExceptOne();
 			}else if(2 == flage){
 				int volume = (int)(number * 1.5);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
-				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.setting_success));
 				MediaPlayerUtils.getInstance().stop();
+				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.setting_success),true);
 			}
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		default:
 			break;

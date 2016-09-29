@@ -3,7 +3,6 @@ package com.sunteam.ebook;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -76,30 +75,6 @@ public class MenuTextEditActivity extends Activity {
 		}
 		TTSUtils.getInstance().speakMenu(
 				title + "，" + numView.getText().toString());
-
-		// numView.setOnKeyListener(new OnKeyListener() {
-		//
-		// @Override
-		// public boolean onKey(View v, int keyCode, KeyEvent event) {
-		// if(keyCode == KeyEvent.KEYCODE_DPAD_CENTER && event.getAction() ==
-		// KeyEvent.ACTION_DOWN){
-		// if(!TextUtils.isEmpty(numView.getText())){
-		// info.name = numView.getText().toString();
-		// boolean hasMark = manager.insertMarkToDb(info);
-		// if(!hasMark){
-		// PublicUtils.showToast(MenuTextEditActivity.this
-		// , getResources().getString(R.string.add_mark_su));
-		// }else{
-		// PublicUtils.showToast(MenuTextEditActivity.this
-		// , getResources().getString(R.string.add_mark_has));
-		// }
-		// }
-		// ScreenManager.getScreenManager().popAllActivityExceptOne();
-		// }
-		// return false;
-		// }
-		// });
-
 	}
 
 	@Override
@@ -118,16 +93,15 @@ public class MenuTextEditActivity extends Activity {
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
 			info.name = numView.getText().toString();
-			Log.e("centre", "------info name---:" + info.name);
 			boolean hasMark = manager.insertMarkToDb(info);
 			if (!hasMark) {
 				PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-						.getString(R.string.add_mark_su));
+						.getString(R.string.add_mark_su),true);
 			} else {
 				PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-						.getString(R.string.add_mark_has));
+						.getString(R.string.add_mark_has),true);
 			}
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
+		///	ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

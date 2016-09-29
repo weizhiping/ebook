@@ -9,14 +9,14 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.ConfirmDialog;
+import com.sunteam.common.utils.dialog.ConfirmListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.PublicUtils;
-import com.sunteam.ebook.util.SuperDialog;
 import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
-import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -114,14 +114,9 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 		case 3:
 			ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
 			if(0 < fileInfos.size()){
-				SuperDialog dialog = new SuperDialog(this);
-				dialog.showSuperDialog(R.string.dialog_clear);
-				dialog.initeCallBack(this);
-				TTSUtils.getInstance().speakMenu(getString(R.string.dialog_clear)
-						+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
+				dialog();
 			}else{
-				PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null));
-				ScreenManager.getScreenManager().popAllActivityExceptOne();
+				PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null),true);
 			}
 			
 			break;
@@ -143,15 +138,38 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			intent.putExtra("title", title);
 			startActivity(intent);
 		}else{
-			PublicUtils.showToast(this, getString(R.string.menu_mark_tips));
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
+			PublicUtils.showToast(this, getString(R.string.menu_mark_tips),true);
+			//ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
 	}
 
 	@Override
 	public void dialogConfrim() {
-		PublicUtils.showToast(this, getString(R.string.dialog_clear_su));
 		manager.deleteMarkFile(fileInfo.path, null);
-		ScreenManager.getScreenManager().popAllActivityExceptOne();
+		PublicUtils.showToast(this, getString(R.string.dialog_clear_su),true);
+		
+		//ScreenManager.getScreenManager().popAllActivityExceptOne();
+	}
+	
+	private void dialog(){
+		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this
+				 , getResources().getString(R.string.dialog_clear)
+				 ,getResources().getString(R.string.dialog_yes), getResources().getString(R.string.dialog_no));
+		 
+		mConfirmDialog.setConfirmListener(new ConfirmListener() {
+			
+			@Override
+			public void doConfirm() {
+				manager.deleteMarkFile(fileInfo.path, null);
+				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.dialog_clear_su),true);
+			}
+			
+			@Override
+			public void doCancel() {
+		
+			}
+		});
+		mConfirmDialog.show();
+
 	}
 }

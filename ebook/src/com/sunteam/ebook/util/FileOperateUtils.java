@@ -196,6 +196,13 @@ public class FileOperateUtils {
 							FileInfo info = new FileInfo(f.getName(), f.getPath(), true,
 									catalog, 0, 0);
 							info.diasyPath = path;
+							int nccLen = path.split("/").length;
+							int fileLen = f.getPath().split("/").length;
+							if((nccLen - fileLen) > 1){
+								info.hasDaisy = true;
+							}else{
+								info.hasDaisy = false;
+							}
 							fileList.add(0,info);
 						}
 					}
