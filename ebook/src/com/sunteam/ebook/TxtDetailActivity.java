@@ -411,12 +411,14 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
-					TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_delete_su));
+					//TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_delete_su));
+					PublicUtils.showToast(this, getResources().getString(R.string.dialog_delete_su));
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
-					TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_clear_su));
+					//TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_clear_su));
+					PublicUtils.showToast(this, getResources().getString(R.string.dialog_clear_su));
 					finish();
 				}else{
 					insertToDb();

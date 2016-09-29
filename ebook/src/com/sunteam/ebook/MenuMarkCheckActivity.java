@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -25,7 +26,7 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuMarkCheckActivity extends Activity implements OnEnterListener,DialogCallBack {
+public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -96,11 +97,6 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 		position = selectItem;
 		if(isDelete){
 			dialog();
-//			SuperDialog dialog = new SuperDialog(this);
-//			dialog.showSuperDialog(R.string.dialog_delete);
-//			dialog.initeCallBack(this);
-//			TTSUtils.getInstance().speakMenu(getString(R.string.dialog_delete)
-//					+"，" + getString(R.string.dialog_yes) + "，" +  getString(R.string.dialog_no));
 		}else{
 			FileInfo info = fileInfos.get(selectItem);
 			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
@@ -109,19 +105,6 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			intent.putExtra("part", info.part);
 			sendBroadcast(intent);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
-		}
-	}
-
-	@Override
-	public void dialogConfrim() {
-		PublicUtils.showToast(this, getString(R.string.dialog_delete_su));
-		FileInfo info = fileInfos.get(position);
-		mMenuList.remove(position);
-		mMainView.updateAdapter();
-		manager.deleteMarkFile(info.path, info.name);
-		if(0 == mMenuList.size()){
-			PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null),true);
-		//	ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
 	}
 	
@@ -135,6 +118,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 			@Override
 			public void doConfirm() {
 				FileInfo info = fileInfos.get(position);
+				final boolean islast = position == (mMenuList.size() - 1)?true:false;
 				mMenuList.remove(position);
 				mMainView.updateAdapter();
 				manager.deleteMarkFile(info.path, info.name);
@@ -144,9 +128,11 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener,D
 					public void onComplete() {
 						if(0 == mMenuList.size()){
 							PublicUtils.showToast(MenuMarkCheckActivity.this, getResources().getString(R.string.menu_mark_null),true);
-							//ScreenManager.getScreenManager().popAllActivityExceptOne();
 						}else{
 							if( mMainView != null ){
+								if(islast){
+									mMainView.setSelection(0);
+								}
 					    		mMainView.onResume();
 					    	}
 						}
