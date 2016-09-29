@@ -62,6 +62,9 @@
 	<string name="input_page_num">请输入页码</string>
 	<string name="select_start">选定起点</string>
 	<string name="select_end">选定终点</string>
+	<string name="file_already_exist">文件已存在</string>
+	<string name="save_newword_success">成功保存到生词本</string>
+	<string name="save_newword_fail">保存到生词本失败</string>
 	
     <string-array name="array_menu">
         <item>书签管理</item>

@@ -181,17 +181,26 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 			File saveFile = new File(fullpath);
 			if(saveFile.exists())	//若对应文件名的文件已存在，则删除原来的文件
 			{	
+				/*
 				saveFile.delete();
 				saveFile.createNewFile();
+				*/
+				
+				PublicUtils.showToast( this, this.getString(R.string.file_already_exist) );
+				
+				return;	//如果已经存在，提示即可
 			}
 
 			FileOutputStream outStream = new FileOutputStream(saveFile);
 			outStream.write(explain.getBytes());
 			outStream.close();
+			
+			PublicUtils.showToast( this, this.getString(R.string.save_newword_success) );
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+			PublicUtils.showToast( this, this.getString(R.string.save_newword_fail) );
 		}
 	}
 	
