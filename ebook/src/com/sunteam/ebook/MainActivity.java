@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements OnEnterListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        TTSUtils.getInstance().init(getApplicationContext());	//初始化TTS
+        TTSUtils.getInstance().init(this);	//初始化TTS
 		if( !PublicUtils.checkSpeechServiceInstalled(this) ) 
 		{			
 			CustomToast.showToast(this, this.getString(R.string.install_tts_tips), Toast.LENGTH_LONG);

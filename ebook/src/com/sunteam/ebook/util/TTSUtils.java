@@ -110,7 +110,7 @@ public class TTSUtils
 	//初始化
 	public void init( Context context )
 	{
-		mContext = context.getApplicationContext();
+		mContext = context;
 		
 		mSharedPreferences = mContext.getSharedPreferences(EbookConstants.TTS_SETTINGS, Activity.MODE_PRIVATE);
         mTtsUtils = TtsUtils.getInstance(context, ttsListener);
