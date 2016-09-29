@@ -1,8 +1,9 @@
 package com.sunteam.ebook.util;
 
+import com.sunteam.common.utils.PromptDialogNospeech;
+
 import android.content.Context;
 import android.os.Handler;
-import android.widget.Toast;
 
 /**
  * 自定义Toast类。
@@ -11,29 +12,30 @@ import android.widget.Toast;
  */
 public class CustomToast 
 {
-	private static Toast mToast;
+	private static PromptDialogNospeech mPromptDialogNospeech;
     private static Handler mHandler = new Handler();
     private static Runnable r = new Runnable() {
         public void run() 
         {
-            mToast.cancel();
+        	mPromptDialogNospeech.cancel();
+        	mPromptDialogNospeech = null;
         }
     };
 
     public static void showToast(Context mContext, String text, int duration) 
     {
     	mHandler.removeCallbacks(r);
-    	if (mToast != null)
+    	if (mPromptDialogNospeech != null)
     	{
-    		mToast.setText(text);
+    		mPromptDialogNospeech.setTitle(text);
     	}
     	else
     	{
-    		mToast = Toast.makeText(mContext, text, duration);
+    		mPromptDialogNospeech = new PromptDialogNospeech( mContext, text );
     	}
     	
-    	mHandler.postDelayed(r, 3000);
-    	mToast.show();
+    	mHandler.postDelayed(r, 1500);
+    	mPromptDialogNospeech.show();
     }
 
     public static void showToast(Context mContext, int resId, int duration) 
