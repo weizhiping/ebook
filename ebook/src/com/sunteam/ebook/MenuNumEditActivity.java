@@ -119,7 +119,7 @@ public class MenuNumEditActivity extends Activity {
 			if(2 == flage){
 				MediaPlayerUtils.getInstance().stop();
 			}
-			break;
+			return super.onKeyDown(keyCode, event);
 		case KeyEvent.KEYCODE_DPAD_UP: // 上
 			number--;
 			break;
