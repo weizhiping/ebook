@@ -688,7 +688,7 @@ public class TTSUtils
 
 		// 发音结束
 		public void onCompleted(String error) {
-			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
+			Log.e(TAG, "onPlayCompletedCallBack----error= " + error);
 			
 			mSpeakStatus = SpeakStatus.STOP;
 			
@@ -708,8 +708,9 @@ public class TTSUtils
 							mOnTTSListenerMenu.onSpeakError();
 						}
 						mOnTTSListenerMenu = null;
+						
+						return;
 					}
-					break;
 				case CONTENT:	//内容
 					if( mOnTTSListener != null )
 					{

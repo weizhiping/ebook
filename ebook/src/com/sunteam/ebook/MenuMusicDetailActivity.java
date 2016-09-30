@@ -17,15 +17,17 @@ import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.view.MainView;
+import com.sunteam.ebook.view.MainView.OnTTSSpeakListener;
 
 /**
  * 背景音乐详细界面
  * 
  * @author sylar
  */
-public class MenuMusicDetailActivity extends Activity implements
+public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListener, 
 		OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
@@ -46,6 +48,7 @@ public class MenuMusicDetailActivity extends Activity implements
 		fileList = new ArrayList<FileInfo>();
 		mMenuList = new ArrayList<String>();
 		initViews();
+		MediaPlayerUtils.getInstance().stop();
 	}
 
 	private void initViews() {
@@ -56,7 +59,7 @@ public class MenuMusicDetailActivity extends Activity implements
 		}
 		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
-		mMainView = new MainView(this, this, title, mMenuList);
+		mMainView = new MainView(this, this, title, mMenuList, this);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 		if(0 == flag){
@@ -68,7 +71,6 @@ public class MenuMusicDetailActivity extends Activity implements
 			}
 		}else if(0 < musicPosition){
 			mMainView.setSelection(musicPosition);	
-			
 		}
 	}
 
@@ -85,11 +87,24 @@ public class MenuMusicDetailActivity extends Activity implements
 		if (mMainView != null) {
 			mMainView.onResume();
 		}
+		if(1 == flag && 0 == fileList.size()){
+			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null),true);
+		}
 		super.onResume();
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(1 == flag){
+			switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:// 返回
+				MediaPlayerUtils.getInstance().stop();
+				Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
+				intent.putExtra("result_flag", 2);
+				sendBroadcast(intent);
+				break;
+			}
+		}
 		return mMainView.onKeyDown(keyCode, event);
 	}
 
@@ -117,7 +132,6 @@ public class MenuMusicDetailActivity extends Activity implements
 		edit.commit();
 		sendBroadcast(intent);
 		PublicUtils.showToast(MenuMusicDetailActivity.this, getResources().getString(R.string.setting_success),true);
-		//ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 
 	// 初始化开关
@@ -145,9 +159,15 @@ public class MenuMusicDetailActivity extends Activity implements
 					musicPosition = i;
 				}
 			}
-		}else{
-			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null),true);
-			//ScreenManager.getScreenManager().popAllActivityExceptOne();
+		}
+	}
+
+	@Override
+	public void onCompleted() {
+		if(1 == flag){
+			MediaPlayerUtils.getInstance().stop();
+			int position = mMainView.getSelectItem();
+			MediaPlayerUtils.getInstance().play(fileList.get(position).path);
 		}
 	}
 }

@@ -17,6 +17,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,7 +43,13 @@ public class MainView extends View implements OnTTSListener
 	private View mLine = null;
 	private ListView mLvMenu = null;
 	private MainListAdapter mAdapter = null;
-	
+	private OnTTSSpeakListener mOnTTSSpeakListener = null;
+
+	public interface OnTTSSpeakListener 
+	{
+		public void onCompleted();
+	}
+
 	public View getView()
 	{
 		return	mView;
@@ -79,6 +86,7 @@ public class MainView extends View implements OnTTSListener
 	{
 		super(context);
 		
+		mOnTTSSpeakListener = null;
 		initView( context, listener, title, menuList, mode );
 	}
 	
@@ -86,6 +94,15 @@ public class MainView extends View implements OnTTSListener
 	{
 		super(context);
 		
+		mOnTTSSpeakListener = null;
+		initView( context, listener, title, menuList, TTSSpeakMode.READ_MODE_NORMAL );
+	}
+	
+	public MainView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList, OnTTSSpeakListener listener2 )
+	{
+		super(context);
+		
+		mOnTTSSpeakListener = listener2;
 		initView( context, listener, title, menuList, TTSSpeakMode.READ_MODE_NORMAL );
 	}
 	
@@ -388,6 +405,10 @@ public class MainView extends View implements OnTTSListener
             switch (msg.what) 
             {
                 case 0:
+                	if( mOnTTSSpeakListener != null )
+                	{
+                		mOnTTSSpeakListener.onCompleted();
+                	}
                 	processLongKey();
                     break;
                 default:
