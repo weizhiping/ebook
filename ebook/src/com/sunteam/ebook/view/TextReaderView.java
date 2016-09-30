@@ -2339,17 +2339,51 @@ import android.view.View;
 				 ReverseInfo ri = new ReverseInfo(i, 2);
 				 
 				 boolean isBreak = false;
-				 char ch = PublicUtils.byte2char(mMbBuf, i);
-				 for( int k = 0; k < CN_SEPARATOR.length; k++ )
-				 {
-					 if( CN_SEPARATOR[k] == ch )
-					 {
-						 isBreak = true;
-						 break;
-					 }
-				 }	//如果一开始就是点符号则跳过反显这个点符号
-				 
+				 char ch1 = PublicUtils.byte2char(mMbBuf, i);
 				 i += 2;
+				 
+				 if( 0xA3A4 == ch1 && isNumber(mMbBuf[i]) )	//￥符号
+				 {
+					 for( int k = i; k < mMbBufLen; )
+					 {
+						 if( mMbBuf[k] < 0 )
+						 {
+							 char c = PublicUtils.byte2char(mMbBuf, k);
+							 if( 0xA3AC == c )
+							 {
+								 k += 2;
+								 i += 2;
+								 ri.len += 2;
+							 }
+							 else
+							 {
+								 break;
+							 }
+						 }
+						 else if( isNumber(mMbBuf[k]) || ( 0x2C == mMbBuf[k] ) )
+						 {
+							 k++;
+							 i++;
+							 ri.len++;
+						 }
+						 else
+						 {
+							 break;
+						 }
+					 }
+				 }
+				 else
+				 {
+					 for( int k = 0; k < CN_SEPARATOR.length; k++ )
+					 {
+						 if( CN_SEPARATOR[k] == ch1 )
+						 {
+							 isBreak = true;
+							 break;
+						 }
+					 }	//如果一开始就是点符号则跳过反显这个点符号
+				 }
+				 
 				 if( isBreak )
 				 {
 					 continue;
@@ -2360,20 +2394,70 @@ import android.view.View;
 					 if( mMbBuf[j] < 0 )
 					 {
 						 ri.len += 2;
-						 ch = PublicUtils.byte2char(mMbBuf, j);
+						 char ch2 = PublicUtils.byte2char(mMbBuf, j);
 						 for( int k = 0; k < CN_SEPARATOR.length; k++ )
 						 {
-							 if( CN_SEPARATOR[k] == ch )
+							 if( CN_SEPARATOR[k] == ch2 )
 							 {
 								 return ri;
 							 }
 						 }	//如果是点符号则返回前面的字符串
 						 
 						 j += 2;
+						 
+						 if( 0xA3A4 == ch2 )	//￥符号
+						 {
+							 for( int k = j; k < mMbBufLen; )
+							 {
+								 if( mMbBuf[k] < 0 )
+								 {
+									 char c = PublicUtils.byte2char(mMbBuf, k);
+									 if( 0xA3AC == c )
+									 {
+										 k += 2;
+										 j += 2;
+										 ri.len += 2;
+									 }
+									 else
+									 {
+										 break;
+									 }
+								 }
+								 else if( isNumber(mMbBuf[k]) || ( 0x2C == mMbBuf[k] ) )
+								 {
+									 k++;
+									 j++;
+									 ri.len++;
+								 }
+								 else
+								 {
+									 break;
+								 }
+							 }
+						 }
 					 }
 					 else if( isEscape( mMbBuf[j] ) )	//如果是转义字符
 					 {
 						 return ri;
+					 }
+					 else if( 0x24 == mMbBuf[j] )	//美元符号'$'
+					 {
+						 ri.len++;
+						 j++;
+						 
+						 for( int k = j; k < mMbBufLen; )
+						 {
+							 if( isNumber(mMbBuf[k]) || ( 0x2E == mMbBuf[k] ) || ( 0x2C == mMbBuf[k] ) )
+							 {
+								 k++;
+								 j++;
+								 ri.len++;
+							 }
+							 else
+							 {
+								 break;
+							 }
+						 }
 					 }
 					 else
 					 {
@@ -2453,6 +2537,28 @@ import android.view.View;
 				 }
 				 
 				 return	ri;
+			 }
+			 else if( 0x24 == mMbBuf[i] )	//美元符号'$'
+			 {
+				 ReverseInfo ri = new ReverseInfo(i, 1);
+				 i++;
+				 
+				 if( isNumber(mMbBuf[i]) )
+				 {
+					 for( int k = i; k < mMbBufLen; )
+					 {
+						 if( isNumber(mMbBuf[k]) || ( 0x2E == mMbBuf[k] ) || ( 0x2C == mMbBuf[k] ) )
+						 {
+							 k++;
+							 i++;
+							 ri.len++;
+						 }
+						 else
+						 {
+							 return ri;
+						 }
+					 }
+				 }
 			 }
 			 else
 			 {
