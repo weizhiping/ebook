@@ -688,7 +688,7 @@ public class TTSUtils
 
 		// 发音结束
 		public void onCompleted(String error) {
-			Log.e(TAG, "onPlayCompletedCallBack----error= " + error);
+			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
 			
 			mSpeakStatus = SpeakStatus.STOP;
 			
