@@ -402,11 +402,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				int item = data.getIntExtra("data_item", 0);
 				int select = mMainView.getSelectItem();
 				if(0 == item){
+					final boolean islast = select == (mMenuList.size() - 1)?true:false;
 					FileInfo info = fileInfoList.get(select);
 					fileInfoList.remove(info);
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
+					if(0 != mMenuList.size() && islast){
+						mMainView.setSelection(0);
+					}
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
@@ -77,6 +78,8 @@ public class MenuPageEditActivity extends Activity {
 		case KeyEvent.KEYCODE_DPAD_UP: // 上
 			isKeyNum = true;
 			number--;
+			if(number < 1)
+			number = totalPage;
 			setPage();
 			break;
 		case KeyEvent.KEYCODE_DPAD_DOWN: // 下
@@ -105,11 +108,15 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
-			Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
-			intent.putExtra("result_flag", 0);
-			intent.putExtra("page", number);
-			sendBroadcast(intent);
-			ScreenManager.getScreenManager().popAllActivityExceptOne();
+			if(0 == number){
+				PublicUtils.showToast(this, getResources().getString(R.string.input_page_num));
+			}else{
+				Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
+				intent.putExtra("result_flag", 0);
+				intent.putExtra("page", number);
+				sendBroadcast(intent);
+				ScreenManager.getScreenManager().popAllActivityExceptOne();
+			}
 			return true;
 		case KeyEvent.KEYCODE_5:
 		case KeyEvent.KEYCODE_NUMPAD_5:		
@@ -214,12 +221,28 @@ public class MenuPageEditActivity extends Activity {
 			PublicUtils.showToast(this, getResources().getString(R.string.input_page_num));
 		}else{
 			if(number > totalPage){
-				number = 1;
+				if(isKeyNum){
+					number = 1;
+					TTSUtils.getInstance().speakMenu(number+"");
+				}else{
+					number = totalPage;
+					PublicUtils.showToast(this, getResources().getString(R.string.input_page_max),new PromptListener() {
+						
+						@Override
+						public void onComplete() {
+							TTSUtils.getInstance().speakMenu(number+"");
+							return;
+						}
+					});
+				}
 			}else if(number < 1){
 				number = totalPage;
+				TTSUtils.getInstance().speakMenu(number+"");
+			}else{
+				TTSUtils.getInstance().speakMenu(number+"");
 			}
 			numView.setText(number + "");
-			TTSUtils.getInstance().speakMenu(number+"");
+			
 		}
 	}
 }

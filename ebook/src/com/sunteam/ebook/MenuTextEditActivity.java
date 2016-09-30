@@ -88,7 +88,7 @@ public class MenuTextEditActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
 			PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-					.getString(R.string.add_mark_cancel));
+					.getString(R.string.add_mark_cancel),true);
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:

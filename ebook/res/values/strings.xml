@@ -60,6 +60,7 @@
 	<string name="already_read">已经读完</string>
 	<string name="has_finished_reading_the_last_book">已经读完最后一本书</string>
 	<string name="input_page_num">请输入页码</string>
+	<string name="input_page_max">超出有效范围，自动纠正为最大页码</string>
 	<string name="select_start">选定起点</string>
 	<string name="select_end">选定终点</string>
 	<string name="file_already_exist">文件已存在</string>
