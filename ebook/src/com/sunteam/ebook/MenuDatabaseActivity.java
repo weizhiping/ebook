@@ -10,9 +10,10 @@ import android.widget.FrameLayout;
 
 import com.sunteam.common.utils.ConfirmDialog;
 import com.sunteam.common.utils.dialog.ConfirmListener;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
-import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -20,7 +21,7 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuDatabaseActivity extends Activity implements OnEnterListener,DialogCallBack {
+public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -97,14 +98,6 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener,Di
 			finish();
 		}
 	}
-
-	@Override
-	public void dialogConfrim() {
-		Intent intent = new Intent();
-		intent.putExtra("data_item", item);
-		setResult(RESULT_OK, intent);
-		finish();
-	}
 	
 	private void dialog(String content){
 		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this, content
@@ -114,11 +107,18 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener,Di
 			
 			@Override
 			public void doConfirm() {
-			
-				Intent intent = new Intent();
-				intent.putExtra("data_item", item);
-				setResult(RESULT_OK, intent);
-				finish();
+				String content = getResources().getString(R.string.dialog_delete_su);
+				if(1 == item){
+					content = getResources().getString(R.string.dialog_clear_su);
+				}
+				PublicUtils.showToast(MenuDatabaseActivity.this, content, new PromptListener(){
+					@Override
+					public void onComplete() {
+						Intent intent = new Intent();
+						intent.putExtra("data_item", item);
+						setResult(RESULT_OK, intent);
+						finish();
+					}});
 			}
 			
 			@Override

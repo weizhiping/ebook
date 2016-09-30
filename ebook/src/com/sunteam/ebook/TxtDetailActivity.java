@@ -8,12 +8,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
@@ -131,15 +130,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     		mMainView.onResume();
     	}
     	if(0 != flag && 0 == fileInfoList.size()){
-    		TTSUtils.getInstance().speakMenu(getResources().getString(R.string.no_file));
-        	Handler handler = new Handler();
-        	handler.postDelayed(new Runnable() {
-    			
-    			@Override
-    			public void run() {
-    				finish();
-    			}
-    		}, 500);
+    		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.no_file),new PromptListener() {
+				
+				@Override
+				public void onComplete() {
+					finish();
+				}
+			});
     	}
     	super.onResume();
     }
@@ -231,7 +228,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				}
 			}
 		}else if (fileInfo.hasDaisy){
-			Log.e(TAG, "----path-------:" + fileInfo.path);
 			Intent intent = new Intent(this, TxtDetailActivity.class);
 			intent.putExtra("path", fileInfo.path);
 			intent.putExtra("name", fileInfo.name);
@@ -411,14 +407,10 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMenuList.remove(select);
 					mMainView.updateAdapter();
 					manager.deleteFile(info.path , flag);
-					//TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_delete_su));
-					PublicUtils.showToast(this, getResources().getString(R.string.dialog_delete_su));
 				}else if(1 == item){
 					mMenuList.clear();
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
-					//TTSUtils.getInstance().speakMenu(getResources().getString(R.string.dialog_clear_su));
-					PublicUtils.showToast(this, getResources().getString(R.string.dialog_clear_su));
 					finish();
 				}else{
 					insertToDb();
