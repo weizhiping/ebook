@@ -107,7 +107,7 @@ public class PublicUtils
 	public static void showProgress(Context context, String info) {
 		cancelProgress();
 
-		progress = new ProgressDialog(context, R.style.progress_dialog);
+		progress = new ProgressDialog(context, R.style.ebook_progress_dialog);
 		progress.setIndeterminate(false);
 		progress.setCancelable(true);
 		progress.setCanceledOnTouchOutside(false);
@@ -127,7 +127,7 @@ public class PublicUtils
 	public static void showProgress(Context context) {
 		cancelProgress();
 
-		progress = new ProgressDialog(context, R.style.progress_dialog);
+		progress = new ProgressDialog(context, R.style.ebook_progress_dialog);
 		progress.setIndeterminate(false);
 		progress.setCancelable(true);
 		progress.setCanceledOnTouchOutside(false);

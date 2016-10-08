@@ -15,7 +15,7 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:textSize="@dimen/title_text_size" />
+            android:textSize="@dimen/ebook_title_text_size" />
 
         <View
             android:id="@+id/ebook_line"

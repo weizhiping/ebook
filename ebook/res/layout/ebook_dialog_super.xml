@@ -10,10 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:paddingTop="@dimen/frame_space"
+        android:paddingTop="@dimen/ebook_frame_space"
         android:visibility="gone"
         android:textColor="@color/text_black"
-        android:textSize="@dimen/big_text_size" />
+        android:textSize="@dimen/ebook_big_text_size" />
 
     <TextView
         android:id="@+id/ebook_dialog_content"
@@ -22,17 +22,17 @@
         android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/text_black"
-        android:textSize="@dimen/big_text_size" />
+        android:textSize="@dimen/ebook_big_text_size" />
 
     <View
         android:id="@+id/ebook_dialog_line"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/line_space"
+        android:layout_height="@dimen/ebook_line_space"
         android:layout_above="@+id/dialog_cancel"
         android:background="@color/bottom_line" />
 
     <View
-        android:layout_width="@dimen/line_space"
+        android:layout_width="@dimen/ebook_line_space"
         android:layout_height="match_parent"
         android:layout_below="@id/ebook_dialog_line"
         android:layout_centerHorizontal="true"
@@ -45,12 +45,12 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:background="@drawable/ebook_dialog_bg"
-        android:padding="@dimen/item_space"
+        android:padding="@dimen/ebook_item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
         android:text="@string/ebook_dialog_yes"
         android:textColor="@color/text_blue"
-        android:textSize="@dimen/pub_text_size" />
+        android:textSize="@dimen/ebook_pub_text_size" />
 
     <Button
         android:id="@+id/ebook_dialog_cancel"
@@ -59,11 +59,11 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/ebook_dialog_bg"
-        android:padding="@dimen/item_space"
+        android:padding="@dimen/ebook_item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
         android:text="@string/ebook_dialog_no"
         android:textColor="@color/text_blue"
-        android:textSize="@dimen/pub_text_size" />
+        android:textSize="@dimen/ebook_pub_text_size" />
 
 </RelativeLayout>

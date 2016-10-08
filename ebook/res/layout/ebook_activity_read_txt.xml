@@ -28,7 +28,7 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:gravity="right|center_vertical"
-			        android:textSize="@dimen/number_text_size"
+			        android:textSize="@dimen/ebook_number_text_size"
 			        android:background="@color/transparent"
 			        />
 		        <TextView
@@ -36,7 +36,7 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:gravity="right|center_vertical"
-			        android:textSize="@dimen/number_text_size"
+			        android:textSize="@dimen/ebook_number_text_size"
 			        android:background="@color/transparent"
 			        />
 			</LinearLayout>   
@@ -47,10 +47,10 @@
 		        android:layout_alignParentTop="true"
 		        android:layout_alignParentLeft="true"
 		        android:layout_toRightOf="@id/ebook_ll_page"
-		        android:layout_marginRight="@dimen/item_right_padding"
+		        android:layout_marginRight="@dimen/ebook_item_right_padding"
 		        android:gravity="left|center_vertical"
 		        android:text="@string/ebook_main_title" 
-		        android:textSize="@dimen/file_text_size"
+		        android:textSize="@dimen/ebook_file_text_size"
 		        android:background="@color/transparent"
 		        android:includeFontPadding="false"
 		        android:maxLength="8"

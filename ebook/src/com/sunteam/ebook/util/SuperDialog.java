@@ -32,7 +32,7 @@ public class SuperDialog implements OnClickListener{
 
 	public SuperDialog(Context c) {
 		this.context = c;
-		dialog = new Dialog(context, R.style.dialog);
+		dialog = new Dialog(context, R.style.ebook_dialog);
 		dialog.setContentView(R.layout.ebook_dialog_super);
 		titleText = (TextView) dialog.findViewById(R.id.ebook_dialog_title);
 		contentText = (TextView) dialog.findViewById(R.id.ebook_dialog_content);

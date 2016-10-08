@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  	<!-- text font -->
-    <dimen name="file_text_size">18dip</dimen>
-    <dimen name="number_text_size">12dip</dimen>
-    <dimen name="pub_text_size">18sp</dimen>
-    <dimen name="main_text_size">16sp</dimen>
-    <dimen name="big_text_size">24sp</dimen>
+    <dimen name="ebook_title_text_size">22dip</dimen>
+    <dimen name="ebook_item_text_size">16dip</dimen> 	
+    <dimen name="ebook_file_text_size">18dip</dimen>
+    <dimen name="ebook_number_text_size">12dip</dimen>
+    <dimen name="ebook_pub_text_size">18sp</dimen>
+    <dimen name="ebook_main_text_size">16sp</dimen>
+    <dimen name="ebook_big_text_size">24sp</dimen>
     
     <!-- space -->
-    <dimen name="frame_space">14dp</dimen>
-    <dimen name="line_space">1dp</dimen>
-    <dimen name="item_space">10dp</dimen>
+    <dimen name="ebook_title_height">31dip</dimen>
+    <dimen name="ebook_item_left_padding">4dip</dimen>
+    <dimen name="ebook_item_right_padding">4dip</dimen>
+    <dimen name="ebook_item_top_padding">4dip</dimen>
+    <dimen name="ebook_item_bottom_padding">4dip</dimen>    
+    <dimen name="ebook_frame_space">14dp</dimen>
+    <dimen name="ebook_line_space">1dp</dimen>
+    <dimen name="ebook_item_space">10dp</dimen>
 </resources>
