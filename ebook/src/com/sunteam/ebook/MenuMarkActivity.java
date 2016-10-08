@@ -116,7 +116,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			if(0 < fileInfos.size()){
 				dialog();
 			}else{
-				PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_mark_null),true);
+				PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_mark_tips),true);
 			}
 			
 			break;
