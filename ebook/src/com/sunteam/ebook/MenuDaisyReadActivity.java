@@ -27,7 +27,7 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		initViews();
 	}
@@ -35,14 +35,14 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 	private void initViews() {
 		Resources res = getResources();
 		
-		String[] menus = res.getStringArray(R.array.array_menu_daisy_read);
+		String[] menus = res.getStringArray(R.array.ebook_array_menu_daisy_read);
 		int length = menus.length;
 		mMenuList = new ArrayList<String>();
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
 		String title = getIntent().getStringExtra("title");
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());

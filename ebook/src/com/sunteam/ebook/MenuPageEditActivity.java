@@ -32,7 +32,7 @@ public class MenuPageEditActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_num_edit);
+		setContentView(R.layout.ebook_activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
 		Intent intent = getIntent();
 		currentPage = intent.getIntExtra("page_cur", 0);
@@ -44,10 +44,10 @@ public class MenuPageEditActivity extends Activity {
 	private void initViews() {
 
 		String title = getIntent().getStringExtra("edit_name");
-		RelativeLayout layout = (RelativeLayout) findViewById(R.id.menu_layout);
-		TextView titleView = (TextView) findViewById(R.id.title_menu);
-		numView = (EditText) findViewById(R.id.num_edit);
-		View line = findViewById(R.id.menu_line);
+		RelativeLayout layout = (RelativeLayout) findViewById(R.id.ebook_menu_layout);
+		TextView titleView = (TextView) findViewById(R.id.ebook_title_menu);
+		numView = (EditText) findViewById(R.id.ebook_num_edit);
+		View line = findViewById(R.id.ebook_menu_line);
 		titleView.setText(title);
 
 		Tools tools = new Tools(this);
@@ -63,7 +63,7 @@ public class MenuPageEditActivity extends Activity {
 		numView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize-2*EbookConstants.LINE_SPACE*scale);		
 		titleView.setHeight((int)fontSize); // 设置控件高度
 		
-		String tips = String.format(getResources().getString(R.string.page_read_tips), currentPage,totalPage );
+		String tips = String.format(getResources().getString(R.string.ebook_page_read_tips), currentPage,totalPage );
 		numView.setText(tips);
 		numView.setFocusable(false);
 		TTSUtils.getInstance().speakMenu(title+"，"+ tips);
@@ -109,7 +109,7 @@ public class MenuPageEditActivity extends Activity {
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
 			if(0 == number){
-				PublicUtils.showToast(this, getResources().getString(R.string.input_page_num));
+				PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_num));
 			}else{
 				Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
 				intent.putExtra("result_flag", 0);
@@ -209,7 +209,7 @@ public class MenuPageEditActivity extends Activity {
 			setPage();
 			break;
 		default:
-			PublicUtils.showToast(this, getResources().getString(R.string.input_page_num)+ "，" + number);
+			PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_num)+ "，" + number);
 			break;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -218,7 +218,7 @@ public class MenuPageEditActivity extends Activity {
 	private void setPage(){
 		if(0 == number){
 			numView.setText("");
-			PublicUtils.showToast(this, getResources().getString(R.string.input_page_num));
+			PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_num));
 		}else{
 			if(number > totalPage){
 				if(isKeyNum){
@@ -226,7 +226,7 @@ public class MenuPageEditActivity extends Activity {
 					TTSUtils.getInstance().speakMenu(number+"");
 				}else{
 					number = totalPage;
-					PublicUtils.showToast(this, getResources().getString(R.string.input_page_max),new PromptListener() {
+					PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_max),new PromptListener() {
 						
 						@Override
 						public void onComplete() {

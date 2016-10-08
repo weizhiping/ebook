@@ -6,7 +6,7 @@
     android:orientation="vertical" 
     >
     <FrameLayout
-        android:id="@+id/rl_title"
+        android:id="@+id/ebook_rl_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -15,7 +15,7 @@
         	android:layout_height="wrap_content"
             >
             <LinearLayout
-                android:id="@+id/ll_page"
+                android:id="@+id/ebook_ll_page"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentTop="true"
@@ -24,7 +24,7 @@
 		        android:orientation="vertical"
 		        >
 		        <TextView
-			        android:id="@+id/pageCount"
+			        android:id="@+id/ebook_pageCount"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:gravity="right|center_vertical"
@@ -32,7 +32,7 @@
 			        android:background="@color/transparent"
 			        />
 		        <TextView
-			        android:id="@+id/curPage"
+			        android:id="@+id/ebook_curPage"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:gravity="right|center_vertical"
@@ -41,15 +41,15 @@
 			        />
 			</LinearLayout>   
 			<TextView
-		        android:id="@+id/main_title"
+		        android:id="@+id/ebook_main_title"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentTop="true"
 		        android:layout_alignParentLeft="true"
-		        android:layout_toRightOf="@id/ll_page"
+		        android:layout_toRightOf="@id/ebook_ll_page"
 		        android:layout_marginRight="@dimen/item_right_padding"
 		        android:gravity="left|center_vertical"
-		        android:text="@string/main_title" 
+		        android:text="@string/ebook_main_title" 
 		        android:textSize="@dimen/file_text_size"
 		        android:background="@color/transparent"
 		        android:includeFontPadding="false"
@@ -57,14 +57,14 @@
 		        />      
         </RelativeLayout>
         <View
-            android:id="@+id/line"
+            android:id="@+id/ebook_line"
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:layout_gravity="bottom"
             android:background="@android:color/black" />
     </FrameLayout> 
 	<com.sunteam.ebook.view.TextReaderView
-        android:id="@+id/read_txt_view"
+        android:id="@+id/ebook_read_txt_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"

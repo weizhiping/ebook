@@ -1282,7 +1282,7 @@ import android.view.View;
 		 {
 			 if( isSpeakPage )
 			 {
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips), mCurPage, getPageCount() );
 				 TTSUtils.getInstance().speakContent(tips);
 			 }
 			 return;
@@ -1292,7 +1292,7 @@ import android.view.View;
 		 DiasySentenceNode node = mDaisySentenceNodeList.get(postion);
 		 if( isSpeakPage )
 		 {
-			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+			 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips), mCurPage, getPageCount() );
 			 TTSUtils.getInstance().speakContent(tips);
 		 }
 		 else

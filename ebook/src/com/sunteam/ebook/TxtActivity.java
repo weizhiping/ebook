@@ -28,7 +28,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		catalog = getIntent().getIntExtra("catalogType", 0);
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		initViews();
@@ -36,20 +36,20 @@ public class TxtActivity extends Activity implements OnEnterListener {
 
 	private void initViews() {
 		mMenuList = new ArrayList<String>();
-		mMenuList.add(this.getString(R.string.txt_menu_catalog));
-		mMenuList.add(this.getString(R.string.txt_menu_fav));
-		mMenuList.add(this.getString(R.string.txt_menu_recent));
+		mMenuList.add(this.getString(R.string.ebook_txt_menu_catalog));
+		mMenuList.add(this.getString(R.string.ebook_txt_menu_fav));
+		mMenuList.add(this.getString(R.string.ebook_txt_menu_recent));
 
 		String title = null;
 		if (catalog == 0) {
-			title = this.getString(R.string.main_menu_txt);
+			title = this.getString(R.string.ebook_main_menu_txt);
 		} else if (catalog == 2) {
-			title = this.getString(R.string.main_menu_word);
+			title = this.getString(R.string.ebook_main_menu_word);
 		} else if (catalog == 1) {
-			title = this.getString(R.string.main_menu_daisy);
+			title = this.getString(R.string.ebook_main_menu_daisy);
 		}
 
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());

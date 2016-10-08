@@ -30,7 +30,7 @@ public class MenuTextEditActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_text_edit);
+		setContentView(R.layout.ebook_activity_text_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
 		manager = new DatabaseManager(this);
 		initViews();
@@ -42,10 +42,10 @@ public class MenuTextEditActivity extends Activity {
 		String currentText = intent.getStringExtra("page_text");
 		int currentPage = intent.getIntExtra("page_cur", 1);
 		info = (FileInfo) intent.getSerializableExtra("fileinfo");
-		RelativeLayout layout = (RelativeLayout) findViewById(R.id.menu_layout);
-		TextView titleView = (TextView) findViewById(R.id.title_menu);
-		numView = (TextView) findViewById(R.id.text_mark);
-		View line = findViewById(R.id.menu_line);
+		RelativeLayout layout = (RelativeLayout) findViewById(R.id.ebook_menu_layout);
+		TextView titleView = (TextView) findViewById(R.id.ebook_title_menu);
+		numView = (TextView) findViewById(R.id.ebook_text_mark);
+		View line = findViewById(R.id.ebook_menu_line);
 		titleView.setText(title);
 
 		Tools tools = new Tools(this);
@@ -64,13 +64,13 @@ public class MenuTextEditActivity extends Activity {
 		titleView.setHeight((int) fontSize); // 设置控件高度
 		if (null == info.diasyPath) {
 			numView.setText(String.format(
-					getResources().getString(R.string.menu_text_tips),
+					getResources().getString(R.string.ebook_menu_text_tips),
 					currentPage) + " " + currentText);
 		} else {
 			numView.setText(currentText
 					+ " "
 					+ String.format(
-							getResources().getString(R.string.menu_text_tips),
+							getResources().getString(R.string.ebook_menu_text_tips),
 							currentPage));
 		}
 		TTSUtils.getInstance().speakMenu(
@@ -88,7 +88,7 @@ public class MenuTextEditActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
 			PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-					.getString(R.string.add_mark_cancel),true);
+					.getString(R.string.ebook_add_mark_cancel),true);
 			break;
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
@@ -96,10 +96,10 @@ public class MenuTextEditActivity extends Activity {
 			boolean hasMark = manager.insertMarkToDb(info);
 			if (!hasMark) {
 				PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-						.getString(R.string.add_mark_su),true);
+						.getString(R.string.ebook_add_mark_su),true);
 			} else {
 				PublicUtils.showToast(MenuTextEditActivity.this, getResources()
-						.getString(R.string.add_mark_has),true);
+						.getString(R.string.ebook_add_mark_has),true);
 			}
 		///	ScreenManager.getScreenManager().popAllActivityExceptOne();
 			return true;

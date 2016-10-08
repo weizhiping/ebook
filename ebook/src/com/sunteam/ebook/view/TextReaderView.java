@@ -261,7 +261,7 @@ import android.view.View;
 								 String str = new String(buffer, length, speakTextLen-length, CHARSET_NAME);	//转换成指定编码
 								 if( !TextUtils.isEmpty(str))
 								 {
-									 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+									 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 									 speakContent(tips+"，"+str);
 										 
 									 return;
@@ -278,7 +278,7 @@ import android.view.View;
 		 }
 		 */	//不论当前是否是播放状态，都停止播放。
 		 
-		 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+		 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 		 speakTips(tips);
 	 }
 	 
@@ -1354,10 +1354,10 @@ import android.view.View;
 				 mReverseInfo.len = ri.len;
 			 }	//反显当前页第一行第一个字
 			 
-			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 			 if( isTop )
 			 {
-				 tips = mContext.getString(R.string.to_top1) + tips;
+				 tips = mContext.getString(R.string.ebook_to_top1) + tips;
 			 }
 			 speakTips(tips);
 		 }
@@ -1403,7 +1403,7 @@ import android.view.View;
 					 mReverseInfo.len = ri.len;
 				 }	//反显当前页第一行第一个字
 				 
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+				 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 				 speakTips(tips);
 			 }
 		 }
@@ -1469,10 +1469,10 @@ import android.view.View;
 				 mReverseInfo.len = ri.len;
 			 }	//反显当前页第一行第一个字
 			 
-			 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+			 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 			 if( isTop )
 			 {
-				 tips = mContext.getString(R.string.to_top1) + tips;
+				 tips = mContext.getString(R.string.ebook_to_top1) + tips;
 			 }
 			 speakTips(tips);
 		 }
@@ -1518,7 +1518,7 @@ import android.view.View;
 					 mReverseInfo.len = ri.len;
 				 }	//反显当前页第一行第一个字
 				 
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips2), mCurPage );
+				 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
 				 speakTips(tips);
 			 }
 		 }
@@ -1610,7 +1610,7 @@ import android.view.View;
 				 
 				 if( null == explain )
 				 {
-					 speakTips(mContext.getString(R.string.no_explain));
+					 speakTips(mContext.getString(R.string.ebook_no_explain));
 					 return;
 				 }
 				 else
@@ -1628,7 +1628,7 @@ import android.view.View;
 					 
 					 if( TextUtils.isEmpty(txt) )
 					 {
-						 speakTips(mContext.getString(R.string.no_explain));
+						 speakTips(mContext.getString(R.string.ebook_no_explain));
 						 return;
 					 }
 					 else
@@ -1636,14 +1636,14 @@ import android.view.View;
 						 String[] str = txt.split("=");
 						 if( ( null == str ) || ( str.length < 2 ) )
 						 {
-							 speakTips(mContext.getString(R.string.no_explain));
+							 speakTips(mContext.getString(R.string.ebook_no_explain));
 							 return;
 						 }
 						 
 						 String[] strExplain = str[1].split(" ");
 						 if( ( null == strExplain ) || ( 0 == strExplain.length ) )
 						 {
-							 speakTips(mContext.getString(R.string.no_explain));
+							 speakTips(mContext.getString(R.string.ebook_no_explain));
 							 return;
 						 }
 						 
@@ -1655,13 +1655,13 @@ import android.view.View;
 							 {
 								 list2.add(strExplain[i]);
 							 }
-							 list2.add(String.format(mContext.getResources().getString(R.string.en_explain_tips), ch-'a'+1));	//添加在字母表中的顺序
+							 list2.add(String.format(mContext.getResources().getString(R.string.ebook_en_explain_tips), ch-'a'+1));	//添加在字母表中的顺序
 						 }
 						 else
 						 {
 							 for( int i = 0; i < strExplain.length; i++ )
 							 {
-								 list2.add(strExplain[i]+mContext.getResources().getString(R.string.cn_explain_tips)+str[0]);
+								 list2.add(strExplain[i]+mContext.getResources().getString(R.string.ebook_cn_explain_tips)+str[0]);
 							 }
 						 }
 						 
@@ -1699,7 +1699,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
 			 return;
 		 }
@@ -1714,7 +1714,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.ebook_to_top1));
 				 }
 				 break;
 			 }
@@ -1780,7 +1780,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
 			 return;
 		 }
@@ -1795,7 +1795,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.ebook_to_top1));
 				 }
 				 break;
 			 }
@@ -1806,7 +1806,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.ebook_to_top1));
 					 }
 				 }
 				 else
@@ -1830,7 +1830,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.ebook_to_top1));
 					 }
 				 }
 				 else
@@ -1840,7 +1840,7 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
-							 speakTips(mContext.getString(R.string.to_top1));
+							 speakTips(mContext.getString(R.string.ebook_to_top1));
 						 }
 					 }
 					 else
@@ -1905,7 +1905,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
 		 }
 		 else
@@ -1929,7 +1929,7 @@ import android.view.View;
 						 if( mOnPageFlingListener != null )
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
-							 speakTips(mContext.getString(R.string.to_top1));
+							 speakTips(mContext.getString(R.string.ebook_to_top1));
 						 }
 					 }
 					 else
@@ -1949,7 +1949,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
 		 }
 	 }
@@ -2015,7 +2015,7 @@ import android.view.View;
 			 if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
-				 speakTips(mContext.getString(R.string.to_top1));
+				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
 			 return;
 		 }
@@ -2030,7 +2030,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.ebook_to_top1));
 				 }
 				 break;
 			 }
@@ -2576,7 +2576,7 @@ import android.view.View;
 		 {
 			 if( isSpeakPage )
 			 {
-				 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+				 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips), mCurPage, getPageCount() );
 				 if( mIsAuto && !TextUtils.isEmpty(mFilename))
 				 {
 					 mIsAuto = false;
@@ -2585,11 +2585,11 @@ import android.view.View;
 				 
 				 if( isTop )
 				 {
-					 tips = mContext.getString(R.string.to_top1) + tips;
+					 tips = mContext.getString(R.string.ebook_to_top1) + tips;
 				 }
 				 else if( isBottom )
 				 {
-					 tips = mContext.getString(R.string.to_bottom1) + tips;
+					 tips = mContext.getString(R.string.ebook_to_bottom1) + tips;
 				 }
 				 
 				 speakTips(tips);
@@ -2599,11 +2599,11 @@ import android.view.View;
 				 String tips = "";
 				 if( isTop )
 				 {
-					 tips = mContext.getString(R.string.to_top1) + tips;
+					 tips = mContext.getString(R.string.ebook_to_top1) + tips;
 				 }
 				 else if( isBottom )
 				 {
-					 tips = mContext.getString(R.string.to_bottom1) + tips;
+					 tips = mContext.getString(R.string.ebook_to_bottom1) + tips;
 				 }
 				 
 				 speakTips(tips);
@@ -2635,11 +2635,11 @@ import android.view.View;
 		 {
 			 if( isTop )
 			 {
-				 str = mContext.getString(R.string.to_top1) + str;
+				 str = mContext.getString(R.string.ebook_to_top1) + str;
 			 }
 			 else if( isBottom )
 			 {
-				 str = mContext.getString(R.string.to_bottom1) + str;
+				 str = mContext.getString(R.string.ebook_to_bottom1) + str;
 			 }
 			 speakContent(str);
 		 }
@@ -2650,7 +2650,7 @@ import android.view.View;
 				 String text = new String(mMbBuf, mReverseInfo.startPos, mReverseInfo.len, CHARSET_NAME);	//转换成指定编码
 				 if( isSpeakPage )
 				 {
-					 String tips = String.format(mContext.getResources().getString(R.string.page_read_tips), mCurPage, getPageCount() );
+					 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips), mCurPage, getPageCount() );
 					 if( mIsAuto && !TextUtils.isEmpty(mFilename))
 					 {
 						 mIsAuto = false;
@@ -2660,11 +2660,11 @@ import android.view.View;
 					 String content = tips+text;
 					 if( isTop )
 					 {
-						 content = mContext.getString(R.string.to_top1) + content;
+						 content = mContext.getString(R.string.ebook_to_top1) + content;
 					 }
 					 else if( isBottom )
 					 {
-						 content = mContext.getString(R.string.to_bottom1) + content;
+						 content = mContext.getString(R.string.ebook_to_bottom1) + content;
 					 }
 					 
 					 speakContent(content);
@@ -2673,11 +2673,11 @@ import android.view.View;
 				 {
 					 if( isTop )
 					 {
-						 text = mContext.getString(R.string.to_top1) + text;
+						 text = mContext.getString(R.string.ebook_to_top1) + text;
 					 }
 					 else if( isBottom )
 					 {
-						 text = mContext.getString(R.string.to_bottom1) + text;
+						 text = mContext.getString(R.string.ebook_to_bottom1) + text;
 					 }
 					 speakContent(text);
 				 }
@@ -2781,7 +2781,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
-				 					speakTips(mContext.getString(R.string.to_top1));
+				 					speakTips(mContext.getString(R.string.ebook_to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2800,7 +2800,7 @@ import android.view.View;
 				 				if( mOnPageFlingListener != null )
 				 				{
 				 					mOnPageFlingListener.onPageFlingToTop();
-				 					speakTips(mContext.getString(R.string.to_top1));
+				 					speakTips(mContext.getString(R.string.ebook_to_top1));
 				 				}
 				 				break;
 				 			}
@@ -2888,7 +2888,7 @@ import android.view.View;
 				 if( mOnPageFlingListener != null )
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
-					 speakTips(mContext.getString(R.string.to_top1));
+					 speakTips(mContext.getString(R.string.ebook_to_top1));
 				 }
 			 }
 		 }
@@ -2909,7 +2909,7 @@ import android.view.View;
 					 if( mOnPageFlingListener != null )
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
-						 speakTips(mContext.getString(R.string.to_top1));
+						 speakTips(mContext.getString(R.string.ebook_to_top1));
 					 }
 				 }
 			 }

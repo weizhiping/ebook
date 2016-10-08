@@ -112,8 +112,8 @@ public class PublicUtils
 		progress.setCancelable(true);
 		progress.setCanceledOnTouchOutside(false);
 		progress.show();
-		progress.setContentView(R.layout.progress_layout);
-		TextView tvInfo = (TextView) progress.findViewById(R.id.tv_info);
+		progress.setContentView(R.layout.ebook_progress_layout);
+		TextView tvInfo = (TextView) progress.findViewById(R.id.ebook_tv_info);
 		tvInfo.setText(info);
 		
 		TTSUtils.getInstance().speakMenu(info);
@@ -132,7 +132,7 @@ public class PublicUtils
 		progress.setCancelable(true);
 		progress.setCanceledOnTouchOutside(false);
 		progress.show();
-		progress.setContentView(R.layout.progress_layout);
+		progress.setContentView(R.layout.ebook_progress_layout);
 	}
 
 	public static void cancelProgress() {
@@ -203,7 +203,7 @@ public class PublicUtils
 	{
 		if( TextUtils.isEmpty(content) )
 		{
-			PublicUtils.showToast( context, context.getString(R.string.search_fail) );
+			PublicUtils.showToast( context, context.getString(R.string.ebook_search_fail) );
 		}
 		else
 		{
@@ -211,13 +211,13 @@ public class PublicUtils
 			final String result = dbUtils.search(content);
 			if( TextUtils.isEmpty(result) )
 			{
-				PublicUtils.showToast( context, context.getString(R.string.search_fail) );
+				PublicUtils.showToast( context, context.getString(R.string.ebook_search_fail) );
 			}
 			else
 			{
 				TTSUtils.getInstance().stop();
 				TTSUtils.getInstance().OnTTSListener(null);
-				PublicUtils.showToast( context, context.getString(R.string.dict_search_success), new PromptListener() {
+				PublicUtils.showToast( context, context.getString(R.string.ebook_dict_search_success), new PromptListener() {
 					@Override
 					public void onComplete() 
 					{

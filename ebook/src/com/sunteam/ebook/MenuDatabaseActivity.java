@@ -31,7 +31,7 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		flag = getIntent().getIntExtra("flag", 1);
 		initViews();
@@ -39,13 +39,13 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 
 	private void initViews() {
 		mMenuList = new ArrayList<String>();
-		mMenuList.add(getString(R.string.menu_delete_current));
-		mMenuList.add(getString(R.string.menu_delete_list));
+		mMenuList.add(getString(R.string.ebook_menu_delete_current));
+		mMenuList.add(getString(R.string.ebook_menu_delete_list));
 		if (2 == flag) {
-			mMenuList.add(getString(R.string.menu_add_fav));
+			mMenuList.add(getString(R.string.ebook_menu_add_fav));
 		}
-		String title = this.getString(R.string.menu_function);
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		String title = this.getString(R.string.ebook_menu_function);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
@@ -88,9 +88,9 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 		item = selectItem;
 		
 		if( 0 == selectItem){
-			dialog(getResources().getString(R.string.dialog_delete));
+			dialog(getResources().getString(R.string.ebook_dialog_delete));
 		}else if(1 == selectItem){
-			dialog(getResources().getString(R.string.dialog_clear));
+			dialog(getResources().getString(R.string.ebook_dialog_clear));
 		}else{
 			Intent intent = new Intent();
 			intent.putExtra("data_item", selectItem);
@@ -101,15 +101,15 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 	
 	private void dialog(String content){
 		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this, content
-				 ,getResources().getString(R.string.dialog_yes), getResources().getString(R.string.dialog_no));
+				 ,getResources().getString(R.string.ebook_dialog_yes), getResources().getString(R.string.ebook_dialog_no));
 		 
 		mConfirmDialog.setConfirmListener(new ConfirmListener() {
 			
 			@Override
 			public void doConfirm() {
-				String content = getResources().getString(R.string.dialog_delete_su);
+				String content = getResources().getString(R.string.ebook_dialog_delete_su);
 				if(1 == item){
-					content = getResources().getString(R.string.dialog_clear_su);
+					content = getResources().getString(R.string.ebook_dialog_clear_su);
 				}
 				PublicUtils.showToast(MenuDatabaseActivity.this, content, new PromptListener(){
 					@Override

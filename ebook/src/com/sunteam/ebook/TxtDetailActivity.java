@@ -52,7 +52,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		initViews();
 	}
 
@@ -72,8 +72,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		switch (flag) 
 		{
 		case 0:
-			mMenuList.add(getString(R.string.external_storage));
-			mMenuList.add(getString(R.string.tf_storage));
+			mMenuList.add(getString(R.string.ebook_external_storage));
+			mMenuList.add(getString(R.string.ebook_tf_storage));
 			break;
 		case 1:
 		case 2:
@@ -98,7 +98,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				}
 			}
 		}
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
@@ -130,7 +130,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     		mMainView.onResume();
     	}
     	if(0 != flag && 0 == fileInfoList.size()){
-    		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.no_file),new PromptListener() {
+    		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.ebook_no_file),new PromptListener() {
 				
 				@Override
 				public void onComplete() {
@@ -200,7 +200,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("file", remberFile);
 				this.startActivity(intent);
 			}else{
-				String tips = this.getString(R.string.tf_does_not_exist);
+				String tips = this.getString(R.string.ebook_tf_does_not_exist);
 				PublicUtils.showToast(this, tips);
 			}
 			return;
@@ -270,7 +270,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		if (0 == count) // 文件为空
 		{
 			// 提示一下（语音和文字）
-			PublicUtils.showToast(this, getString(R.string.txt_menu_null));
+			PublicUtils.showToast(this, getString(R.string.ebook_txt_menu_null));
 		} 
 		else if (1 == count) // 只有一部分
 		{
@@ -323,7 +323,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private void insertToDb(){
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
-		String title = getResources().getString(R.string.add_fav_success);
+		String title = getResources().getString(R.string.ebook_add_fav_success);
 		PublicUtils.showToast(this, title);
 		//TTSUtils.getInstance().speakMenu(title);
 	}
@@ -349,7 +349,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			String tips = TxtDetailActivity.this.getString(R.string.word_parse_tips);
+			String tips = TxtDetailActivity.this.getString(R.string.ebook_word_parse_tips);
 			PublicUtils.showProgress(TxtDetailActivity.this, tips); 
 		}
 
@@ -377,7 +377,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 			else
 			{
-				String tips = TxtDetailActivity.this.getString(R.string.word_parse_fail);
+				String tips = TxtDetailActivity.this.getString(R.string.ebook_word_parse_fail);
 				PublicUtils.showToast(TxtDetailActivity.this, tips);
 			}
 		}

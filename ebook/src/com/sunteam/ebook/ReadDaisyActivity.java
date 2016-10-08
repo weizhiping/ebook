@@ -54,7 +54,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_read_daisy);
+		setContentView(R.layout.ebook_activity_read_daisy);
 		
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
@@ -64,10 +64,10 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		
 		Tools tools = new Tools(this);
 		this.getWindow().setBackgroundDrawable(new ColorDrawable(tools.getBackgroundColor())); // 设置窗口背景色
-    	mTvTitle = (TextView)this.findViewById(R.id.main_title);
-    	mTvPageCount = (TextView)this.findViewById(R.id.pageCount);
-    	mTvCurPage = (TextView)this.findViewById(R.id.curPage);
-    	mLine = (View)this.findViewById(R.id.line);
+    	mTvTitle = (TextView)this.findViewById(R.id.ebook_main_title);
+    	mTvPageCount = (TextView)this.findViewById(R.id.ebook_pageCount);
+    	mTvCurPage = (TextView)this.findViewById(R.id.ebook_curPage);
+    	mLine = (View)this.findViewById(R.id.ebook_line);
     	
     	mTvTitle.setTextColor(tools.getFontColor());
     	mTvPageCount.setTextColor(tools.getFontColor());
@@ -84,7 +84,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
     	mTvPageCount.setHeight((int)(fontSize/2));
     	mTvCurPage.setHeight((int)(fontSize/2));
     	
-    	mDaisyReaderView = (DaisyReaderView) findViewById(R.id.read_daisy_view);
+    	mDaisyReaderView = (DaisyReaderView) findViewById(R.id.ebook_read_daisy_view);
     	mDaisyReaderView.setOnPageFlingListener(this);    	
     	mDaisyReaderView.setTextColor(tools.getFontColor());
     	mDaisyReaderView.setReverseColor(tools.getHighlightColor());
@@ -95,7 +95,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
     	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
-    		//PublicUtils.showToast(this, this.getString(R.string.checksum_error));
+    		//PublicUtils.showToast(this, this.getString(R.string.ebook_checksum_error));
     		back();
     	}
 	}
@@ -180,7 +180,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.to_top);
+		String tips = this.getString(R.string.ebook_to_top);
 		PublicUtils.showToast(this, tips);
 	}
 
@@ -199,11 +199,11 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
 			TTSUtils.getInstance().OnTTSListener(ReadDaisyActivity.this);
-			TTSUtils.getInstance().speakContent(ReadDaisyActivity.this.getString(R.string.already_read));
+			TTSUtils.getInstance().speakContent(ReadDaisyActivity.this.getString(R.string.ebook_already_read));
 		}
 		else
 		{
-			String tips = this.getString(R.string.has_finished_reading_the_last_book);
+			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
 			PublicUtils.showToast(this, tips);
 		}
 	}

@@ -2,11 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/menu_layout"
+    android:id="@+id/ebook_menu_layout"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/title_menu"
+        android:id="@+id/ebook_title_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
@@ -16,14 +16,14 @@
         />
 
     <View
-        android:id="@+id/menu_line"
+        android:id="@+id/ebook_menu_line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:layout_below="@id/title_menu"
+        android:layout_below="@id/ebook_title_menu"
         android:background="@color/space_line" />
 
     <EditText
-        android:id="@+id/num_edit"
+        android:id="@+id/ebook_num_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"

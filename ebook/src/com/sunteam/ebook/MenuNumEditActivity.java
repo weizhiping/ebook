@@ -39,7 +39,7 @@ public class MenuNumEditActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_num_edit);
+		setContentView(R.layout.ebook_activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		initViews();
@@ -51,10 +51,10 @@ public class MenuNumEditActivity extends Activity {
 		maxNum = intent.getIntExtra("edit_max", 0);
 		number = intent.getIntExtra("edit_current", 0);
 		flage = intent.getIntExtra("edit_flage", 0);
-		RelativeLayout layout = (RelativeLayout) findViewById(R.id.menu_layout);
-		TextView titleView = (TextView) findViewById(R.id.title_menu);
-		numView = (EditText) findViewById(R.id.num_edit);
-		View line = findViewById(R.id.menu_line);
+		RelativeLayout layout = (RelativeLayout) findViewById(R.id.ebook_menu_layout);
+		TextView titleView = (TextView) findViewById(R.id.ebook_title_menu);
+		numView = (EditText) findViewById(R.id.ebook_num_edit);
+		View line = findViewById(R.id.ebook_menu_line);
 		titleView.setText(title);
 		numView.setFocusable(false);
 		
@@ -144,7 +144,7 @@ public class MenuNumEditActivity extends Activity {
 				int volume = (int)(number * 1.5);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
 				MediaPlayerUtils.getInstance().stop();
-				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.setting_success),true);
+				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.ebook_setting_success),true);
 			}
 			return true;
 		default:

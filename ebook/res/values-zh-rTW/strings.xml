@@ -1,121 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">电子书</string>
-    <string name="main_title">电子书</string>
-    <string name="main_menu_txt">文本文档</string>
-    <string name="main_menu_daisy">Daisy 文档</string>
-    <string name="main_menu_word">WORD 文档</string>
-    <string name="txt_menu_catalog">目录浏览</string>
-    <string name="txt_menu_fav">我的收藏</string>
-    <string name="txt_menu_recent">最近使用文件</string>
-    <string name="txt_menu_part">第%1$s部分</string>
-    <string name="txt_menu_null">文件内容为空</string>
-    <string name="external_storage">内存</string>
-    <string name="tf_storage">存储卡</string>
-    <string name="tf_does_not_exist">存储卡不存在，请插入！</string>
-    <string name="external_catalog">内储根目录</string>
-    <string name="tf_catalog">存储卡根目录</string>
-    <string name="menu_function">功能菜单</string>
-    <string name="menu_delete_current">删除当前</string>
-    <string name="menu_delete_list">清空列表</string>
-    <string name="menu_add_fav">添加到我的收藏</string>
-     <string name="add_fav_success">成功添加到我的收藏</string>
-    <string name="page_read_tips">第%1$s页 总共%2$s页</string>
-    <string name="no_explain">无例词</string>
-    <string name="en_explain_tips">字母表中的第 %1$s个字母</string>
-    <string name="cn_explain_tips">的</string>
-    <string name="to_top">已经到开头</string>
-    <string name="to_bottom">已经到结尾</string>
-	<string name="loading">请稍候</string>
-	<string name="word_parse_tips">正在解析Word文档，请稍候！</string>
-	<string name="word_parse_fail">Word文档解析失败！</string>
-	<string name="checksum_error">CheckSum校验错误！</string>
-	<string name="page_read_tips2">第%1$s页</string>
-	<string name="baike_search_success">百科查询</string>
-	<string name="dict_search_success">词典查询</string>
-	<string name="search_fail">无搜索结果</string>
-	<string name="install_tts_tips">请先安装讯飞语音+"</string>
-	<string name="setting_success">设定成功</string>
-	<string name="tts_speed">语速</string>
-	<string name="tts_pitch">语调</string>
-	<string name="tts_volume">音量</string>
-	<string name="menu_text_tips">第 %1$s页</string>
-	<string name="menu_mark_tips">当前尚未创建书签</string>
-	<string name="dialog_yes">是</string>
-	<string name="dialog_no">否</string>
-	<string name="dialog_delete">确认删除</string>
-	<string name="dialog_delete_su">删除成功</string>
-	<string name="dialog_delete_failed">删除失败</string>
-	<string name="dialog_clear">确认清空</string>
-	<string name="dialog_clear_su">清空成功</string>
-	<string name="no_file">无文件</string>
-	<string name="add_mark_su">添加书签成功</string>
-	<string name="add_mark_has">书签名已存在</string>
-	<string name="already_read">已经读完</string>
-	<string name="has_finished_reading_the_last_book">已经读完最后一本书</string>
-	<string name="select_start">选定起点</string>
-	<string name="select_end">选定终点</string>
-	<string name="file_already_exist">文件已存在</string>
-	<string name="save_newword_success">成功保存到生词本</string>
-	<string name="save_newword_fail">保存到生词本失败</string>
+    <string name="ebook_app_name">电子书</string>
+    <string name="ebook_main_title">电子书</string>
+    <string name="ebook_main_menu_txt">文本文档</string>
+    <string name="ebook_main_menu_daisy">Daisy 文档</string>
+    <string name="ebook_main_menu_word">WORD 文档</string>
+    <string name="ebook_txt_menu_catalog">目录浏览</string>
+    <string name="ebook_txt_menu_fav">我的收藏</string>
+    <string name="ebook_txt_menu_recent">最近使用文件</string>
+    <string name="ebook_txt_menu_part">第%1$s部分</string>
+    <string name="ebook_txt_menu_null">文件内容为空</string>
+    <string name="ebook_external_storage">内存</string>
+    <string name="ebook_tf_storage">存储卡</string>
+    <string name="ebook_tf_does_not_exist">存储卡不存在，请插入！</string>
+    <string name="ebook_external_catalog">内储根目录</string>
+    <string name="ebook_tf_catalog">存储卡根目录</string>
+    <string name="ebook_menu_function">功能菜单</string>
+    <string name="ebook_menu_delete_current">删除当前</string>
+    <string name="ebook_menu_delete_list">清空列表</string>
+    <string name="ebook_menu_add_fav">添加到我的收藏</string>
+    <string name="ebook_add_fav_success">成功添加到我的收藏</string>
+    <string name="ebook_page_read_tips">第%1$s页 总共%2$s页</string>
+    <string name="ebook_no_explain">无例词</string>
+    <string name="ebook_en_explain_tips">字母表中的第 %1$s个字母</string>
+    <string name="ebook_cn_explain_tips">的</string>
+    <string name="ebook_to_top">已经到开头</string>
+    <string name="ebook_to_bottom">已经到结尾</string>
+	<string name="ebook_loading">请稍候</string>
+	<string name="ebook_word_parse_tips">正在解析Word文档，请稍候！</string>
+	<string name="ebook_word_parse_fail">Word文档解析失败！</string>
+	<string name="ebook_checksum_error">CheckSum校验错误！</string>
+	<string name="ebook_page_read_tips2">第%1$s页</string>
+	<string name="ebook_baike_search_success">百科查询</string>
+	<string name="ebook_dict_search_success">词典查询</string>
+	<string name="ebook_search_fail">无搜索结果</string>
+	<string name="ebook_install_tts_tips">请先安装讯飞语音+"</string>
+	<string name="ebook_setting_success">设定成功</string>
+	<string name="ebook_tts_speed">语速</string>
+	<string name="ebook_tts_pitch">语调</string>
+	<string name="ebook_tts_volume">音量</string>
+	<string name="ebook_menu_text_tips">第 %1$s页</string>
+	<string name="ebook_menu_mark_tips">当前尚未创建书签</string>
+	<string name="ebook_dialog_yes">是</string>
+	<string name="ebook_dialog_no">否</string>
+	<string name="ebook_dialog_delete">确认删除</string>
+	<string name="ebook_dialog_delete_su">删除成功</string>
+	<string name="ebook_dialog_delete_failed">删除失败</string>
+	<string name="ebook_dialog_clear">确认清空</string>
+	<string name="ebook_dialog_clear_su">清空成功</string>
+	<string name="ebook_no_file">无文件</string>
+	<string name="ebook_add_mark_su">添加书签成功</string>
+	<string name="ebook_add_mark_has">书签名已存在</string>
+	<string name="ebook_already_read">已经读完</string>
+	<string name="ebook_has_finished_reading_the_last_book">已经读完最后一本书</string>
+	<string name="ebook_select_start">选定起点</string>
+	<string name="ebook_select_end">选定终点</string>
+	<string name="ebook_file_already_exist">文件已存在</string>
+	<string name="ebook_save_newword_success">成功保存到生词本</string>
+	<string name="ebook_save_newword_fail">保存到生词本失败</string>
 	
-    <string-array name="array_menu">
+    <string-array name="ebook_array_menu">
         <item>书签管理</item>
         <item>跳至开头</item>
         <item>跳转页码</item>
         <item>朗读语音</item>
         <item>背景音乐</item>
     </string-array>
-    <string-array name="array_menu_mark">
+    <string-array name="ebook_array_menu_mark">
         <item>增加书签</item>
         <item>查看书签</item>
         <item>删除书签</item>
         <item>清空书签</item>
     </string-array>
-    <string-array name="array_menu_voice">
+    <string-array name="ebook_array_menu_voice">
         <item>中文角色</item>
         <!-- <item>英文角色</item>-->
         <item>语速</item>
         <item>语调</item>
         <item>语音音效</item><!-- <item>语音风格</item> -->
     </string-array>
-    <string-array name="array_menu_voice_china">
+    <string-array name="ebook_array_menu_voice_china">
         <item>国语男声</item>
         <item>国语女声</item>
         <item>粤语女声</item>
         <item>童声</item>
     </string-array>
-    <string-array name="array_menu_voice_english">
+    <string-array name="ebook_array_menu_voice_english">
         <item>英语男声</item>
         <item>英语女声</item>
     </string-array>
-    <string-array name="array_menu_voice_style">
+    <string-array name="ebook_array_menu_voice_style">
         <item>一字一顿</item>
         <item>平铺直叙</item>
     </string-array>
-     <string-array name="array_menu_voice_effect">
+     <string-array name="ebook_array_menu_voice_effect">
         <item>原声</item>
         <item>回声</item>
          <item>机器人</item>
         <item>阴阳怪气</item>
     </string-array>
-    <string-array name="array_menu_music">
+    <string-array name="ebook_array_menu_music">
         <item>开关</item>
         <item>音乐选择</item>
         <item>背景音强度</item>
     </string-array>
-	<string-array name="array_menu_music_on">
+	<string-array name="ebook_array_menu_music_on">
         <item>开启</item>
         <item>关闭</item>
     </string-array>
-    <string-array name="array_menu_daisy">
+    <string-array name="ebook_array_menu_daisy">
         <item>书签管理</item>
         <item>朗读模式</item>
         <item>跳至文档开头</item>
         <item>跳至章节页码</item>
     </string-array>
-    <string-array name="array_menu_daisy_read">
+    <string-array name="ebook_array_menu_daisy_read">
         <item>逐句朗读</item>
         <item>逐章朗读</item>
         <item>全文朗读</item>

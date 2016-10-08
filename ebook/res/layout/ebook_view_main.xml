@@ -9,7 +9,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/ebook_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
@@ -18,7 +18,7 @@
             android:textSize="@dimen/title_text_size" />
 
         <View
-            android:id="@+id/line"
+            android:id="@+id/ebook_line"
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:layout_gravity="bottom"
@@ -26,7 +26,7 @@
     </FrameLayout>
 
     <ListView
-        android:id="@+id/menu_list"
+        android:id="@+id/ebook_menu_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"

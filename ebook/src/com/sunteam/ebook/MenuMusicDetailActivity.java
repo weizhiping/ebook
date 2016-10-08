@@ -40,7 +40,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,
 				Context.MODE_PRIVATE);
@@ -58,7 +58,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 			initFiles();
 		}
 		String title = getIntent().getStringExtra("title");
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList, this);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
@@ -88,7 +88,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 			mMainView.onResume();
 		}
 		if(1 == flag && 0 == fileList.size()){
-			PublicUtils.showToast(this, getResources().getString(R.string.menu_muisc_null),true);
+			PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_muisc_null),true);
 		}
 		super.onResume();
 	}
@@ -131,12 +131,12 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		}
 		edit.commit();
 		sendBroadcast(intent);
-		PublicUtils.showToast(MenuMusicDetailActivity.this, getResources().getString(R.string.setting_success),true);
+		PublicUtils.showToast(MenuMusicDetailActivity.this, getResources().getString(R.string.ebook_setting_success),true);
 	}
 
 	// 初始化开关
 	private void initSwitch() {
-		String[] menus = getResources().getStringArray(R.array.array_menu_music_on);
+		String[] menus = getResources().getStringArray(R.array.ebook_array_menu_music_on);
 		int length = menus.length;
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);

@@ -41,17 +41,17 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_read_txt);
+		setContentView(R.layout.ebook_activity_read_txt);
 		
 		word = this.getIntent().getStringExtra("word");
 		explain = this.getIntent().getStringExtra("explain");
 		
 		Tools tools = new Tools(this);
 		this.getWindow().setBackgroundDrawable(new ColorDrawable(tools.getBackgroundColor())); // 设置窗口背景色
-    	mTvTitle = (TextView)this.findViewById(R.id.main_title);
-    	mTvPageCount = (TextView)this.findViewById(R.id.pageCount);
-    	mTvCurPage = (TextView)this.findViewById(R.id.curPage);
-    	mLine = (View)this.findViewById(R.id.line);
+    	mTvTitle = (TextView)this.findViewById(R.id.ebook_main_title);
+    	mTvPageCount = (TextView)this.findViewById(R.id.ebook_pageCount);
+    	mTvCurPage = (TextView)this.findViewById(R.id.ebook_curPage);
+    	mLine = (View)this.findViewById(R.id.ebook_line);
     	
     	mTvTitle.setTextColor(tools.getFontColor());
     	mTvPageCount.setTextColor(tools.getFontColor());
@@ -66,7 +66,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     	mTvTitle.setHeight((int)fontSize); // 设置控件高度
     	mTvTitle.setText(word);
 				
-    	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
+    	mTextReaderView = (TextReaderView) findViewById(R.id.ebook_read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
     	mTextReaderView.setTextColor(tools.getFontColor());
     	mTextReaderView.setReverseColor(tools.getHighlightColor());
@@ -75,7 +75,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     	
     	if( mTextReaderView.openBook(explain) == false )
     	{
-    		PublicUtils.showToast(this, this.getString(R.string.checksum_error));
+    		PublicUtils.showToast(this, this.getString(R.string.ebook_checksum_error));
     		back();
     	}
 	}
@@ -186,7 +186,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				saveFile.createNewFile();
 				*/
 				
-				PublicUtils.showToast( this, this.getString(R.string.file_already_exist) );
+				PublicUtils.showToast( this, this.getString(R.string.ebook_file_already_exist) );
 				
 				return;	//如果已经存在，提示即可
 			}
@@ -195,12 +195,12 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 			outStream.write(explain.getBytes());
 			outStream.close();
 			
-			PublicUtils.showToast( this, this.getString(R.string.save_newword_success) );
+			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_success) );
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			PublicUtils.showToast( this, this.getString(R.string.save_newword_fail) );
+			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_fail) );
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.to_top);
+		String tips = this.getString(R.string.ebook_to_top);
 		PublicUtils.showToast(this, tips);
 	}
 
@@ -216,7 +216,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	public void onPageFlingToBottom() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.to_bottom);
+		String tips = this.getString(R.string.ebook_to_bottom);
 		PublicUtils.showToast(this, tips);
 	}
 

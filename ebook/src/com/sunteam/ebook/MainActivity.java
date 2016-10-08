@@ -37,12 +37,12 @@ public class MainActivity extends Activity implements OnEnterListener
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.ebook_activity_main);
         
         TTSUtils.getInstance().init(this);	//初始化TTS
 		if( !PublicUtils.checkSpeechServiceInstalled(this) ) 
 		{			
-			CustomToast.showToast(this, this.getString(R.string.install_tts_tips), Toast.LENGTH_LONG);
+			CustomToast.showToast(this, this.getString(R.string.ebook_install_tts_tips), Toast.LENGTH_LONG);
 			finish();
 			return;
 		}
@@ -56,12 +56,12 @@ public class MainActivity extends Activity implements OnEnterListener
     	PublicUtils.setColorSchemeIndex(PublicUtils.getSysColorSchemeIndex());	//设置系统配色方案
     	
     	mMenuList = new ArrayList<String>();
-    	mMenuList.add( this.getString(R.string.main_menu_txt) );
-    	mMenuList.add( this.getString(R.string.main_menu_daisy) );
-    	mMenuList.add( this.getString(R.string.main_menu_word) );
+    	mMenuList.add( this.getString(R.string.ebook_main_menu_txt) );
+    	mMenuList.add( this.getString(R.string.ebook_main_menu_daisy) );
+    	mMenuList.add( this.getString(R.string.ebook_main_menu_word) );
     	
-    	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
-    	mMainView = new MainView( this, this, this.getString(R.string.main_title), mMenuList);
+    	mFlContainer = (FrameLayout)this.findViewById(R.id.ebook_fl_container);
+    	mMainView = new MainView( this, this, this.getString(R.string.ebook_main_title), mMenuList);
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
     	if(null != remberFile){

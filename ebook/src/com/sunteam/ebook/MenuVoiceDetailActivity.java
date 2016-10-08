@@ -29,7 +29,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		initData();
 		initViews();
@@ -41,16 +41,16 @@ public class MenuVoiceDetailActivity extends Activity implements
 		String[] menus = null;
 		switch (voiceFlag) {
 		case 0:
-			menus = res.getStringArray(R.array.array_menu_voice_china);
+			menus = res.getStringArray(R.array.ebook_array_menu_voice_china);
 			break;
 		case 1:
-			menus = res.getStringArray(R.array.array_menu_voice_english);
+			menus = res.getStringArray(R.array.ebook_array_menu_voice_english);
 			break;
 		case 4:
-			menus = res.getStringArray(R.array.array_menu_voice_effect);		
+			menus = res.getStringArray(R.array.ebook_array_menu_voice_effect);		
 			break;
 //		case 5:
-//			menus = res.getStringArray(R.array.array_menu_voice_style);
+//			menus = res.getStringArray(R.array.ebook_array_menu_voice_style);
 //			break;
 		}
 		int length = menus.length;
@@ -76,7 +76,7 @@ public class MenuVoiceDetailActivity extends Activity implements
 			mMainView.setSelection(TTSUtils.getInstance().getCurEffectIndex());
 			break;
 		}
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 	}

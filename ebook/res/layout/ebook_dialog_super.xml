@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/dialog_title"
+        android:id="@+id/ebook_dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -16,7 +16,7 @@
         android:textSize="@dimen/big_text_size" />
 
     <TextView
-        android:id="@+id/dialog_content"
+        android:id="@+id/ebook_dialog_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -25,7 +25,7 @@
         android:textSize="@dimen/big_text_size" />
 
     <View
-        android:id="@+id/dialog_line"
+        android:id="@+id/ebook_dialog_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/line_space"
         android:layout_above="@+id/dialog_cancel"
@@ -34,12 +34,12 @@
     <View
         android:layout_width="@dimen/line_space"
         android:layout_height="match_parent"
-        android:layout_below="@id/dialog_line"
+        android:layout_below="@id/ebook_dialog_line"
         android:layout_centerHorizontal="true"
         android:background="@color/bottom_line" />
 
     <Button
-        android:id="@+id/dialog_confrim"
+        android:id="@+id/ebook_dialog_confrim"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -48,12 +48,12 @@
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
-        android:text="@string/dialog_yes"
+        android:text="@string/ebook_dialog_yes"
         android:textColor="@color/text_blue"
         android:textSize="@dimen/pub_text_size" />
 
     <Button
-        android:id="@+id/dialog_cancel"
+        android:id="@+id/ebook_dialog_cancel"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -62,7 +62,7 @@
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"
-        android:text="@string/dialog_no"
+        android:text="@string/ebook_dialog_no"
         android:textColor="@color/text_blue"
         android:textSize="@dimen/pub_text_size" />
 

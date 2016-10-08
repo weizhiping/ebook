@@ -58,7 +58,7 @@ public class MainView extends View implements OnTTSListener
 	private void initView( final Context context, OnEnterListener listener, final String title, ArrayList<String> menuList, TTSSpeakMode mode )
 	{
 		mContext = context;
-		mView = LayoutInflater.from(context).inflate( R.layout.view_main, null );
+		mView = LayoutInflater.from(context).inflate( R.layout.ebook_view_main, null );
 		
 		mTvTitle = (TextView)mView.findViewById(R.id.title);		//标题栏
     	mLine = (View)mView.findViewById(R.id.line);				//分割线
@@ -137,15 +137,15 @@ public class MainView extends View implements OnTTSListener
 					break;
 				case READ_MODE_SPEED:		//语速模式
 					int speed = Integer.parseInt(gListData.get(selectItem));
-					TTSUtils.getInstance().testSpeed(speed, mContext.getString(R.string.tts_speed)+speed);
+					TTSUtils.getInstance().testSpeed(speed, mContext.getString(R.string.ebook_tts_speed)+speed);
 					break;
 				case READ_MODE_PITCH:		//语调模式
 					int pitch = Integer.parseInt(gListData.get(selectItem));
-					TTSUtils.getInstance().testPitch(pitch, mContext.getString(R.string.tts_pitch)+pitch);
+					TTSUtils.getInstance().testPitch(pitch, mContext.getString(R.string.ebook_tts_pitch)+pitch);
 					break;
 				case READ_MODE_VOLUME:		//音量模式
 					int volume = Integer.parseInt(gListData.get(selectItem));
-					TTSUtils.getInstance().testVolume(volume, mContext.getString(R.string.tts_volume)+volume);
+					TTSUtils.getInstance().testVolume(volume, mContext.getString(R.string.ebook_tts_volume)+volume);
 					break;
 				case READ_MODE_EFFECT:		//音效模式
 					TTSUtils.getInstance().testEffect(gListData.get(selectItem), gListData.get(selectItem));

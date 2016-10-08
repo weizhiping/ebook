@@ -255,7 +255,7 @@ public class TTSUtils
 	public boolean testRoleCn( String role, final String text )
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleCn = res.getStringArray(R.array.array_menu_voice_china);
+		String[] ttsRoleCn = res.getStringArray(R.array.ebook_array_menu_voice_china);
 		
 		for( int i = 0; i < ttsRoleCn.length; i++ )
 		{
@@ -274,7 +274,7 @@ public class TTSUtils
 	public boolean setRoleCn( String role )
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleCn = res.getStringArray(R.array.array_menu_voice_china);
+		String[] ttsRoleCn = res.getStringArray(R.array.ebook_array_menu_voice_china);
 		
 		for( int i = 0; i < ttsRoleCn.length; i++ )
 		{
@@ -284,7 +284,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
 				
 				return	true;
 			}
@@ -297,7 +297,7 @@ public class TTSUtils
 	public String getCurRoleCn()
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleCn = res.getStringArray(R.array.array_menu_voice_china);
+		String[] ttsRoleCn = res.getStringArray(R.array.ebook_array_menu_voice_china);
 		
 		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+"");
 		for( int i = 0; i < mRoleCn.length; i++ )
@@ -330,14 +330,14 @@ public class TTSUtils
 	public String[] getRoleCnList()
 	{
 		Resources res = mContext.getResources();
-		return	res.getStringArray(R.array.array_menu_voice_china);
+		return	res.getStringArray(R.array.ebook_array_menu_voice_china);
 	}
 	
 	//测试英文发音人
 	public boolean testRoleEn( String role, final String text )
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleEn = res.getStringArray(R.array.array_menu_voice_english);
+		String[] ttsRoleEn = res.getStringArray(R.array.ebook_array_menu_voice_english);
 		
 		for( int i = 0; i < ttsRoleEn.length; i++ )
 		{
@@ -356,7 +356,7 @@ public class TTSUtils
 	public boolean setRoleEn( String role )
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleEn = res.getStringArray(R.array.array_menu_voice_english);
+		String[] ttsRoleEn = res.getStringArray(R.array.ebook_array_menu_voice_english);
 		
 		for( int i = 0; i < ttsRoleEn.length; i++ )
 		{
@@ -366,7 +366,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
 				
 				return	true;
 			}
@@ -379,7 +379,7 @@ public class TTSUtils
 	public String getCurRoleEn()
 	{
 		Resources res = mContext.getResources();
-		String[] ttsRoleEn = res.getStringArray(R.array.array_menu_voice_english);
+		String[] ttsRoleEn = res.getStringArray(R.array.ebook_array_menu_voice_english);
 		
 		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_EN+"");
 		for( int i = 0; i < mRoleEn.length; i++ )
@@ -412,7 +412,7 @@ public class TTSUtils
 	public String[] getRoleEnList()
 	{
 		Resources res = mContext.getResources();
-		return	res.getStringArray(R.array.array_menu_voice_english);
+		return	res.getStringArray(R.array.ebook_array_menu_voice_english);
 	}
 	
 	//测试语速
@@ -428,7 +428,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.SPEED, (speed*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
 	}
 	
 	//得到语速
@@ -451,7 +451,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.PITCH, (pitch*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
 	}
 	
 	//得到语调
@@ -474,7 +474,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.VOLUME, (volume*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.setting_success));
+		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
 	}
 	
 	//得到音量
@@ -488,7 +488,7 @@ public class TTSUtils
 	public boolean testEffect( String effect, final String text )
 	{
 		/*Resources res = mContext.getResources();
-		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
+		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
 		{
@@ -507,7 +507,7 @@ public class TTSUtils
 	public boolean setEffect( String effect )
 	{
 		/*Resources res = mContext.getResources();
-		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
+		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
 		{
@@ -517,7 +517,7 @@ public class TTSUtils
 				editor.putInt( TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
 				editor.commit();
 				
-				PublicUtils.showToastEx(mContext, mContext.getString(R.string.setting_success));
+				PublicUtils.showToastEx(mContext, mContext.getString(R.string.ebook_setting_success));
 				
 				return	true;
 			}
@@ -530,7 +530,7 @@ public class TTSUtils
 	public String getCurEffect()
 	{
 		/*Resources res = mContext.getResources();
-		String[] ttsEffect = res.getStringArray(R.array.array_menu_voice_effect);
+		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
 		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
 		for( int i = 0; i < mEffect.length; i++ )
@@ -565,7 +565,7 @@ public class TTSUtils
 	public String[] getEffectList()
 	{
 		Resources res = mContext.getResources();
-		return	res.getStringArray(R.array.array_menu_voice_effect);
+		return	res.getStringArray(R.array.ebook_array_menu_voice_effect);
 	}
 		
     /**

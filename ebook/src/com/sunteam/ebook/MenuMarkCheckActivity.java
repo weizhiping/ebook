@@ -36,7 +36,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		fileInfos =  (ArrayList<FileInfo>) getIntent().getSerializableExtra("fileinfos");
 		isDelete = getIntent().getBooleanExtra("isdelete", false);
@@ -52,7 +52,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 			mMenuList.add(fileInfos.get(i).name);
 		}
 		String title = getIntent().getStringExtra("title");
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
@@ -108,8 +108,8 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 	
 	private void dialog(){
 		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this
-				 , getResources().getString(R.string.dialog_delete)
-				 ,getResources().getString(R.string.dialog_yes), getResources().getString(R.string.dialog_no));
+				 , getResources().getString(R.string.ebook_dialog_delete)
+				 ,getResources().getString(R.string.ebook_dialog_yes), getResources().getString(R.string.ebook_dialog_no));
 		 
 		mConfirmDialog.setConfirmListener(new ConfirmListener() {
 			
@@ -120,12 +120,12 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 				mMenuList.remove(position);
 				mMainView.updateAdapter();
 				manager.deleteMarkFile(info.path, info.name);
-				PublicUtils.showToast(MenuMarkCheckActivity.this, getString(R.string.dialog_delete_su),new PromptListener() {
+				PublicUtils.showToast(MenuMarkCheckActivity.this, getString(R.string.ebook_dialog_delete_su),new PromptListener() {
 					
 					@Override
 					public void onComplete() {
 						if(0 == mMenuList.size()){
-							PublicUtils.showToast(MenuMarkCheckActivity.this, getResources().getString(R.string.menu_mark_null),true);
+							PublicUtils.showToast(MenuMarkCheckActivity.this, getResources().getString(R.string.ebook_menu_mark_null),true);
 						}else{
 							if( mMainView != null ){
 								if(islast){

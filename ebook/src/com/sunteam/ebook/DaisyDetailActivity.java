@@ -38,7 +38,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		Intent intent = getIntent();
 		String name = intent.getStringExtra("name");
 		path = intent.getStringExtra("path");
@@ -61,7 +61,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private void initViews(String name) {
 		mMenuList = new ArrayList<String>();
 		initFiles();
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this,name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());

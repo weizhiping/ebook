@@ -31,7 +31,7 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		catalog = getIntent().getIntExtra("catalogType", 0);
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		initViews();
@@ -41,9 +41,9 @@ public class DaisyActivity extends Activity implements OnEnterListener {
 		mMenuList = new ArrayList<String>();
 		fileInfoList = new ArrayList<FileInfo>();
 		initFiles();
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this,
-				this.getString(R.string.main_menu_daisy), mMenuList);
+				this.getString(R.string.ebook_main_menu_daisy), mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 		if (null != remberFile) {

@@ -33,11 +33,11 @@ public class SuperDialog implements OnClickListener{
 	public SuperDialog(Context c) {
 		this.context = c;
 		dialog = new Dialog(context, R.style.dialog);
-		dialog.setContentView(R.layout.dialog_super);
-		titleText = (TextView) dialog.findViewById(R.id.dialog_title);
-		contentText = (TextView) dialog.findViewById(R.id.dialog_content);
-		Button cancelBtn = (Button) dialog.findViewById(R.id.dialog_cancel);
-		Button confrimBtn = (Button) dialog.findViewById(R.id.dialog_confrim);
+		dialog.setContentView(R.layout.ebook_dialog_super);
+		titleText = (TextView) dialog.findViewById(R.id.ebook_dialog_title);
+		contentText = (TextView) dialog.findViewById(R.id.ebook_dialog_content);
+		Button cancelBtn = (Button) dialog.findViewById(R.id.ebook_dialog_cancel);
+		Button confrimBtn = (Button) dialog.findViewById(R.id.ebook_dialog_confrim);
 		cancelBtn.setOnClickListener(this);
 		confrimBtn.setOnClickListener(this);
 	}
@@ -63,10 +63,10 @@ public class SuperDialog implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.dialog_cancel:
+		case R.id.ebook_dialog_cancel:
 			dialog.dismiss();
 			break;
-		case R.id.dialog_confrim:
+		case R.id.ebook_dialog_confrim:
 			dialog.dismiss();
 			if(null != callBack)
 				callBack.dialogConfrim();

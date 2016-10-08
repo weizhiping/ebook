@@ -246,15 +246,15 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 				break;
 			case READ_MODE_SPEED:		//语速模式
 				int speed = Integer.parseInt(gListData.get(selectItem));
-				TTSUtils.getInstance().testSpeed(speed, mContext.getString(R.string.tts_speed)+speed);
+				TTSUtils.getInstance().testSpeed(speed, mContext.getString(R.string.ebook_tts_speed)+speed);
 				break;
 			case READ_MODE_PITCH:		//语调模式
 				int pitch = Integer.parseInt(gListData.get(selectItem));
-				TTSUtils.getInstance().testPitch(pitch, mContext.getString(R.string.tts_pitch)+pitch);
+				TTSUtils.getInstance().testPitch(pitch, mContext.getString(R.string.ebook_tts_pitch)+pitch);
 				break;
 			case READ_MODE_VOLUME:		//音量模式
 				int volume = Integer.parseInt(gListData.get(selectItem));
-				TTSUtils.getInstance().testVolume(volume, mContext.getString(R.string.tts_volume)+volume);
+				TTSUtils.getInstance().testVolume(volume, mContext.getString(R.string.ebook_tts_volume)+volume);
 				break;
 			case READ_MODE_EFFECT:		//音效模式
 				TTSUtils.getInstance().testEffect(gListData.get(selectItem), gListData.get(selectItem));
@@ -312,9 +312,9 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
         if( null == convertView )
         {
         	vh = new ViewHolder();
-        	convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_menu, null);
+        	convertView = LayoutInflater.from(mContext).inflate(R.layout.ebook_list_item_menu, null);
         	
-        	vh.tvMenu = (ScrollForeverTextView)convertView.findViewById(R.id.menu);    		
+        	vh.tvMenu = (ScrollForeverTextView)convertView.findViewById(R.id.ebook_menu);    		
     		vh.tvMenu.setOnClickListener(this);
 
         	convertView.setTag(vh);
@@ -365,7 +365,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		
 		switch( id )
 		{
-			case R.id.menu:
+			case R.id.ebook_menu:
 				if( this.selectItem != position )
 				{
 					setSelectItem( position );

@@ -61,7 +61,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_read_txt);
+		setContentView(R.layout.ebook_activity_read_txt);
 		
 		isAuto = this.getIntent().getBooleanExtra("isAuto", false);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
@@ -71,10 +71,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		
 		Tools tools = new Tools(this);
 		this.getWindow().setBackgroundDrawable(new ColorDrawable(tools.getBackgroundColor())); // 设置窗口背景色
-    	mTvTitle = (TextView)this.findViewById(R.id.main_title);
-    	mTvPageCount = (TextView)this.findViewById(R.id.pageCount);
-    	mTvCurPage = (TextView)this.findViewById(R.id.curPage);
-    	mLine = (View)this.findViewById(R.id.line);
+    	mTvTitle = (TextView)this.findViewById(R.id.ebook_main_title);
+    	mTvPageCount = (TextView)this.findViewById(R.id.ebook_pageCount);
+    	mTvCurPage = (TextView)this.findViewById(R.id.ebook_curPage);
+    	mLine = (View)this.findViewById(R.id.ebook_line);
     	
     	mTvTitle.setTextColor(tools.getFontColor());
     	mTvPageCount.setTextColor(tools.getFontColor());
@@ -91,7 +91,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	mTvPageCount.setHeight((int)(fontSize/2));
     	mTvCurPage.setHeight((int)(fontSize/2));
     	
-    	mTextReaderView = (TextReaderView) findViewById(R.id.read_txt_view);
+    	mTextReaderView = (TextReaderView) findViewById(R.id.ebook_read_txt_view);
     	mTextReaderView.setOnPageFlingListener(this);
     	mTextReaderView.setTextColor(tools.getFontColor());
     	mTextReaderView.setReverseColor(tools.getHighlightColor());
@@ -99,7 +99,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	//mTextReaderView.setTextSize(tools.getFontSize());
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
-    		Toast.makeText(this, this.getString(R.string.checksum_error), Toast.LENGTH_SHORT).show();
+    		Toast.makeText(this, this.getString(R.string.ebook_checksum_error), Toast.LENGTH_SHORT).show();
     		back();
     	}
     	registerReceiver();
@@ -206,12 +206,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 			case KeyEvent.KEYCODE_1:
 			case KeyEvent.KEYCODE_NUMPAD_1:		//开始选词
 				mTextReaderView.startSelect();
-				PublicUtils.showToast(this, this.getString(R.string.select_start));
+				PublicUtils.showToast(this, this.getString(R.string.ebook_select_start));
 				return	true;
 			case KeyEvent.KEYCODE_3:
 			case KeyEvent.KEYCODE_NUMPAD_3:		//结束选词
 				mTextReaderView.endSelect();
-				PublicUtils.showToast(this, this.getString(R.string.select_end));
+				PublicUtils.showToast(this, this.getString(R.string.ebook_select_end));
 				return	true;
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
@@ -276,10 +276,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	{
 		// TODO Auto-generated method stub
 		/*
-		String tips = this.getString(R.string.to_top);
+		String tips = this.getString(R.string.ebook_to_top);
 		PublicUtils.showToast(this, tips);
 		*/
-		CustomToast.showToast(this, this.getString(R.string.to_top), Toast.LENGTH_SHORT);
+		CustomToast.showToast(this, this.getString(R.string.ebook_to_top), Toast.LENGTH_SHORT);
 	}
 
 	@Override
@@ -296,11 +296,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
 			TTSUtils.getInstance().OnTTSListener(ReadTxtActivity.this);
-			TTSUtils.getInstance().speakContent(ReadTxtActivity.this.getString(R.string.already_read));
+			TTSUtils.getInstance().speakContent(ReadTxtActivity.this.getString(R.string.ebook_already_read));
 		}
 		else
 		{
-			String tips = this.getString(R.string.has_finished_reading_the_last_book);
+			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
 			PublicUtils.showToast(this, tips);
 		}
 	}

@@ -32,7 +32,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		
 		initViews();
 	}
@@ -48,10 +48,10 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	mMenuList = new ArrayList<String>();
     	for( int i = 1; i <= count; i++ )
     	{
-    		mMenuList.add(String.format(this.getResources().getString(R.string.txt_menu_part), i ));
+    		mMenuList.add(String.format(this.getResources().getString(R.string.ebook_txt_menu_part), i ));
     	}
     	
-    	mFlContainer = (FrameLayout)this.findViewById(R.id.fl_container);
+    	mFlContainer = (FrameLayout)this.findViewById(R.id.ebook_fl_container);
     	mMainView = new MainView( this, this, fileInfo.name, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());

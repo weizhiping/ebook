@@ -36,7 +36,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		currentText = getIntent().getStringExtra("page_text");
@@ -48,14 +48,14 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 	private void initViews() {
 		Resources res = getResources();
 		
-		String[] menus = res.getStringArray(R.array.array_menu_mark);
+		String[] menus = res.getStringArray(R.array.ebook_array_menu_mark);
 		int length = menus.length;
 		mMenuList = new ArrayList<String>();
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
 		String title = getIntent().getStringExtra("title");
-		mFlContainer = (FrameLayout) this.findViewById(R.id.fl_container);
+		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
@@ -116,7 +116,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			if(0 < fileInfos.size()){
 				dialog();
 			}else{
-				PublicUtils.showToast(this, getResources().getString(R.string.menu_mark_null),true);
+				PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_mark_null),true);
 			}
 			
 			break;
@@ -138,7 +138,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			intent.putExtra("title", title);
 			startActivity(intent);
 		}else{
-			PublicUtils.showToast(this, getString(R.string.menu_mark_tips),true);
+			PublicUtils.showToast(this, getString(R.string.ebook_menu_mark_tips),true);
 			//ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
 	}
@@ -146,22 +146,22 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 	@Override
 	public void dialogConfrim() {
 		manager.deleteMarkFile(fileInfo.path, null);
-		PublicUtils.showToast(this, getString(R.string.dialog_clear_su),true);
+		PublicUtils.showToast(this, getString(R.string.ebook_dialog_clear_su),true);
 		
 		//ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 	
 	private void dialog(){
 		 ConfirmDialog mConfirmDialog = new ConfirmDialog(this
-				 , getResources().getString(R.string.dialog_clear)
-				 ,getResources().getString(R.string.dialog_yes), getResources().getString(R.string.dialog_no));
+				 , getResources().getString(R.string.ebook_dialog_clear)
+				 ,getResources().getString(R.string.ebook_dialog_yes), getResources().getString(R.string.ebook_dialog_no));
 		 
 		mConfirmDialog.setConfirmListener(new ConfirmListener() {
 			
 			@Override
 			public void doConfirm() {
 				manager.deleteMarkFile(fileInfo.path, null);
-				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.dialog_clear_su),true);
+				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.ebook_dialog_clear_su),true);
 			}
 			
 			@Override
