@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.CustomToast;
@@ -56,7 +57,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	private ShutdownBroadcastReceiver shutReceiver;
 	private SharedPreferences shared;
 	private boolean isAuto = false;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +99,17 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	//mTextReaderView.setTextSize(tools.getFontSize());
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
-    		Toast.makeText(this, this.getString(R.string.ebook_checksum_error), Toast.LENGTH_SHORT).show();
-    		back();
+    		
+    		TTSUtils.getInstance().stop();
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast( this, this.getString(R.string.ebook_checksum_error), new PromptListener() {
+				@Override
+				public void onComplete() 
+				{
+					// TODO Auto-generated method stub
+					back();
+				}
+			});
     	}
     	registerReceiver();
     	playMusic();

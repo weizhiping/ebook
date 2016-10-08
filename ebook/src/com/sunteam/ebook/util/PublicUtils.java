@@ -231,4 +231,31 @@ public class PublicUtils
 			}
 		}
 	}
+	
+	//判断一个文件是否为纯文本文件
+    public static boolean checkIsTextFile(byte[] buffer)
+    {
+        boolean isTextFile = true;
+        
+        try
+        {
+            int i = 0;
+            int length = (int)buffer.length;
+            byte data;
+            while (i < length && isTextFile)
+            {
+                data = (byte)buffer[i];
+                isTextFile = (data != 0);
+                i++;
+            }
+            
+            return isTextFile;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            
+            return	false;
+        }
+    }
 }	

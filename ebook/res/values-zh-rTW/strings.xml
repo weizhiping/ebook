@@ -30,7 +30,7 @@
 	<string name="ebook_loading">请稍候</string>
 	<string name="ebook_word_parse_tips">正在解析Word文档，请稍候！</string>
 	<string name="ebook_word_parse_fail">Word文档解析失败！</string>
-	<string name="ebook_checksum_error">CheckSum校验错误！</string>
+	<string name="ebook_checksum_error">文件已损坏！</string>
 	<string name="ebook_page_read_tips2">第%1$s页</string>
 	<string name="ebook_baike_search_success">百科查询</string>
 	<string name="ebook_dict_search_success">词典查询</string>
