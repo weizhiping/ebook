@@ -323,8 +323,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private void insertToDb(){
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
-		String title = getResources().getString(R.string.ebook_add_fav_success);
-		PublicUtils.showToast(this, title);
 		//TTSUtils.getInstance().speakMenu(title);
 	}
 	

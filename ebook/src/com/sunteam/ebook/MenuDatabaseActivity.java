@@ -92,10 +92,14 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 		}else if(1 == selectItem){
 			dialog(getResources().getString(R.string.ebook_dialog_clear));
 		}else{
-			Intent intent = new Intent();
-			intent.putExtra("data_item", selectItem);
-			setResult(RESULT_OK, intent);
-			finish();
+			PublicUtils.showToast(MenuDatabaseActivity.this, getResources().getString(R.string.ebook_add_fav_success), new PromptListener(){
+				@Override
+				public void onComplete() {
+					Intent intent = new Intent();
+					intent.putExtra("data_item", item);
+					setResult(RESULT_OK, intent);
+					finish();
+				}});
 		}
 	}
 	
