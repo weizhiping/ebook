@@ -60,9 +60,9 @@ public class MainView extends View implements OnTTSListener
 		mContext = context;
 		mView = LayoutInflater.from(context).inflate( R.layout.ebook_view_main, null );
 		
-		mTvTitle = (TextView)mView.findViewById(R.id.title);		//标题栏
-    	mLine = (View)mView.findViewById(R.id.line);				//分割线
-    	mLvMenu = (ListView)mView.findViewById(R.id.menu_list);		//listview
+		mTvTitle = (TextView)mView.findViewById(R.id.ebook_title);		//标题栏
+    	mLine = (View)mView.findViewById(R.id.ebook_line);				//分割线
+    	mLvMenu = (ListView)mView.findViewById(R.id.ebook_menu_list);		//listview
     	mLvMenu.setSelected(true);
     	
     	Tools tools = new Tools(context);
