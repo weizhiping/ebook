@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="270dp"
     android:layout_height="180dp"
-    android:background="@drawable/folder_new_background"
+    android:background="@drawable/ebook_folder_new_background"
     android:orientation="vertical" >
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/dialog_bg"
+        android:background="@drawable/ebook_dialog_bg"
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/dialog_bg"
+        android:background="@drawable/ebook_dialog_bg"
         android:padding="@dimen/item_space"
         android:layout_marginBottom="2dp"
         android:layout_marginRight="2dp"

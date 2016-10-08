@@ -9,7 +9,7 @@
         style="@android:style/Widget.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateDrawable="@drawable/progress_draw"
+        android:indeterminateDrawable="@drawable/ebook_progress_draw"
         android:max="10000" />
 	<TextView
 	    android:id="@+id/ebook_tv_info" 

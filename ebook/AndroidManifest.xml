@@ -20,7 +20,7 @@
     <application
         android:name=".InitApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ebook_ic_launcher"
         android:label="@string/ebook_app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
         >
