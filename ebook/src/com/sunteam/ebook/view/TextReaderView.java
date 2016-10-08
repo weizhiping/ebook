@@ -2630,6 +2630,37 @@ import android.view.View;
 				 str = CodeTableUtils.getCnString(code);
 			 }
 		 }
+		 else if( ( mMbBuf[mReverseInfo.startPos] < 0 ) && ( mReverseInfo.len % 2  == 0 ) )
+		 {
+			 boolean isSpace = true;	//是否汉字空格
+			 for( int i = mReverseInfo.startPos; i < mReverseInfo.startPos+mReverseInfo.len; i++ )
+			 {
+				 if( -95 != mMbBuf[i] )
+				 {
+					 isSpace = false;
+					 break;
+				 }
+			 }	//判断是否全是A1A1
+			 
+			 if( isSpace )
+			 {
+				 Locale locale = mContext.getResources().getConfiguration().locale;
+				 String language = locale.getLanguage();
+				 str = "";
+				 for( int i = 0; i < mReverseInfo.len/2; i++ )
+				 {
+					 char code = 0xA1A1;
+					 if( "en".equalsIgnoreCase(language) )	//英文
+					 {
+						 str += CodeTableUtils.getEnString(code);
+					 }
+					 else
+					 {
+						 str += CodeTableUtils.getCnString(code);
+					 }
+				 }
+			 }
+		 }
 		 
 		 if( null != str )
 		 {
