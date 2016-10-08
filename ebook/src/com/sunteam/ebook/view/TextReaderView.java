@@ -181,23 +181,25 @@ import android.view.View;
 	 }
 	 
 	 //开始选词
-	 public void startSelect()
+	 public boolean startSelect()
 	 {
 		 if( mReadMode != ReadMode.READ_MODE_CHARACTER )
 		 {
-			 return;
+			 return	false;
 		 }
 		 
 		 mSelectInfo.startPos = mReverseInfo.startPos;
 		 mSelectInfo.len = mReverseInfo.len;
+		 
+		 return	true;
 	 }
 	 
 	 //结束选词
-	 public void endSelect()
+	 public boolean endSelect()
 	 {
 		 if( mReadMode != ReadMode.READ_MODE_CHARACTER )
 		 {
-			 return;
+			 return	false;
 		 }
 		 
 		 if( mReverseInfo.startPos >= mSelectInfo.startPos )
@@ -220,6 +222,8 @@ import android.view.View;
 			 
 			 this.invalidate();
 		 }
+		 
+		 return	true;
 	 }
 	 
 	 //朗读页码
