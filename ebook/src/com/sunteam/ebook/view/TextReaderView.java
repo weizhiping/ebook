@@ -313,7 +313,13 @@ import android.view.View;
 		 mReadMode = rm;
 		 mCurReadExplainIndex = 0;
 	 }
-
+	 
+	 //得到朗读模式
+	 public ReadMode getReadMode()
+	 {
+		 return	mReadMode;
+	 }
+	 
 	 //设置背景色
 	 @Override
 	 public void setBackgroundColor( int color )
@@ -2091,7 +2097,7 @@ import android.view.View;
 		 TTSUtils.getInstance().stop();
 		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
 		 
-		 int start = mReverseInfo.startPos;
+		 int start = mReverseInfo.startPos + mReverseInfo.len;
 		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
 		 {
 			 start = mSplitInfoList.get(mLineNumber).startPos;
@@ -2207,7 +2213,11 @@ import android.view.View;
 		 ReverseInfo ri = getNextReverseSentenceInfo( start );
 		 if( null == ri )
 		 {
-			 if( mOnPageFlingListener != null )
+			 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+			 {
+				 preParagraph();
+			 }
+			 else if( mOnPageFlingListener != null )
 			 {
 				 mOnPageFlingListener.onPageFlingToBottom(true);
 			 }

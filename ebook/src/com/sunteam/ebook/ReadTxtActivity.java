@@ -22,6 +22,7 @@ import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -315,7 +316,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	public void onPageFlingToBottom( boolean isContinue ) 
 	{
 		// TODO Auto-generated method stub
-		if( !isContinue )
+		if( !isContinue || ( mTextReaderView.getReadMode() != ReadMode.READ_MODE_ALL ) )
 		{
 			PublicUtils.showToast(this, this.getString(R.string.ebook_to_bottom));
 			return;
