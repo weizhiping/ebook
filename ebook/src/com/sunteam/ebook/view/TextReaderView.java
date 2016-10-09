@@ -1045,18 +1045,18 @@ import android.view.View;
 		 	case READ_MODE_ALL:			//全文朗读
 		 		mParagraphStartPos = 0;
 		 		mParagraphLength = 0;
-		 		nextSentence(true, false, false);
+		 		curSentence(true, false, false);
 		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
 		 		mParagraphStartPos = 0;
 		 		mParagraphLength = 0;
-		 		nextParagraph(true);
+		 		curParagraph(true);
 		 		break;
 		 	case READ_MODE_WORD:		//逐词朗读
-		 		nextWord(true);
+		 		curWord(true);
 		 		break;
 		 	case READ_MODE_CHARACTER:	//逐字朗读
-		 		nextCharacter(true);
+		 		curCharacter(true);
 		 		break;
 		 	default:
 		 		break;
@@ -1564,7 +1564,7 @@ import android.view.View;
 		 }
 		 else if( status == SpeakStatus.STOP )
 		 {
-			 nextSentence(false, false, false);
+			 curSentence(false, false, false);
 		 }
 	 }
 	 
@@ -1586,10 +1586,10 @@ import android.view.View;
 			 {
 			 	case READ_MODE_ALL:			//全文朗读
 			 	case READ_MODE_PARAGRAPH:	//逐段朗读
-			 		nextSentence(false, false, false);
+			 		curSentence(false, false, false);
 			 		break;
 			 	case READ_MODE_WORD:		//逐词朗读
-			 		nextWord(false);
+			 		curWord(false);
 			 		break;
 			 	case READ_MODE_CHARACTER:	//逐字朗读
 			 		readExplain();
@@ -1759,6 +1759,31 @@ import android.view.View;
 		 }
 	 }	 
 	 
+	 //到当前一个字符
+	 public void curCharacter( boolean isSpeakPage )
+	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_CHARACTER);
+		 
+		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(isSpeakPage, false, false);			//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
+	 }
+	 
 	 //到下一个字符
 	 public void nextCharacter( boolean isSpeakPage )
 	 {
@@ -1879,6 +1904,31 @@ import android.view.View;
 		 }
 	 }	 	 
 	 
+	 //到当前一个单词
+	 public void curWord( boolean isSpeakPage )
+	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 setReadMode(ReadMode.READ_MODE_WORD);
+		 
+		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(isSpeakPage, false, false);			//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 this.invalidate();
+		 }
+	 }	 	 
+	 
 	 //到下一个单词
 	 public void nextWord( boolean isSpeakPage )
 	 {
@@ -1967,6 +2017,56 @@ import android.view.View;
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
 				 speakTips(mContext.getString(R.string.ebook_to_top1));
+			 }
+		 }
+	 }
+	 
+	 //到当前一个段落
+	 public void curParagraph( boolean isSpeakPage )
+	 {
+		 TTSUtils.getInstance().stop();
+		 setReadMode(ReadMode.READ_MODE_PARAGRAPH);
+		 
+		 int start = mReverseInfo.startPos;
+		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 {
+			 start = mSplitInfoList.get(mLineNumber).startPos;
+		 }
+		 
+		 int len = getNextParagraphLength( start );
+		 if( 0 == len )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 for( int i = mLineNumber; i < mSplitInfoList.size(); i++ )
+			 {
+				 if( mSplitInfoList.get(i).startPos == start )
+				 {
+					 mReverseInfo.startPos = mOffset;
+					 mReverseInfo.len = 0;
+					 mLineNumber = i;
+					 mParagraphStartPos = start;
+					 mParagraphLength = getNextParagraphLength(mParagraphStartPos);
+					 
+					 if( isFilterParagraph( mParagraphStartPos, mParagraphLength ) )
+					 {
+						 nextParagraph( isSpeakPage );	
+						 return;
+					 }	//跳过空行
+					 
+					 curSentence( isSpeakPage, false, false );
+					 return;
+				 }
+			 }
+			 
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
 			 }
 		 }
 	 }
@@ -2075,6 +2175,44 @@ import android.view.View;
 			 oldReverseInfo = ri;
 		 }
 	 }	 
+	 
+	 //朗读当前句子
+	 private void curSentence( boolean isSpeakPage, boolean isTop, boolean isBottom )
+	 {
+		 int start = mReverseInfo.startPos;
+		 if( ( mOffset == mReverseInfo.startPos ) && ( 0 == mReverseInfo.len ) )
+		 {
+			 start = mSplitInfoList.get(mLineNumber).startPos;
+		 }
+		 
+		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) )
+		 {
+			 return;
+		 }
+		 
+		 ReverseInfo ri = getNextReverseSentenceInfo( start );
+		 if( null == ri )
+		 {
+			 if( mOnPageFlingListener != null )
+			 {
+				 mOnPageFlingListener.onPageFlingToBottom();
+			 }
+		 }
+		 else
+		 {
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) )
+			 {
+				 return;
+			 }
+			 
+			 mReverseInfo.startPos = ri.startPos;
+			 mReverseInfo.len = ri.len;
+			 readReverseText(isSpeakPage, isTop, isBottom);			//朗读反显文字
+			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+			 calcCurPage();
+			 this.invalidate();
+		 }
+	 }
 	 
 	 //到下一个句子
 	 private void nextSentence( boolean isSpeakPage, boolean isTop, boolean isBottom )
