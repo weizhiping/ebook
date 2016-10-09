@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -170,7 +171,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 							intent.putExtra("flag", flag);
 							startActivityForResult(intent, MENU_DATA);
 						} else if (0 != flag) {
-							insertToDb();
+							insertToDb(true);
 						}
 						break;
 					default:
@@ -320,10 +321,22 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 	}
 	//添加到收藏
-	private void insertToDb(){
+	private void insertToDb(boolean isTips){
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
-		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
-		//TTSUtils.getInstance().speakMenu(title);
+		boolean hasBook = manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
+		if(isTips){
+			String tips = getResources().getString(R.string.ebook_add_fav_success);
+			if(hasBook){
+				tips = getResources().getString(R.string.ebook_add_fav_fail);
+			}
+			PublicUtils.showToast(this, tips, new PromptListener(){
+				@Override
+				public void onComplete() {
+					if( mMainView != null ){
+			    		mMainView.onResume();
+			    	}
+				}});
+		}
 	}
 	
 	// 初始化数据库文件
@@ -416,7 +429,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					manager.deleteFile( null, flag);
 					finish();
 				}else{
-					insertToDb();
+					insertToDb(false);
 				}
 				break;
 			default:

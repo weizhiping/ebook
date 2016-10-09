@@ -22,6 +22,7 @@
     <string name="ebook_menu_add_fav">添加到我的收藏</string>
     <string name="ebook_menu_muisc_null">背景音乐目录，没有音乐文件</string>
     <string name="ebook_add_fav_success">成功添加到我的收藏</string>
+    <string name="ebook_add_fav_fail">添加我的收藏失败，文件已存在</string>
     <string name="ebook_page_read_tips">第%1$s页 总共%2$s页</string>
     <string name="ebook_no_explain">无例词</string>
     <string name="ebook_en_explain_tips">字母表中的第 %1$s个字母</string>

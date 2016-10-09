@@ -28,7 +28,7 @@ public class DatabaseManager {
 	}
 
 	// 收藏和最近浏览数据库插入数据
-	public void insertBookToDb(FileInfo file, int type) {
+	public boolean insertBookToDb(FileInfo file, int type) {
 		boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path,
 				type);
 		Log.e("database", "-----------has book---:" + hasbook);
@@ -54,6 +54,7 @@ public class DatabaseManager {
 		} else {
 			updateToDb(file.path, file.flag, type);
 		}
+		return hasbook;
 	}
 
 	// 查询电子书数据
