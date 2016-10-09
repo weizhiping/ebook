@@ -1043,12 +1043,12 @@ import android.view.View;
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
-		 		mParagraphStartPos = 0;
+		 		mParagraphStartPos = mOffset;
 		 		mParagraphLength = 0;
 		 		curSentence(true, false, false);
 		 		break;
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		mParagraphStartPos = 0;
+		 		mParagraphStartPos = mOffset;
 		 		mParagraphLength = 0;
 		 		curParagraph(true);
 		 		break;
@@ -1971,6 +1971,9 @@ import android.view.View;
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
+				 mReverseInfo = getNextReverseSentenceInfo( mOffset );
+				 calcCurPage();
+				 this.invalidate();
 				 mOnPageFlingListener.onPageFlingToTop();
 				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
@@ -1991,10 +1994,13 @@ import android.view.View;
 					 
 					 if( mParagraphStartPos+mParagraphLength > end )
 					 {
-						 mParagraphStartPos = 0;
+						 mParagraphStartPos = mOffset;
 						 mParagraphLength = 0;
 						 if( mOnPageFlingListener != null )
 						 {
+							 mReverseInfo = getNextReverseSentenceInfo( mOffset );
+							 calcCurPage();
+							 this.invalidate();
 							 mOnPageFlingListener.onPageFlingToTop();
 							 speakTips(mContext.getString(R.string.ebook_to_top1));
 						 }
@@ -2015,6 +2021,9 @@ import android.view.View;
 			 
 			 if( mOnPageFlingListener != null )
 			 {
+				 mReverseInfo = getNextReverseSentenceInfo( mOffset );
+				 calcCurPage();
+				 this.invalidate();
 				 mOnPageFlingListener.onPageFlingToTop();
 				 speakTips(mContext.getString(R.string.ebook_to_top1));
 			 }
@@ -2185,7 +2194,7 @@ import android.view.View;
 			 start = mSplitInfoList.get(mLineNumber).startPos;
 		 }
 		 
-		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) )
+		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 		 {
 			 return;
 		 }
@@ -2200,7 +2209,7 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) )
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 			 {
 				 return;
 			 }
@@ -2223,7 +2232,7 @@ import android.view.View;
 			 start = mSplitInfoList.get(mLineNumber).startPos;
 		 }
 		 
-		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) )
+		 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( start >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 		 {
 			 return;
 		 }
@@ -2238,7 +2247,7 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) )
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 			 {
 				 return;
 			 }
