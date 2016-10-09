@@ -27,6 +27,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private ArrayList<FileInfo> fileInfoList = null;
 	private FileInfo fileInfo;
 	private boolean isAuto = false;
+	private boolean isResume = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -75,10 +76,15 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     @Override
     public void onResume()
     {
-    	if( mMainView != null )
+    	if( isResume )
     	{
-    		mMainView.onResume();
+	    	if( mMainView != null )
+	    	{
+	    		mMainView.onResume();
+	    	}
     	}
+    	
+    	isResume = true;
     	super.onResume();
     }
  
@@ -118,10 +124,12 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 					switch( next )
 					{
 						case EbookConstants.TO_NEXT_PART:	//到下一个部分
+							isResume = false;
 							mMainView.down(true);
 							mMainView.enter(true);
 							break;
 						case EbookConstants.TO_NEXT_BOOK:	//到下一本书
+							isResume = false;
 							Intent intent = new Intent();
 							intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
 							setResult(RESULT_OK, intent);

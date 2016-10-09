@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -23,7 +22,6 @@ import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.PublicUtils;
-import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
 import com.sunteam.ebook.word.WordParseUtils;
@@ -49,6 +47,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private int catalog;//0为txt,2为word,1为disay
 	private FileInfo remberFile;//路径记忆传递
 	private int position;//路径记忆位置
+	private boolean isResume = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,11 +124,16 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
-    	
-    	if( mMainView != null )
+    	if( isResume )
     	{
-    		mMainView.onResume();
+	    	if( mMainView != null )
+	    	{
+	    		mMainView.onResume();
+	    	}
     	}
+    	
+    	isResume = true;
+    	
     	if(0 != flag && 0 == fileInfoList.size()){
     		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.ebook_no_file),new PromptListener() {
 				
@@ -407,6 +411,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					int next = data.getIntExtra("next", -1);
 					if( EbookConstants.TO_NEXT_BOOK == next )
 					{
+						isResume = false;
 						mMainView.down(true);
 						mMainView.enter(true);
 						 // 阅读下一本书
