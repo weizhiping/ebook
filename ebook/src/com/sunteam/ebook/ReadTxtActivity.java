@@ -97,6 +97,26 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	mTextReaderView.setReverseColor(tools.getHighlightColor());
     	mTextReaderView.setBackgroundColor(tools.getBackgroundColor());
     	//mTextReaderView.setTextSize(tools.getFontSize());
+    	
+    	registerReceiver();
+    	playMusic();
+    	
+    	if (0 == fileInfo.count) // 文件为空
+		{
+    		TTSUtils.getInstance().stop();
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast( this, this.getString(R.string.ebook_txt_menu_null), new PromptListener() {
+				@Override
+				public void onComplete() 
+				{
+					// TODO Auto-generated method stub
+					back();
+				}
+			});
+			
+			return;
+		} 
+    	
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
     		
@@ -111,9 +131,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 				}
 			});
     	}
-    	registerReceiver();
-    	playMusic();
     	
+    	/*
     	mTvTitle.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -128,6 +147,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 				startActivityForResult(intent, MENU_CODE);
 			}
 		});
+		*/
 	}
 	
 	private void registerReceiver(){

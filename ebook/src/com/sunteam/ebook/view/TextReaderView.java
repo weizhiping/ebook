@@ -130,7 +130,7 @@ import android.view.View;
 	 private boolean mIsAuto = false;		//是否是自动朗读进入的，如果是还需要读文件名称。
 	 private int mPercent = 0;				//当前朗读进度
 	 private String mSpeakText = null;		//当前朗读内容
-	 private boolean mIsTextFile = true;	//当前内容是否是纯文本
+	 private boolean mIsTextFile = false;	//当前内容是否是纯文本
 	 
 	 public interface OnPageFlingListener 
 	 {

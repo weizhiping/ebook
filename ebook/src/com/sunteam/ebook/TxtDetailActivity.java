@@ -267,12 +267,15 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
 		fileInfo.count = count;
 		
+		/*
 		if (0 == count) // 文件为空
 		{
 			// 提示一下（语音和文字）
 			PublicUtils.showToast(this, getString(R.string.ebook_txt_menu_null));
 		} 
 		else if (1 == count) // 只有一部分
+		*/
+		if( count <= 1 )
 		{
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
