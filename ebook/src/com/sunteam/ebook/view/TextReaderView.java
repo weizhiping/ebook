@@ -16,7 +16,6 @@ import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
-import com.sunteam.ebook.util.TTSUtils.SpeakForm;
 import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.util.WordExplainUtils;
 
@@ -1040,6 +1039,12 @@ import android.view.View;
 	 //初始化反显信息
 	 private void initReverseInfo()
 	 {
+		 if( mReverseInfo.startPos < mSplitInfoList.get(mLineNumber).startPos )
+		 {
+			 mReverseInfo.startPos = mOffset;
+			 mReverseInfo.len = 0;
+		 }	//如果反显开始于当前页之前，则从当前页开始反显。
+		 
 		 switch( mReadMode )
 		 {
 		 	case READ_MODE_ALL:			//全文朗读
@@ -3213,7 +3218,10 @@ import android.view.View;
 	public void onSpeakCompleted() 
 	{
 		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(MSG_SPEAK_COMPLETED);
+		if( mSplitInfoList.size() > 0 )
+		{
+			mHandler.sendEmptyMessage(MSG_SPEAK_COMPLETED);
+		}
 	}
 
 	//朗读错误
@@ -3221,7 +3229,10 @@ import android.view.View;
 	public void onSpeakError() 
 	{
 		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(MSG_SPEAK_ERROR);
+		if( mSplitInfoList.size() > 0 )
+		{
+			mHandler.sendEmptyMessage(MSG_SPEAK_ERROR);
+		}
 	}
 	
 	//发音进度
