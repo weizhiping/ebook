@@ -213,7 +213,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	}
 
 	@Override
-	public void onPageFlingToBottom() 
+	public void onPageFlingToBottom( boolean isContinue ) 
 	{
 		// TODO Auto-generated method stub
 		String tips = this.getString(R.string.ebook_to_bottom);

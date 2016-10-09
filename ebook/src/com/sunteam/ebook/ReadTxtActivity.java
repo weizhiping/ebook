@@ -11,13 +11,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +28,6 @@ import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
-import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
@@ -41,7 +37,7 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
  * 
  * @author sylar
  */
-public class ReadTxtActivity extends Activity implements OnPageFlingListener, OnTTSListener
+public class ReadTxtActivity extends Activity implements OnPageFlingListener
 {
 	private static final String TAG = "ReadTxtActivity";
 	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
@@ -97,6 +93,26 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
     	mTextReaderView.setReverseColor(tools.getHighlightColor());
     	mTextReaderView.setBackgroundColor(tools.getBackgroundColor());
     	//mTextReaderView.setTextSize(tools.getFontSize());
+    	
+    	registerReceiver();
+    	playMusic();
+    	
+    	if (0 == fileInfo.count) // 文件为空
+		{
+    		TTSUtils.getInstance().stop();
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast( this, this.getString(R.string.ebook_txt_menu_null), new PromptListener() {
+				@Override
+				public void onComplete() 
+				{
+					// TODO Auto-generated method stub
+					back();
+				}
+			});
+			
+			return;
+		} 
+    	
     	if( mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part), TextFileReaderUtils.getInstance().getCharsetName(), fileInfo.line, fileInfo.startPos, fileInfo.len, fileInfo.checksum, isAuto, fileInfo.name) == false )
     	{
     		
@@ -111,9 +127,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 				}
 			});
     	}
-    	registerReceiver();
-    	playMusic();
     	
+    	/*
     	mTvTitle.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -128,6 +143,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 				startActivityForResult(intent, MENU_CODE);
 			}
 		});
+		*/
 	}
 	
 	private void registerReceiver(){
@@ -296,9 +312,15 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	}
 
 	@Override
-	public void onPageFlingToBottom() 
+	public void onPageFlingToBottom( boolean isContinue ) 
 	{
 		// TODO Auto-generated method stub
+		if( !isContinue )
+		{
+			PublicUtils.showToast(this, this.getString(R.string.ebook_to_bottom));
+			return;
+		}
+		
 		if( fileInfo.part+1 < fileInfo.count )	//还有下一部分需要朗读
 		{
 			Intent intent = new Intent();
@@ -308,8 +330,18 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 		}
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
-			TTSUtils.getInstance().OnTTSListener(ReadTxtActivity.this);
-			TTSUtils.getInstance().speakContent(ReadTxtActivity.this.getString(R.string.ebook_already_read));
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast(this, this.getString(R.string.ebook_already_read), new PromptListener(){
+
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent();
+        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+        			setResult(RESULT_OK, intent);
+        			back();
+				}
+			});
 		}
 		else
 		{
@@ -384,50 +416,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener, On
 	     
 		return super.dispatchKeyEvent(event);
 	}
-
-
-	//朗读完成
-	@Override
-	public void onSpeakCompleted() 
-	{
-		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(0);
-	}
-
-	//朗读错误
-	@Override
-	public void onSpeakError() 
-	{
-		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(1);
-	}
-
-	//发音进度
-	@Override
-	public void onSpeakProgress(int percent, int beginPos, int endPos) 
-	{
-		// TODO Auto-generated method stub	
-	}
-	
-	private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) 
-        {
-            switch (msg.what) 
-            {
-                case 0:		//朗读完成
-                case 1:		//朗读错误
-                	Intent intent = new Intent();
-        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
-        			setResult(RESULT_OK, intent);
-        			back();
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
 
 	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
 	      
