@@ -118,10 +118,11 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 			@Override
 			public void doConfirm() {
 				FileInfo info = fileInfos.get(position);
+				manager.deleteMarkFile(info.path, info.name);
 				final boolean islast = position == (mMenuList.size() - 1)?true:false;
 				mMenuList.remove(position);
 				mMainView.updateAdapter();
-				manager.deleteMarkFile(info.path, info.name);
+				fileInfos.remove(position);
 				PublicUtils.showToast(MenuMarkCheckActivity.this, getString(R.string.ebook_dialog_delete_su),new PromptListener() {
 					
 					@Override
