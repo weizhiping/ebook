@@ -25,10 +25,8 @@
     <EditText
         android:id="@+id/ebook_num_edit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
+        android:layout_height="match_parent"
         android:background="@color/transparent"
-        android:layout_centerInParent="true"
         android:gravity="center" 
         android:cursorVisible="false"
         android:textSize="@dimen/ebook_title_text_size"/>
