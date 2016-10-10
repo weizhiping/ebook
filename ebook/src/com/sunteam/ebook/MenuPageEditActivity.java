@@ -27,7 +27,9 @@ public class MenuPageEditActivity extends Activity {
 	private EditText numView;
 	private int currentPage;
 	private int totalPage;
+	private int afterNum;
 	private boolean isKeyNum = true;
+	private boolean isMax;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +122,7 @@ public class MenuPageEditActivity extends Activity {
 			return true;
 		case KeyEvent.KEYCODE_5:
 		case KeyEvent.KEYCODE_NUMPAD_5:		
+			afterNum = 5;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -129,6 +132,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_7:
 		case KeyEvent.KEYCODE_NUMPAD_7:	
+			afterNum = 7;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -138,6 +142,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_9:
 		case KeyEvent.KEYCODE_NUMPAD_9:	
+			afterNum = 9;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -147,6 +152,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_4:
 		case KeyEvent.KEYCODE_NUMPAD_4:	
+			afterNum = 4;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -156,6 +162,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_6:
 		case KeyEvent.KEYCODE_NUMPAD_6:		
+			afterNum = 6;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -165,6 +172,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_2:
 		case KeyEvent.KEYCODE_NUMPAD_2:		
+			afterNum = 2;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -174,6 +182,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_8:
 		case KeyEvent.KEYCODE_NUMPAD_8:		
+			afterNum = 8;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -183,6 +192,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_3:
 		case KeyEvent.KEYCODE_NUMPAD_3:	
+			afterNum = 3;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -192,6 +202,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_0:
 		case KeyEvent.KEYCODE_NUMPAD_0:	
+			afterNum = 0;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -201,6 +212,7 @@ public class MenuPageEditActivity extends Activity {
 			break;
 		case KeyEvent.KEYCODE_1:
 		case KeyEvent.KEYCODE_NUMPAD_1:	
+			afterNum = 1;
 			if(isKeyNum){
 				isKeyNum = false;
 				number = 0;
@@ -225,15 +237,22 @@ public class MenuPageEditActivity extends Activity {
 					number = 1;
 					TTSUtils.getInstance().speakMenu(number+"");
 				}else{
-					number = totalPage;
-					PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_max),new PromptListener() {
-						
-						@Override
-						public void onComplete() {
-							TTSUtils.getInstance().speakMenu(number+"");
-							return;
-						}
-					});
+					if(!isMax){
+						isMax = true;
+						number = totalPage;
+						PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_max),new PromptListener() {
+							
+							@Override
+							public void onComplete() {
+								TTSUtils.getInstance().speakMenu(number+"");
+								return;
+							}
+						});
+					}else{
+						isMax = false;
+						number = afterNum;
+						TTSUtils.getInstance().speakMenu(number+"");
+					}
 				}
 			}else if(number < 1){
 				number = totalPage;
