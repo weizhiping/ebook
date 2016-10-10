@@ -137,6 +137,10 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 //				insertToDb();
 //				break;
 			case KeyEvent.KEYCODE_MENU:
+				fileInfo.line = mDaisyReaderView.getLineNumber();
+				fileInfo.checksum = mDaisyReaderView.getCheckSum();
+				fileInfo.startPos = mDaisyReaderView.getReverseInfo().startPos;
+				fileInfo.len = mDaisyReaderView.getReverseInfo().len;
 				Intent intent = new Intent(this, MenuDaisyActivity.class);
 				intent.putExtra("page_count", mDaisyReaderView.getPageCount());
 				intent.putExtra("page_cur", mDaisyReaderView.getCurPage());
@@ -250,6 +254,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 					}
 				}else if(3 == resultFlag){
 					int line = intent.getIntExtra("line", 0);
+					int part = intent.getIntExtra("part", 0);
+					int start = intent.getIntExtra("start", 0);
+					int len = intent.getIntExtra("len", 0);
 					 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, 0, 0, 0);
 				}
 				

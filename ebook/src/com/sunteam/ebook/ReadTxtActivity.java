@@ -248,6 +248,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				return	true;
 			case KeyEvent.KEYCODE_MENU:
 				fileInfo.line = mTextReaderView.getLineNumber();
+				fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
+				fileInfo.len = mTextReaderView.getReverseInfo().len;
 				Intent intent = new Intent(this, MenuActivity.class);
 				intent.putExtra("page_count", mTextReaderView.getPageCount());
 				intent.putExtra("page_cur", mTextReaderView.getCurPage());
@@ -387,8 +389,10 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				case 3:
 					int line = intent.getIntExtra("line", 0);
 					int part = intent.getIntExtra("part", 0);
+					int start = intent.getIntExtra("start", 0);
+					int len = intent.getIntExtra("len", 0);
 					 mTextReaderView.openBook(TextFileReaderUtils.getInstance().getParagraphBuffer(part)
-							 , TextFileReaderUtils.getInstance().getCharsetName(), line, 0, 0, 0, false, fileInfo.name);
+							 , TextFileReaderUtils.getInstance().getCharsetName(), line, start, len, 0, false, fileInfo.name);
 					break;
 				}
 				

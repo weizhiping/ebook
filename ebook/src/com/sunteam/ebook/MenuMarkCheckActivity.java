@@ -101,6 +101,8 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 			intent.putExtra("result_flag", 3);
 			intent.putExtra("line", info.line);
 			intent.putExtra("part", info.part);
+			intent.putExtra("start", info.startPos);
+			intent.putExtra("len", info.len);
 			sendBroadcast(intent);
 			ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
