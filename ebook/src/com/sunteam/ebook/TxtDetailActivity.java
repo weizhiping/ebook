@@ -417,7 +417,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						mMainView.enter(true);
 						 // 阅读下一本书
 					}
-				}else{
+				}else if(1 == flag || 2 == flag){
 					initDataFiles(flag,catalog);
 				}
 				break;
