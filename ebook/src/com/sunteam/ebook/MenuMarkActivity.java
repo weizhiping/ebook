@@ -166,7 +166,9 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			
 			@Override
 			public void doCancel() {
-		
+				if( mMainView != null ){
+		    		mMainView.onResume();
+		    	}
 			}
 		});
 		mConfirmDialog.show();
