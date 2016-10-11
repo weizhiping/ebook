@@ -406,6 +406,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		if(RESULT_OK == resultCode){
 			switch (requestCode) { 
 			case EbookConstants.REQUEST_CODE: // 阅读器返回
+				//Log.e(TAG, "------read result-----:" + data);
 				if( data != null )
 				{
 					int next = data.getIntExtra("next", -1);
@@ -416,6 +417,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						mMainView.enter(true);
 						 // 阅读下一本书
 					}
+				}else{
+					initDataFiles(flag,catalog);
 				}
 				break;
 			case MENU_DATA:

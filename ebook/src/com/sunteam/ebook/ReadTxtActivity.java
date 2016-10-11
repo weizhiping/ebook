@@ -407,6 +407,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
 		insertToDb();
+		setResult(RESULT_OK);
 		finish();
 	}
 	
@@ -427,7 +428,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	    @Override  
 	    public void onReceive(Context context, Intent intent) {  
 	        Log.e(TAG, "Shut down this system, ShutdownBroadcastReceiver onReceive()");  
-	          
+	        Log.e(TAG, "-----------------------------shut down-----------------");  
 	        if (intent.getAction().equals(ACTION_SHUTDOWN)) {  
 	            insertToDb();
 	        }  

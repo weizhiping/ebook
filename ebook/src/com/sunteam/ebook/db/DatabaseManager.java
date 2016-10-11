@@ -52,7 +52,7 @@ public class DatabaseManager {
 			db.insert(EbookConstants.BOOKS_TABLE, null, newValues);
 			db.close();
 		} else {
-			updateToDb(file.path, file.flag, type);
+			updateToDb(file, type);
 		}
 		return hasbook;
 	}
@@ -235,13 +235,17 @@ public class DatabaseManager {
 	}
 
 	// 数据库更新数据
-	public void updateToDb(String path, int flag, int type) {
+	public void updateToDb(FileInfo file, int type) {
 		db = helper.getWritableDatabase();
 		ContentValues newValues = new ContentValues();
 		newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
-		newValues.put(EbookConstants.BOOK_FLAG, flag);
+		newValues.put(EbookConstants.BOOK_FLAG, file.flag);
+		newValues.put(EbookConstants.BOOK_START, file.startPos);
+		newValues.put(EbookConstants.BOOK_LINE, file.line);
+		newValues.put(EbookConstants.BOOK_LEN, file.len);
+		newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
 		db.update(EbookConstants.BOOKS_TABLE, newValues,
-				EbookConstants.BOOK_PATH + "=?", new String[] { path });
+				EbookConstants.BOOK_PATH + "=?", new String[] { file.path });
 		db.close();
 	}
 
