@@ -54,6 +54,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private ShutdownBroadcastReceiver shutReceiver;
 	private SharedPreferences shared;
 	private boolean isAuto = false;
+	private boolean isReadPage = false;	//是否朗读页码
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +179,17 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}else{
 			MediaPlayerUtils.getInstance().stop();
 		}
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if( isReadPage )
+		{
+			mTextReaderView.readPage();		//朗读页码
+		}
+		isReadPage = true;
 	}
 	
 	@Override

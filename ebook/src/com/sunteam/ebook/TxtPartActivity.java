@@ -117,7 +117,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 		switch (requestCode) 
 		{
 			case EbookConstants.REQUEST_CODE:		//阅读器返回
-				if( RESULT_OK == resultCode )
+				if( RESULT_OK == resultCode && data != null )
 				{
 					int next = data.getIntExtra("next", EbookConstants.TO_NEXT_PART);
 					
