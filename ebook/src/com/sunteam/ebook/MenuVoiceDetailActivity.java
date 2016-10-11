@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.entity.TTSSpeakMode;
@@ -118,15 +119,35 @@ public class MenuVoiceDetailActivity extends Activity implements
 		String voice = mMenuList.get(selectItem);
 		switch (voiceFlag) {
 		case 0:
-			TTSUtils.getInstance().setRoleCn(voice);
+			TTSUtils.getInstance().setRoleCn(this, voice, new PromptListener() {
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					ScreenManager.getScreenManager().popAllActivityExceptOne();
+				}
+				
+			});
 			break;
 		case 1:
-			TTSUtils.getInstance().setRoleEn(voice);
+			TTSUtils.getInstance().setRoleEn(this, voice, new PromptListener() {
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					ScreenManager.getScreenManager().popAllActivityExceptOne();
+				}
+				
+			});
 			break;
 		case 4:
-			TTSUtils.getInstance().setEffect(voice);
+			TTSUtils.getInstance().setEffect(this, voice, new PromptListener() {
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					ScreenManager.getScreenManager().popAllActivityExceptOne();
+				}
+				
+			});
 			break;
 		}
-		ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 }

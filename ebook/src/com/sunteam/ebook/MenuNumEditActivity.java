@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -135,11 +136,23 @@ public class MenuNumEditActivity extends Activity {
 		case KeyEvent.KEYCODE_DPAD_CENTER: // 确定
 		case KeyEvent.KEYCODE_ENTER:
 			if(0 == flage){
-				TTSUtils.getInstance().setSpeed(number);
-				ScreenManager.getScreenManager().popAllActivityExceptOne();
+				TTSUtils.getInstance().setSpeed(this, number, new PromptListener() {
+					@Override
+					public void onComplete() {
+						// TODO Auto-generated method stub
+						ScreenManager.getScreenManager().popAllActivityExceptOne();
+					}
+					
+				});
 			}else if(1 == flage){
-				TTSUtils.getInstance().setPitch(number);
-				ScreenManager.getScreenManager().popAllActivityExceptOne();
+				TTSUtils.getInstance().setPitch(this, number, new PromptListener() {
+					@Override
+					public void onComplete() {
+						// TODO Auto-generated method stub
+						ScreenManager.getScreenManager().popAllActivityExceptOne();
+					}
+					
+				});
 			}else if(2 == flage){
 				int volume = (int)(number * 1.5);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);

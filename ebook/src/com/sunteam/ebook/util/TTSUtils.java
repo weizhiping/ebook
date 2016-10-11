@@ -10,6 +10,7 @@ import android.util.Log;
 import com.iflytek.cloud.SpeechConstant;
 import com.sunteam.common.tts.TtsListener;
 import com.sunteam.common.tts.TtsUtils;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.R;
 
 /**
@@ -271,9 +272,9 @@ public class TTSUtils
 	}
 	
 	//设置中文发音人
-	public boolean setRoleCn( String role )
+	public boolean setRoleCn( Context context, String role, PromptListener listener )
 	{
-		Resources res = mContext.getResources();
+		Resources res = context.getResources();
 		String[] ttsRoleCn = res.getStringArray(R.array.ebook_array_menu_voice_china);
 		
 		for( int i = 0; i < ttsRoleCn.length; i++ )
@@ -284,7 +285,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
+				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
 				
 				return	true;
 			}
@@ -353,9 +354,9 @@ public class TTSUtils
 	}
 		
 	//设置英文发音人
-	public boolean setRoleEn( String role )
+	public boolean setRoleEn( Context context, String role, PromptListener listener )
 	{
-		Resources res = mContext.getResources();
+		Resources res = context.getResources();
 		String[] ttsRoleEn = res.getStringArray(R.array.ebook_array_menu_voice_english);
 		
 		for( int i = 0; i < ttsRoleEn.length; i++ )
@@ -366,7 +367,7 @@ public class TTSUtils
 				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
+				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
 				
 				return	true;
 			}
@@ -422,13 +423,13 @@ public class TTSUtils
 	}
 		
 	//设置语速
-	public void setSpeed( int speed )
+	public void setSpeed( Context context, int speed, PromptListener listener )
 	{
 		Editor editor = mSharedPreferences.edit();
 		editor.putString( SpeechConstant.SPEED, (speed*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
+		PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
 	}
 	
 	//得到语速
@@ -445,13 +446,13 @@ public class TTSUtils
 	}
 		
 	//设置语调
-	public void setPitch( int pitch )
+	public void setPitch( Context context, int pitch, PromptListener listener )
 	{
 		Editor editor = mSharedPreferences.edit();
 		editor.putString( SpeechConstant.PITCH, (pitch*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
+		PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
 	}
 	
 	//得到语调
@@ -468,13 +469,13 @@ public class TTSUtils
 	}
 		
 	//设置音量
-	public void setVolume( int volume )
+	public void setVolume( Context context, int volume )
 	{
 		Editor editor = mSharedPreferences.edit();
 		editor.putString( SpeechConstant.VOLUME, (volume*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(mContext, mContext.getString(R.string.ebook_setting_success));
+		PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success));
 	}
 	
 	//得到音量
@@ -504,7 +505,7 @@ public class TTSUtils
 	}
 	
 	//设置音效
-	public boolean setEffect( String effect )
+	public boolean setEffect( Context context, String effect, PromptListener listener )
 	{
 		/*Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
