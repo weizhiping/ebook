@@ -2365,7 +2365,8 @@ import android.view.View;
 				 char ch = PublicUtils.byte2char(mMbBuf, i);
 				 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
 				 {
-					 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )			//过滤掉空格
+					 //if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )			//过滤掉空格
+					 if( ( CodeTableUtils.CODE[k] == ch ) )
 					 {
 						 return ri;
 					 }
@@ -2378,7 +2379,8 @@ import android.view.View;
 						 ch = PublicUtils.byte2char(mMbBuf, j);
 						 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
 						 {
-							 if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )	//过滤掉空格
+							 //if( ( CodeTableUtils.CODE[k] == ch ) && ( 0xA1A1 != ch ) )	//过滤掉空格
+							 if( ( CodeTableUtils.CODE[k] == ch ) )
 							 {
 								 return ri;
 							 }
