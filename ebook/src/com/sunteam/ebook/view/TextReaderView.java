@@ -2921,6 +2921,7 @@ import android.view.View;
 	 //根据反显位置重新计算当前页起始位置(行号)	//无用了
 	 private void recalcLineNumber( Action action )
 	 {
+		 recalcLineNumberEx(0,0,0);
 		 /*
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
