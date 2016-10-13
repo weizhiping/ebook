@@ -2415,12 +2415,22 @@ import android.view.View;
 					 }
 					 else
 					 {
-						 for( int k = 0; k < CodeTableUtils.PunctuationEn.length; k++ )
+						 if( 0x2E == mMbBuf[j] )
 						 {
-							 if( CodeTableUtils.PunctuationEn[k] == mMbBuf[j] )
+							 if( ( j+1 < mMbBufLen ) && ( ( 0x20 == mMbBuf[j+1] ) || ( 0x0d == mMbBuf[j+1] ) || ( 0x0a == mMbBuf[j+1] ) || ( mMbBuf[j+1] < 0 ) ) )
 							 {
 								 return	ri;
-							 }	//如果是标点符号则返回前面的字符串
+							 }
+						 }	//如果是.符号，则需要判断是否是结尾标志，如果不是就和单词放在一起。
+						 else
+						 {
+							 for( int k = 0; k < CodeTableUtils.PunctuationEn.length; k++ )
+							 {
+								 if( CodeTableUtils.PunctuationEn[k] == mMbBuf[j] )
+								 {
+									 return	ri;
+								 }	//如果是标点符号则返回前面的字符串
+							 }
 						 }
 						 ri.len++;
 					 }
