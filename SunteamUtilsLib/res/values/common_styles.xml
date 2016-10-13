@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="dialog_confirm" parent="@android:style/Theme.Dialog">
+    <style name="common_dialog_confirm" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">true</item>
@@ -11,7 +11,7 @@
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
-    <style name="dialog_prompt" parent="@android:style/Theme.Dialog">
+    <style name="common_dialog_prompt" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">true</item>
