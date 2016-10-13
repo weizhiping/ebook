@@ -221,7 +221,13 @@ public class MenuPageEditActivity extends Activity {
 			setPage();
 			break;
 		default:
-			PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_num)+ "，" + number);
+			PublicUtils.showToast(this, getResources().getString(R.string.ebook_input_page_num),new PromptListener() {
+				
+				@Override
+				public void onComplete() {
+					TTSUtils.getInstance().speakMenu(number+"");
+				}
+			});
 			break;
 		}
 		return super.onKeyDown(keyCode, event);

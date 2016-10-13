@@ -33,6 +33,7 @@ public class MenuNumEditActivity extends Activity {
 	private int number;
 	private int maxNum;
 	private int flage;//0 语速，1为语调,2为背景音乐强度
+	private int currentVolume;
 	private String title;
 	private EditText numView;
 	private AudioManager mAudioManager;
@@ -43,6 +44,7 @@ public class MenuNumEditActivity extends Activity {
 		setContentView(R.layout.ebook_activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		initViews();
 	}
 
@@ -119,6 +121,7 @@ public class MenuNumEditActivity extends Activity {
 		case KeyEvent.KEYCODE_BACK:// 返回
 			if(2 == flage){
 				MediaPlayerUtils.getInstance().stop();
+				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 1);
 			}
 			return super.onKeyDown(keyCode, event);
 		case KeyEvent.KEYCODE_DPAD_UP: // 上
