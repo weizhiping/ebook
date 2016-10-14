@@ -418,8 +418,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		MediaPlayerUtils.getInstance().stop();
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
-		insertToDb();
 		setResult(RESULT_OK);
+		insertToDb();
 		finish();
 	}
 	

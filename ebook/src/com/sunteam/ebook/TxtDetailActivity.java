@@ -229,6 +229,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						 name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)){
 					new WordAsyncTask(isAuto).execute(fileInfo);
 				}else{
+				//	Log.e(TAG, "----name--:" + fileInfo.name + "---selectItem-:" + selectItem);
 					showFiles(fileInfo, fileInfo.path, isAuto);
 				}
 			}
@@ -282,6 +283,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		*/
 		if( count <= 1 )
 		{
+			
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
@@ -419,11 +421,18 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					}
 				}else if(1 == flag || 2 == flag){
 					initDataFiles(flag,catalog);
+					int select = mMainView.getSelectItem();
+					String item =  mMenuList.get(select);
+					mMenuList.remove(item);
+					mMenuList.add(0,item);
+					mMainView.updateAdapter();
+					mMainView.setSelection(0);
 				}
 				break;
 			case MENU_DATA:
 				int item = data.getIntExtra("data_item", 0);
 				int select = mMainView.getSelectItem();
+				
 				if(0 == item){
 					final boolean islast = select == (mMenuList.size() - 1)?true:false;
 					FileInfo info = fileInfoList.get(select);
