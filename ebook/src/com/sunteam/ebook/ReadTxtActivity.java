@@ -289,6 +289,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		fileInfo.len = mTextReaderView.getReverseInfo().len;
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
+		Log.e(TAG, "-----------------insert db complete----:" + fileInfo.path + fileInfo.flag);
 	}
 	
 	@Override
@@ -420,6 +421,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		TTSUtils.getInstance().OnTTSListener(null);
 		setResult(RESULT_OK);
 		insertToDb();
+		sendBroadcast(new Intent(EbookConstants.ACTION_UPDATE_FILE));
 		finish();
 	}
 	

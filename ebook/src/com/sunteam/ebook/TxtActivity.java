@@ -3,13 +3,18 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -24,6 +29,8 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	private ArrayList<String> mMenuList = null;
 	private int catalog;// 1为txt文档，2为word文档,3为disay
 	private FileInfo remberFile;
+	private UpdateRemFileReceiver fileReceiver;
+	private DatabaseManager manager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +38,9 @@ public class TxtActivity extends Activity implements OnEnterListener {
 		setContentView(R.layout.ebook_activity_main);
 		catalog = getIntent().getIntExtra("catalogType", 0);
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
+		manager = new DatabaseManager(this);
 		initViews();
+		registerReceiver();
 	}
 
 	private void initViews() {
@@ -59,6 +68,13 @@ public class TxtActivity extends Activity implements OnEnterListener {
 		}
 	}
     
+	private void registerReceiver(){
+		fileReceiver = new UpdateRemFileReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.ACTION_UPDATE_FILE);
+		registerReceiver(fileReceiver, filter);
+	}
+	
     @Override
     public void onPause()
     {
@@ -102,5 +118,21 @@ public class TxtActivity extends Activity implements OnEnterListener {
 		intent.putExtra("catalogType", catalog);
 		intent.putExtra("file", remberFile);
 		this.startActivity(intent);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(fileReceiver);
+	}
+	
+	private class UpdateRemFileReceiver extends BroadcastReceiver { 
+	      
+	    @Override  
+	    public void onReceive(Context context, Intent intent) {    
+	        if (intent.getAction().equals(EbookConstants.ACTION_UPDATE_FILE)) {  
+	        	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+	        }  
+	    } 
 	}
 }

@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -48,12 +52,14 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private FileInfo remberFile;//路径记忆传递
 	private int position;//路径记忆位置
 	private boolean isResume = true;
+	private UpdateRemFileReceiver fileReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ebook_activity_main);
 		initViews();
+		registerReceiver();
 	}
 
 	private void initViews() {
@@ -91,8 +97,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			FileInfo fileInfo = fileInfoList.get(i);
 			mMenuList.add(fileInfo.name);
 			if(null != remberFile && remberFile.path.contains(fileInfo.path)){
+				Log.e(TAG, "----rem f--:" + remberFile.flag + "---flag--:" + flag + "--i--:" + i);
 				if(remberFile.flag == flag){
-					position = i;
+					position = 0;
 				}else if(0 == remberFile.flag){
 					position = i;
 				}
@@ -109,6 +116,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				mMainView.setSelection(position);
 			}
 		}
+	}
+	
+	private void registerReceiver(){
+		fileReceiver = new UpdateRemFileReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.ACTION_UPDATE_FILE);
+		registerReceiver(fileReceiver, filter);
 	}
     
     @Override
@@ -456,5 +470,25 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				break;
 			}
 		}
+	}
+	
+	
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(fileReceiver);
+	}
+	
+	private class UpdateRemFileReceiver extends BroadcastReceiver { 
+	      
+	    @Override  
+	    public void onReceive(Context context, Intent intent) {    
+	        if (intent.getAction().equals(EbookConstants.ACTION_UPDATE_FILE)) {  
+	        	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+	        //	 Log.e(TAG, "--------remberFile--11----------:" + remberFile.flag + "--flag-:" + flag + "--type--:" + flagType);  
+	        	 flagType = remberFile.flag;
+	        }  
+	    } 
 	}
 }

@@ -143,7 +143,9 @@ public class FileOperateUtils {
 			if (!isHideFile(f)) {
 				if (f.isDirectory()) {
 					boolean hasFile = hasSuffixFile(f, suffix, suffixDocx);
+					//Log.e("file", "------has file-----:" +hasFile + "--name--" +  f.getName());
 					if (hasFile) {
+						//Log.e("file", "------add file-----:" + f.getName());
 						fileList.add(f);
 					}
 				} else {
@@ -427,6 +429,7 @@ public class FileOperateUtils {
 			if (!f.isDirectory()) {
 				if ((suffix.equalsIgnoreCase(getFileExtensions(f))
 						|| getFileExtensions(f).equalsIgnoreCase(suffixTwo))&& !isHideFile(f)) {
+					//Log.e("file", "--------has txt-----:" + file.getName() );
 					return true;
 				}
 			} else {

@@ -85,7 +85,7 @@ public class EbookConstants
 	
 	//广播ACTION
 	public static final String MENU_PAGE_EDIT = "page_edit";
-	
+	public static final String ACTION_UPDATE_FILE = "update_rember_file";  
 	public static final int BOOK_COLLECTION = 1;
 	public static final int BOOK_RECENT = 2;
 	

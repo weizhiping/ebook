@@ -4,7 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
@@ -32,6 +35,8 @@ public class MainActivity extends Activity implements OnEnterListener
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private FileInfo remberFile;
+	private DatabaseManager manager;
+	private UpdateRemFileReceiver fileReceiver;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -46,9 +51,10 @@ public class MainActivity extends Activity implements OnEnterListener
 			finish();
 			return;
 		}
-		
+		manager = new DatabaseManager(this);
         getRecentInfo();
         initViews();
+        registerReceiver();
     }
     
     private void initViews()
@@ -70,13 +76,19 @@ public class MainActivity extends Activity implements OnEnterListener
     }
     //获取最近一次使用的文件
     private void getRecentInfo(){
-    	DatabaseManager manager = new DatabaseManager(this);
     	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
     	File dir = new File(FileOperateUtils.getMusicPath());
 		if (!dir.exists() && !dir.isDirectory()){
 			dir.mkdirs();
 		}
     }
+    
+    private void registerReceiver(){
+		fileReceiver = new UpdateRemFileReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.ACTION_UPDATE_FILE);
+		registerReceiver(fileReceiver, filter);
+	}
     
     @Override
     public void onPause()
@@ -145,5 +157,16 @@ public class MainActivity extends Activity implements OnEnterListener
 	{
 		super.onDestroy();
 		TTSUtils.getInstance().destroy();
+		unregisterReceiver(fileReceiver);
 	}	
+	
+	private class UpdateRemFileReceiver extends BroadcastReceiver { 
+	      
+	    @Override  
+	    public void onReceive(Context context, Intent intent) {    
+	        if (intent.getAction().equals(EbookConstants.ACTION_UPDATE_FILE)) {  
+	        	remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+	        }  
+	    } 
+	}
 }

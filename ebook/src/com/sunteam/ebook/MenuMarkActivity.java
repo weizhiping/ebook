@@ -16,7 +16,6 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.util.PublicUtils;
-import com.sunteam.ebook.util.SuperDialog.DialogCallBack;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -24,7 +23,7 @@ import com.sunteam.ebook.view.MainView;
  * 
  * @author sylar
  */
-public class MenuMarkActivity extends Activity implements OnEnterListener,DialogCallBack {
+public class MenuMarkActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -141,14 +140,6 @@ public class MenuMarkActivity extends Activity implements OnEnterListener,Dialog
 			PublicUtils.showToast(this, getString(R.string.ebook_menu_mark_tips),true);
 			//ScreenManager.getScreenManager().popAllActivityExceptOne();
 		}
-	}
-
-	@Override
-	public void dialogConfrim() {
-		manager.deleteMarkFile(fileInfo.path, null);
-		PublicUtils.showToast(this, getString(R.string.ebook_dialog_clear_su),true);
-		
-		//ScreenManager.getScreenManager().popAllActivityExceptOne();
 	}
 	
 	private void dialog(){
