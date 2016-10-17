@@ -283,6 +283,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		MediaPlayerUtils.getInstance().stop();
 		MediaPlayerUtils.getInstance().OnMediaPlayerListener(null);
 		insertToDb();
+		sendBroadcast(new Intent(EbookConstants.ACTION_UPDATE_FILE));
 		finish();
 	}
 	
