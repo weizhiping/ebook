@@ -491,6 +491,43 @@ import android.view.View;
 		 return	"";
 	 }
 	 
+	 //得到有效的长度，去除结尾的换行或者空格
+	 private int getEffectiveLength( byte[] buf )
+	 {
+		 int len = mMbBuf.length;
+		 for( int i = mMbBuf.length-1; i >= 0; i-- )
+		 {
+			 if( buf[i] > 0 )
+			 {
+				 if( ( 0x0d == buf[i] ) || ( 0x0a == buf[i] ) || ( 0x20 == buf[i] ) )
+				 {
+					 len--;
+				 }
+				 else
+				 {
+					 break;
+				 }
+			 }
+			 else if( buf[i] < 0 )	//汉字
+			 {
+				 if( ( i > 0 ) && (-95 == buf[i]) && (-95 == buf[i-1]) )	//汉字空格0xA1A1
+				 {
+					 len--;
+				 }
+				 else
+				 {
+					 break;
+				 }
+			 }
+			 else
+			 {
+				 len--;
+			 }
+		 }
+		 
+		 return	len;
+	 }
+	 
 	 public boolean openBook( String content ) 
 	 {
 		 byte[] buf = null;
@@ -554,7 +591,7 @@ import android.view.View;
 			 }
 		 }
 		 
-		 mMbBufLen = (int)mMbBuf.length;
+		 mMbBufLen = getEffectiveLength(mMbBuf);
 		 mLineNumber = lineNumber;
 		 
 		 mCheckSum = 0;//calcCheckSum( mMbBuf );	//计算CheckSum
