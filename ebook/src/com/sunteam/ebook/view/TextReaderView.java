@@ -565,30 +565,28 @@ import android.view.View;
 		 mOffset = 0;
 		 mReverseInfo.startPos = startPos;
 		 
-		 if( CHARSET_NAME.equalsIgnoreCase(charsetName) )
+		 try 
 		 {
-			 mMbBuf = buffer;
-		 }
-		 else
-		 {
-			 try 
+			 String str = new String(buffer, charsetName).replaceAll("•", "·");	//因为这个GB18080是四字节编码，所以需要替换为2字节的。
+			 mMbBuf = str.getBytes(CHARSET_NAME);	//转换成指定编码
+			 
+			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
+			 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
 			 {
-				 mMbBuf = new String(buffer, charsetName).getBytes(CHARSET_NAME);	//转换成指定编码
-				 
-				 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
-				 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
+				 mOffset = 4;
+				 if( mReverseInfo.startPos < mOffset )
 				 {
-					 mOffset = 4;
-					 if( mReverseInfo.startPos < mOffset )
-					 {
-						 mReverseInfo.startPos = mOffset;
-					 }
+					 mReverseInfo.startPos = mOffset;
 				 }
-			 } 
-			 catch (UnsupportedEncodingException e) 
-			 {
-				 e.printStackTrace();
 			 }
+		 } 
+		 catch (UnsupportedEncodingException e) 
+		 {
+			 e.printStackTrace();
+		 }
+		 catch( Exception e )
+		 {
+			 e.printStackTrace();
 		 }
 		 
 		 mMbBufLen = getEffectiveLength(mMbBuf);
