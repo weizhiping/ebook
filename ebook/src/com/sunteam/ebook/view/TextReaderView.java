@@ -2454,7 +2454,8 @@ import android.view.View;
 					 {
 						 if( 0x2E == mMbBuf[j] )
 						 {
-							 if( ( j+1 < mMbBufLen ) && ( ( 0x20 == mMbBuf[j+1] ) || ( 0x0d == mMbBuf[j+1] ) || ( 0x0a == mMbBuf[j+1] ) || ( mMbBuf[j+1] < 0 ) ) )
+							 if( ( ( j+1 < mMbBufLen ) && ( ( 0x20 == mMbBuf[j+1] ) || ( 0x0d == mMbBuf[j+1] ) || ( 0x0a == mMbBuf[j+1] ) || ( mMbBuf[j+1] < 0 ) ) ) ||
+									 ( j+1 == mMbBufLen ) )
 							 {
 								 return	ri;
 							 }

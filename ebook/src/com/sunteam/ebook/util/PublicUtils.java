@@ -148,6 +148,7 @@ public class PublicUtils
 	public static void showToast( Context context, String tips,final boolean isFinish )
 	{		
 		//用后鼎提供的系统提示对话框
+		TTSUtils.getInstance().stop();
 		PromptDialog pd = new PromptDialog(context, tips);
 		pd.setPromptListener( new PromptListener() 
 		{
@@ -167,6 +168,7 @@ public class PublicUtils
 		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 		*/
 		
+		TTSUtils.getInstance().stop();
 		//用后鼎提供的系统提示对话框
 		PromptDialog pd = new PromptDialog(context, tips);
 		pd.setPromptListener( new PromptListener() 
@@ -186,6 +188,7 @@ public class PublicUtils
 		CustomToast.showToast(context, tips, Toast.LENGTH_SHORT);
 		*/
 		
+		TTSUtils.getInstance().stop();
 		//用后鼎提供的系统提示对话框
 		PromptDialog pd = new PromptDialog(context, tips);
 		pd.setPromptListener( listener );
