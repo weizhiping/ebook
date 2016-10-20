@@ -108,7 +108,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				public void onComplete() 
 				{
 					// TODO Auto-generated method stub
-					back();
+					back(true);
 				}
 			});
 			
@@ -125,7 +125,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				public void onComplete() 
 				{
 					// TODO Auto-generated method stub
-					back();
+					back(true);
 				}
 			});
     	}
@@ -342,7 +342,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
 			setResult(RESULT_OK, intent);
-			back();
+			back(false);
 		}
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
@@ -355,7 +355,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					Intent intent = new Intent();
         			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
         			setResult(RESULT_OK, intent);
-        			back();
+        			back(false);
 				}
 			});
 		}
@@ -414,12 +414,15 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	}
 	
 	//退出此界面
-	private void back()
+	private void back( boolean isSetResult )
 	{
 		MediaPlayerUtils.getInstance().stop();
 		TTSUtils.getInstance().stop();
 		TTSUtils.getInstance().OnTTSListener(null);
-		setResult(RESULT_OK);
+		if( isSetResult )
+		{
+			setResult(RESULT_OK);
+		}
 		insertToDb();
 		sendBroadcast(new Intent(EbookConstants.ACTION_UPDATE_FILE));
 		finish();
@@ -430,7 +433,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	{  
 		if( event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN )
 		{
-			back();
+			back(true);
 			return true;   
 		}     
 	     
