@@ -1,0 +1,8 @@
+#BNF+IAT 1.0 UTF-8;
+!grammar menuitem;
+!slot <item>;
+!slot <common>;
+!start <enterItem>;
+<enterItem>:<item>|<common>;
+<item>:主菜单|电子书|录音机|收音机|万年历|计算器|指南针|音频播放|定时闹钟|功能设置|文件管理|按摩管理|蓝牙功能|电子词典;
+<common>:上|下|确定|退出;
