@@ -463,7 +463,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					manager.deleteFile( null, flag);
 					finish();
 				}else{
-					insertToDb(false);
+					insertToDb(true);
 				}
 				break;
 			default:
