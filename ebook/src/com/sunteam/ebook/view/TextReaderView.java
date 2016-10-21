@@ -1401,12 +1401,12 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = mOffset;
-		 mReverseInfo.len = 0;
 		 boolean isTop = false;	//是否到头了
 		 
 		 if( preLine() )
 		 {
+			 mReverseInfo.startPos = mOffset;
+			 mReverseInfo.len = 0;
 			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
@@ -1461,13 +1461,12 @@ import android.view.View;
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 TTSUtils.getInstance().stop();
 		 
-		 setReadMode(ReadMode.READ_MODE_ALL);
-		 
-		 mReverseInfo.startPos = mOffset;
-		 mReverseInfo.len = 0;
+		 setReadMode(ReadMode.READ_MODE_ALL);		
 		 
 		 if( nextLine() )
 		 {
+			 mReverseInfo.startPos = mOffset;
+			 mReverseInfo.len = 0;
 			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
@@ -1516,12 +1515,12 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = mOffset;
-		 mReverseInfo.len = 0;
 		 boolean isTop = false;	//是否到头了
 		 
 		 if( prePage() )
 		 {
+			 mReverseInfo.startPos = mOffset;
+			 mReverseInfo.len = 0;
 			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
@@ -1578,11 +1577,10 @@ import android.view.View;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 
-		 mReverseInfo.startPos = mOffset;
-		 mReverseInfo.len = 0;
-		 
 		 if( nextPage() )
 		 {
+			 mReverseInfo.startPos = mOffset;
+			 mReverseInfo.len = 0;
 			 mCurReadExplainIndex = 0;
 			 this.invalidate();
 			 if( mOnPageFlingListener != null )
@@ -2168,7 +2166,7 @@ import android.view.View;
 		 }
 		 
 		 int len = getNextParagraphLength( start );
-		 if( 0 == len )
+		 if( ( 0 == len ) || ( start+len >= mMbBufLen ) )
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
@@ -3329,9 +3327,12 @@ import android.view.View;
 	@Override
 	public void onSpeakProgress(int percent, int beginPos, int endPos) 
 	{
-		// TODO Auto-generated method stub	
-		mPercent = percent;
-		recalcLineNumberEx( percent, beginPos, endPos );
+		// TODO Auto-generated method stub
+		if( TTSUtils.getInstance().getSpeakStatus() == SpeakStatus.SPEAK )
+		{
+			mPercent = percent;
+			recalcLineNumberEx( percent, beginPos, endPos );
+		}
 	}
 		
 	private Handler mHandler = new Handler(new Handler.Callback() {
