@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -560,6 +561,10 @@ import android.view.View;
 	  */
 	 public boolean openBook(byte[] buffer, String charsetName, int lineNumber, int startPos, int len, int checksum, boolean isAuto, String filename) 
 	 {
+		 if( ( null == buffer ) || ( 0 == buffer.length) )
+		 {
+			 return	false;
+		 }
 		 mFilename = filename;
 		 mIsAuto = isAuto;
 		 mOffset = 0;
@@ -567,8 +572,15 @@ import android.view.View;
 		 
 		 try 
 		 {
-			 String str = new String(buffer, charsetName).replaceAll("•", "·");	//因为这个GB18080是四字节编码，所以需要替换为2字节的。
-			 mMbBuf = str.getBytes(CHARSET_NAME);	//转换成指定编码
+			 String str = new String(buffer, charsetName);	//原始字符串
+			 //str = str.replaceAll("(.)\\1+", "$1");		//将多个连续的相同字符替换为1个 比如abbbccd替换后为abcd
+			 str = str.replaceAll("\r", "");				//去掉\r
+			 str = str.replaceAll("\t{1,}", "\n");			//将多个连续的制表符替换为1个换行
+			 str = str.replaceAll("\n{2,}", "\n");			//将多个连续的换行符替换为1个
+			 str = str.replaceAll(" {2,}", " ");			//将多个连续的空格替换为1个
+			 str = str.replaceAll("•", "·");				//因为这个GB18080是四字节编码，所以需要替换为2字节的。
+			 
+			 mMbBuf = str.getBytes(CHARSET_NAME);			//转换成指定编码
 			 
 			 //别的编码转为gb18030的时候可能会加上BOM，gb18030的BOM是0x84 0x31 0x95 0x33，使用的时候需要跳过BOM
 			 if( ( mMbBuf.length >= 4 ) && ( -124 == mMbBuf[0] ) && ( 49 == mMbBuf[1] ) && ( -107 == mMbBuf[2] ) && ( 51 == mMbBuf[3] ) )
@@ -3122,6 +3134,8 @@ import android.view.View;
 		 
 		 int length = (mReverseInfo.len * percent + 50)/ 100;		 
 		 int size = mSplitInfoList.size();
+		 
+		 //Log.e( TAG, "wzp debug 0000000000 percent = "+percent+"  beginPos = "+beginPos+"  endPos = "+endPos+"  length = "+length);
 		 
 		 int curPageLine = Math.min( mLineCount, (size-mLineNumber) );		//当前屏最大行数
 		 SplitInfo siBegin = mSplitInfoList.get(mLineNumber);				//得到当前屏第一行的信息
