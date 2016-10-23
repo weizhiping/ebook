@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -18,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
@@ -36,7 +35,7 @@ import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
  * 
  * @author sylar
  */
-public class ReadDaisyActivity extends Activity implements OnPageFlingListener, OnTTSListener 
+public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 {
 	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
 	private TextView mTvTitle = null;
@@ -138,6 +137,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 //				insertToDb();
 //				break;
 			case KeyEvent.KEYCODE_MENU:
+				MediaPlayerUtils.getInstance().pause();		//暂停播放
+				
 				fileInfo.line = mDaisyReaderView.getLineNumber();
 				fileInfo.checksum = mDaisyReaderView.getCheckSum();
 				fileInfo.startPos = mDaisyReaderView.getReverseInfo().startPos;
@@ -203,8 +204,18 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		}
 		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 		{
-			TTSUtils.getInstance().OnTTSListener(ReadDaisyActivity.this);
-			TTSUtils.getInstance().speakContent(ReadDaisyActivity.this.getString(R.string.ebook_already_read));
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast(this, this.getString(R.string.ebook_already_read), new PromptListener(){
+
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent();
+        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+        			setResult(RESULT_OK, intent);
+        			back();
+				}
+			});
 		}
 		else
 		{
@@ -300,50 +311,6 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 		return super.dispatchKeyEvent(event);
 	}
 
-
-	//朗读完成
-	@Override
-	public void onSpeakCompleted() 
-	{
-		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(0);
-	}
-
-	//朗读错误
-	@Override
-	public void onSpeakError() 
-	{
-		// TODO Auto-generated method stub
-		mHandler.sendEmptyMessage(1);
-	}
-	
-	//发音进度
-	@Override
-	public void onSpeakProgress(int percent, int beginPos, int endPos) 
-	{
-		// TODO Auto-generated method stub	
-	}
-		
-	private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) 
-        {
-            switch (msg.what) 
-            {
-                case 0:		//朗读完成
-                case 1:		//朗读错误
-                	Intent intent = new Intent();
-        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
-        			setResult(RESULT_OK, intent);
-        			back();
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
-    });
-	
 	private class ShutdownBroadcastReceiver extends BroadcastReceiver { 
 	      
 	    @Override  

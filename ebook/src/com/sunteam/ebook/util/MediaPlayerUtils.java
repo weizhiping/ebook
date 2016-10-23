@@ -128,6 +128,12 @@ public class MediaPlayerUtils
      */
 	public void play( final String audioPath, final long startTime, final long endTime ) 
 	{
+		if( ( null == audioPath ) || ( ( endTime - startTime ) <= 0 ) )
+		{
+			//mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
+			return;
+		}
+		
 		stop();	//先停止当前播放
 		if( mMediaPlayer != null )
 		{

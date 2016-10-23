@@ -34,6 +34,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private String path;
 	private int seq;
 	private boolean isAuto = false;			//是否自动进入阅读界面
+	private boolean isResume = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +93,16 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
-    	if( mMainView != null )
+    	if( isResume )
     	{
-    		mMainView.onResume();
+	    	if( mMainView != null )
+	    	{
+	    		mMainView.onResume();
+	    	}
     	}
+    	
+    	isResume = true;
+    	
     	super.onResume();
     }
   	
@@ -155,6 +162,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					switch( next )
 					{
 						case EbookConstants.TO_NEXT_PART:	//到下一个部分
+							isResume = false;
 							int seq = data.getIntExtra("seq", -1);
 							if( -1 == seq )
 							{
@@ -207,6 +215,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 							}
 							break;
 						case EbookConstants.TO_NEXT_BOOK:	//到下一本书
+							isResume = false;
 							Intent intent = new Intent();
 							intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
 							setResult(RESULT_OK, intent);

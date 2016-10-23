@@ -19,7 +19,6 @@ import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
-import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
