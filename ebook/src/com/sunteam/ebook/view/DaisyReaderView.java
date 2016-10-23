@@ -13,13 +13,13 @@ import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
-import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils.OnMediaPlayerListener;
 import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -1322,6 +1322,8 @@ import android.view.View;
 	 //根据反显位置重新计算当前页起始位置(行号)
 	 private void recalcLineNumber( Action action )
 	 {
+		 recalcLineNumberEx(0);
+		 /*
 		 if( mReverseInfo.len <= 0 )	//如果没有反显
 		 {
 			 return;
@@ -1473,8 +1475,186 @@ import android.view.View;
 		 	default:
 		 		break;
 		 }
+		 */
 	 }
-	
+	 
+	 //根据反显位置重新计算当前页起始位置(行号)
+	 private void recalcLineNumberEx(int percent)
+	 {
+		 if( mReverseInfo.len <= 0 )	//如果没有反显
+		 {
+			 return;
+		 }
+		 
+		 if( mSplitInfoList.isEmpty() )
+		 {
+			 return;
+		 }
+		 
+		 /*
+		 后鼎当时是在语点中测试停止时，发音进度百分比与要发音的字符串长度乘积得到停止发音位置：
+		 int l = speakText.length;
+		 int j = (l * speakProgress + 50)/ 100;
+		 String s = speakText.substring(0, j);
+		 在停止发音时，我显示字符串s，发现发音停止位置与s显示位置基本吻合，前后相差一个字符。
+		 */
+		 
+		 int length = (mReverseInfo.len * percent + 50)/ 100;		 
+		 int size = mSplitInfoList.size();
+		 
+		 //Log.e( TAG, "wzp debug 0000000000 percent = "+percent+"  beginPos = "+beginPos+"  endPos = "+endPos+"  length = "+length);
+		 
+		 int curPageLine = Math.min( mLineCount, (size-mLineNumber) );		//当前屏最大行数
+		 SplitInfo siBegin = mSplitInfoList.get(mLineNumber);				//得到当前屏第一行的信息
+		 SplitInfo siEnd = mSplitInfoList.get(mLineNumber+curPageLine-1);	//得到当前屏最后一行的信息
+			 
+		 if( ( mReverseInfo.startPos >= siBegin.startPos ) && ( (mReverseInfo.startPos + mReverseInfo.len) <= (siEnd.startPos + siEnd.len) ) )	//反显完全在当前页
+		 {
+			 return;
+		 }
+		 else if( mReverseInfo.startPos > (siEnd.startPos + siEnd.len) )	//反显开始于当前页之后
+		 {
+			 if( nextPage() )
+			 {
+				 this.invalidate();
+				 if( mOnPageFlingListener != null )
+				 {
+					 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+					 if( null == node )
+					 {
+						 mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+					 }
+					 else
+					 {
+						 mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+					 }
+				 }
+			 }
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom();
+				 }
+			 }
+		 }
+		 else if( (mReverseInfo.startPos + mReverseInfo.len) < siBegin.startPos )	//反显结束于当前页之前
+		 {
+			 if( prePage() )
+			 {
+				 this.invalidate();
+				 if( mOnPageFlingListener != null )
+				 {
+					 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+					 if( null == node )
+					 {
+						 mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+					 }
+					 else
+					 {
+						 mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+					 }
+				 }
+			 }
+			 else
+			 {
+				 if( mOnPageFlingListener != null )
+				 {
+					 mOnPageFlingListener.onPageFlingToTop();
+					 speakTips(mContext.getString(R.string.ebook_to_top1));
+				 }
+			 }
+		 }
+		 else if( ( mReverseInfo.startPos < siBegin.startPos ) && ( (mReverseInfo.startPos + mReverseInfo.len) <= (siEnd.startPos + siEnd.len) ) )	//反显开始于当前页之前并且结束于当前页
+		 {
+			 if( (mReverseInfo.startPos + length) < siBegin.startPos )	//如果当前朗读到的位置已经在上一页，则需要翻页
+			 {
+				 if( prePage() )
+				 {
+					 this.invalidate();
+					 if( mOnPageFlingListener != null )
+					 {
+						 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+						 if( null == node )
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+						 }
+						 else
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+						 }
+					 }
+				 }
+				 else
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToTop();
+						 speakTips(mContext.getString(R.string.ebook_to_top1));
+					 }
+				 }
+			 }
+		 }
+		 else if( ( mReverseInfo.startPos >= siBegin.startPos ) && ( (mReverseInfo.startPos + mReverseInfo.len) > (siEnd.startPos + siEnd.len) ) )	//反显开始于当前页并且结束于当前页之后
+		 {
+			 if( (mReverseInfo.startPos + length) > (siEnd.startPos + siEnd.len) )	//如果当前朗读到的位置已经在下一页，则需要翻页
+			 {
+				 if( nextPage() )
+				 {
+					 this.invalidate();
+					 if( mOnPageFlingListener != null )
+					 {
+						 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+						 if( null == node )
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+						 }
+						 else
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+						 }
+					 }
+				 }
+				 else
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom();
+					 }
+				 }
+			 }
+		 }
+		 else	//反显开始于当前页之前并且结束于当前页之后
+		 {
+			 if( (mReverseInfo.startPos + length) > (siEnd.startPos + siEnd.len) )	//如果当前朗读到的位置已经在下一页，则需要翻页
+			 {
+				 if( nextPage() )
+				 {
+					 this.invalidate();
+					 if( mOnPageFlingListener != null )
+					 {
+						 DiasyNode node = DaisyFileReaderUtils.getInstance().getDiasyNode(mChapterPosition);
+						 if( null == node )
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted("",mCurPage);
+						 }
+						 else
+						 {
+							 mOnPageFlingListener.onPageFlingCompleted(node.name,mCurPage);
+						 }
+					 }
+				 }
+				 else
+				 {
+					 if( mOnPageFlingListener != null )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom();
+					 }
+				 }
+			 }
+		 }
+	 }
+		
 	 private enum Action
 	 {
 		 NEXT_LINE, 	//下一行
@@ -1528,6 +1708,16 @@ import android.view.View;
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onSpeakProgress(int percent) 
+	{
+		// TODO Auto-generated method stub
+		if( MediaPlayerUtils.getInstance().getPlayStatus() == PlayStatus.PLAY )
+		{
+			recalcLineNumberEx( percent );
+		}
+	}
 	
 	private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -1547,12 +1737,21 @@ import android.view.View;
             		 }
                     break;
                 case MSG_SPEAK_ERROR:		//朗读错误
-                	
                     break;
                 default:
                     break;
             }
             return false;
         }
-    }); 	
+    });
+	
+	/**
+     * 开始语音合成
+     *
+     * @param text
+     */
+	private void speakTips( final String text ) 
+	{
+		TTSUtils.getInstance().speakTips(text);
+    }
 }

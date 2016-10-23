@@ -1,11 +1,10 @@
 package com.sunteam.ebook.util;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Message;
 
 /**
  * MediaPlayer工具类。
@@ -14,7 +13,8 @@ import android.os.Handler;
  */
 public class MediaPlayerUtils
 {
-	private static final int MSG_PLAY_COMPLETION = 100;
+	private static final int MSG_PLAY_COMPLETION = 100;		//播放完成
+	private static final int MSG_PLAY_PROGRESS = 200;			//播放进度
 	private static MediaPlayerUtils instance = null;
 	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
@@ -23,7 +23,8 @@ public class MediaPlayerUtils
 	public interface OnMediaPlayerListener 
 	{
 		public void onPlayCompleted();		//播放完成
-		public void onPlayError();			//播放错误
+		public void onPlayError();					//播放错误
+		public void onSpeakProgress(int percent);	//播放进度
 	}
 	
 	public enum PlayStatus
@@ -97,7 +98,10 @@ public class MediaPlayerUtils
 		{
 			if( PlayStatus.STOP != mPlayStatus )
 			{
-				mMediaPlayer.stop();
+				if( mMediaPlayer.isPlaying() )
+				{
+					mMediaPlayer.stop();
+				}
 				mPlayStatus = PlayStatus.STOP;
 			}	//如果没有停止，先停止
 			
@@ -125,13 +129,21 @@ public class MediaPlayerUtils
 				mMediaPlayer.start();
 				mPlayStatus = PlayStatus.PLAY;
 				
-				new android.os.CountDownTimer( endTime-startTime, 1000 )
+				final long time = endTime-startTime;
+				new android.os.CountDownTimer( time, time/100 )
 				{
 					@Override
 					public void onTick(long millisUntilFinished) 
 					{
 						// TODO Auto-generated method stub
-						
+						if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+						{
+							Message msg = mHandler.obtainMessage();
+							msg.what = MSG_PLAY_PROGRESS;
+							msg.arg1 = (int)((time-millisUntilFinished)*100/time);
+							
+							mHandler.sendMessage(msg);
+						}
 					}
 
 					@Override
@@ -284,6 +296,12 @@ public class MediaPlayerUtils
 					{
 						mOnMediaPlayerListener.onPlayCompleted();
 					}
+            		break;
+            	case MSG_PLAY_PROGRESS:		//播放进度
+            		if ( mOnMediaPlayerListener != null ) 
+        			{
+            			mOnMediaPlayerListener.onSpeakProgress(msg.arg1);
+        			}
             		break;
                 default:
                     break;
