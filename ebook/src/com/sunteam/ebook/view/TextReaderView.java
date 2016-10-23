@@ -602,6 +602,11 @@ import android.view.View;
 		 }
 		 
 		 mMbBufLen = getEffectiveLength(mMbBuf);
+		 if( mMbBufLen <= 0 )
+		 {
+			 return	false;
+		 }
+		 
 		 mLineNumber = lineNumber;
 		 
 		 mCheckSum = 0;//calcCheckSum( mMbBuf );	//计算CheckSum
