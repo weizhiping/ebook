@@ -10,9 +10,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="15dp"
         android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="@dimen/textsize" />
+        android:includeFontPadding="false"
+        android:paddingBottom="@dimen/dialog_bottom_padding"
+        android:paddingLeft="@dimen/dialog_left_padding"
+        android:paddingRight="@dimen/dialog_right_padding"
+        android:paddingTop="@dimen/dialog_top_padding"
+        android:textSize="@dimen/dialog_text_size" />
 
 </RelativeLayout>

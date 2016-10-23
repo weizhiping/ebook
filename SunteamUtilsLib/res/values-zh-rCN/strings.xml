@@ -2,7 +2,7 @@
 <resources>
 
     <string name="funtionmenu">功能菜单</string>
-    <string name="delete">删除</string>
+    <string name="common_delete">删除</string>
     <string name="common_dialog_confirm_ok">确认</string>
     <string name="common_dialog_confirm_cancel">取消</string>
 

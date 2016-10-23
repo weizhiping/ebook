@@ -10,22 +10,27 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingBottom="@dimen/dialog_bottom_padding"
+        android:paddingLeft="@dimen/dialog_left_padding"
+        android:paddingRight="@dimen/dialog_right_padding"
+        android:paddingTop="@dimen/dialog_top_padding"
+        android:text="@string/common_dialog_confirm_ok"
         android:textSize="@dimen/dialog_text_size" />
 
     <!-- 纯粹占位 -->
 
-    <TextView
+    <View
         android:id="@+id/common_dialog_confirm_space_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="@dimen/dialog_text_size" />
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/dialog_bottom_padding" >
 
         <LinearLayout
             android:layout_width="0dp"
@@ -39,6 +44,12 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:focusable="true"
+                android:includeFontPadding="false"
+                android:paddingBottom="@dimen/dialog_bottom_padding"
+                android:paddingLeft="@dimen/dialog_left_padding"
+                android:paddingRight="@dimen/dialog_right_padding"
+                android:paddingTop="@dimen/dialog_top_padding"
+                android:text="@string/common_dialog_confirm_ok"
                 android:textSize="@dimen/dialog_text_size" />
         </LinearLayout>
 
@@ -54,6 +65,12 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:focusable="true"
+                android:includeFontPadding="false"
+                android:paddingBottom="@dimen/dialog_bottom_padding"
+                android:paddingLeft="@dimen/dialog_left_padding"
+                android:paddingRight="@dimen/dialog_right_padding"
+                android:paddingTop="@dimen/dialog_top_padding"
+                android:text="@string/common_dialog_confirm_cancel"
                 android:textSize="@dimen/dialog_text_size" />
         </LinearLayout>
     </LinearLayout>
