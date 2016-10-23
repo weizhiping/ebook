@@ -63,12 +63,12 @@
     public static final android.os.Parcelable$Creator *;
 }
 
--libraryjars ./libs/android-support-v4.jar
+-libraryjars ../SunteamUtilsLib/libs/android-support-v4.jar
 -libraryjars ./libs/jxl.jar
--libraryjars ./libs/Msc.jar
+-libraryjars ../SunteamUtilsLib/libs/Msc.jar
 -libraryjars ./libs/SpeechServiceLibUtil.jar
 -libraryjars ./libs/tm-extractors-0.4.jar
--libraryjars ./libs/SunteamUtils.jar
+-libraryjars ../SunteamUtilsLib/libs/SunteamUtils.jar
 
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** {*; }

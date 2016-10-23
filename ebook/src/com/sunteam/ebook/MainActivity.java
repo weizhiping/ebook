@@ -73,6 +73,8 @@ public class MainActivity extends Activity implements OnEnterListener
     	if(null != remberFile){
     		mMainView.setSelection(remberFile.catalog);
     	}
+    	
+    	TTSUtils.getInstance().setInitIsSuccess(true);	//设置TTS初始化成功
     }
     //获取最近一次使用的文件
     private void getRecentInfo(){

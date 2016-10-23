@@ -108,6 +108,12 @@ public class TTSUtils
 		return instance;
 	}
 
+	//设置初始化是否成功
+	public void setInitIsSuccess(boolean success)
+	{
+		isSuccess = success;
+	}
+	
 	//初始化
 	public void init( Context context )
 	{
