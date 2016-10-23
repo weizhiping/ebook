@@ -19,6 +19,7 @@ import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity implements OnEnterListener
         setContentView(R.layout.ebook_activity_main);
         
         TTSUtils.getInstance().init(this);	//初始化TTS
+        MediaPlayerUtils.getInstance().init();	//初始化MediaPlayer
 		if( !PublicUtils.checkSpeechServiceInstalled(this) ) 
 		{			
 			CustomToast.showToast(this, this.getString(R.string.ebook_install_tts_tips), Toast.LENGTH_LONG);
@@ -159,7 +161,11 @@ public class MainActivity extends Activity implements OnEnterListener
 	{
 		super.onDestroy();
 		TTSUtils.getInstance().destroy();
+		MediaPlayerUtils.getInstance().destroy();
 		unregisterReceiver(fileReceiver);
+		
+		android.os.Process.killProcess(android.os.Process.myPid());
+		System.exit(1);
 	}	
 	
 	private class UpdateRemFileReceiver extends BroadcastReceiver { 

@@ -19,6 +19,7 @@ public class MediaPlayerUtils
 	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
+	private android.os.CountDownTimer mCountDownTimer = null;
 	
 	public interface OnMediaPlayerListener 
 	{
@@ -64,6 +65,17 @@ public class MediaPlayerUtils
 			mMediaPlayer = new MediaPlayer();
 		}
 	}
+	
+	//销毁
+	public void destroy()
+	{
+		stop();
+		if( mMediaPlayer != null )
+		{
+			mMediaPlayer.release();
+			mMediaPlayer = null;
+		}
+	}
 
 	//暂停
 	public void pause()
@@ -94,19 +106,18 @@ public class MediaPlayerUtils
 	//停止
 	public void stop()
 	{
+		if( mCountDownTimer != null )
+		{
+			mCountDownTimer.cancel();
+			mCountDownTimer = null;
+		}
 		if( mMediaPlayer != null )
 		{
 			if( PlayStatus.STOP != mPlayStatus )
 			{
-				if( mMediaPlayer.isPlaying() )
-				{
-					mMediaPlayer.stop();
-				}
+				mMediaPlayer.stop();
 				mPlayStatus = PlayStatus.STOP;
 			}	//如果没有停止，先停止
-			
-			mMediaPlayer.release();
-			mMediaPlayer = null;
 		}
 	}
 
@@ -118,11 +129,11 @@ public class MediaPlayerUtils
 	public void play( final String audioPath, final long startTime, final long endTime ) 
 	{
 		stop();	//先停止当前播放
-		init();
 		if( mMediaPlayer != null )
 		{
 			try 
 			{
+				mMediaPlayer.reset();
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
 				mMediaPlayer.seekTo((int)startTime);
@@ -130,7 +141,7 @@ public class MediaPlayerUtils
 				mPlayStatus = PlayStatus.PLAY;
 				
 				final long time = endTime-startTime;
-				new android.os.CountDownTimer( time, time/100 )
+				mCountDownTimer = new android.os.CountDownTimer( time, time/100 )
 				{
 					@Override
 					public void onTick(long millisUntilFinished) 
@@ -156,7 +167,8 @@ public class MediaPlayerUtils
 						}
 					}
 					
-				}.start();  
+				};
+				mCountDownTimer.start();  
 				
 				mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
@@ -164,8 +176,6 @@ public class MediaPlayerUtils
 					{										
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
-						mMediaPlayer.release();
-						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayCompleted();
@@ -178,8 +188,6 @@ public class MediaPlayerUtils
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
-						mMediaPlayer.release();
-						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayError();
@@ -220,11 +228,11 @@ public class MediaPlayerUtils
 	public void play( final String audioPath ) 
 	{
 		stop();	//先停止当前播放
-		init();
 		if( mMediaPlayer != null )
 		{
 			try 
 			{
+				mMediaPlayer.reset();
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
 				mMediaPlayer.setLooping(true);
@@ -237,8 +245,6 @@ public class MediaPlayerUtils
 					{										
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
-						mMediaPlayer.release();
-						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayCompleted();
@@ -251,8 +257,6 @@ public class MediaPlayerUtils
 					public boolean onError(MediaPlayer mp, int what, int extra) {
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
-						mMediaPlayer.release();
-						mMediaPlayer = null;
 						if( mOnMediaPlayerListener != null )
 						{
 							mOnMediaPlayerListener.onPlayError();
@@ -291,6 +295,7 @@ public class MediaPlayerUtils
             switch (msg.what) 
             {
             	case MSG_PLAY_COMPLETION:	//播放完毕
+            		mCountDownTimer = null;
             		stop();	//先停止当前播放
 					if( mOnMediaPlayerListener != null )
 					{
