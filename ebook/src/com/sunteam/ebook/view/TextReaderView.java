@@ -602,7 +602,7 @@ import android.view.View;
 		 }
 		 
 		 mMbBufLen = getEffectiveLength(mMbBuf);
-		 if( mMbBufLen <= 0 )
+		 if( mMbBufLen-mOffset <= 0 )
 		 {
 			 return	false;
 		 }

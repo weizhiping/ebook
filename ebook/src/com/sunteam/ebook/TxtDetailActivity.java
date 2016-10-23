@@ -412,7 +412,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			else
 			{
 				String tips = TxtDetailActivity.this.getString(R.string.ebook_word_parse_fail);
-				PublicUtils.showToast(TxtDetailActivity.this, tips);
+				PublicUtils.showToast(TxtDetailActivity.this, tips, new PromptListener() {
+
+					@Override
+					public void onComplete() {
+						// TODO Auto-generated method stub
+						if( mMainView != null ){
+				    		mMainView.onResume();
+				    	}
+					}
+					
+				});
 			}
 		}
 	}
