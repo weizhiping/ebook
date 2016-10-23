@@ -464,8 +464,9 @@ public class DaisyFileReaderUtils
 						if( splitItem[i].contains("href=") )
 						{
 							start = splitItem[i].indexOf("\"");
-							end = splitItem[i].lastIndexOf("\"");
-							initNcx(path+"/"+splitItem[i].substring(start+1, end));	//初始化ncx文件
+							String subStr = splitItem[i].substring(start+1);
+							end = subStr.indexOf("\"");
+							initNcx(path+"/"+subStr.substring(0, end));	//初始化ncx文件
 							return;
 						}
 					}

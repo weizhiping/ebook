@@ -53,8 +53,8 @@ import android.view.View;
 	 private static final String TAG = "DaisyReaderView";
 	 private static final int MSG_SPEAK_COMPLETED = 100;
 	 private static final int MSG_SPEAK_ERROR = 200;
-	 private static final float MARGIN_WIDTH = 0;		//左右与边缘的距离
-	 private static final float MARGIN_HEIGHT = 0;		//上下与边缘的距离
+	 private float MARGIN_WIDTH = 0;		//左右与边缘的距离
+	 private float MARGIN_HEIGHT = 0;		//上下与边缘的距离
 	 private static final String CHARSET_NAME = "GB18030";//编码格式，默认为GB18030
 	 
 	 private Context mContext = null;
@@ -126,8 +126,26 @@ import android.view.View;
 		 mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);	//画笔
 		 mPaint.setTextAlign(Align.LEFT);			//做对齐
 		 
-		 final float fontSize = new Tools(context).getFontSize();
-		 mTextSize = fontSize-2*EbookConstants.LINE_SPACE;
+		 final int fontSize = new Tools(context).getFontSize();
+		 switch( fontSize )
+		 {
+		 	case 24:	//小号字
+		 		mTextSize = 20.0f;
+		 		mLineSpace = 3.6f;
+		 		break;
+		 	case 30:	//中号字
+		 		mTextSize = 26.0f;
+		 		mLineSpace = 3.5f;
+		 		MARGIN_WIDTH = 4.0f;
+		 		break;
+		 	case 40:	//大号字
+		 		mTextSize = 35.0f;
+		 		mLineSpace = 4.2f;
+		 		MARGIN_WIDTH = 2.5f;
+		 		break;
+		 	default:
+		 		break;
+		 }
 		 final float scale = context.getResources().getDisplayMetrics().density/0.75f;	//计算相对于ldpi的倍数
 		 
 		 mLineSpace *= scale;		//行间距

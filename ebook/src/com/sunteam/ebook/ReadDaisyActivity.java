@@ -51,6 +51,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener, 
 	private String diaPath;
 	private MenuBroadcastReceiver menuReceiver;
 	private static final int MENU_DAISY_CODE = 11;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
