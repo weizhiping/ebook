@@ -1790,6 +1790,15 @@ import android.view.View;
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
 				 speakTips(mContext.getString(R.string.ebook_to_top1));
+				 
+				 ReverseInfo ri = getNextReverseCharacterInfo( mOffset );
+				 if( ri != null  )
+				 {
+					 mReverseInfo.startPos = ri.startPos;
+					 mReverseInfo.len = ri.len;
+					 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+					 this.invalidate();
+				 }
 			 }
 			 return;
 		 }
@@ -1805,6 +1814,15 @@ import android.view.View;
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
 					 speakTips(mContext.getString(R.string.ebook_to_top1));
+					 
+					 ReverseInfo ri2 = getNextReverseCharacterInfo( mOffset );
+					 if( ri2 != null  )
+					 {
+						 mReverseInfo.startPos = ri2.startPos;
+						 mReverseInfo.len = ri2.len;
+						 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+						 this.invalidate();
+					 }
 				 }
 				 break;
 			 }
@@ -1896,6 +1914,15 @@ import android.view.View;
 			 {
 				 mOnPageFlingListener.onPageFlingToTop();
 				 speakTips(mContext.getString(R.string.ebook_to_top1));
+				 
+				 ReverseInfo ri = getNextReverseWordInfo( mOffset );
+				 if( ri != null )
+				 {
+					 mReverseInfo.startPos = ri.startPos;
+					 mReverseInfo.len = ri.len;
+					 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+					 this.invalidate();
+				 }
 			 }
 			 return;
 		 }
@@ -1911,6 +1938,15 @@ import android.view.View;
 				 {
 					 mOnPageFlingListener.onPageFlingToTop();
 					 speakTips(mContext.getString(R.string.ebook_to_top1));
+					 
+					 ReverseInfo ri2 = getNextReverseWordInfo( mOffset );
+					 if( ri2 != null )
+					 {
+						 mReverseInfo.startPos = ri2.startPos;
+						 mReverseInfo.len = ri2.len;
+						 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+						 this.invalidate();
+					 }
 				 }
 				 break;
 			 }
@@ -1922,6 +1958,15 @@ import android.view.View;
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
 						 speakTips(mContext.getString(R.string.ebook_to_top1));
+						 
+						 ReverseInfo ri2 = getNextReverseWordInfo( mOffset );
+						 if( ri2 != null )
+						 {
+							 mReverseInfo.startPos = ri2.startPos;
+							 mReverseInfo.len = ri2.len;
+							 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+							 this.invalidate();
+						 }
 					 }
 				 }
 				 else
@@ -1946,6 +1991,15 @@ import android.view.View;
 					 {
 						 mOnPageFlingListener.onPageFlingToTop();
 						 speakTips(mContext.getString(R.string.ebook_to_top1));
+						 
+						 ReverseInfo ri2 = getNextReverseWordInfo( mOffset );
+						 if( ri2 != null )
+						 {
+							 mReverseInfo.startPos = ri2.startPos;
+							 mReverseInfo.len = ri2.len;
+							 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+							 this.invalidate();
+						 }
 					 }
 				 }
 				 else
@@ -1956,6 +2010,15 @@ import android.view.View;
 						 {
 							 mOnPageFlingListener.onPageFlingToTop();
 							 speakTips(mContext.getString(R.string.ebook_to_top1));
+							 
+							 ReverseInfo ri2 = getNextReverseWordInfo( mOffset );
+							 if( ri2 != null )
+							 {
+								 mReverseInfo.startPos = ri2.startPos;
+								 mReverseInfo.len = ri2.len;
+								 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
+								 this.invalidate();
+							 }
 						 }
 					 }
 					 else
