@@ -37,6 +37,7 @@ public class MenuNumEditActivity extends Activity {
 	private String title;
 	private EditText numView;
 	private AudioManager mAudioManager;
+	private SharedPreferences musicShared;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class MenuNumEditActivity extends Activity {
 		titleView.setHeight((int)fontSize); // 设置控件高度
 		
 		if(2 == flage){
+			musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_MUSIC );
 			number = (int)(currentMusic/1.5);
 			playMusic();
@@ -94,8 +96,7 @@ public class MenuNumEditActivity extends Activity {
 	
 
 	private void playMusic(){
-		SharedPreferences shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
-		String path = shared.getString(EbookConstants.MUSICE_PATH, null);
+		String path = musicShared.getString(EbookConstants.MUSICE_PATH, null);
 		if(null == path){
 			path = FileOperateUtils.getFirstMusicInDir();
 		}else{
@@ -120,7 +121,10 @@ public class MenuNumEditActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
 			if(2 == flage){
-				MediaPlayerUtils.getInstance().stop();
+				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
+				if(!isMusic){
+					MediaPlayerUtils.getInstance().stop();
+				}
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 1);
 			}
 			return super.onKeyDown(keyCode, event);
@@ -159,7 +163,10 @@ public class MenuNumEditActivity extends Activity {
 			}else if(2 == flage){
 				int volume = (int)(number * 1.5);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
-				MediaPlayerUtils.getInstance().stop();
+				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
+				if(!isMusic){
+					MediaPlayerUtils.getInstance().stop();
+				}
 				PublicUtils.showToast(MenuNumEditActivity.this, getResources().getString(R.string.ebook_setting_success),true);
 			}
 			return true;
