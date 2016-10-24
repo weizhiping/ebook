@@ -12,7 +12,10 @@ import com.sunteam.common.utils.ConfirmDialog;
 import com.sunteam.common.utils.dialog.ConfirmListener;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
+import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.view.MainView;
 
@@ -25,6 +28,8 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private DatabaseManager manager;
+	private FileInfo fileInfo;
 	private int flag;//1为收藏，2为最近使用
 	private int item;
 
@@ -34,6 +39,8 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		flag = getIntent().getIntExtra("flag", 1);
+		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
+		manager = new DatabaseManager(this);
 		initViews();
 	}
 
@@ -92,19 +99,22 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 		}else if(1 == selectItem){
 			dialog(getResources().getString(R.string.ebook_dialog_clear));
 		}else{
-			Intent intent = new Intent();
-			intent.putExtra("data_item", item);
-			setResult(RESULT_OK, intent);
-			finish();
-//			PublicUtils.showToast(MenuDatabaseActivity.this, getResources().getString(R.string.ebook_add_fav_success), new PromptListener(){
-//				@Override
-//				public void onComplete() {
-//					Intent intent = new Intent();
-//					intent.putExtra("data_item", item);
-//					setResult(RESULT_OK, intent);
-//					finish();
-//				}});
+			insertToDb();
 		}
+	}
+	
+	//添加到收藏
+	private void insertToDb(){
+		boolean hasBook = manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
+		String tips = getResources().getString(R.string.ebook_add_fav_success);
+		if(hasBook){
+			tips = getResources().getString(R.string.ebook_add_fav_fail);
+		}
+		PublicUtils.showToast(this, tips, new PromptListener(){
+			@Override
+			public void onComplete() {
+				finish();
+			}});
 	}
 	
 	private void dialog(String content){

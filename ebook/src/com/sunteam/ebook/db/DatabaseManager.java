@@ -27,13 +27,13 @@ public class DatabaseManager {
 		helper = new SQLHelper(context);
 	}
 
-	// 收藏和最近浏览数据库插入数据
+	// 收藏和最近浏览数据库插入数据  1为收藏，2为最近
 	public boolean insertBookToDb(FileInfo file, int type) {
 		try
 		{
 			boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path,
 					type);
-			Log.e("database", "-----------has book---:" + hasbook);
+			Log.i("database", "-----------has book---:" + hasbook + "--type-:" + type);
 			if (!hasbook) {
 				db = helper.getWritableDatabase();
 				ContentValues newValues = new ContentValues();
@@ -304,7 +304,19 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_LEN, file.len);
 			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
 			db.update(EbookConstants.BOOKS_TABLE, newValues,
-					EbookConstants.BOOK_PATH + "=?", new String[] { file.path });
+				EbookConstants.BOOK_PATH + "=? and " + 
+				EbookConstants.BOOK_TYPE + "=?", new String[] { file.path,String.valueOf(type) });
+			
+			newValues.clear();
+			newValues.put(EbookConstants.BOOK_FLAG, file.flag);
+			newValues.put(EbookConstants.BOOK_START, file.startPos);
+			newValues.put(EbookConstants.BOOK_LINE, file.line);
+			newValues.put(EbookConstants.BOOK_LEN, file.len);
+			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
+			db.update(EbookConstants.BOOKS_TABLE, newValues,
+				EbookConstants.BOOK_PATH + "=? and " + 
+				EbookConstants.BOOK_TYPE + "=?", new String[] { file.path,"1" });
+			
 			db.close();
 		}
 		catch( Exception e )

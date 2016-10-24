@@ -97,7 +97,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			FileInfo fileInfo = fileInfoList.get(i);
 			mMenuList.add(fileInfo.name);
 			if(null != remberFile && remberFile.path.contains(fileInfo.path)){
-				Log.e(TAG, "----rem f--:" + remberFile.flag + "---flag--:" + flag + "--i--:" + i);
 				if(remberFile.flag == flag){
 					position = 0;
 				}else if(0 == remberFile.flag){
@@ -186,10 +185,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					case KeyEvent.KEYCODE_MENU:
 						if (1 == flag || 2 == flag) {
 							Intent intent = new Intent(TxtDetailActivity.this, MenuDatabaseActivity.class);
+							FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
+							intent.putExtra("file", fileInfo);
 							intent.putExtra("flag", flag);
 							startActivityForResult(intent, MENU_DATA);
 						} else if (0 != flag) {
-							insertToDb(true);
+							insertToDb();
 						}
 						break;
 					default:
@@ -344,22 +345,20 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 	}
 	//添加到收藏
-	private void insertToDb(boolean isTips){
+	private void insertToDb(){
 		FileInfo fileInfo = fileInfoList.get(mMainView.getSelectItem());
 		boolean hasBook = manager.insertBookToDb(fileInfo, EbookConstants.BOOK_COLLECTION);
-		if(isTips){
-			String tips = getResources().getString(R.string.ebook_add_fav_success);
-			if(hasBook){
-				tips = getResources().getString(R.string.ebook_add_fav_fail);
-			}
-			PublicUtils.showToast(this, tips, new PromptListener(){
-				@Override
-				public void onComplete() {
-					if( mMainView != null ){
-			    		mMainView.onResume();
-			    	}
-				}});
+		String tips = getResources().getString(R.string.ebook_add_fav_success);
+		if(hasBook){
+			tips = getResources().getString(R.string.ebook_add_fav_fail);
 		}
+		PublicUtils.showToast(this, tips, new PromptListener(){
+			@Override
+			public void onComplete() {
+				if( mMainView != null ){
+			    	mMainView.onResume();
+			    }
+			}});
 	}
 	
 	// 初始化数据库文件
@@ -443,7 +442,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						mMainView.enter(true);
 						 // 阅读下一本书
 					}
-				}else if(1 == flag || 2 == flag){
+				}else if(2 == flag){
 					initDataFiles(flag,catalog);
 					int select = mMainView.getSelectItem();
 					String item =  mMenuList.get(select);
@@ -451,6 +450,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMenuList.add(0,item);
 					mMainView.updateAdapter();
 					mMainView.setSelection(0);
+				}else if(1 == flag){
+					initDataFiles(flag,catalog);
 				}
 				break;
 			case MENU_DATA:
@@ -472,8 +473,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					mMainView.updateAdapter();
 					manager.deleteFile( null, flag);
 					finish();
-				}else{
-					insertToDb(true);
 				}
 				break;
 			default:
