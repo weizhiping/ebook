@@ -55,6 +55,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private SharedPreferences shared;
 	private boolean isAuto = false;
 	private boolean isReadPage = false;	//是否朗读页码
+	private boolean isFinish;//是否读完
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -283,10 +284,19 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	}
 	//插入到最近浏览
 	private void insertToDb(){
-		fileInfo.line = mTextReaderView.getLineNumber();
-		fileInfo.checksum = mTextReaderView.getCheckSum();
-		fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
-		fileInfo.len = mTextReaderView.getReverseInfo().len;
+		Log.e(TAG, "----init===== to db------" + isFinish + "--name--:" + fileInfo.name);
+		if(isFinish){
+			fileInfo.line = 0;
+			fileInfo.checksum = 0;
+			fileInfo.startPos = 0;
+			fileInfo.len = 0;
+		}else{
+			fileInfo.line = mTextReaderView.getLineNumber();
+			fileInfo.checksum = mTextReaderView.getCheckSum();
+			fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
+			fileInfo.len = mTextReaderView.getReverseInfo().len;
+		}
+		
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
@@ -329,6 +339,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	public void onPageFlingToBottom( boolean isContinue ) 
 	{
+		isFinish = true;
 		// TODO Auto-generated method stub
 		if( !isContinue || ( mTextReaderView.getReadMode() != ReadMode.READ_MODE_ALL ) )
 		{

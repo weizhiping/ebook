@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -443,13 +442,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						 // 阅读下一本书
 					}
 				}else if(2 == flag){
-					initDataFiles(flag,catalog);
-					int select = mMainView.getSelectItem();
-					String item =  mMenuList.get(select);
-					mMenuList.remove(item);
-					mMenuList.add(0,item);
-					mMainView.updateAdapter();
-					mMainView.setSelection(0);
+					reloadData();
+//					int select = mMainView.getSelectItem();
+//					String item =  mMenuList.get(select);
+//					mMenuList.remove(item);
+//					mMenuList.add(0,item);
+//					mMainView.updateAdapter();
+//					mMainView.setSelection(0);
 				}else if(1 == flag){
 					initDataFiles(flag,catalog);
 				}
@@ -481,7 +480,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		}
 	}
 	
-	
+	private void reloadData(){
+		mMenuList.clear();
+		initDataFiles(flag,catalog);
+		int size = fileInfoList.size();
+		for (int i = 0; i < size; i++) {
+			FileInfo fileInfo = fileInfoList.get(i);
+			mMenuList.add(fileInfo.name);
+		}
+		mMainView.updateAdapter();
+		mMainView.setSelection(0);
+	}
 	
 	@Override
 	protected void onDestroy() {
