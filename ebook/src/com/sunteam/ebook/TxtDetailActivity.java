@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -297,7 +298,12 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		*/
 		if( count <= 1 )
 		{
-			
+			if(1 != flag && 2!= flag){
+				manager.updateQueryBook(fileInfo);
+//				if(null != dbFile){
+//					fileInfo = dbFile;
+//				}
+			}
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);

@@ -199,6 +199,39 @@ public class DatabaseManager {
 		}
 	}
 
+	// 更新电子书断点数据
+		public void updateQueryBook(FileInfo info) {
+			try{
+				db = helper.getWritableDatabase();
+				Cursor cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=?", new String[] {
+						info.path, String.valueOf(EbookConstants.BOOK_RECENT) }, null, null, null);
+				try {
+					if (null != cursor) {
+						if (cursor.getCount() > 0) {
+							cursor.moveToPosition(0);
+								info.startPos = cursor.getInt(cursor
+										.getColumnIndex(EbookConstants.BOOK_START));
+								info.line = cursor.getInt(cursor
+										.getColumnIndex(EbookConstants.BOOK_LINE));
+								info.len = cursor.getInt(cursor
+										.getColumnIndex(EbookConstants.BOOK_LEN));
+								info.checksum = cursor.getInt(cursor
+										.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
+						}
+					}
+				} finally {
+					if (null != cursor) {
+						cursor.close();
+					}
+					if (null != db) {
+						db.close();
+					}
+				}
+			}
+			catch( Exception e ){
+				e.printStackTrace();
+			}
+		}
 	// 查找数据库中是否已经存在某一条数据
 	private boolean hasDataInBase(String table, String path, int type) {
 		try
