@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -98,7 +97,11 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			mMenuList.add(fileInfo.name);
 			if(null != remberFile && remberFile.path.contains(fileInfo.path)){
 				if(remberFile.flag == flag){
-					position = 0;
+					if(flag == 1){
+						position = i;
+					}else{
+						position = 0;
+					}
 				}else if(0 == remberFile.flag){
 					position = i;
 				}
