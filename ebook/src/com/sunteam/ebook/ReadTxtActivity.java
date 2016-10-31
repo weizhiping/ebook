@@ -309,6 +309,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				int result = data.getIntExtra("result", 0);
 				switch(result){
 				case 10:
+					isReadPage = false;
 					int curPage = data.getIntExtra("page", 1);
 					mTextReaderView.setCurPage(curPage);
 					break;
@@ -400,6 +401,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				int resultFlag = intent.getIntExtra("result_flag", 0);
 				switch(resultFlag){
 				case 0://跳转到页码
+					isReadPage = false;
 					int curPage = intent.getIntExtra("page", 1);
 					mTextReaderView.setCurPage(curPage);
 					break;
