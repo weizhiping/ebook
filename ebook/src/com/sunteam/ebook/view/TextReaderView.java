@@ -81,6 +81,8 @@ import android.view.View;
 		 
 		 0xA1A2,	//顿号
 		 0xA970,	//顿号
+		 
+		 0xA1A1,	//空格
 	 };	//中文分隔符
 	 
 	 private static final char[] EN_SEPARATOR = { 
