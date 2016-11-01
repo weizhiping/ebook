@@ -1435,7 +1435,7 @@ import android.view.View;
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence(false, isTop, false);
+			 curSentence(false, isTop, false);
 		 }
 		 else
 		 {
@@ -1483,7 +1483,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence(false, false, false);
+				 curSentence(false, false, false);
 			 }
 			 else
 			 {
@@ -1549,7 +1549,7 @@ import android.view.View;
 		 
 		 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 		 {
-			 nextSentence(false, isTop, false);
+			 curSentence(false, isTop, false);
 		 }
 		 else
 		 {
@@ -1597,7 +1597,7 @@ import android.view.View;
 			 
 			 if( SpeakStatus.SPEAK == status )	//如果中断前是朗读状态
 			 {
-				 nextSentence(false, false, false);
+				 curSentence(false, false, false);
 			 }
 			 else
 			 {
