@@ -2708,6 +2708,15 @@ import android.view.View;
 					 }	//如果一开始就是点符号则跳过反显这个点符号
 				 }
 				 
+				 for( int k = 0; k < CodeTableUtils.CODE.length; k++ )
+				 {
+					 if( ( CodeTableUtils.CODE[k] == ch1 ) && ( i < mMbBufLen ) && ( 0x0d == mMbBuf[i] || 0x0a == mMbBuf[i] ) )
+					 {
+						 isBreak = true;
+						 break;
+					 }
+				 }	//如果一开始就是标点符号并且后面没有有用字符，则跳过。
+				 
 				 if( isBreak )
 				 {
 					 continue;

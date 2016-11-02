@@ -24,6 +24,13 @@
         android:label="@string/ebook_app_name"
         android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" 
         >
+        <receiver android:name=".activities.widget.UsbBroadCastReceiver">	
+		　　<intent-filter android:priority="1000">	
+				　　<action android:name="android.intent.action.MEDIA_MOUNTED"/>	
+				　　<action android:name="android.intent.action.MEDIA_EJECT" />	
+				　　<data android:scheme="file"/>	
+		　　</intent-filter>	
+	　　</receiver>
         <activity
             android:name=".MainActivity"
             android:label="@string/ebook_app_name" 
