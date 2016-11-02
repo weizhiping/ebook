@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.view.MainView;
@@ -26,6 +28,8 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private FileInfo fileInfo;
+	private FileInfo remberFile;//路径记忆传递
+	private DatabaseManager manager;
 	private boolean isAuto = false;
 	private boolean isResume = true;
 	
@@ -34,13 +38,14 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ebook_activity_main);
-		
+		manager = new DatabaseManager(this);
 		initViews();
 	}
 	
 	private void initViews()
     {
 		Intent intent = getIntent();
+		remberFile = (FileInfo) intent.getSerializableExtra("rem_file");
 		fileInfo = (FileInfo) intent.getSerializableExtra("file");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
     	int count = intent.getIntExtra("count", 0);
@@ -56,7 +61,10 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, fileInfo.name, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
-    	
+    	if(null != remberFile && remberFile.path.equals(fileInfo.path)){
+    		Log.e("part", "-----rem file part---:" + remberFile.part);
+    		mMainView.setSelection(remberFile.part);
+    	}
     	if( isAuto )
     	{
     		mMainView.enter(isAuto);
@@ -103,7 +111,9 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) 
 	{
+		
 		fileInfo.part = selectItem;
+		manager.updateQueryBook(fileInfo);
 		Intent intent = new Intent(this,ReadTxtActivity.class);
 		intent.putExtra("file", fileInfo);
 		intent.putExtra("file_list", fileInfoList);

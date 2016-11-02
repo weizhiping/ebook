@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -307,6 +308,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 //					fileInfo = dbFile;
 //				}
 			}
+			Log.e(TAG, "-----file part---:" + fileInfo.part);
 			Intent intent = new Intent(this, ReadTxtActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
@@ -318,6 +320,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			Intent intent = new Intent(this, TxtPartActivity.class);
 			intent.putExtra("file", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
+			intent.putExtra("rem_file", remberFile);
 			intent.putExtra("count", count); // 第几部分
 			intent.putExtra("isAuto", isAuto);
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);

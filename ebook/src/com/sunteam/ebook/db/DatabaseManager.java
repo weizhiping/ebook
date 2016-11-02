@@ -203,8 +203,8 @@ public class DatabaseManager {
 		public void updateQueryBook(FileInfo info) {
 			try{
 				db = helper.getWritableDatabase();
-				Cursor cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=?", new String[] {
-						info.path, String.valueOf(EbookConstants.BOOK_RECENT) }, null, null, null);
+				Cursor cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=? and part=?", new String[] {
+						info.path, String.valueOf(EbookConstants.BOOK_RECENT),String.valueOf(info.part) }, null, null, null);
 				try {
 					if (null != cursor) {
 						if (cursor.getCount() > 0) {
@@ -217,6 +217,11 @@ public class DatabaseManager {
 										.getColumnIndex(EbookConstants.BOOK_LEN));
 								info.checksum = cursor.getInt(cursor
 										.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
+						}else{
+							info.startPos = 0;
+							info.line = 0;
+							info.len = 0;
+							info.checksum = 0;
 						}
 					}
 				} finally {
@@ -335,6 +340,7 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_START, file.startPos);
 			newValues.put(EbookConstants.BOOK_LINE, file.line);
 			newValues.put(EbookConstants.BOOK_LEN, file.len);
+			newValues.put(EbookConstants.BOOK_PART, file.part);
 			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
 			db.update(EbookConstants.BOOKS_TABLE, newValues,
 				EbookConstants.BOOK_PATH + "=? and " + 
@@ -345,6 +351,7 @@ public class DatabaseManager {
 			newValues.put(EbookConstants.BOOK_START, file.startPos);
 			newValues.put(EbookConstants.BOOK_LINE, file.line);
 			newValues.put(EbookConstants.BOOK_LEN, file.len);
+			newValues.put(EbookConstants.BOOK_PART, file.part);
 			newValues.put(EbookConstants.BOOK_CHECKSUM, file.checksum);
 			db.update(EbookConstants.BOOKS_TABLE, newValues,
 				EbookConstants.BOOK_PATH + "=? and " + 
