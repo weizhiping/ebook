@@ -268,7 +268,10 @@ public class MainView extends View implements OnTTSListener
 	public boolean onKeyUp(int keyCode, KeyEvent event) 
 	{
 		keyUpFlag = true;
-		
+		if( KeyEvent.KEYCODE_MENU ==keyCode )
+		{
+			return	true;
+		}
 		return false;
 	}
 	
@@ -337,7 +340,7 @@ public class MainView extends View implements OnTTSListener
 							}
 						}
 					}
-					break;
+					return	true;
 				default:
 					break;
 			}
@@ -353,6 +356,8 @@ public class MainView extends View implements OnTTSListener
 					break;
 				case KeyEvent.KEYCODE_DPAD_RIGHT:
 					break;
+				case KeyEvent.KEYCODE_MENU:
+					return	true;
 				default:
 					break;
 			}
