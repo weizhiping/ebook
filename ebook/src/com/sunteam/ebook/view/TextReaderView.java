@@ -2356,7 +2356,7 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len > mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 			 {
 				 return;
 			 }
@@ -2394,7 +2394,7 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len >= mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && ( ri.startPos + ri.len > mParagraphStartPos + mParagraphLength ) && ( mParagraphLength > 0 ) )
 			 {
 				 return;
 			 }
