@@ -3,6 +3,8 @@ package com.sunteam.ebook.util;
 import java.io.IOException;
 
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.media.MediaPlayer.OnSeekCompleteListener;
 import android.os.Handler;
 import android.os.Message;
 
@@ -126,7 +128,7 @@ public class MediaPlayerUtils
      *
      * @param text
      */
-	public void play( final String audioPath, final long startTime, final long endTime ) 
+	public void play( final String audioPath,  final long startTime,  final long endTime ) 
 	{
 		if( ( null == audioPath ) || ( ( endTime - startTime ) <= 0 ) )
 		{
@@ -142,39 +144,54 @@ public class MediaPlayerUtils
 				mMediaPlayer.reset();
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
-				mMediaPlayer.seekTo((int)startTime);
-				mMediaPlayer.start();
-				mPlayStatus = PlayStatus.PLAY;
 				
-				final long time = endTime-startTime;
-				mCountDownTimer = new android.os.CountDownTimer( time, time/100 )
-				{
+				mMediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					@Override
-					public void onTick(long millisUntilFinished) 
+					public void onPrepared(MediaPlayer m) {
+						// TODO Auto-generated method stub
+						mMediaPlayer.seekTo((int)startTime);
+					}
+				});
+				
+				mMediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener(){
+					@Override
+					public void onSeekComplete(MediaPlayer m) 
 					{
 						// TODO Auto-generated method stub
-						if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+						mMediaPlayer.start();
+						mPlayStatus = PlayStatus.PLAY;
+						
+						final long time = endTime-startTime;
+						mCountDownTimer = new android.os.CountDownTimer( time, time/100 )
 						{
-							Message msg = mHandler.obtainMessage();
-							msg.what = MSG_PLAY_PROGRESS;
-							msg.arg1 = (int)((time-millisUntilFinished)*100/time);
-							
-							mHandler.sendMessage(msg);
-						}
-					}
+							@Override
+							public void onTick(long millisUntilFinished) 
+							{
+								// TODO Auto-generated method stub
+								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+								{
+									Message msg = mHandler.obtainMessage();
+									msg.what = MSG_PLAY_PROGRESS;
+									msg.arg1 = (int)((time-millisUntilFinished)*100/time);
+									
+									mHandler.sendMessage(msg);
+								}
+							}
 
-					@Override
-					public void onFinish() 
-					{
-						// TODO Auto-generated method stub
-						if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
-						{
-							mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
-						}
+							@Override
+							public void onFinish() 
+							{
+								// TODO Auto-generated method stub
+								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+								{
+									mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
+								}
+							}
+							
+						};
+						mCountDownTimer.start();  
 					}
-					
-				};
-				mCountDownTimer.start();  
+				});
 				
 				mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
