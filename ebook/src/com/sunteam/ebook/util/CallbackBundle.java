@@ -1,7 +1,5 @@
 package com.sunteam.ebook.util;
 
-import java.util.List;
-
 import android.os.Bundle;
 
 /**

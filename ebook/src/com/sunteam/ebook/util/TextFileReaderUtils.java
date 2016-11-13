@@ -1,6 +1,7 @@
 package com.sunteam.ebook.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
@@ -8,6 +9,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import com.sunteam.ebook.entity.SplitInfo;
+
+import android.os.Environment;
 
 /**
  * 文本文件读取工具类。
@@ -18,10 +21,13 @@ public class TextFileReaderUtils
 {
 	private static TextFileReaderUtils instance = null;
 	private File mBookFile = null;
+	private RandomAccessFile mRandomAccessFile = null;
+	private FileChannel  mFileChannel  = null;
 	private String mStrCharsetName = "GB18030";		//编码格式，默认为GB18030
 	private MappedByteBuffer mMbBuf = null;			//内存中的图书字符
 	private int mMbBufLen = 0; 						//图书总长度
 	private ArrayList<SplitInfo> mSplitInfoList  = null;	//分段信息
+	private boolean isInsideSDPath = true;				//是否内部SD卡路径
 	
 	public static TextFileReaderUtils getInstance()
 	{
@@ -38,19 +44,66 @@ public class TextFileReaderUtils
 		mSplitInfoList = new ArrayList<SplitInfo>();
 	}
 	
+	//是否是内部SD卡路径
+	public boolean isInsideSDPath()
+	{
+		return	isInsideSDPath;
+	}
+	
+	public void destroy()
+	{
+		try
+		{
+			if( mMbBuf != null )
+			{
+				mMbBuf.clear();
+				mMbBuf = null;
+			}
+			
+			if( mFileChannel != null )
+			{
+				mFileChannel.close();
+				mFileChannel = null;
+			}
+			
+			if( mRandomAccessFile != null )
+			{
+				mRandomAccessFile.close();
+				mRandomAccessFile = null;
+			}
+			
+			mSplitInfoList.clear();	//先清除上次保存的信息
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	//初始化
 	@SuppressWarnings("resource")
-	public void init( final String fullpath ) throws IOException
+	public void init( final String fullpath ) throws Exception
 	{
+		String insideSDPath = Environment.getExternalStorageDirectory().getPath();	//得到内置SD卡路径
+		if( ( fullpath != null ) && ( insideSDPath != null ) && ( fullpath.indexOf(insideSDPath) == 0 ) )
+		{
+			isInsideSDPath = true;
+		}
+		else
+		{
+			isInsideSDPath = false;
+		}
 		mSplitInfoList.clear();	//先清除上次保存的信息
 		
 		IdentifyEncoding ie = new IdentifyEncoding();
 		mStrCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
 		
 		mBookFile = new File(fullpath);
+		mRandomAccessFile = new RandomAccessFile( mBookFile, "r");
+		mFileChannel = mRandomAccessFile.getChannel();
 		long lLen = mBookFile.length();
 		mMbBufLen = (int)lLen;
-		mMbBuf = new RandomAccessFile( mBookFile, "r").getChannel().map(FileChannel.MapMode.READ_ONLY, 0, lLen);	//读入虚拟内存
+		mMbBuf = mFileChannel.map(FileChannel.MapMode.READ_ONLY, 0, lLen);	//读入虚拟内存
 		
 		int begin = 0;
 		

@@ -1,7 +1,6 @@
 package com.sunteam.ebook;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -151,15 +150,25 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
     	
     	isResume = true;
     	
-    	if(0 != flag && 0 == fileInfoList.size()){
-    		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.ebook_no_file),new PromptListener() {
-				
-				@Override
-				public void onComplete() {
-					finish();
-				}
-			});
+    	//Log.e(TAG, "wzp debug ================== flag = "+flag +"  size = "+fileInfoList.size());
+    	
+    	try
+    	{
+	    	if(0 != flag && 0 == fileInfoList.size()){
+	    		PublicUtils.showToast(TxtDetailActivity.this, getString(R.string.ebook_no_file),new PromptListener() {
+					
+					@Override
+					public void onComplete() {
+						finish();
+					}
+				});
+	    	}
     	}
+    	catch( Exception e )
+    	{
+    		e.printStackTrace();
+    	}
+    	
     	super.onResume();
     }
  
@@ -284,11 +293,19 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// 显示文件内容
 	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto) {
 		fileInfo.flag = flagType;
-		try {
+		try 
+		{
 			TextFileReaderUtils.getInstance().init(fullpath);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			
+			PublicUtils.showToast( this, this.getString(R.string.ebook_open_file_fail) );
+			
+			return;
+		}
+		
 		int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
 		fileInfo.count = count;
 		

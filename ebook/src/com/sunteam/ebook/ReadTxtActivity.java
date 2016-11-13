@@ -21,8 +21,11 @@ import android.widget.Toast;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.CallbackBundleType;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ReadMode;
+import com.sunteam.ebook.util.CallbackBundle;
+import com.sunteam.ebook.util.CallbackUtils;
 import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -61,6 +64,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ebook_activity_read_txt);
+		
+		CallbackUtils.registerCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
 		
 		isAuto = this.getIntent().getBooleanExtra("isAuto", false);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
@@ -321,6 +326,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	public void onDestroy()
 	{
+		CallbackUtils.unRegisterCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT);
 		unregisterReceiver(menuReceiver);
 		unregisterReceiver(shutReceiver);
 		super.onDestroy();
@@ -463,4 +469,19 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	        }  
 	    } 
 	}
+	
+	//SDCARD 拔出回调
+	private CallbackBundle mCallbackBundle = new CallbackBundle() {
+		@Override
+		public void callback(Bundle bundle) 
+		{
+			// TODO Auto-generated method stub
+			if( false == TextFileReaderUtils.getInstance().isInsideSDPath() )
+			{
+				back(true);
+				
+				TextFileReaderUtils.getInstance().destroy();
+			}
+		}
+	};
 }
