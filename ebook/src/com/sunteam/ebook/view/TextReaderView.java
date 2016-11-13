@@ -1812,7 +1812,9 @@ import android.view.View;
 
 		 ReverseInfo oldReverseInfo = null;
 		 
-		 for( int i = mOffset; i < mMbBufLen; )
+		 int len = getPreParagraphLength( mReverseInfo.startPos );	//得到上一个段落
+		 
+		 for( int i = mReverseInfo.startPos-len; i < mMbBufLen; )
 		 {
 			 ReverseInfo ri = getNextReverseCharacterInfo( i );
 			 if( null == ri )
@@ -1913,7 +1915,7 @@ import android.view.View;
 		 TTSUtils.getInstance().stop();
 		 
 		 setReadMode(ReadMode.READ_MODE_WORD);
-		 
+
 		 int start = mReverseInfo.startPos;
 		 if( start == mOffset )	//已经到顶了
 		 {
@@ -1936,7 +1938,9 @@ import android.view.View;
 
 		 ReverseInfo oldReverseInfo = null;
 		 
-		 for( int i = mOffset; i < mMbBufLen; )
+		 int len = getPreParagraphLength( mReverseInfo.startPos );	//得到上一个段落
+		 
+		 for( int i = mReverseInfo.startPos-len; i < mMbBufLen; )
 		 {
 			 ReverseInfo ri = getNextReverseWordInfo( i );
 			 if( null == ri )
