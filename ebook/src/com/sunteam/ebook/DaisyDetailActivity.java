@@ -93,7 +93,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
-    	if( isResume )
+    	if( isResume && !isAuto )
     	{
 	    	if( mMainView != null )
 	    	{
@@ -168,7 +168,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 							{
 								if( mMainView.isDown() )
 								{
-									mMainView.down();
+									mMainView.down(true);
 									mMainView.enter(true);
 								}
 								else
@@ -187,7 +187,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 								{
 									if( mMainView.isDown() )
 									{
-										mMainView.down();
+										mMainView.down(true);
 										mMainView.enter(true);
 									}
 									else

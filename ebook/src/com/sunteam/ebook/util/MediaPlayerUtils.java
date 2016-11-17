@@ -201,7 +201,7 @@ public class MediaPlayerUtils
 						mPlayStatus = PlayStatus.STOP;
 						if( mOnMediaPlayerListener != null )
 						{
-							mOnMediaPlayerListener.onPlayCompleted();
+							//mOnMediaPlayerListener.onPlayCompleted();
 						}
 					}
 				});	//播放完成
