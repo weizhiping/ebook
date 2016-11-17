@@ -113,7 +113,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		mFlContainer.addView(mMainView.getView());
 		if(null != remberFile){
 			if(flag == 0){
-				mMainView.setSelection(storage);
+				mMainView.setSelection(remberFile.storage);
 			}else if(mMenuList.size() > 0){
 				mMainView.setSelection(position);
 			}
@@ -249,6 +249,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("flag", 10);
 				intent.putExtra("flagType", flagType);
 				intent.putExtra("catalogType", catalog);
+				intent.putExtra("storage", storage);
 				intent.putExtra("file", remberFile);
 				this.startActivity(intent);
 			} else {
@@ -268,6 +269,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("flag", 10);
 			intent.putExtra("flagType", flagType);
 			intent.putExtra("catalogType", catalog);
+			intent.putExtra("storage", storage);
 			intent.putExtra("file", remberFile);
 			this.startActivity(intent);
 		}else{
@@ -279,6 +281,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("diasys", diasList);
 			}
 			fileInfo.flag = flagType;
+			fileInfo.storage = storage;
 			intent.putExtra("name", menu);
 			intent.putExtra("catalogType", fileInfo.catalog);
 			intent.putExtra("path", fileInfo.path);
@@ -293,6 +296,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// 显示文件内容
 	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto) {
 		fileInfo.flag = flagType;
+		fileInfo.storage = storage;
 		try 
 		{
 			TextFileReaderUtils.getInstance().init(fullpath);
