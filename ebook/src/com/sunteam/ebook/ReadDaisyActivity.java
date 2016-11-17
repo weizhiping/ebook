@@ -124,10 +124,10 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				mDaisyReaderView.down();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_LEFT:	//左
-				mDaisyReaderView.left();
+				left();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_RIGHT:	//右
-				mDaisyReaderView.right();
+				right();
 				return	true;
 			case KeyEvent.KEYCODE_DPAD_CENTER:	//确定
 			case KeyEvent.KEYCODE_ENTER:
@@ -179,6 +179,42 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 					break;
 				}
 			}
+		}
+	}
+	
+	//到上一个涨价
+	private void left()
+	{
+		if( mDiasyNode.seq-1 >= 0 )	//还有上一部分需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_PRE_PART);
+			intent.putExtra("seq", mDiasyNode.seq);
+			setResult(RESULT_OK, intent);
+			back();
+		}
+		else
+		{
+			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
+			PublicUtils.showToast(this, tips);
+		}
+	}
+	
+	//到下一个章节
+	private void right()
+	{
+		if( mDiasyNode.seq+1 < DaisyFileReaderUtils.getInstance().getDiasyNodeTotal() )	//还有下一部分需要朗读
+		{
+			Intent intent = new Intent();
+			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
+			intent.putExtra("seq", mDiasyNode.seq);
+			setResult(RESULT_OK, intent);
+			back();
+		}
+		else
+		{
+			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
+			PublicUtils.showToast(this, tips);
 		}
 	}
 	

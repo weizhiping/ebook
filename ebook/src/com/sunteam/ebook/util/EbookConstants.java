@@ -94,6 +94,7 @@ public class EbookConstants
 	public static final int REQUEST_CODE = 100;
 	public static final int TO_NEXT_PART = 0;			//到下一个部分
 	public static final int TO_NEXT_BOOK = 1;			//到下一本书
+	public static final int TO_PRE_PART = 2;			//到上一个部分
 	
 	public static final String NEW_WORD_BOOK = "生词本";
 	

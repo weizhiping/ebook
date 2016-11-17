@@ -93,7 +93,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
-    	if( isResume && !isAuto )
+    	if( isResume )
     	{
 	    	if( mMainView != null )
 	    	{
@@ -120,6 +120,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		isResume = !isAuto;
 		DiasyNode dias = diasList.get(selectItem);
 		ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 		int size = diaysList.size();
@@ -158,12 +159,27 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				if( RESULT_OK == resultCode )
 				{
 					int next = data.getIntExtra("next", EbookConstants.TO_NEXT_PART);
+					int seq = data.getIntExtra("seq", -1);
 					
 					switch( next )
 					{
+						case EbookConstants.TO_PRE_PART:	//到上一个部分
+							isResume = false;
+							if( mMainView.isUp() )
+							{
+								mMainView.up(true);
+								mMainView.enter(true);
+							}
+							else
+							{
+								Intent intent = new Intent();
+								intent.putExtra("next", EbookConstants.TO_PRE_PART);
+								setResult(RESULT_OK, intent);
+								finish();
+							}
+							break;
 						case EbookConstants.TO_NEXT_PART:	//到下一个部分
 							isResume = false;
-							int seq = data.getIntExtra("seq", -1);
 							if( -1 == seq )
 							{
 								if( mMainView.isDown() )

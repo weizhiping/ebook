@@ -144,7 +144,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	}
 	
 	//按了上键
-	public void up()
+	public void up( boolean isAuto )
 	{
 		if( this.selectItem > 0 )
 		{
@@ -155,7 +155,10 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 			this.selectItem = gListData.size() - 1;
 		}
 		
-		readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		if( !isAuto )
+		{
+			readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		}
 		
 		int first = mLv.getFirstVisiblePosition();
 		if( selectItem < first )
@@ -200,6 +203,19 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		}
 		
 		this.notifyDataSetChanged();
+	}
+	
+	//是否还有上一项
+	public boolean isUp()
+	{
+		if( this.selectItem > 0 )
+		{
+			return	true;
+		}
+		else
+		{
+			return	false;
+		}
 	}
 	
 	//是否还有下一项

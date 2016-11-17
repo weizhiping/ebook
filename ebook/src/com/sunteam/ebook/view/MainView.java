@@ -156,9 +156,14 @@ public class MainView extends View implements OnTTSListener
 		}
 	}
 	
+	public void up( boolean isAuto )
+	{
+		mAdapter.up(isAuto);
+	}
+	
 	public void up()
 	{
-		mAdapter.up();
+		mAdapter.up(false);
 	}
 	
 	public void down( boolean isAuto )
@@ -184,6 +189,11 @@ public class MainView extends View implements OnTTSListener
 	public void updateAdapter()
 	{
 		mAdapter.notifyDataSetChanged();
+	}
+	
+	public boolean isUp()
+	{
+		return	mAdapter.isUp();	
 	}
 	
 	public boolean isDown()
@@ -298,7 +308,7 @@ public class MainView extends View implements OnTTSListener
 					mAdapter.enter(false);
 					return true;
 				case KeyEvent.KEYCODE_DPAD_UP:
-					mAdapter.up();
+					mAdapter.up(false);
 					return true;
 				case KeyEvent.KEYCODE_DPAD_DOWN:
 					mAdapter.down(false);
@@ -370,7 +380,7 @@ public class MainView extends View implements OnTTSListener
 	{
 		if( KeyEvent.KEYCODE_DPAD_UP == longKeyCode ) 
 		{
-			mAdapter.up();
+			mAdapter.up(false);
 		} 
 		else if (KeyEvent.KEYCODE_DPAD_DOWN == longKeyCode) 
 		{
