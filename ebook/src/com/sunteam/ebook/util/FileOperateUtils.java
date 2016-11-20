@@ -434,6 +434,10 @@ public class FileOperateUtils {
 				}
 			} else {
 				bIsFilter = hasSuffixFile(f, suffix, suffixTwo);
+				if( bIsFilter )
+				{
+					return	true;
+				}
 			}
 		}
 		return bIsFilter;
