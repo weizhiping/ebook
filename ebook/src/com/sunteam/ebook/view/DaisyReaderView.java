@@ -1662,6 +1662,12 @@ import android.view.View;
 		 PRE_PAGE,		//上一页
 	 }
 
+	 //继续朗读
+	 public void continueSpeak()
+	 {
+		 mHandler.sendEmptyMessage(MSG_SPEAK_COMPLETED);
+	 }
+	 
 	//朗读完成
 	@Override
 	public void onSpeakCompleted() 

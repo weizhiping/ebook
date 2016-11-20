@@ -26,7 +26,6 @@ import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
-import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
 import com.sunteam.ebook.view.DaisyReaderView;
 import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
 
@@ -182,7 +181,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		}
 	}
 	
-	//到上一个涨价
+	//到上一个章节
 	private void left()
 	{
 		if( mDiasyNode.seq-1 >= 0 )	//还有上一部分需要朗读
@@ -195,8 +194,16 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		}
 		else
 		{
-			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
-			PublicUtils.showToast(this, tips);
+			String tips = this.getString(R.string.ebook_first_chapter);
+			PublicUtils.showToast(this, tips, new PromptListener() {
+
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					mDaisyReaderView.continueSpeak();
+				}
+				
+			});
 		}
 	}
 	
@@ -213,8 +220,16 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		}
 		else
 		{
-			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
-			PublicUtils.showToast(this, tips);
+			String tips = this.getString(R.string.ebook_last_chapter);
+			PublicUtils.showToast(this, tips, new PromptListener(){
+
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					mDaisyReaderView.continueSpeak();
+				}
+				
+			});
 		}
 	}
 	
@@ -223,7 +238,15 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	{
 		// TODO Auto-generated method stub
 		String tips = this.getString(R.string.ebook_to_top);
-		PublicUtils.showToast(this, tips);
+		PublicUtils.showToast(this, tips, new PromptListener(){
+
+			@Override
+			public void onComplete() {
+				// TODO Auto-generated method stub
+				mDaisyReaderView.continueSpeak();
+			}
+			
+		});
 	}
 
 	@Override
@@ -238,7 +261,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			setResult(RESULT_OK, intent);
 			back();
 		}
-		else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+		//else if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+		else if( ( fileInfo.item+1 < fileInfoList.size() )  )	//还有下一本书需要朗读
 		{
 			TTSUtils.getInstance().OnTTSListener(null);
 			PublicUtils.showToast(this, this.getString(R.string.ebook_already_read), new PromptListener(){
