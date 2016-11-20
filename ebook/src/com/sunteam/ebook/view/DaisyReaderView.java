@@ -1267,7 +1267,7 @@ import android.view.View;
 			 }
 			 else
 			 {
-				 if( mOnPageFlingListener != null )
+				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 				 {
 					 mOnPageFlingListener.onPageFlingToBottom();
 				 }
@@ -1531,7 +1531,7 @@ import android.view.View;
 			 }
 			 else
 			 {
-				 if( mOnPageFlingListener != null )
+				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode )
 				 {
 					 mOnPageFlingListener.onPageFlingToBottom();
 				 }
@@ -1616,7 +1616,7 @@ import android.view.View;
 				 }
 				 else
 				 {
-					 if( mOnPageFlingListener != null )
+					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 					 {
 						 mOnPageFlingListener.onPageFlingToBottom();
 					 }
@@ -1645,7 +1645,7 @@ import android.view.View;
 				 }
 				 else
 				 {
-					 if( mOnPageFlingListener != null )
+					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 					 {
 						 mOnPageFlingListener.onPageFlingToBottom();
 					 }
@@ -1735,6 +1735,7 @@ import android.view.View;
             		{
             			case READ_MODE_ALL:			//全文朗读
             		 	case READ_MODE_PARAGRAPH:	//逐段朗读
+            		 	case READ_MODE_SENCENTE:	//逐句朗读
             		 		curSentence(false);
             		 		break;
             		 	default:
