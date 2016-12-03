@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class MainActivity extends Activity implements OnEnterListener
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+        
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
         setContentView(R.layout.ebook_activity_main);
         
         TTSUtils.getInstance().init(this);	//初始化TTS
@@ -160,6 +163,7 @@ public class MainActivity extends Activity implements OnEnterListener
 	public void onDestroy()
 	{
 		super.onDestroy();
+		
 		TTSUtils.getInstance().destroy();
 		MediaPlayerUtils.getInstance().destroy();
 		unregisterReceiver(fileReceiver);

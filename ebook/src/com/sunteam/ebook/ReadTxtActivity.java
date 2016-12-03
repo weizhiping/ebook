@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_txt);
 		
 		CallbackUtils.registerCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
@@ -114,7 +117,19 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				public void onComplete() 
 				{
 					// TODO Auto-generated method stub
-					back(true);
+					
+					if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+					{
+						isFinish = true;
+						Intent intent = new Intent();
+	        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+	        			setResult(RESULT_OK, intent);
+	        			back(false);
+					}
+					else
+					{
+						back(true);
+					}
 				}
 			});
 			
@@ -131,7 +146,18 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				public void onComplete() 
 				{
 					// TODO Auto-generated method stub
-					back(true);
+					if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+					{
+						isFinish = true;
+						Intent intent = new Intent();
+	        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+	        			setResult(RESULT_OK, intent);
+	        			back(false);
+					}
+					else
+					{
+						back(true);
+					}
 				}
 			});
     	}

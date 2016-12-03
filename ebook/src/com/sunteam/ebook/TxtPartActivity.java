@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
@@ -37,6 +38,8 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+		
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_main);
 		manager = new DatabaseManager(this);
 		initViews();
@@ -84,7 +87,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     @Override
     public void onResume()
     {
-    	if( isResume )
+    	if( isResume && !isAuto )
     	{
 	    	if( mMainView != null )
 	    	{
