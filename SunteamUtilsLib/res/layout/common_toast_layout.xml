@@ -5,7 +5,7 @@
     android:background="@color/white">
 
     <TextView
-        android:id="@+id/common_dialog_prompt_hint"
+        android:id="@+id/common_toast_layout_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -15,6 +15,6 @@
         android:paddingLeft="@dimen/dialog_left_padding"
         android:paddingRight="@dimen/dialog_right_padding"
         android:paddingTop="@dimen/dialog_top_padding"
-        android:textSize="@dimen/dialog_text_size" />
+        android:textSize="@dimen/text_big_size" />
 
 </RelativeLayout>

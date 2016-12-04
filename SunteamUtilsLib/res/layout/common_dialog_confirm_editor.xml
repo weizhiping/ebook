@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/common_dialog_confirm_editor_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingBottom="@dimen/dialog_bottom_padding"
+        android:paddingLeft="@dimen/dialog_left_padding"
+        android:paddingRight="@dimen/dialog_right_padding"
+        android:paddingTop="@dimen/dialog_top_padding"
+        android:text="@string/common_dialog_confirm_ok"
+        android:textSize="@dimen/dialog_text_size" />
+
+    <EditText
+        android:id="@+id/common_dialog_confirm_editor_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingLeft="@dimen/dialog_left_padding"
+        android:paddingRight="@dimen/dialog_right_padding"
+        android:background="@null"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="left|center_vertical"
+        android:hint=""
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textSize="@dimen/dialog_text_size" />
+
+    <!-- 纯粹占位 -->
+
+    <View
+        android:id="@+id/common_dialog_confirm_editor_space_line"
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/dialog_bottom_padding" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/common_dialog_confirm_editor_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:includeFontPadding="false"
+                android:paddingBottom="@dimen/dialog_bottom_padding"
+                android:paddingLeft="@dimen/dialog_left_padding"
+                android:paddingRight="@dimen/dialog_right_padding"
+                android:paddingTop="@dimen/dialog_top_padding"
+                android:text="@string/common_dialog_confirm_ok"
+                android:textSize="@dimen/dialog_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/common_dialog_confirm_editor_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:includeFontPadding="false"
+                android:paddingBottom="@dimen/dialog_bottom_padding"
+                android:paddingLeft="@dimen/dialog_left_padding"
+                android:paddingRight="@dimen/dialog_right_padding"
+                android:paddingTop="@dimen/dialog_top_padding"
+                android:text="@string/common_dialog_confirm_cancel"
+                android:textSize="@dimen/dialog_text_size" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

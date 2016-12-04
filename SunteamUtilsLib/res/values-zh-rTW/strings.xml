@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 
-    <string name="funtionmenu">功能菜單</string>
+    <string name="common_functionmenu">功能菜單</string>
     <string name="common_delete">刪除</string>
     <string name="common_dialog_confirm_ok">確認</string>
     <string name="common_dialog_confirm_cancel">取消</string>
