@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.sunteam.common.utils.RefreshScreenUtils;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -54,6 +55,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		RefreshScreenUtils.enableRefreshScreen();
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_daisy);
@@ -215,6 +218,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	{
 		if( mDiasyNode.seq+1 < DaisyFileReaderUtils.getInstance().getDiasyNodeTotal() )	//还有下一部分需要朗读
 		{
+			RefreshScreenUtils.disableRefreshScreen();
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
 			intent.putExtra("seq", mDiasyNode.seq);
@@ -258,6 +262,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		// TODO Auto-generated method stub
 		if( mDiasyNode.seq+1 < DaisyFileReaderUtils.getInstance().getDiasyNodeTotal() )	//还有下一部分需要朗读
 		{
+			RefreshScreenUtils.disableRefreshScreen();
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
 			intent.putExtra("seq", mDiasyNode.seq);
@@ -273,6 +278,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				@Override
 				public void onComplete() {
 					// TODO Auto-generated method stub
+					RefreshScreenUtils.disableRefreshScreen();
 					Intent intent = new Intent();
         			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
         			setResult(RESULT_OK, intent);

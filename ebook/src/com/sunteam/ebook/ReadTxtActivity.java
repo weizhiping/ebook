@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sunteam.common.utils.RefreshScreenUtils;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -64,6 +65,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		RefreshScreenUtils.enableRefreshScreen();
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_txt);
@@ -120,6 +123,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					
 					if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 					{
+						RefreshScreenUtils.disableRefreshScreen();
 						isFinish = true;
 						Intent intent = new Intent();
 	        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
@@ -148,6 +152,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					// TODO Auto-generated method stub
 					if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
 					{
+						RefreshScreenUtils.disableRefreshScreen();
 						isFinish = true;
 						Intent intent = new Intent();
 	        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
@@ -382,6 +387,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		
 		if( fileInfo.part+1 < fileInfo.count )	//还有下一部分需要朗读
 		{
+			RefreshScreenUtils.disableRefreshScreen();
 			Intent intent = new Intent();
 			intent.putExtra("next", EbookConstants.TO_NEXT_PART);
 			setResult(RESULT_OK, intent);
@@ -395,6 +401,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				@Override
 				public void onComplete() {
 					// TODO Auto-generated method stub
+					RefreshScreenUtils.disableRefreshScreen();
 					Intent intent = new Intent();
         			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
         			setResult(RESULT_OK, intent);
