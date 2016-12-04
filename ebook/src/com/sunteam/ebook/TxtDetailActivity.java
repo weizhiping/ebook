@@ -39,6 +39,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private static final String TAG = "TxtDetailActivity";
 	private static final int[] keyCodeList = { KeyEvent.KEYCODE_MENU };
 	private static final int MENU_DATA = 10;
+	
+	private Context mContext = null;
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -65,6 +67,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	private void initViews() {
+		mContext = this;
 		Intent intent = getIntent();
 		String name = intent.getStringExtra("name");
 		flag = intent.getIntExtra("flag", 0);
@@ -298,58 +301,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	
 	// 显示文件内容
 	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto) {
-		fileInfo.flag = flagType;
-		fileInfo.storage = storage;
-		try 
-		{
-			TextFileReaderUtils.getInstance().init(fullpath);
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			
-			PublicUtils.showToast( this, this.getString(R.string.ebook_file_does_not_exist) );
-			
-			return;
-		}
-		
-		int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
-		fileInfo.count = count;
-		
-		/*
-		if (0 == count) // 文件为空
-		{
-			// 提示一下（语音和文字）
-			PublicUtils.showToast(this, getString(R.string.ebook_txt_menu_null));
-		} 
-		else if (1 == count) // 只有一部分
-		*/
-		if( count <= 1 )
-		{
-			if(1 != flag && 2!= flag){
-				manager.updateQueryBook(fileInfo);
-//				if(null != dbFile){
-//					fileInfo = dbFile;
-//				}
-			}
-			Log.e(TAG, "-----file part---:" + fileInfo.part);
-			Intent intent = new Intent(this, ReadTxtActivity.class);
-			intent.putExtra("file", fileInfo);
-			intent.putExtra("file_list", fileInfoList);
-			intent.putExtra("isAuto", isAuto);
-			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
-//			manager.insertBookToDb(fileInfo, 2);
-		} else {
-			// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
-			Intent intent = new Intent(this, TxtPartActivity.class);
-			intent.putExtra("file", fileInfo);
-			intent.putExtra("file_list", fileInfoList);
-			intent.putExtra("rem_file", remberFile);
-			intent.putExtra("count", count); // 第几部分
-			intent.putExtra("isAuto", isAuto);
-			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
-//			manager.insertBookToDb(fileInfo, 2);
-		}
+		new InitTxtAsyncAccessTask(fileInfo, fullpath, isAuto).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	// 初始化显示文件
@@ -545,4 +497,96 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	        }  
 	    } 
 	}
+	
+	//得到部分信息
+	private class InitTxtAsyncAccessTask extends AsyncTask<Void, Void, Boolean>
+	{	
+		private FileInfo fileInfo;
+		private String fullpath;
+		private boolean isAuto;
+		
+		public InitTxtAsyncAccessTask(FileInfo fileInfo, final String fullpath, boolean isAuto)
+		{
+			this.fileInfo = fileInfo;
+			this.fullpath = fullpath;
+			this.isAuto = isAuto;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... arg0) 
+		{
+			// TODO Auto-generated method stub
+			try 
+			{
+				TextFileReaderUtils.getInstance().init(fullpath);
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+				return	false;
+			}
+			
+			return	true;
+		}
+		
+		@Override
+		protected void onPreExecute() 
+		{	
+			super.onPreExecute();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) 
+		{	
+			super.onPostExecute(result);
+			
+			fileInfo.flag = flagType;
+			fileInfo.storage = storage;
+			
+			if( false == result )
+			{
+				PublicUtils.showToast( mContext, mContext.getString(R.string.ebook_file_does_not_exist) );
+				
+				return;
+			}
+			
+			int count = TextFileReaderUtils.getInstance().getParagraphCount(); // 得到分段信息
+			fileInfo.count = count;
+			
+			/*
+			if (0 == count) // 文件为空
+			{
+				// 提示一下（语音和文字）
+				PublicUtils.showToast(this, getString(R.string.ebook_txt_menu_null));
+			} 
+			else if (1 == count) // 只有一部分
+			*/
+			if( count <= 1 )
+			{
+				if(1 != flag && 2!= flag){
+					manager.updateQueryBook(fileInfo);
+//					if(null != dbFile){
+//						fileInfo = dbFile;
+//					}
+				}
+				Log.e(TAG, "-----file part---:" + fileInfo.part);
+				Intent intent = new Intent(mContext, ReadTxtActivity.class);
+				intent.putExtra("file", fileInfo);
+				intent.putExtra("file_list", fileInfoList);
+				intent.putExtra("isAuto", isAuto);
+				startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+//				manager.insertBookToDb(fileInfo, 2);
+			} else {
+				// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
+				Intent intent = new Intent(mContext, TxtPartActivity.class);
+				intent.putExtra("file", fileInfo);
+				intent.putExtra("file_list", fileInfoList);
+				intent.putExtra("rem_file", remberFile);
+				intent.putExtra("count", count); // 第几部分
+				intent.putExtra("isAuto", isAuto);
+				startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+//				manager.insertBookToDb(fileInfo, 2);
+			}
+		}		
+	}	
 }
