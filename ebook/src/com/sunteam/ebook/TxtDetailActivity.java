@@ -308,7 +308,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		{
 			e.printStackTrace();
 			
-			PublicUtils.showToast( this, this.getString(R.string.ebook_open_file_fail) );
+			PublicUtils.showToast( this, this.getString(R.string.ebook_file_does_not_exist) );
 			
 			return;
 		}

@@ -70,6 +70,7 @@
 	<string name="ebook_open_file_fail">文件已损坏！</string>
 	<string name="ebook_first_chapter">已经到第一章</string>
 	<string name="ebook_last_chapter">已经到最后一章</string>
+	<string name="ebook_file_does_not_exist">文件不存在</string>
 	
     <string-array name="ebook_array_menu">
         <item>书签管理</item>
