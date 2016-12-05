@@ -200,11 +200,18 @@ public class DatabaseManager {
 	}
 
 	// 更新电子书断点数据
-		public void updateQueryBook(FileInfo info) {
+		public void updateQueryBook(FileInfo info,int part) {
 			try{
 				db = helper.getWritableDatabase();
-				Cursor cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=? and part=?", new String[] {
-						info.path, String.valueOf(EbookConstants.BOOK_RECENT),String.valueOf(info.part) }, null, null, null);
+				Cursor cursor;
+				if(-1 == part){
+					cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=?", new String[] {
+							info.path, String.valueOf(EbookConstants.BOOK_RECENT) }, null, null, null);
+				}else{
+					cursor = db.query(EbookConstants.BOOKS_TABLE, null, "path=? and type=? and part=?", new String[] {
+							info.path, String.valueOf(EbookConstants.BOOK_RECENT),String.valueOf(info.part) }, null, null, null);
+				}
+				
 				try {
 					if (null != cursor) {
 						if (cursor.getCount() > 0) {
@@ -217,6 +224,8 @@ public class DatabaseManager {
 										.getColumnIndex(EbookConstants.BOOK_LEN));
 								info.checksum = cursor.getInt(cursor
 										.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
+								info.part = cursor.getInt(cursor
+										.getColumnIndex(EbookConstants.BOOK_PART));
 						}else{
 							info.startPos = 0;
 							info.line = 0;

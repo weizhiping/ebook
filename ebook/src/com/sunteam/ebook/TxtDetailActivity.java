@@ -564,12 +564,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			if( count <= 1 )
 			{
 				if(1 != flag && 2!= flag){
-					manager.updateQueryBook(fileInfo);
-//					if(null != dbFile){
-//						fileInfo = dbFile;
-//					}
+					manager.updateQueryBook(fileInfo,0);
 				}
-				Log.e(TAG, "-----file part---:" + fileInfo.part);
 				Intent intent = new Intent(mContext, ReadTxtActivity.class);
 				intent.putExtra("file", fileInfo);
 				intent.putExtra("file_list", fileInfoList);
@@ -578,6 +574,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 //				manager.insertBookToDb(fileInfo, 2);
 			} else {
 				// 根据count数量显示一个list，内容形如：第1部分 第2部分 ... 第n部分
+				if(1 != flag && 2!= flag){
+					manager.updateQueryBook(fileInfo,-1);
+				}
 				Intent intent = new Intent(mContext, TxtPartActivity.class);
 				intent.putExtra("file", fileInfo);
 				intent.putExtra("file_list", fileInfoList);

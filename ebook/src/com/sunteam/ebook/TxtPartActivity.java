@@ -64,9 +64,12 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	mMainView = new MainView( this, this, fileInfo.name, mMenuList );
     	mFlContainer.removeAllViews();
     	mFlContainer.addView(mMainView.getView());
+    //	Log.e("part", "----- file part---:" + fileInfo.part);
     	if(null != remberFile && remberFile.path.equals(fileInfo.path)){
-    		Log.e("part", "-----rem file part---:" + remberFile.part);
+    //		Log.e("part", "-----rem file part---:" + remberFile.part);
     		mMainView.setSelection(remberFile.part);
+    	}else{
+    		mMainView.setSelection(fileInfo.part);
     	}
     	if( isAuto )
     	{
@@ -116,7 +119,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	{
 		
 		fileInfo.part = selectItem;
-		manager.updateQueryBook(fileInfo);
+		manager.updateQueryBook(fileInfo,selectItem);
 		Intent intent = new Intent(this,ReadTxtActivity.class);
 		intent.putExtra("file", fileInfo);
 		intent.putExtra("file_list", fileInfoList);
