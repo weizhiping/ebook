@@ -2,6 +2,8 @@ package com.sunteam.ebook;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -11,7 +13,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -310,6 +311,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			fileInfoList = FileOperateUtils.getDaisyInDir(catalog,rootPath);
 		}else{
 			ArrayList<File> filesList = null;
+			ArrayList<FileInfo> listDir = new ArrayList<FileInfo>();
+			ArrayList<FileInfo> listFile = new ArrayList<FileInfo>();
 			if (catalog == 0) {
 				filesList = FileOperateUtils.getFilesInDir(rootPath,
 						EbookConstants.BOOK_TXT, EbookConstants.BOOK_TXT);
@@ -322,12 +325,23 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				for (File f: filesList) {
 					if (f.isDirectory()) {
 						fileInfo = new FileInfo(f.getName(), f.getPath(), true,catalog,flagType,storage);
-						fileInfoList.add(fileInfo);
+						listDir.add(fileInfo);
 					} else {
 						fileInfo = new FileInfo(f.getName(), f.getPath(), false,catalog,flagType,storage);
-						fileInfoList.add(fileInfo);
+						listFile.add(fileInfo);
 					}
 				}
+				Collections.sort( listFile, new FileComparator() );	//通过重写Comparator的实现类FileComparator来实现按文件名排序。
+				Collections.sort( listDir, new FileComparator() );	//通过重写Comparator的实现类FileComparator来实现按目录名排序。
+				int size = listDir.size();
+				for( int i = 0; i < size; i++ ){
+					fileInfoList.add( listDir.get( i ) );
+				}	//先放目录
+				
+				size = listFile.size();
+				for( int i = 0; i < size; i++ ){
+					fileInfoList.add( listFile.get( i ) );
+				}	//再放文件
 			}
 		}
 	}
@@ -588,4 +602,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		}		
 	}	
+	
+	//对文件名排序
+	private class FileComparator implements Comparator<FileInfo> {  
+		
+		public int compare( FileInfo entity1, FileInfo entity2 ) {  
+		    	try{
+		    		return	entity1.name.compareToIgnoreCase( entity2.name );
+		    	}catch( Exception e ){
+		    		e.printStackTrace();
+		    		return	0;
+		    	}
+		    }  
+		}
 }
