@@ -121,7 +121,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 			@Override
 			public void doConfirm() {
 				FileInfo info = fileInfos.get(position);
-				manager.deleteMarkFile(info.path, info.name);
+				manager.deleteMarkFile(info,false);
 				final boolean islast = position == (mMenuList.size() - 1)?true:false;
 				mMenuList.remove(position);
 				mMainView.updateAdapter();

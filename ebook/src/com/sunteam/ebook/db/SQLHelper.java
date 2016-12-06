@@ -11,7 +11,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 	 * The name of the apps SQLite database.
 	 */
 	public static final String DATABASE = "ebook.db";
-	private static final int DB_VERSION = 9;
+	private static final int DB_VERSION = 10;
 	
 	public SQLHelper(Context context) {
 		super(context, DATABASE, null, DB_VERSION);
@@ -68,6 +68,8 @@ public class SQLHelper extends SQLiteOpenHelper {
 			createMark.append(" TEXT,");
 			createMark.append(EbookConstants.BOOK_DIASY_PATH);
 			createMark.append(" TEXT,");
+			createMark.append(EbookConstants.BOOK_PART);
+			createMark.append(" INTEGER,");
 			createMark.append(EbookConstants.BOOK_LINE);
 			createMark.append(" INTEGER,");
 			createMark.append(EbookConstants.BOOK_START);

@@ -70,8 +70,7 @@ public class MenuTextEditActivity extends Activity {
 					getResources().getString(R.string.ebook_menu_text_tips),
 					currentPage) + " " + currentText);
 		} else {
-			numView.setText(currentText
-					+ " "
+			numView.setText(currentText+ " "
 					+ String.format(
 							getResources().getString(R.string.ebook_menu_text_tips),
 							currentPage));

@@ -378,8 +378,7 @@ public class DatabaseManager {
 	public boolean insertMarkToDb(FileInfo file) {
 		try
 		{
-			boolean hasbook = hasMarkInBase(EbookConstants.MARKS_TABLE, file.path,
-					file.name);
+			boolean hasbook = hasMarkInBase(EbookConstants.MARKS_TABLE, file);
 			Log.i("database", "-----------has mark---:" + hasbook);
 			if (!hasbook) {
 				db = helper.getWritableDatabase();
@@ -389,6 +388,7 @@ public class DatabaseManager {
 				newValues.put(EbookConstants.BOOK_LINE, file.line);
 				newValues.put(EbookConstants.BOOK_START, file.startPos);
 				newValues.put(EbookConstants.BOOK_LEN, file.len);
+				newValues.put(EbookConstants.BOOK_PART, file.part);
 				newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
 				db.insert(EbookConstants.MARKS_TABLE, null, newValues);
 				db.close();
@@ -406,13 +406,13 @@ public class DatabaseManager {
 	}
 
 	// 查找数据库中是否已经存在某一条数据
-	private boolean hasMarkInBase(String table, String path, String name) {
+	private boolean hasMarkInBase(String table, FileInfo file) {
 		try
 		{
 			Cursor cursor = null;
 			db = helper.getWritableDatabase();
-			cursor = db.query(table, null, "path=? and name=?", new String[] {
-					path, name }, null, null, null);
+			cursor = db.query(table, null, "path=? and name=? and part=?", new String[] {
+					file.path, file.name,String.valueOf(file.part) }, null, null, null);
 			int count = 0;
 			if (null != cursor) {
 				count = cursor.getCount();
@@ -431,20 +431,20 @@ public class DatabaseManager {
 	}
 
 	// 删除书签数据,Path为null表示删除所有数据
-	public void deleteMarkFile(String path, String name) {
+	public void deleteMarkFile(FileInfo file,boolean isAll) {
 		try
 		{
 			db = helper.getWritableDatabase();
-			if (null != name) {
-				db.delete(EbookConstants.MARKS_TABLE, "path=? and name=?",
-						new String[] { path, name });
+			if (!isAll) {
+				db.delete(EbookConstants.MARKS_TABLE, "path=? and name=? and part=?",
+						new String[] { file.path, file.name,String.valueOf(file.part) });
 			} else {
 				Cursor cursor = db.query(EbookConstants.MARKS_TABLE, null,
-						"path=?", new String[] { path }, null, null, null);
+						"path=?", new String[] { file.path }, null, null, null);
 				if (null != cursor) {
 					while (cursor.moveToNext()) {
 						db.delete(EbookConstants.MARKS_TABLE, "path=?",
-								new String[] { path });
+								new String[] { file.path });
 					}
 					cursor.close();
 				}
@@ -458,12 +458,12 @@ public class DatabaseManager {
 	}
 
 	// 查询书签数据
-	public ArrayList<FileInfo> queryMarks(String path) {
+	public ArrayList<FileInfo> queryMarks(FileInfo file) {
 		try
 		{
 			db = helper.getWritableDatabase();
-			Cursor cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=?",
-					new String[] { path }, null, null, "time desc");
+			Cursor cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=? and part=?",
+					new String[] { file.path,String.valueOf(file.part) }, null, null, "time desc");
 			ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 			try {
 				if (null != cursor) {
@@ -480,6 +480,8 @@ public class DatabaseManager {
 									.getColumnIndex(EbookConstants.BOOK_START));
 							book.len = cursor.getInt(cursor
 									.getColumnIndex(EbookConstants.BOOK_LEN));
+							book.part = cursor.getInt(cursor
+									.getColumnIndex(EbookConstants.BOOK_PART));
 							orderList.add(book);
 						}
 					}

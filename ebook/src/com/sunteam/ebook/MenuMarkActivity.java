@@ -114,7 +114,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			wantToCheckActivity(true,title);
 			break;
 		case 3:
-			ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
+			ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo);
 			if(0 < fileInfos.size()){
 				dialog();
 			}else{
@@ -132,8 +132,9 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 	}
 	
 	private void wantToCheckActivity(boolean isDelete,String title){
-		ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo.path);
-		if(0 < fileInfos.size()){
+		ArrayList<FileInfo> fileInfos = manager.queryMarks(fileInfo);
+//		Log.e("mark", "-----file size--:" + fileInfos.size());
+		if(null != fileInfos && 0 < fileInfos.size()){
 			Intent intent = new Intent(this, MenuMarkCheckActivity.class);
 			intent.putExtra("fileinfos", fileInfos);
 			intent.putExtra("isdelete", isDelete);
@@ -154,7 +155,7 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			
 			@Override
 			public void doConfirm() {
-				manager.deleteMarkFile(fileInfo.path, null);
+				manager.deleteMarkFile(fileInfo, true);
 				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.ebook_dialog_clear_su),true);
 			}
 			
