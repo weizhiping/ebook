@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.sunteam.ebook.entity.DiasyNode;
@@ -55,6 +56,7 @@ public class DaisyFileReaderUtils
 	private String mSentencePath = null;	//保存句子的路径
 	private String mSentenceData = null;	//保存所有的句子数据
 	private DaisyType mDaisyType = DaisyType.DAISY2;
+	private boolean isInsideSDPath = true;				//是否内部SD卡路径
 	
 	enum DaisyType
 	{
@@ -70,6 +72,12 @@ public class DaisyFileReaderUtils
 		}
 		
 		return instance;
+	}
+	
+	//是否是内部SD卡路径
+	public boolean isInsideSDPath()
+	{
+		return	isInsideSDPath;
 	}
 	
 	/**
@@ -235,6 +243,16 @@ public class DaisyFileReaderUtils
 		try 
 		{
 			final String smilPath = path+"/"+smil;
+			
+			String insideSDPath = Environment.getExternalStorageDirectory().getPath();	//得到内置SD卡路径
+			if( ( smilPath != null ) && ( insideSDPath != null ) && ( smilPath.indexOf(insideSDPath) == 0 ) )
+			{
+				isInsideSDPath = true;
+			}
+			else
+			{
+				isInsideSDPath = false;
+			}
 			
 			IdentifyEncoding ie = new IdentifyEncoding();
 			String strCharsetName = ie.GetEncodingName( smilPath );	//得到文本编码

@@ -20,14 +20,18 @@ import com.sunteam.common.utils.RefreshScreenUtils;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.CallbackBundleType;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ReadMode;
+import com.sunteam.ebook.util.CallbackBundle;
+import com.sunteam.ebook.util.CallbackUtils;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.DaisyReaderView;
 import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
 
@@ -38,6 +42,7 @@ import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
  */
 public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 {
+	private static final String TAG = "ReadDaisyActivity";
 	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
 	private TextView mTvTitle = null;
 	private TextView mTvPageCount = null;
@@ -60,6 +65,8 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_daisy);
+		
+		CallbackUtils.registerCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
 		
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
@@ -100,8 +107,14 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
-    		//PublicUtils.showToast(this, this.getString(R.string.ebook_checksum_error));
-    		back();
+    		PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
+
+				@Override
+				public void onComplete() {
+					// TODO 自动生成的方法存根
+					back();
+				}
+    		});
     	}
 	}
 	
@@ -390,4 +403,25 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	        }  
 	    } 
 	}
+	
+	@Override
+	public void onDestroy()
+	{
+		CallbackUtils.unRegisterCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT);
+		super.onDestroy();
+	}
+	
+	
+	//SDCARD 拔出回调
+	private CallbackBundle mCallbackBundle = new CallbackBundle() {
+		@Override
+		public void callback(Bundle bundle) 
+		{
+			// TODO Auto-generated method stub
+			if( false == DaisyFileReaderUtils.getInstance().isInsideSDPath() )
+			{
+				back();
+			}
+		}
+	};	
 }

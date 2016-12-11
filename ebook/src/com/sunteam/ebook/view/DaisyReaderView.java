@@ -360,6 +360,11 @@ import android.view.View;
 			 mDaisySentenceNodeList = new ArrayList<DiasySentenceNode>();
 			 return	false;
 		 }
+		 
+		 if( list.size() == 0 )
+		 {
+			 return	false;
+		 }
 		
 		 mDaisyPath = path;
 		 mDaisySentenceNodeList = list;		 
@@ -1194,6 +1199,10 @@ import android.view.View;
 	 //到上一个句子
 	 private void preSentence()
 	 {
+		 if( mSplitInfoList.size() == 0 )
+		 {
+			 return;
+		 }
 		 int position = getCurReversePosition();
 		 if( position <= 0 )
 		 {
@@ -1226,6 +1235,10 @@ import android.view.View;
 	 //到当前句子
 	 private void curSentence( boolean isSpeakPage )
 	 {
+		 if( mSplitInfoList.size() == 0 )
+		 {
+			 return;
+		 }
 		 int position = getCurReversePosition();
 		 if( position >= mDaisySentenceNodeList.size() )
 		 {
@@ -1257,6 +1270,10 @@ import android.view.View;
 	 //到下一个句子
 	 private void nextSentence( boolean isSpeakPage, boolean isAutoPlay )
 	 {
+		 if( mSplitInfoList.size() == 0 )
+		 {
+			 return;
+		 }
 		 int position = getCurReversePosition();
 		 position++;
 		 if( position >= mDaisySentenceNodeList.size() )
