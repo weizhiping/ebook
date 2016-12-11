@@ -2,11 +2,11 @@ package com.sunteam.ebook.receiver;
 
 import com.sunteam.ebook.entity.CallbackBundleType;
 import com.sunteam.ebook.util.CallbackUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 //SD卡插拔广播
 public class UsbBroadCastReceiver extends BroadcastReceiver
@@ -18,7 +18,11 @@ public class UsbBroadCastReceiver extends BroadcastReceiver
 		
 		if( Intent.ACTION_MEDIA_EJECT.equals(action) )
 		{
-			CallbackUtils.callCallback(CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, null);
+			CallbackUtils.callCallbackEx(CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, null);
+			if( false == TextFileReaderUtils.getInstance().isInsideSDPath() )
+			{
+				TextFileReaderUtils.getInstance().destroy();
+			}
 			//Toast.makeText(context, "SD卡已拔出", Toast.LENGTH_SHORT).show();
 		}
 		else if( Intent.ACTION_MEDIA_MOUNTED.equals(action) )

@@ -533,8 +533,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			if( false == TextFileReaderUtils.getInstance().isInsideSDPath() )
 			{
 				back(true);
-				
-				TextFileReaderUtils.getInstance().destroy();
 			}
 		}
 	};

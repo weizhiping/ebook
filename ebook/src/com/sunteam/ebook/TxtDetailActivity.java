@@ -570,7 +570,17 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			
 			if( false == result )
 			{
-				PublicUtils.showToast( mContext, mContext.getString(R.string.ebook_file_does_not_exist) );
+				PublicUtils.showToast( mContext, mContext.getString(R.string.ebook_file_does_not_exist), new PromptListener(){
+
+					@Override
+					public void onComplete() {
+						// TODO 自动生成的方法存根
+						if( mMainView != null )
+				    	{
+				    		mMainView.onResume();
+				    	}
+					}
+				});
 				
 				return;
 			}

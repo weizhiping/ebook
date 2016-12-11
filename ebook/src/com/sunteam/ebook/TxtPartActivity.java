@@ -1,19 +1,26 @@
 package com.sunteam.ebook;
 
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.CallbackBundleType;
 import com.sunteam.ebook.entity.FileInfo;
+import com.sunteam.ebook.util.CallbackBundle;
+import com.sunteam.ebook.util.CallbackUtils;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
+import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -24,6 +31,7 @@ import com.sunteam.ebook.view.MainView;
 
 public class TxtPartActivity extends Activity implements OnEnterListener 
 {
+	private static final String TAG = "TxtPartActivity";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -47,6 +55,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	
 	private void initViews()
     {
+		CallbackUtils.registerCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
 		Intent intent = getIntent();
 		remberFile = (FileInfo) intent.getSerializableExtra("rem_file");
 		fileInfo = (FileInfo) intent.getSerializableExtra("file");
@@ -101,6 +110,13 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     	isResume = true;
     	super.onResume();
     }
+    
+    @Override
+    public void onDestroy()
+    {
+    	super.onDestroy();
+    	CallbackUtils.unRegisterCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT);
+    }
  
     @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
@@ -117,6 +133,32 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) 
 	{
+		if( !TextFileReaderUtils.getInstance().isInsideSDPath() )	//是否是外部SD卡
+		{
+			try
+			{
+				File file = new File(fileInfo.path);
+				RandomAccessFile raf = new RandomAccessFile( file, "r");
+				raf.close();
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+				PublicUtils.showToast( this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener(){
+					
+					@Override
+					public void onComplete() {
+						// TODO 自动生成的方法存根
+						if( mMainView != null )
+				    	{
+				    		mMainView.onResume();
+				    	}
+					}
+				});
+			
+				return;
+			}
+		}
 		
 		fileInfo.part = selectItem;
 		manager.updateQueryBook(fileInfo,selectItem);
@@ -160,4 +202,17 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 				break;
 		} 	
 	}	
+	
+	//SDCARD 拔出回调
+	private CallbackBundle mCallbackBundle = new CallbackBundle() {
+		@Override
+		public void callback(Bundle bundle) 
+		{
+			// TODO Auto-generated method stub
+			if( false == TextFileReaderUtils.getInstance().isInsideSDPath() )
+			{
+				finish();
+			}
+		}
+	};	
 }

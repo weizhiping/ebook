@@ -114,4 +114,27 @@ public class CallbackUtils
 		
 		return	true;
 	}
+	
+	//逆序调用回调
+	public static boolean callCallbackEx( CallbackBundleType type, Bundle bundle )
+	{
+		if( mCallbackBundleEntityList != null )
+        {
+			int size = mCallbackBundleEntityList.size();
+			for( int i = size-1; i >= 0; i-- )
+			{
+				if( type== mCallbackBundleEntityList.get( i ).type )
+				{
+					CallbackBundle cb = mCallbackBundleEntityList.get( i ).cb;
+	            	if( cb != null )
+	            	{
+	    				// 调用事先设置的回调函数
+	    				cb.callback( bundle );
+	            	}
+				}
+			}
+        }
+		
+		return	true;
+	}	
 }
