@@ -17,6 +17,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -382,16 +384,24 @@ public class MainView extends View implements OnTTSListener
 	
 	private void processLongKey() 
 	{
-		if( KeyEvent.KEYCODE_DPAD_UP == longKeyCode ) 
+		if (!keyUpFlag) { // 如果没有抬起，则不作为长按键处理
+			releaseWakeLock();
+			return;
+		}
+		
+		if (KeyEvent.KEYCODE_DPAD_UP == longKeyCode) 
 		{
+			acquireWakeLock(mContext);
 			mAdapter.up(false);
 		} 
 		else if (KeyEvent.KEYCODE_DPAD_DOWN == longKeyCode) 
 		{
+			acquireWakeLock(mContext);
 			mAdapter.down(false);
 		} 
 		else 
 		{
+			releaseWakeLock();
 			setScanning(false);
 			longKeyCode = 0;
 		}
@@ -436,4 +446,22 @@ public class MainView extends View implements OnTTSListener
             return false;
         }
     });	
+	
+	private WakeLock mWakeLock = null;
+	
+	@SuppressWarnings("deprecation")
+	private void acquireWakeLock(Context context) {
+		if (null == mWakeLock) {
+			PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+			mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, context.getClass().getName());
+			mWakeLock.acquire();
+		}
+	}
+
+	private void releaseWakeLock() {
+		if (null != mWakeLock && mWakeLock.isHeld()) {
+			mWakeLock.release();
+			mWakeLock = null;
+		}
+	}	
 }

@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements OnEnterListener
     {
         super.onCreate(savedInstanceState);
         
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
         setContentView(R.layout.ebook_activity_main);
         
         TTSUtils.getInstance().init(this);	//初始化TTS
