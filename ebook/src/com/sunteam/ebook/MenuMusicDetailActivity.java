@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.entity.ScreenManager;
@@ -91,7 +92,14 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 			mMainView.onResume();
 		}
 		if(1 == flag && 0 == fileList.size()){
-			PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_muisc_null),true);
+			PublicUtils.showToast(this, getResources().getString(R.string.ebook_menu_muisc_null), new PromptListener() {
+
+				@Override
+				public void onComplete() {
+					// TODO 自动生成的方法存根
+					MenuMusicDetailActivity.this.finish();
+				}
+			});
 		}
 		super.onResume();
 	}
