@@ -241,7 +241,18 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				this.startActivity(intent);
 			}else{
 				String tips = this.getString(R.string.ebook_tf_does_not_exist);
-				PublicUtils.showToast(this, tips);
+				PublicUtils.showToast(this, tips, new PromptListener() {
+
+					@Override
+					public void onComplete() {
+						// TODO 自动生成的方法存根
+						if( mMainView != null )
+				    	{
+				    		mMainView.onResume();
+				    	}	//播放一下当前的title和item
+					}
+					
+				});
 			}
 			return;
 		}
