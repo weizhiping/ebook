@@ -318,6 +318,26 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) 
+	{
+		switch( keyCode )
+		{
+			case KeyEvent.KEYCODE_2:
+			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
+				mTextReaderView.setIsPlayParagraph(true);
+				return	true;
+			case KeyEvent.KEYCODE_8:
+			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
+				mTextReaderView.setIsPlayParagraph(true);
+				return	true;
+			default:
+				break;
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+	
 	//插入到最近浏览
 	private void insertToDb(){
 		Log.e(TAG, "----init===== to db------" + isFinish + "--name--:" + fileInfo.name);

@@ -132,6 +132,7 @@ import android.view.View;
 	 private int mPercent = 0;				//当前朗读进度
 	 private String mSpeakText = null;		//当前朗读内容
 	 private boolean mIsTextFile = false;	//当前内容是否是纯文本
+	 private boolean mIsPlayParagraph = false;	//是否可以进行段落播放
 	 
 	 public interface OnPageFlingListener 
 	 {
@@ -244,6 +245,16 @@ import android.view.View;
 		 }
 		 
 		 return	true;
+	 }
+	 
+	 //设置是否可以进行段落播放
+	 public void setIsPlayParagraph( boolean isPlay )
+	 {
+		 mIsPlayParagraph = isPlay;
+		 if( isPlay )
+		 {
+			 readReverseText(false, false, false);			//朗读反显文字
+		 }
 	 }
 	 
 	 //朗读页码
@@ -2160,6 +2171,7 @@ import android.view.View;
 							 return;
 						 }	//跳过空行
 						 
+						 mIsPlayParagraph = false;
 						 nextSentence( false, false, false );
 					 }
 					 return;
@@ -2267,6 +2279,7 @@ import android.view.View;
 						 return;
 					 }	//跳过空行
 					 
+					 mIsPlayParagraph = false;
 					 nextSentence( isSpeakPage, false, false );
 					 return;
 				 }
@@ -2405,7 +2418,15 @@ import android.view.View;
 			 
 			 mReverseInfo.startPos = ri.startPos;
 			 mReverseInfo.len = ri.len;
-			 readReverseText(isSpeakPage, isTop, isBottom);			//朗读反显文字
+			 
+			 if( ( ReadMode.READ_MODE_PARAGRAPH == mReadMode ) && !mIsPlayParagraph )
+			 {
+				 TTSUtils.getInstance().stop();
+			 }
+			 else
+			 {
+				 readReverseText(isSpeakPage, isTop, isBottom);			//朗读反显文字
+			 }
 			 recalcLineNumber(Action.NEXT_LINE);	//重新计算当前页起始位置(行号)
 			 calcCurPage();
 			 this.invalidate();
