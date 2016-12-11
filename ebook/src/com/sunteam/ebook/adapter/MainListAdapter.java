@@ -77,6 +77,20 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 		this.notifyDataSetChanged();
 	}
 	
+	public void setSelectItem( int selectItem, boolean isAuto )
+	{
+		this.selectItem = selectItem;
+		
+		if( !isAuto )
+		{
+			readSelectItemContent();	//此处需要加上tts朗读selectItem内容
+		}
+		
+		mLv.setSelection(selectItem);
+		
+		this.notifyDataSetChanged();
+	}
+	
 	public int getSelectItem()
 	{
 		return	this.selectItem;

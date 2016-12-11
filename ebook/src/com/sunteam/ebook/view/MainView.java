@@ -110,6 +110,10 @@ public class MainView extends View implements OnTTSListener
 		mAdapter.setSelectItem(position);
 	}
 	
+	public void setSelection(int position, boolean isAuto){
+		mAdapter.setSelectItem(position, isAuto);
+	}
+	
 	public void onPause()
 	{
 		TTSUtils.getInstance().OnTTSListener(null);

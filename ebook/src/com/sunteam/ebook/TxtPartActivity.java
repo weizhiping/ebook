@@ -76,9 +76,9 @@ public class TxtPartActivity extends Activity implements OnEnterListener
     //	Log.e("part", "----- file part---:" + fileInfo.part);
     	if(null != remberFile && remberFile.path.equals(fileInfo.path)){
     //		Log.e("part", "-----rem file part---:" + remberFile.part);
-    		mMainView.setSelection(remberFile.part);
+    		mMainView.setSelection(remberFile.part, isAuto);
     	}else{
-    		mMainView.setSelection(fileInfo.part);
+    		mMainView.setSelection(fileInfo.part, isAuto);
     	}
     	if( isAuto )
     	{
@@ -131,7 +131,7 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 	}
 
 	@Override
-	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) 
+	public void onEnterCompleted(int selectItem, String menu, boolean isAutoPlay) 
 	{
 		if( !TextFileReaderUtils.getInstance().isInsideSDPath() )	//是否是外部SD卡
 		{
@@ -165,13 +165,14 @@ public class TxtPartActivity extends Activity implements OnEnterListener
 		Intent intent = new Intent(this,ReadTxtActivity.class);
 		intent.putExtra("file", fileInfo);
 		intent.putExtra("file_list", fileInfoList);
-		intent.putExtra("isAuto", isAuto);
+		intent.putExtra("isAuto", isAutoPlay);
 		startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 	} 
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
+		isAuto = false;
 		switch (requestCode) 
 		{
 			case EbookConstants.REQUEST_CODE:		//阅读器返回
