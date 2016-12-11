@@ -451,6 +451,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					playMusic();
 					break;
 				case 3:
+					isReadPage = false;
 					int line = intent.getIntExtra("line", 0);
 					int part = intent.getIntExtra("part", 0);
 					int start = intent.getIntExtra("start", 0);
