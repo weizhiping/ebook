@@ -340,7 +340,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	
 	//插入到最近浏览
 	private void insertToDb(){
-		Log.e(TAG, "----init===== to db------" + isFinish + "--name--:" + fileInfo.name);
+//		Log.e(TAG, "----to db------" + isFinish + "--name--:" + fileInfo.name + "---part--:" + fileInfo.part);
 		if(isFinish){
 			fileInfo.line = 0;
 			fileInfo.checksum = 0;
