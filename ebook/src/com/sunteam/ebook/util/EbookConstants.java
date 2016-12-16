@@ -82,6 +82,7 @@ public class EbookConstants
 	public static final String SETTINGS_TABLE = "settings";
 	public static final String MUSICE_STATE = "music_state";//背景音乐开关状态
 	public static final String MUSICE_PATH = "music_path";//背景音乐路径
+	public static final String READ_MODE = "read_mode";//朗读模式
 	
 	//广播ACTION
 	public static final String MENU_PAGE_EDIT = "page_edit";

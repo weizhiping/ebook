@@ -3,11 +3,13 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
@@ -24,14 +26,16 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
+	private SharedPreferences shared;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
+		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,
+				Context.MODE_PRIVATE);
 		initViews();
 	}
 
@@ -49,6 +53,9 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
+		int select = shared.getInt(EbookConstants.READ_MODE, 0);
+		mMainView.setSelection(select);
+		
 	}
     
     @Override
@@ -85,6 +92,9 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		Editor edit = shared.edit();
+		edit.putInt(EbookConstants.READ_MODE, selectItem);
+		edit.commit();
 		Intent intent = new Intent(EbookConstants.MENU_PAGE_EDIT);
 		intent.putExtra("result_flag", 1);
 		intent.putExtra("flag", selectItem);
