@@ -19,7 +19,6 @@ import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
-import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -1184,7 +1183,7 @@ import android.view.View;
 				 }
 				 else if( status == PlayStatus.STOP )
 				 {
-					 nextSentence(false, false, false);
+					 curSentence(false);
 				 }
 				 break;
 			 case READ_MODE_SENCENTE:	//逐句朗读
@@ -1254,7 +1253,14 @@ import android.view.View;
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
-				 mOnPageFlingListener.onPageFlingToBottom(true);
+				 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom(false); 
+				 }
+				 else
+				 {
+					 mOnPageFlingListener.onPageFlingToBottom(true);
+				 }
 			 }
 			 
 			 return;
@@ -1294,9 +1300,16 @@ import android.view.View;
 			 }
 			 else
 			 {
-				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
+				 if( mOnPageFlingListener != null )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom(!isHandPlay);
+					 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom(false);
+					 }
+					 else
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom(!isHandPlay);
+					 }
 				 }
 			 }
 			 return;
@@ -1558,9 +1571,16 @@ import android.view.View;
 			 }
 			 else
 			 {
-				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode )
+				 if( mOnPageFlingListener != null )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom(true);
+					 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom(false); 
+					 }
+					 else
+					 {
+						 mOnPageFlingListener.onPageFlingToBottom(true);
+					 }
 				 }
 			 }
 		 }
@@ -1643,9 +1663,16 @@ import android.view.View;
 				 }
 				 else
 				 {
-					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
+					 if( mOnPageFlingListener != null )
 					 {
-						 mOnPageFlingListener.onPageFlingToBottom(true);
+						 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+						 {
+							 mOnPageFlingListener.onPageFlingToBottom(false); 
+						 }
+						 else
+						 {
+							 mOnPageFlingListener.onPageFlingToBottom(true);
+						 }
 					 }
 				 }
 			 }
@@ -1672,9 +1699,16 @@ import android.view.View;
 				 }
 				 else
 				 {
-					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
+					 if( mOnPageFlingListener != null )
 					 {
-						 mOnPageFlingListener.onPageFlingToBottom(true);
+						 if( ReadMode.READ_MODE_PARAGRAPH == mReadMode )
+						 {
+							 mOnPageFlingListener.onPageFlingToBottom(false); 
+						 }
+						 else
+						 {
+							 mOnPageFlingListener.onPageFlingToBottom(true);
+						 }
 					 }
 				 }
 			 }

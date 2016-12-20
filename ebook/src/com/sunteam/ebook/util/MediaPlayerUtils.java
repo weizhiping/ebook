@@ -209,7 +209,7 @@ public class MediaPlayerUtils
 					{										
 						// TODO Auto-generated method stub
 						mPlayStatus = PlayStatus.STOP;
-						if( mOnMediaPlayerListener != null )
+						if( ( mOnMediaPlayerListener != null ) && ( mCountDownTimer != null ) )
 						{
 							mOnMediaPlayerListener.onPlayCompleted();
 						}
