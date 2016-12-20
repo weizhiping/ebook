@@ -25,9 +25,9 @@ public class MediaPlayerUtils
 	
 	public interface OnMediaPlayerListener 
 	{
-		public void onPlayCompleted();		//播放完成
+		public void onPlayCompleted();				//播放完成
 		public void onPlayError();					//播放错误
-		public void onSpeakProgress(int percent);	//播放进度
+		public void onPlayProgress(int percent);	//播放进度
 	}
 	
 	public enum PlayStatus
@@ -182,7 +182,7 @@ public class MediaPlayerUtils
 							public void onFinish() 
 							{
 								// TODO Auto-generated method stub
-								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+								if( mMediaPlayer != null )
 								{
 									mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
 								}
@@ -328,7 +328,7 @@ public class MediaPlayerUtils
             	case MSG_PLAY_PROGRESS:		//播放进度
             		if ( mOnMediaPlayerListener != null ) 
         			{
-            			mOnMediaPlayerListener.onSpeakProgress(msg.arg1);
+            			mOnMediaPlayerListener.onPlayProgress(msg.arg1);
         			}
             		break;
                 default:

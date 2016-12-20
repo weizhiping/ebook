@@ -1732,7 +1732,7 @@ import android.view.View;
 	}
 
 	@Override
-	public void onSpeakProgress(int percent) 
+	public void onPlayProgress(int percent) 
 	{
 		// TODO Auto-generated method stub
 		if( MediaPlayerUtils.getInstance().getPlayStatus() == PlayStatus.PLAY )
