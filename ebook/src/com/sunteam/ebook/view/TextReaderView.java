@@ -952,6 +952,11 @@ import android.view.View;
 			 }
 		 }
 		 
+		 if( null == pi )
+		 {
+			 mCurPage = 1;
+			 return;
+		 }
 		 mCurPage = pi.page;
 		 
 		 if( mOnPageFlingListener != null )
