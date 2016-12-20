@@ -19,6 +19,7 @@ import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -152,6 +153,15 @@ import android.view.View;
 		 
 		 TTSUtils.getInstance().OnTTSListener(this);
 		 MediaPlayerUtils.getInstance().OnMediaPlayerListener(this);
+	 }
+	 
+	 //朗读页码
+	 public void readPage()
+	 {
+		 TTSUtils.getInstance().stop();
+		 
+		 String tips = String.format(mContext.getResources().getString(R.string.ebook_page_read_tips2), mCurPage );
+		 speakTips(tips);
 	 }
 	 
 	 //设置翻页监听器

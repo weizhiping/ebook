@@ -56,6 +56,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private String diaPath;
 	private MenuBroadcastReceiver menuReceiver;
 	private static final int MENU_DAISY_CODE = 11;
+	private boolean isReadPage = false;	//是否朗读页码
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +132,17 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	}
 	
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if( isReadPage )
+		{
+			mDaisyReaderView.readPage();		//朗读页码
+		}
+		isReadPage = true;
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
 		switch( keyCode )
@@ -192,6 +204,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				int result = data.getIntExtra("result", 0);
 				switch(result){
 				case MENU_DAISY_CODE:
+					isReadPage = false;
 					int curPage = data.getIntExtra("page", 1);
 					mDaisyReaderView.setCurPage(curPage);
 					break;
@@ -331,6 +344,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			if(action.equals(EbookConstants.MENU_PAGE_EDIT)){
 				int resultFlag = intent.getIntExtra("result_flag", 0);
 				if(0 == resultFlag){
+					isReadPage = false;
 					int curPage = intent.getIntExtra("page", 1);
 					mDaisyReaderView.setCurPage(curPage);
 				}else if(1 == resultFlag){
@@ -347,6 +361,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 						break;
 					}
 				}else if(3 == resultFlag){
+					isReadPage = false;
 					int line = intent.getIntExtra("line", 0);
 					int part = intent.getIntExtra("part", 0);
 					int start = intent.getIntExtra("start", 0);
