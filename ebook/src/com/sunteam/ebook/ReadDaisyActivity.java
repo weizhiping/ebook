@@ -286,7 +286,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
-		String tips = this.getString(R.string.ebook_to_top);
+		String tips = this.getString(R.string.ebook_to_chapter_top);
 		PublicUtils.showToast(this, tips, new PromptListener(){
 
 			@Override
@@ -299,9 +299,15 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	}
 
 	@Override
-	public void onPageFlingToBottom() 
+	public void onPageFlingToBottom(boolean isContinuePlay) 
 	{
 		// TODO Auto-generated method stub
+		if( !isContinuePlay )
+		{
+			String tips = this.getString(R.string.ebook_to_chapter_bottom);
+			PublicUtils.showToast(this, tips);
+			return;
+		}
 		if( mDiasyNode.seq+1 < DaisyFileReaderUtils.getInstance().getDiasyNodeTotal() )	//还有下一部分需要朗读
 		{
 			RefreshScreenUtils.disableRefreshScreen();

@@ -93,7 +93,7 @@ import android.view.View;
 	 {
 		 public void onLoadCompleted( String title, int pageCount, int curPage );		//加载完成
 		 public void onPageFlingToTop();	//翻到头了
-		 public void onPageFlingToBottom();	//翻到尾了
+		 public void onPageFlingToBottom( boolean isContinuePlay );	//翻到尾了
 		 public void onPageFlingCompleted( String title, int curPage );	//翻页完成
 	 }
 	 
@@ -1126,7 +1126,7 @@ import android.view.View;
 	 {
 		 MediaPlayerUtils.getInstance().stop();
 		 
-		 nextSentence(false, false);
+		 nextSentence(false, false, true);
 	 }
 		 
 	 //跳到上一章节
@@ -1155,7 +1155,7 @@ import android.view.View;
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
+				 mOnPageFlingListener.onPageFlingToBottom(true);
 			 }
 			 
 			 return;
@@ -1184,7 +1184,7 @@ import android.view.View;
 				 }
 				 else if( status == PlayStatus.STOP )
 				 {
-					 nextSentence(false, false);
+					 nextSentence(false, false, false);
 				 }
 				 break;
 			 case READ_MODE_SENCENTE:	//逐句朗读
@@ -1254,7 +1254,7 @@ import android.view.View;
 		 {
 			 if( mOnPageFlingListener != null )
 			 {
-				 mOnPageFlingListener.onPageFlingToBottom();
+				 mOnPageFlingListener.onPageFlingToBottom(true);
 			 }
 			 
 			 return;
@@ -1278,7 +1278,7 @@ import android.view.View;
 	 }
 	 
 	 //到下一个句子
-	 private void nextSentence( boolean isSpeakPage, boolean isAutoPlay )
+	 private void nextSentence( boolean isSpeakPage, boolean isAutoPlay, boolean isHandPlay )
 	 {
 		 if( mSplitInfoList.size() == 0 )
 		 {
@@ -1296,7 +1296,7 @@ import android.view.View;
 			 {
 				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
+					 mOnPageFlingListener.onPageFlingToBottom(!isHandPlay);
 				 }
 			 }
 			 return;
@@ -1560,7 +1560,7 @@ import android.view.View;
 			 {
 				 if( mOnPageFlingListener != null && ReadMode.READ_MODE_PARAGRAPH != mReadMode )
 				 {
-					 mOnPageFlingListener.onPageFlingToBottom();
+					 mOnPageFlingListener.onPageFlingToBottom(true);
 				 }
 			 }
 		 }
@@ -1645,7 +1645,7 @@ import android.view.View;
 				 {
 					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 					 {
-						 mOnPageFlingListener.onPageFlingToBottom();
+						 mOnPageFlingListener.onPageFlingToBottom(true);
 					 }
 				 }
 			 }
@@ -1674,7 +1674,7 @@ import android.view.View;
 				 {
 					 if( mOnPageFlingListener != null  && ReadMode.READ_MODE_PARAGRAPH != mReadMode)
 					 {
-						 mOnPageFlingListener.onPageFlingToBottom();
+						 mOnPageFlingListener.onPageFlingToBottom(true);
 					 }
 				 }
 			 }
@@ -1727,7 +1727,7 @@ import android.view.View;
 		{
 			case READ_MODE_ALL:			//全文朗读
 		 	case READ_MODE_PARAGRAPH:	//逐段朗读
-		 		nextSentence(false, false);
+		 		nextSentence(false, false, false);
 		 		break;
 		 	default:
 		 		break;
