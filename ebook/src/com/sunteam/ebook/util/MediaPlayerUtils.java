@@ -2,6 +2,7 @@ package com.sunteam.ebook.util;
 
 import java.io.IOException;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnSeekCompleteListener;
@@ -142,14 +143,15 @@ public class MediaPlayerUtils
 			try 
 			{
 				mMediaPlayer.reset();
+				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 				mMediaPlayer.setDataSource(audioPath);
-				mMediaPlayer.prepare();
+				mMediaPlayer.prepareAsync();
 				
 				mMediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					@Override
 					public void onPrepared(MediaPlayer m) {
 						// TODO Auto-generated method stub
-						mMediaPlayer.seekTo((int)startTime);
+						mMediaPlayer.seekTo((int)startTime+1);	//多seek 1毫秒，否则有些文件不能播放。
 					}
 				});
 				
@@ -182,7 +184,7 @@ public class MediaPlayerUtils
 							public void onFinish() 
 							{
 								// TODO Auto-generated method stub
-								if( mMediaPlayer != null )
+								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
 								{
 									mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
 								}
@@ -201,7 +203,7 @@ public class MediaPlayerUtils
 						mPlayStatus = PlayStatus.STOP;
 						if( mOnMediaPlayerListener != null )
 						{
-							//mOnMediaPlayerListener.onPlayCompleted();
+							mOnMediaPlayerListener.onPlayCompleted();
 						}
 					}
 				});	//播放完成
