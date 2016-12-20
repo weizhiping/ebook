@@ -53,7 +53,7 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, title, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
-		int select = shared.getInt(EbookConstants.READ_MODE, 0);
+		int select = shared.getInt(EbookConstants.READ_MODE, 2);
 		mMainView.setSelection(select);
 		
 	}

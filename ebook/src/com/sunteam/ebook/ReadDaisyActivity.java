@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,6 +58,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private MenuBroadcastReceiver menuReceiver;
 	private static final int MENU_DAISY_CODE = 11;
 	private boolean isReadPage = false;	//是否朗读页码
+	private SharedPreferences shared;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,20 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	
     	registerReceiver();
     	
+    	shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE, Context.MODE_PRIVATE);
+    	int select = shared.getInt(EbookConstants.READ_MODE, 2);
+    	switch(select)
+    	{
+			case 0:
+				mDaisyReaderView.setReadMode(ReadMode.READ_MODE_SENCENTE);	//设置逐句朗读
+				break;
+			case 1:
+				mDaisyReaderView.setReadMode(ReadMode.READ_MODE_PARAGRAPH);	//设置章节朗读
+				break;
+			case 2:
+				mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
+				break;
+		}
     	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
     	{
     		PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
