@@ -22,7 +22,7 @@ public class MediaPlayerUtils
 	private MediaPlayer mMediaPlayer = null;
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
-	private android.os.CountDownTimer mCountDownTimer = null;
+	private AdvancedCountdownTimer mCountDownTimer = null;
 	
 	public interface OnMediaPlayerListener 
 	{
@@ -87,6 +87,10 @@ public class MediaPlayerUtils
 		{
 			if( PlayStatus.PLAY == mPlayStatus )
 			{
+				if( mCountDownTimer != null )
+				{
+					mCountDownTimer.pause();
+				}
 				mMediaPlayer.pause();
 				mPlayStatus = PlayStatus.PAUSE;
 			}	//如果正在播放，先暂停
@@ -100,6 +104,10 @@ public class MediaPlayerUtils
 		{
 			if( PlayStatus.PAUSE == mPlayStatus )
 			{
+				if( mCountDownTimer != null )
+				{
+					mCountDownTimer.resume();
+				}
 				mMediaPlayer.start();
 				mPlayStatus = PlayStatus.PLAY;
 			}	//如果正在暂停，先恢复
@@ -164,22 +172,8 @@ public class MediaPlayerUtils
 						mPlayStatus = PlayStatus.PLAY;
 						
 						final long time = endTime-startTime;
-						mCountDownTimer = new android.os.CountDownTimer( time, time/100 )
+						mCountDownTimer = new AdvancedCountdownTimer( time, time/10 )
 						{
-							@Override
-							public void onTick(long millisUntilFinished) 
-							{
-								// TODO Auto-generated method stub
-								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
-								{
-									Message msg = mHandler.obtainMessage();
-									msg.what = MSG_PLAY_PROGRESS;
-									msg.arg1 = (int)((time-millisUntilFinished)*100/time);
-									
-									mHandler.sendMessage(msg);
-								}
-							}
-
 							@Override
 							public void onFinish() 
 							{
@@ -187,6 +181,20 @@ public class MediaPlayerUtils
 								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
 								{
 									mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
+								}
+							}
+
+							@Override
+							public void onTick(long millisUntilFinished, int percent) 
+							{
+								// TODO Auto-generated method stub
+								if( mMediaPlayer != null && mMediaPlayer.isPlaying() )
+								{
+									Message msg = mHandler.obtainMessage();
+									msg.what = MSG_PLAY_PROGRESS;
+									msg.arg1 = percent;
+									
+									mHandler.sendMessage(msg);
 								}
 							}
 							
