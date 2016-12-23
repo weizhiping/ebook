@@ -109,7 +109,9 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					} else {
 						position = 0;
 					}
-				} else if (0 == remberFile.flag) {
+				} else if (0 == remberFile.flag ) {
+					position = i;
+				}else if(1 == remberFile.flag && 1 == flagType){
 					position = i;
 				}
 			}
