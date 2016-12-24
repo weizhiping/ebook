@@ -232,6 +232,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
+		isFinish = false;
+		mTextReaderView.setIsPlayParagraph(!isFinish, false);
 		switch( keyCode )
 		{
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
@@ -326,11 +328,11 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		{
 			case KeyEvent.KEYCODE_2:
 			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
-				mTextReaderView.setIsPlayParagraph(!isFinish);
+				mTextReaderView.setIsPlayParagraph(!isFinish, true);
 				return	true;
 			case KeyEvent.KEYCODE_8:
 			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
-				mTextReaderView.setIsPlayParagraph(!isFinish);
+				mTextReaderView.setIsPlayParagraph(!isFinish, true);
 				return	true;
 			default:
 				break;

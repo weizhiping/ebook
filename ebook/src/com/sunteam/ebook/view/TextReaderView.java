@@ -248,10 +248,10 @@ import android.view.View;
 	 }
 	 
 	 //设置是否可以进行段落播放
-	 public void setIsPlayParagraph( boolean isPlay )
+	 public void setIsPlayParagraph( boolean isPlayParagraph, boolean isInstantlyPlay )
 	 {
-		 mIsPlayParagraph = isPlay;
-		 if( isPlay )
+		 mIsPlayParagraph = isPlayParagraph;
+		 if( isPlayParagraph && isInstantlyPlay )
 		 {
 			 readReverseText(false, false, false);			//朗读反显文字
 		 }
