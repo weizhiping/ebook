@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
@@ -166,6 +165,15 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					
 					switch( next )
 					{
+						case EbookConstants.TO_BOOK_START:	//到一本书的开头
+							{
+								isResume = false;
+								Intent intent = new Intent();
+								intent.putExtra("next", EbookConstants.TO_BOOK_START);
+								setResult(RESULT_OK, intent);
+								finish();
+							}
+							break;
 						case EbookConstants.TO_PRE_PART:	//到上一个部分
 							isResume = false;
 							boolean isEnter = data.getBooleanExtra("isEnter", false);

@@ -456,6 +456,11 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						mMainView.enter(true);
 						// 阅读下一本书
 					}
+					else if( EbookConstants.TO_BOOK_START == next )
+					{
+						isResume = false;
+						mMainView.enter(true);
+					}	//跳到文档开头
 				} else if (2 == flag) {
 					reloadData();
 					// int select = mMainView.getSelectItem();

@@ -221,8 +221,17 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				switch(result){
 				case MENU_DAISY_CODE:
 					isReadPage = false;
+					
+					/*
 					int curPage = data.getIntExtra("page", 1);
 					mDaisyReaderView.setCurPage(curPage);
+					*/
+					
+					Intent intent = new Intent();
+					intent.putExtra("next", EbookConstants.TO_BOOK_START);
+					intent.putExtra("seq", mDiasyNode.seq);
+					setResult(RESULT_OK, intent);
+					back();
 					break;
 				}
 			}

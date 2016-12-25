@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
