@@ -168,6 +168,14 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					{
 						case EbookConstants.TO_PRE_PART:	//到上一个部分
 							isResume = false;
+							boolean isEnter = data.getBooleanExtra("isEnter", false);
+							
+							if( isEnter )
+							{
+								mMainView.enter(true);
+								break;
+							}
+							
 							if( mMainView.isUp() )
 							{
 								mMainView.up(true);
@@ -177,6 +185,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 							{
 								Intent intent = new Intent();
 								intent.putExtra("next", EbookConstants.TO_PRE_PART);
+								intent.putExtra("isEnter", true);
 								setResult(RESULT_OK, intent);
 								finish();
 							}
