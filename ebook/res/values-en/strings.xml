@@ -117,7 +117,7 @@
         <item>书签管理</item>
         <item>朗读模式</item>
         <item>跳至文档开头</item>
-        <item>跳至章节页码</item>
+        <item>跳转章节页码</item>
     </string-array>
     <string-array name="ebook_array_menu_daisy_read">
         <item>逐句朗读</item>

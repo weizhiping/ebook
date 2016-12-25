@@ -689,11 +689,28 @@ import android.view.View;
 			 }
 			 
 			 length += mDaisySentenceNodeList.get(i).sentence.length;
+			 
+			 if( i == mDaisySentenceNodeList.size()-1 )
+			 {
+				 if( length == si.startPos )
+				 {
+					 mReverseInfo.startPos = length;
+					 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
+					 break;
+				 }
+				 else if( length > si.startPos )
+				 {
+					 mReverseInfo.startPos = length-mDaisySentenceNodeList.get(i).sentence.length;
+					 mReverseInfo.len = mDaisySentenceNodeList.get(i).sentence.length;
+					 break;
+				 }
+			 }
 		 }
 		 
 		 this.invalidate();
 		 
-		 initReverseInfo();	//初始化反显信息
+		 //initReverseInfo();	//初始化反显信息
+		 nextSentence(false, false, false);	//朗读下一个句子
 		 
 		 if( mOnPageFlingListener != null )
 		 {
