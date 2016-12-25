@@ -43,6 +43,77 @@ public class IdentifyEncoding
 		Initialize_Frequencies();
 	}
 	
+	public String getCharsetName( String fullpath )		//得到文件编码类型
+	{
+		File file = new File(fullpath);
+		if( !file.exists() )
+		{
+			return	"utf-8";
+		}
+		int length = (int)file.length();
+		if( 0 == length )
+		{
+			return	"utf-8";
+		}
+		
+		//先将索引文件读取到内存
+		FileInputStream fis;
+		try 
+		{
+			fis = new FileInputStream(file);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return	"utf-8";
+		}
+		byte[] buffer = new byte[length];
+		try 
+		{
+			fis.read(buffer);
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try 
+		{
+			fis.close();
+		} 
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return	"utf-8";
+		}
+		
+		try
+		{
+			String data = new String(buffer);
+			int start = data.indexOf("encoding");
+			String encoding = data.substring(start);
+			int end = encoding.indexOf("?>");
+			String str = encoding.substring(0, end);
+			
+			String[] strSplit = str.split("\'");
+			if( strSplit.length >= 2 )
+			{
+				return	strSplit[1];
+			}
+			
+			strSplit = str.split("\"");
+			return	strSplit[1];
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+			
+			return	"utf-8";
+		}
+	}
+	
 	public String GetEncodingName( String str_filepath )	//判断文件编码类型
 	{
 		File file = new File(str_filepath);

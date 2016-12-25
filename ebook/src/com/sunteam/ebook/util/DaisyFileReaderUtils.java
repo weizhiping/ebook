@@ -130,7 +130,7 @@ public class DaisyFileReaderUtils
 		try 
 		{
 			IdentifyEncoding ie = new IdentifyEncoding();
-			String strCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
+			String strCharsetName = ie.getCharsetName( fullpath );	//得到文本编码
 			
 			File file = new File(fullpath);
 			if( !file.exists() )
@@ -255,7 +255,7 @@ public class DaisyFileReaderUtils
 			}
 			
 			IdentifyEncoding ie = new IdentifyEncoding();
-			String strCharsetName = ie.GetEncodingName( smilPath );	//得到文本编码
+			String strCharsetName = ie.getCharsetName( smilPath );	//得到文本编码
 			
 			File file = new File(smilPath);
 			if( !file.exists() )
@@ -565,7 +565,7 @@ public class DaisyFileReaderUtils
 		try 
 		{
 			IdentifyEncoding ie = new IdentifyEncoding();
-			String strCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
+			String strCharsetName = ie.getCharsetName( fullpath );	//得到文本编码
 			
 			File file = new File(fullpath);
 			if( !file.exists() )
@@ -686,7 +686,7 @@ public class DaisyFileReaderUtils
 			else
 			{
 				IdentifyEncoding ie = new IdentifyEncoding();
-				String strCharsetName = ie.GetEncodingName( sentencePath );	//得到文本编码
+				String strCharsetName = ie.getCharsetName( sentencePath );	//得到文本编码
 				
 				File file = new File(sentencePath);
 				if( !file.exists() )
