@@ -254,7 +254,7 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//按了确定键
 	public void enter(boolean isAuto)
 	{
-		if( mOnEnterListener != null )
+		if( mOnEnterListener != null && ( selectItem >= 0 ) && ( selectItem <= this.gListData.size()-1 ) )
 		{
 			mOnEnterListener.onEnterCompleted( this.selectItem, this.gListData.get(selectItem), isAuto );
 		}
@@ -263,6 +263,10 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 	//tts朗读selectItem内容
 	private void readSelectItemContent()
 	{
+		if( ( selectItem < 0 ) || ( selectItem >= gListData.size() ) )
+		{
+			return;
+		}
 		switch( this.mode )
 		{
 			case READ_MODE_NORMAL:		//普通模式
