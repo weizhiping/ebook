@@ -709,8 +709,7 @@ import android.view.View;
 		 
 		 this.invalidate();
 		 
-		 //initReverseInfo();	//初始化反显信息
-		 nextSentence(false, false, false);	//朗读下一个句子
+		 initReverseInfo();	//初始化反显信息
 		 
 		 if( mOnPageFlingListener != null )
 		 {

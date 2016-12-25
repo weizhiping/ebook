@@ -25,7 +25,7 @@ public class DaisyFileReaderUtils
 	//以下TAG主要在ncc.*文件中使用
 	private static final String TAG_H_START = "<h";
 	private static final String TAG_H_END = "</h";
-	private static final String TAG_A_START = "<a href=\"";
+	private static final String TAG_A_START = "href=\"";
 	private static final String TAG_A_END = "</a>";
 	
 	//以下TAG主要在*.smil文件中使用
