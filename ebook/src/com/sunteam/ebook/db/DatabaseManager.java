@@ -33,13 +33,14 @@ public class DatabaseManager {
 		{
 			boolean hasbook = hasDataInBase(EbookConstants.BOOKS_TABLE, file.path,
 					type);
-			Log.i("database", "-----------has book---:" + hasbook + "--type-:" + type);
+			Log.e("database", "-----------has book---:" + hasbook + "--type-:" + type);
 			if (!hasbook) {
 				db = helper.getWritableDatabase();
 				ContentValues newValues = new ContentValues();
 				newValues.put(EbookConstants.BOOK_NAME, file.name);
 				newValues.put(EbookConstants.BOOK_PATH, file.path);
 				newValues.put(EbookConstants.BOOK_DIASY_PATH, file.diasyPath);
+				newValues.put(EbookConstants.BOOK_DIASY_FLAG, file.diasyFlag);
 				newValues.put(EbookConstants.BOOK_FOLDER, file.isFolder);
 				newValues.put(EbookConstants.BOOK_CATALOG, file.catalog);
 				newValues.put(EbookConstants.BOOK_FLAG, file.flag);
@@ -88,6 +89,8 @@ public class DatabaseManager {
 							book.diasyPath = cursor
 									.getString(cursor
 											.getColumnIndex(EbookConstants.BOOK_DIASY_PATH));
+							book.diasyFlag = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_DIASY_FLAG));
 							int folder = cursor.getInt(cursor
 									.getColumnIndex(EbookConstants.BOOK_FOLDER));
 							if (0 == folder) {
@@ -155,6 +158,8 @@ public class DatabaseManager {
 							book.diasyPath = cursor
 									.getString(cursor
 											.getColumnIndex(EbookConstants.BOOK_DIASY_PATH));
+							book.diasyFlag = cursor.getString(cursor
+									.getColumnIndex(EbookConstants.BOOK_DIASY_FLAG));
 							int folder = cursor.getInt(cursor
 									.getColumnIndex(EbookConstants.BOOK_FOLDER));
 							if (0 == folder) {
@@ -345,6 +350,7 @@ public class DatabaseManager {
 			db = helper.getWritableDatabase();
 			ContentValues newValues = new ContentValues();
 			newValues.put(EbookConstants.BOOK_TIME, System.currentTimeMillis());
+			newValues.put(EbookConstants.BOOK_DIASY_FLAG, file.diasyFlag);
 			newValues.put(EbookConstants.BOOK_FLAG, file.flag);
 			newValues.put(EbookConstants.BOOK_START, file.startPos);
 			newValues.put(EbookConstants.BOOK_LINE, file.line);

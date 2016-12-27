@@ -203,11 +203,13 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	}
 	
 	private void insertToDb(){
-		Log.e("read", "----inser to db flag=--:" + fileInfo.flag);
+		
 		fileInfo.line = mDaisyReaderView.getLineNumber();
 		fileInfo.checksum = mDaisyReaderView.getCheckSum();
 		fileInfo.startPos = mDaisyReaderView.getReverseInfo().startPos;
 		fileInfo.len = mDaisyReaderView.getReverseInfo().len;
+		fileInfo.diasyFlag = mDiasyNode.father + "_" + mDiasyNode.seq + "_" + mDiasyNode.level;
+		Log.e("read", "----inser to db flag=--:" + fileInfo.flag + "--diasy--:" + fileInfo.diasyFlag);
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
