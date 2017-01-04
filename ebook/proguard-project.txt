@@ -96,6 +96,15 @@
 -dontwarn org.textmining.text.extraction.**
 -keep class org.textmining.text.extraction.** {*; }
 
+-dontwarn com.hp.hpl.sparta.**
+-keep class com.hp.hpl.sparta.** {*; }
+-dontwarn demo.**
+-keep class demo.** {*; }
+-dontwarn net.sourceforge.pinyin4j.**
+-keep class net.sourceforge.pinyin4j.** {*; }
+-dontwarn pinyindb.**
+-keep class pinyindb.** {*; }
+
 -keep class **.R$* {   
 *;   
 }

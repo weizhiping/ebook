@@ -26,6 +26,7 @@ import com.sunteam.ebook.util.CharacterParser;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
+import com.sunteam.ebook.util.Pinyin4jUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.MainView;
@@ -638,18 +639,31 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	// }
 	private class UsernameComparator implements Comparator<FileInfo> {
 		public int compare(FileInfo entity1, FileInfo entity2) {
+			/*
 			try {
-				String str1 = CharacterParser.getInstance().getSelling(
-						entity1.name);
-				String str2 = CharacterParser.getInstance().getSelling(
-						entity2.name);
+				String str1 = CharacterParser.getInstance().getSelling( entity1.name );
+				String str2 = CharacterParser.getInstance().getSelling( entity2.name );
 				return str1.compareToIgnoreCase(str2);
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+
+				return 0;
+			}
+			*/
+			try 
+			{
+				String str1 = Pinyin4jUtils.converterToSpell( entity1.name );
+				String str2 = Pinyin4jUtils.converterToSpell( entity2.name );
+				return str1.compareToIgnoreCase(str2);
+			} 
+			catch (Exception e) 
+			{
 				e.printStackTrace();
 
 				return 0;
 			}
 		}
 	}
-
 }
