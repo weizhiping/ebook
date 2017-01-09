@@ -652,18 +652,88 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				return 0;
 			}
 			*/
+			
+			String str1 = "";
+			String str2 = "";
+			
+			String str10 = "";
+			String str11 = "";
+			String str20 = "";
+			String str21 = "";
+			
 			try 
 			{
-				String str1 = Pinyin4jUtils.converterToSpell( entity1.name );
-				String str2 = Pinyin4jUtils.converterToSpell( entity2.name );
-				return str1.compareToIgnoreCase(str2);
+				str1 = Pinyin4jUtils.converterToSpell( entity1.name );
+				str2 = Pinyin4jUtils.converterToSpell( entity2.name );
+				
+				for( int i = 0; i < str1.length(); i++ )
+				{
+					String str = str1.substring(i, i+1);
+					if( isNumber( str ) )
+					{
+						str10 += str;
+					}
+					else
+					{
+						str11 += str1.substring(i);
+						break;
+					}
+				}
+				
+				for( int i = 0; i < str2.length(); i++ )
+				{
+					String str = str2.substring(i, i+1);
+					if( isNumber( str ) )
+					{
+						str20 += str;
+					}
+					else
+					{
+						str21 += str2.substring(i);
+						break;
+					}
+				}
+				
+				if( !TextUtils.isEmpty(str10) && !TextUtils.isEmpty(str20) )
+				{
+					float f1 = Float.parseFloat(str10);
+					float f2 = Float.parseFloat(str20);
+					
+					if( f1 > f2 )
+					{
+						return	1;
+					}
+					else if( f1 < f2 )
+					{
+						return	-1;
+					}
+					else
+					{
+						return str11.compareToIgnoreCase(str21);
+					}
+				}
+				else
+				{
+					return str1.compareToIgnoreCase(str2);
+				}
 			} 
 			catch (Exception e) 
 			{
 				e.printStackTrace();
 
-				return 0;
+				return str1.compareToIgnoreCase(str2);
 			}
+		}
+		
+		private boolean isNumber( String str )
+		{
+			if( "0".equals(str) || "1".equals(str) || "2".equals(str) || "3".equals(str) || "4".equals(str) || "5".equals(str) || 
+				"6".equals(str) || "7".equals(str) || "8".equals(str) || "9".equals(str) || ".".equals(str) )
+			{
+				return	true;
+			}
+			
+			return	false;
 		}
 	}
 }
