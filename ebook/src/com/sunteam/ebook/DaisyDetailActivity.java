@@ -41,7 +41,6 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
 		// WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); //禁止休眠
 		setContentView(R.layout.ebook_activity_main);
@@ -139,6 +138,14 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+			setResult(RESULT_OK);
+		}
+		return super.dispatchKeyEvent(event);
+	}
+
+	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		isResume = !isAuto;
 		DiasyNode dias = diasList.get(selectItem);
@@ -164,7 +171,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("diasys", diaysList);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("isAuto", isAuto);
-			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+			startActivity(intent);
 		}
 	}
 

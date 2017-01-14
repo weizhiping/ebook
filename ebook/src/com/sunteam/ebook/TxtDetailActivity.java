@@ -22,7 +22,6 @@ import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.CallbackBundle;
-import com.sunteam.ebook.util.CharacterParser;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.FileOperateUtils;
@@ -270,8 +269,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						|| name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)) {
 					new WordAsyncTask(isAuto).execute(fileInfo);
 				} else {
-					// Log.e(TAG, "----name--:" + fileInfo.name +
-					// "---selectItem-:" + selectItem);
 					showFiles(fileInfo, fileInfo.path, isAuto);
 				}
 			}
@@ -318,6 +315,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private void initFiles() {
 		if (catalog == 1) {
 			fileInfoList = FileOperateUtils.getDaisyInDir(catalog, rootPath);
+			Collections.sort(fileInfoList, new UsernameComparator());
 		} else {
 			ArrayList<File> filesList = null;
 			ArrayList<FileInfo> listDir = new ArrayList<FileInfo>();
@@ -447,8 +445,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		if (RESULT_OK == resultCode) {
 			switch (requestCode) {
 			case EbookConstants.REQUEST_CODE: // 阅读器返回
-				// Log.e(TAG, "------read result-----:" + data + "---flag--:" +
-				// flag);
 				if (data != null) {
 					int next = data.getIntExtra("next", -1);
 					if (EbookConstants.TO_NEXT_BOOK == next) {
