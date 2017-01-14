@@ -41,6 +41,7 @@ public class DatabaseManager {
 				newValues.put(EbookConstants.BOOK_PATH, file.path);
 				newValues.put(EbookConstants.BOOK_DIASY_PATH, file.diasyPath);
 				newValues.put(EbookConstants.BOOK_DIASY_FLAG, file.diasyFlag);
+				newValues.put(EbookConstants.BOOK_DIASY, file.hasDaisy);
 				newValues.put(EbookConstants.BOOK_FOLDER, file.isFolder);
 				newValues.put(EbookConstants.BOOK_CATALOG, file.catalog);
 				newValues.put(EbookConstants.BOOK_FLAG, file.flag);
@@ -91,6 +92,9 @@ public class DatabaseManager {
 											.getColumnIndex(EbookConstants.BOOK_DIASY_PATH));
 							book.diasyFlag = cursor.getString(cursor
 									.getColumnIndex(EbookConstants.BOOK_DIASY_FLAG));
+							book.hasDaisy = cursor.getInt(cursor
+									.getColumnIndex(EbookConstants.BOOK_DIASY));
+							
 							int folder = cursor.getInt(cursor
 									.getColumnIndex(EbookConstants.BOOK_FOLDER));
 							if (0 == folder) {
@@ -160,6 +164,8 @@ public class DatabaseManager {
 											.getColumnIndex(EbookConstants.BOOK_DIASY_PATH));
 							book.diasyFlag = cursor.getString(cursor
 									.getColumnIndex(EbookConstants.BOOK_DIASY_FLAG));
+							book.hasDaisy = cursor.getInt(cursor
+									.getColumnIndex(EbookConstants.BOOK_DIASY));
 							int folder = cursor.getInt(cursor
 									.getColumnIndex(EbookConstants.BOOK_FOLDER));
 							if (0 == folder) {

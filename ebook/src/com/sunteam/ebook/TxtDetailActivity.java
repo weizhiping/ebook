@@ -272,7 +272,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					showFiles(fileInfo, fileInfo.path, isAuto);
 				}
 			}
-		} else if (fileInfo.hasDaisy) {
+		} else if (fileInfo.hasDaisy == 1) {
 			Intent intent = new Intent(this, TxtDetailActivity.class);
 			intent.putExtra("path", fileInfo.path);
 			intent.putExtra("name", fileInfo.name);

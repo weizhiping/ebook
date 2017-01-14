@@ -62,6 +62,7 @@ public class EbookConstants
 	public static final String BOOK_PATH = "path";
 	public static final String BOOK_DIASY_PATH = "diasypath";
 	public static final String BOOK_DIASY_FLAG = "diasyflag";
+	public static final String BOOK_DIASY = "diasyhas";		//是否有diasy二级目录
 	public static final String BOOK_FOLDER = "folder";	//0为文件，1为文件夹
 	public static final String BOOK_CATALOG = "catalog";//1为txt,2为word,3为disay
 	public static final String BOOK_FLAG = "flag";

@@ -187,9 +187,9 @@ public class FileOperateUtils {
 					int nccLen = path.split("/").length;
 					int fileLen = f.getPath().split("/").length;
 					if((nccLen - fileLen) > 1){
-						info.hasDaisy = true;
+						info.hasDaisy = 1;
 					}else{
-						info.hasDaisy = false;
+						info.hasDaisy = 0;
 					}
 						fileList.add(info);
 					}else{
@@ -201,9 +201,9 @@ public class FileOperateUtils {
 							int nccLen = path.split("/").length;
 							int fileLen = f.getPath().split("/").length;
 							if((nccLen - fileLen) > 1){
-								info.hasDaisy = true;
+								info.hasDaisy = 1;
 							}else{
-								info.hasDaisy = false;
+								info.hasDaisy = 0;
 							}
 							fileList.add(0,info);
 						}
