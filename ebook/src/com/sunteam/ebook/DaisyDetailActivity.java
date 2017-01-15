@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.view.MainView;
 
 /**
@@ -55,9 +57,23 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra(
 				"file_list");
 		isAuto = intent.getBooleanExtra("isAuto", false);
-		initViews(name);
-		if (isAuto) {
-			mMainView.enter(isAuto);
+		if( ( null == diasList ) || ( null == fileInfoList ) || ( 0 == diasList.size() ) || ( 0 == fileInfoList.size() ) )
+		{
+			PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
+
+				@Override
+				public void onComplete() {
+					// TODO 自动生成的方法存根
+					finish();
+				}
+    		});
+		}
+		else
+		{
+			initViews(name);
+			if (isAuto) {
+				mMainView.enter(isAuto);
+			}
 		}
 	}
 
