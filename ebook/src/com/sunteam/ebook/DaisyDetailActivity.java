@@ -37,6 +37,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private String path;
 	private int seq;
 	private int position;
+	private boolean isAutoPrePart = false;	//是否自动到上一个章节
 	private boolean isAuto = false; // 是否自动进入阅读界面
 	private boolean isResume = true;
 
@@ -57,6 +58,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra(
 				"file_list");
 		isAuto = intent.getBooleanExtra("isAuto", false);
+		isAutoPrePart = intent.getBooleanExtra("isAutoPrePart", false);
 		if( ( null == diasList ) || ( null == fileInfoList ) || ( 0 == diasList.size() ) || ( 0 == fileInfoList.size() ) )
 		{
 			PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
@@ -73,6 +75,40 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			initViews(name);
 			if (isAuto) {
 				mMainView.enter(isAuto);
+			}
+			
+			if( isAutoPrePart )
+			{
+				isAuto = true;
+				while (mMainView.isDown()) 
+				{
+					mMainView.down(true);
+				}
+				
+				int selectItem = mMainView.getSelectItem();
+				DiasyNode dias = diasList.get(selectItem);
+				ArrayList<DiasyNode> diasyList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
+				
+				if (0 == diasyList.size()) // 当前节点是叶子节点
+				{
+					mMainView.enter(true);
+				} 
+				else // 如果当前节点不是叶子节点，则直接进入
+				{
+					Intent intent2 = new Intent(this,
+							DaisyDetailActivity.class);
+					intent2.putExtra("name", mMainView.getCurItem());
+					intent2.putExtra("seq", seq);
+					intent2.putExtra("catalogType", catalog);
+					intent2.putExtra("path", path);
+					intent2.putExtra("file", remberFile);
+					intent2.putExtra("fileinfo", fileInfo);
+					intent2.putExtra("diasys", diasyList);
+					intent2.putExtra("file_list", fileInfoList);
+					intent2.putExtra("isAutoPrePart", true);
+					startActivityForResult(intent,
+							EbookConstants.REQUEST_CODE);
+				}
 			}
 		}
 	}
@@ -196,6 +232,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		switch (requestCode) {
 		case EbookConstants.REQUEST_CODE: // 阅读器返回
 			if (RESULT_OK == resultCode) {
+				if( null == data )
+				{
+					break;
+				}
 				int next = data
 						.getIntExtra("next", EbookConstants.TO_NEXT_PART);
 				int seq = data.getIntExtra("seq", -1);
@@ -212,22 +252,43 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					break;
 				case EbookConstants.TO_PRE_PART: // 到上一个部分
 					isResume = false;
-					boolean isEnter = data.getBooleanExtra("isEnter", false);
-
-					if (isEnter) {
-						mMainView.enter(true);
-						break;
-					}
-
-					if (mMainView.isUp()) {
-						mMainView.up(true);
+					if (-1 == seq) {
 						mMainView.enter(true);
 					} else {
-						Intent intent = new Intent();
-						intent.putExtra("next", EbookConstants.TO_PRE_PART);
-						intent.putExtra("isEnter", true);
-						setResult(RESULT_OK, intent);
-						finish();
+						if (mMainView.isUp()) {
+							mMainView.up(true);
+							
+							int selectItem = mMainView.getSelectItem();
+							DiasyNode dias = diasList.get(selectItem);
+							ArrayList<DiasyNode> diaysList = DaisyFileReaderUtils.getInstance()
+									.getChildNodeList(dias.seq);
+							if (0 == diaysList.size()) // 上一节点是叶子节点
+							{
+								mMainView.enter(true);
+							}
+							else
+							{
+								Intent intent = new Intent(this,
+										DaisyDetailActivity.class);
+								intent.putExtra("name", mMainView.getCurItem());
+								intent.putExtra("seq", dias.seq);
+								intent.putExtra("catalogType", catalog);
+								intent.putExtra("path", path);
+								intent.putExtra("file", remberFile);
+								intent.putExtra("fileinfo", fileInfo);
+								intent.putExtra("diasys", diaysList);
+								intent.putExtra("file_list", fileInfoList);
+								intent.putExtra("isAutoPrePart", true);
+								startActivityForResult(intent,
+										EbookConstants.REQUEST_CODE);
+							}
+						} else {
+							Intent intent = new Intent();
+							intent.putExtra("next",
+									EbookConstants.TO_PRE_PART);
+							setResult(RESULT_OK, intent);
+							finish();
+						}
 					}
 					break;
 				case EbookConstants.TO_NEXT_PART: // 到下一个部分
@@ -258,7 +319,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 								setResult(RESULT_OK, intent);
 								finish();
 							}
-						} else // 如果当前节点不是叶子节点，则直接进入
+						} 
+						else // 如果当前节点不是叶子节点，则直接进入
 						{
 							Intent intent = new Intent(this,
 									DaisyDetailActivity.class);
