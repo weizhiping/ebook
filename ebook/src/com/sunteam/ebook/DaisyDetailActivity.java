@@ -223,7 +223,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("diasys", diaysList);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("isAuto", isAuto);
-			startActivity(intent);
+			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
 

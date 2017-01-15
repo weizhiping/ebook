@@ -287,7 +287,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			ArrayList<DiasyNode> diasList = DaisyFileReaderUtils.getInstance()
 					.getChildNodeList(-1);
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
-			;
 			if (null != diasList && diasList.size() > 0) {
 				intent.putExtra("diasys", diasList);
 			}
