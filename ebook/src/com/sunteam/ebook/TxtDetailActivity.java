@@ -13,7 +13,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
@@ -496,7 +495,6 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				break;
 			}
 		}else if(resultCode == RESULT_CANCELED){
-			Log.e(TAG, "--------result cancel-------"+ flag);
 			if (2 == flag) {
 				reloadData();
 			} else if (1 == flag) {
