@@ -192,7 +192,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-			setResult(RESULT_OK);
+			setResult(RESULT_CANCELED);
 		}
 		return super.dispatchKeyEvent(event);
 	}
