@@ -121,7 +121,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
-		mMainView.setSelection(position);
+		mMainView.setSelection(position, isAuto);
 	}
 
 	// 初始化显示文件
