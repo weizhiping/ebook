@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.DiasyNode;
+import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
@@ -205,6 +206,27 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				.getChildNodeList(dias.seq);
 		int size = diaysList.size();
 		if ((0 == size) || isAuto) {
+			if( size > 0 )
+			{
+				ArrayList<DiasySentenceNode> list = DaisyFileReaderUtils.getInstance().getDiasySentenceNodeList(path, dias.seq);
+				if( ( null == list ) || ( 0 == list.size() ) )
+				{
+					Intent intent = new Intent(this, DaisyDetailActivity.class);
+					intent.putExtra("name", menu);
+					intent.putExtra("seq", dias.seq);
+					intent.putExtra("catalogType", catalog);
+					intent.putExtra("path", path);
+					intent.putExtra("file", remberFile);
+					intent.putExtra("fileinfo", fileInfo);
+					intent.putExtra("diasys", diaysList);
+					intent.putExtra("file_list", fileInfoList);
+					intent.putExtra("isAuto", isAuto);
+					startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+					
+					return;
+				}	//有些父节点本身没有句子，则需要进入子节点列表。
+			}
+			
 			Intent intent = new Intent(this, ReadDaisyActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("path", path);
