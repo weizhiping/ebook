@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.tts.TtsUtils;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
@@ -216,6 +217,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		TtsUtils.getInstance().stop();
 		if (flag == 0) {
 			String path;
 			if (0 == selectItem) {

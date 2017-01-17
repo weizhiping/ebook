@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.tts.TtsUtils;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
@@ -112,6 +113,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		// TODO Auto-generated method stub
+		TtsUtils.getInstance().stop();
 		String name = menu;
 		Intent intent = new Intent(this, TxtDetailActivity.class);
 		intent.putExtra("name", name);
