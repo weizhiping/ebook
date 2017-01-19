@@ -399,7 +399,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 					int part = intent.getIntExtra("part", 0);
 					int start = intent.getIntExtra("start", 0);
 					int len = intent.getIntExtra("len", 0);
-					 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, 0, 0, 0);
+					 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, start, len, 0);
 				}
 				
 			}
