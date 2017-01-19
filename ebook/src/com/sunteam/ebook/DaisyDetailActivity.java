@@ -3,13 +3,17 @@ package com.sunteam.ebook;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.BookmarkInfo;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.DiasySentenceNode;
@@ -32,6 +36,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
 	private ArrayList<DiasyNode> diasList;
+	private DatabaseManager manager;
 	private int catalog;// 1为txt文档，2为word文档,3为disay
 	private FileInfo remberFile;
 	private FileInfo fileInfo;
@@ -42,6 +47,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private boolean isAuto = false; // 是否自动进入阅读界面
 	private boolean isResume = true;
 	private BookmarkInfo mBookmarkInfo = null;
+	private UpdateRemFileReceiver fileReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +201,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private void initViews(String name) {
 		mMenuList = new ArrayList<String>();
 		initFiles();
+		registerReceiver();
+		manager = new DatabaseManager(this);
 		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
@@ -212,12 +220,20 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			if (null != remberFile && remberFile.diasyPath.contains(path)) {
 				String[] diasys = remberFile.diasyFlag.split("_");
 				int remSeq = Integer.valueOf(diasys[1]);
-				if (hasNode(node, remSeq) || node.seq == remSeq)
+				if (hasNode(node, remSeq) || node.seq == remSeq){
 					position = i;
+				}
 			}
 		}
 	}
 
+	private void registerReceiver() {
+		fileReceiver = new UpdateRemFileReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(EbookConstants.ACTION_UPDATE_FILE);
+		registerReceiver(fileReceiver, filter);
+	}
+	
 	private boolean hasNode(DiasyNode node, int remSeq) {
 		boolean hasNode = false;
 		ArrayList<DiasyNode> nodeList = DaisyFileReaderUtils.getInstance()
@@ -308,7 +324,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					return;
 				}	//有些父节点本身没有句子，则需要进入子节点列表。
 			}
-			
+			manager.updateQueryBook(fileInfo, 0);
 			Intent intent = new Intent(this, ReadDaisyActivity.class);
 			intent.putExtra("name", menu);
 			intent.putExtra("path", path);
@@ -477,6 +493,23 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			break;
 		default:
 			break;
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(fileReceiver);
+	}
+	
+	private class UpdateRemFileReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(EbookConstants.ACTION_UPDATE_FILE)) {
+				remberFile = manager.queryLastBook(EbookConstants.BOOK_RECENT);
+		//		flagType = remberFile.flag;
+			}
 		}
 	}
 }

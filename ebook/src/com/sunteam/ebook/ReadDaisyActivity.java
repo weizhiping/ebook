@@ -127,10 +127,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				break;
 		}
     	
-    	int line = 0;
-    	int start = 0;
-    	int len = 0;
-    	
+    	int line = fileInfo.line;
+    	int start = fileInfo.startPos;
+    	int len = fileInfo.len;
     	if( mBookmarkInfo != null )
     	{
     		line = mBookmarkInfo.line;
@@ -227,6 +226,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		fileInfo.len = mDaisyReaderView.getReverseInfo().len;
 		fileInfo.diasyFlag = mDiasyNode.father + "_" + mDiasyNode.seq + "_" + mDiasyNode.level;
 		Log.e("read", "----inser to db flag=--:" + fileInfo.flag + "--diasy--:" + fileInfo.diasyFlag);
+		Log.e("read", "----inser to db lin=--:" + fileInfo.line + "--start--:" + fileInfo.startPos + "--len--:" + fileInfo.len);
 		DatabaseManager manager = new DatabaseManager(this);
 		manager.insertBookToDb(fileInfo, EbookConstants.BOOK_RECENT);
 	}
