@@ -14,6 +14,7 @@ public abstract class AdvancedCountdownTimer
 	private final long mCountdownInterval;
 	private long mTotalTime;
 	private long mRemainTime;
+	private long mStartTime;
 
 	public AdvancedCountdownTimer(long millisInFuture, long countDownInterval) 
 	{
@@ -34,12 +35,14 @@ public abstract class AdvancedCountdownTimer
 	{
 		mHandler.removeMessages(MSG_RUN);
 		mHandler.removeMessages(MSG_PAUSE);
+		mHandler.removeMessages(MSG_RESUME);
 	}
 
 	public final void resume() 
 	{
+		mStartTime = System.currentTimeMillis();
 		mHandler.removeMessages(MSG_PAUSE);
-		mHandler.sendMessageAtFrontOfQueue(mHandler.obtainMessage(MSG_RUN));
+		mHandler.sendMessageAtFrontOfQueue(mHandler.obtainMessage(MSG_RESUME));
 	}
 
 	public final void pause() 
@@ -55,6 +58,7 @@ public abstract class AdvancedCountdownTimer
 			onFinish();
 			return this;
 		}
+		mStartTime = System.currentTimeMillis();
 		mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_RUN), mCountdownInterval);
 		
 		return this;
@@ -64,6 +68,7 @@ public abstract class AdvancedCountdownTimer
 	public abstract void onFinish();
 	private static final int MSG_RUN = 1;
 	private static final int MSG_PAUSE = 2;
+	private static final int MSG_RESUME = 3;
 
 	private Handler mHandler = new Handler() 
 	{
@@ -75,6 +80,7 @@ public abstract class AdvancedCountdownTimer
 				if (msg.what == MSG_RUN)
 				{
 					mRemainTime = mRemainTime - mCountdownInterval;
+					mStartTime = System.currentTimeMillis();
 
 					if (mRemainTime <= 0) 
 					{
@@ -92,7 +98,24 @@ public abstract class AdvancedCountdownTimer
 				} 
 				else if (msg.what == MSG_PAUSE) 
 				{
-
+					long time = System.currentTimeMillis()+50;
+					mRemainTime = mRemainTime - (time-mStartTime);
+				}
+				else if (msg.what == MSG_RESUME) 
+				{
+					if (mRemainTime <= 0) 
+					{
+						onFinish();
+					} 
+					else if (mRemainTime < mCountdownInterval) 
+					{
+						sendMessageDelayed(obtainMessage(MSG_RUN), mRemainTime);
+					} 
+					else 
+					{
+						onTick(mRemainTime, new Long(100 * (mTotalTime - mRemainTime) / mTotalTime) .intValue());
+						sendMessageDelayed(obtainMessage(MSG_RUN), mCountdownInterval);
+					}
 				}
 			}
 		}
