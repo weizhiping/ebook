@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
+import com.sunteam.ebook.entity.BookmarkInfo;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.DiasySentenceNode;
 import com.sunteam.ebook.entity.FileInfo;
@@ -36,11 +37,11 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private FileInfo fileInfo;
 	private ArrayList<FileInfo> fileInfoList = null;
 	private String path;
-	private int seq;
 	private int position;
 	private boolean isAutoPrePart = false;	//是否自动到上一个章节
 	private boolean isAuto = false; // 是否自动进入阅读界面
 	private boolean isResume = true;
+	private BookmarkInfo mBookmarkInfo = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		String name = intent.getStringExtra("name");
 		path = intent.getStringExtra("path");
 		catalog = intent.getIntExtra("catalogType", 0);
-		seq = intent.getIntExtra("seq", -1);
+		mBookmarkInfo = (BookmarkInfo) intent.getSerializableExtra("bookmark");
+		
 		remberFile = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		diasList = (ArrayList<DiasyNode>) intent.getSerializableExtra("diasys");
@@ -74,6 +76,59 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		else
 		{
 			initViews(name);
+			
+			if( mBookmarkInfo != null )
+			{
+				if( diasList != null && diasList.size() > 0 )
+				{
+					for( int i = 0; i < diasList.size(); i++ )
+					{
+						if( mBookmarkInfo.seq == diasList.get(i).seq )
+						{
+							for( int j = 0; j < i; j++ )
+							{
+								mMainView.down(true);
+							}
+							mMainView.enter(isAuto);
+							return;
+						}
+					}	//在当前节点中查找是否包含了书签节点
+					
+					for( int i = 0; i < diasList.size(); i++ )
+					{
+						if( isSeachBookmarkNode( mBookmarkInfo.seq, diasList.get(i).seq ) )
+						{
+							isResume = false;
+							int selectItem = mMainView.getSelectItem();
+							DiasyNode dias = diasList.get(selectItem);
+							ArrayList<DiasyNode> list = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
+							Intent intent2 = new Intent(this,
+									DaisyDetailActivity.class);
+							intent2.putExtra("name", mMainView.getCurItem());
+							intent2.putExtra("seq", dias.seq);
+							intent2.putExtra("catalogType", catalog);
+							intent2.putExtra("path", path);
+							intent2.putExtra("file", remberFile);
+							intent2.putExtra("fileinfo", fileInfo);
+							intent2.putExtra("diasys", list);
+							intent2.putExtra("file_list", fileInfoList);
+							intent2.putExtra("isAuto", isAuto);
+							intent2.putExtra("bookmark", mBookmarkInfo);
+							startActivityForResult(intent2,
+									EbookConstants.REQUEST_CODE);
+							return;
+						}
+						
+						if( mMainView.isDown() )
+						{
+							mMainView.down(true);
+						}
+					}	//在字节点中查找是否包含了书签节点
+					
+					return;
+				}
+			}	//为了实现书签跳转
+			
 			if (isAuto) {
 				mMainView.enter(isAuto);
 			}
@@ -88,9 +143,9 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				
 				int selectItem = mMainView.getSelectItem();
 				DiasyNode dias = diasList.get(selectItem);
-				ArrayList<DiasyNode> diasyList = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
+				ArrayList<DiasyNode> list = DaisyFileReaderUtils.getInstance().getChildNodeList(dias.seq);
 				
-				if (0 == diasyList.size()) // 当前节点是叶子节点
+				if (0 == list.size()) // 当前节点是叶子节点
 				{
 					mMainView.enter(true);
 				} 
@@ -99,19 +154,42 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					Intent intent2 = new Intent(this,
 							DaisyDetailActivity.class);
 					intent2.putExtra("name", mMainView.getCurItem());
-					intent2.putExtra("seq", seq);
+					intent2.putExtra("seq", dias.seq);
 					intent2.putExtra("catalogType", catalog);
 					intent2.putExtra("path", path);
 					intent2.putExtra("file", remberFile);
 					intent2.putExtra("fileinfo", fileInfo);
-					intent2.putExtra("diasys", diasyList);
+					intent2.putExtra("diasys", list);
 					intent2.putExtra("file_list", fileInfoList);
 					intent2.putExtra("isAutoPrePart", true);
-					startActivityForResult(intent,
+					startActivityForResult(intent2,
 							EbookConstants.REQUEST_CODE);
 				}
-			}
+			}	//为了实现切换到上一个章节
 		}
+	}
+	
+	//查找curNodeSeq的子节点中是否有bookmarkSeq节点
+	private boolean isSeachBookmarkNode( int bookmarkSeq, int curNodeSeq )
+	{
+		ArrayList<DiasyNode> list = DaisyFileReaderUtils.getInstance().getChildNodeList(curNodeSeq);
+		for( int i = 0; i < list.size(); i++ )
+		{
+			if( bookmarkSeq == list.get(i).seq )
+			{
+				return	true;
+			}
+		}	//在当前节点中查找是否包含了书签节点
+		
+		for( int i = 0; i < list.size(); i++ )
+		{
+			if( isSeachBookmarkNode( bookmarkSeq, list.get(i).seq ) )
+			{
+				return	true;
+			}
+		}	//在字节点中查找是否包含了书签节点
+		
+		return	false;
 	}
 
 	private void initViews(String name) {
@@ -221,6 +299,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 					intent.putExtra("diasys", diaysList);
 					intent.putExtra("file_list", fileInfoList);
 					intent.putExtra("isAuto", isAuto);
+					if( mBookmarkInfo != null )
+					{
+						intent.putExtra("bookmark", mBookmarkInfo);
+					}
 					startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 					
 					return;
@@ -233,6 +315,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("node", dias);
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
+			if( mBookmarkInfo != null )
+			{
+				intent.putExtra("bookmark", mBookmarkInfo);
+			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		} else {
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
@@ -245,6 +331,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("diasys", diaysList);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("isAuto", isAuto);
+			if( mBookmarkInfo != null )
+			{
+				intent.putExtra("bookmark", mBookmarkInfo);
+			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
@@ -263,6 +353,19 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				int seq = data.getIntExtra("seq", -1);
 
 				switch (next) {
+				case EbookConstants.TO_BOOK_MARK:	// 到一本书的书签
+				{
+					isResume = false;
+					Intent intent = new Intent();
+					intent.putExtra("next", EbookConstants.TO_BOOK_MARK);
+					intent.putExtra("seq", seq);
+					intent.putExtra("line", data.getIntExtra("line", 0));
+					intent.putExtra("start", data.getIntExtra("start", 0));
+					intent.putExtra("len", data.getIntExtra("len", 0));
+					setResult(RESULT_OK, intent);
+					finish();
+				}
+					break;
 				case EbookConstants.TO_BOOK_START: // 到一本书的开头
 				{
 					isResume = false;

@@ -474,8 +474,17 @@ public class DatabaseManager {
 		try
 		{
 			db = helper.getWritableDatabase();
-			Cursor cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=? and part=?",
-					new String[] { file.path,String.valueOf(file.part) }, null, null, "time desc");
+			Cursor cursor = null;
+			if( file.isDaisy )
+			{
+				cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=?",
+						new String[] { file.path }, null, null, "time desc");
+			}
+			else
+			{
+				cursor = db.query(EbookConstants.MARKS_TABLE, null, "path=? and part=?",
+						new String[] { file.path,String.valueOf(file.part) }, null, null, "time desc");
+			}
 			ArrayList<FileInfo> orderList = new ArrayList<FileInfo>();
 			try {
 				if (null != cursor) {

@@ -20,6 +20,7 @@ import com.sunteam.common.tts.TtsUtils;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.BookmarkInfo;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
 import com.sunteam.ebook.util.CallbackBundle;
@@ -56,6 +57,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private FileInfo remberFile;// 路径记忆传递
 	private int position;// 路径记忆位置
 	private boolean isResume = true;
+	private BookmarkInfo mBookmarkInfo = null;
 	private UpdateRemFileReceiver fileReceiver;
 
 	@Override
@@ -301,6 +303,10 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("isAuto", isAuto);
+			if( mBookmarkInfo != null )
+			{
+				intent.putExtra("bookmark", mBookmarkInfo);
+			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 		}
 	}
@@ -459,6 +465,16 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						isResume = false;
 						mMainView.enter(true);
 					}	//跳到文档开头
+					else if( EbookConstants.TO_BOOK_MARK == next )
+					{
+						isResume = false;
+						mBookmarkInfo = new BookmarkInfo();
+						mBookmarkInfo.seq = data.getIntExtra("seq", 0);
+						mBookmarkInfo.line = data.getIntExtra("line", 0);
+						mBookmarkInfo.start = data.getIntExtra("start", 0);
+						mBookmarkInfo.len = data.getIntExtra("len", 0);
+						mMainView.enter(true);
+					}	//到一本书的书签位置
 				} else if (2 == flag) {
 					reloadData();
 					// int select = mMainView.getSelectItem();

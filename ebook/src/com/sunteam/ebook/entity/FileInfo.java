@@ -12,6 +12,7 @@ public class FileInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public String name;
 	public String path;
+	public boolean isDaisy;	//是否是daisy文件
 	public boolean isFolder;
 	public String diasyPath;//diasy可以查看节点的路径
 	public String diasyFlag;//0_1_2  父节点_节点序号_节点等级

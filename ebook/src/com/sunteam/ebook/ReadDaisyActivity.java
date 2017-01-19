@@ -21,6 +21,7 @@ import com.sunteam.common.utils.RefreshScreenUtils;
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.db.DatabaseManager;
+import com.sunteam.ebook.entity.BookmarkInfo;
 import com.sunteam.ebook.entity.CallbackBundleType;
 import com.sunteam.ebook.entity.DiasyNode;
 import com.sunteam.ebook.entity.FileInfo;
@@ -32,7 +33,6 @@ import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
-import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.DaisyReaderView;
 import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
 
@@ -59,6 +59,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private static final int MENU_DAISY_CODE = 11;
 	private boolean isReadPage = false;	//是否朗读页码
 	private SharedPreferences shared;
+	private BookmarkInfo mBookmarkInfo = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,9 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("fileinfo");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		mDiasyNode = (DiasyNode) getIntent().getSerializableExtra("node");
+		mBookmarkInfo = (BookmarkInfo) this.getIntent().getSerializableExtra("bookmark");
+		
+		fileInfo.isDaisy = true;
 		diaPath = getIntent().getStringExtra("path");
 		String name = getIntent().getStringExtra("name");
 		
@@ -122,7 +126,19 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				mDaisyReaderView.setReadMode(ReadMode.READ_MODE_ALL);		//设置全文朗读
 				break;
 		}
-    	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, 0, 0, 0, 0) == false )
+    	
+    	int line = 0;
+    	int start = 0;
+    	int len = 0;
+    	
+    	if( mBookmarkInfo != null )
+    	{
+    		line = mBookmarkInfo.line;
+    		start = mBookmarkInfo.start;
+    		len = mBookmarkInfo.len;
+    	}
+    	
+    	if( mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, start, len, 0) == false )
     	{
     		PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
 
@@ -189,6 +205,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				fileInfo.checksum = mDaisyReaderView.getCheckSum();
 				fileInfo.startPos = mDaisyReaderView.getReverseInfo().startPos;
 				fileInfo.len = mDaisyReaderView.getReverseInfo().len;
+				fileInfo.part = mDiasyNode.seq;
 				Intent intent = new Intent(this, MenuDaisyActivity.class);
 				intent.putExtra("page_count", mDaisyReaderView.getPageCount());
 				intent.putExtra("page_cur", mDaisyReaderView.getCurPage());
@@ -399,9 +416,23 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 					int part = intent.getIntExtra("part", 0);
 					int start = intent.getIntExtra("start", 0);
 					int len = intent.getIntExtra("len", 0);
-					 mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, start, len, 0);
-				}
 				
+					if( part == mDiasyNode.seq )
+					{
+						mDaisyReaderView.openBook(diaPath, mDiasyNode.seq, line, start, len, 0);
+					}
+					else
+					{
+						Intent intent1 = new Intent();
+						intent1.putExtra("next", EbookConstants.TO_BOOK_MARK);
+						intent1.putExtra("seq", part);
+						intent1.putExtra("line", line);
+						intent1.putExtra("start", start);
+						intent1.putExtra("len", len);
+						ReadDaisyActivity.this.setResult(RESULT_OK, intent1);
+						back();
+					}
+				}
 			}
 		}
 	}
