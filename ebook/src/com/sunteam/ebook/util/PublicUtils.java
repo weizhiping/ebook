@@ -198,7 +198,7 @@ public class PublicUtils
 	//检查讯飞语音服务是否安装
 	public static boolean checkSpeechServiceInstalled(Context context)
 	{
-		return SpeechUtility.getUtility().checkServiceInstalled();
+		return true;	//SpeechUtility.getUtility().checkServiceInstalled();
 	}
 	
 	//跳到反查
