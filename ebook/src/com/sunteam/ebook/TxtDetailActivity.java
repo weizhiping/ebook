@@ -58,6 +58,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private boolean isResume = true;//是否是resume
 	private BookmarkInfo mBookmarkInfo = null;//书签信息
 	private UpdateRemFileReceiver fileReceiver;//更新路径记忆实体类广播
+	private boolean isToBookStart = false;	//是否是自动跳到文件开头播放
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -302,6 +303,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
 			intent.putExtra("isAuto", isAuto);
+			intent.putExtra("isToBookStart", isToBookStart);
 			if( mBookmarkInfo != null )
 			{
 				intent.putExtra("bookmark", mBookmarkInfo);
@@ -461,6 +463,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 					}
 					else if( EbookConstants.TO_BOOK_START == next )
 					{
+						isToBookStart = true;
 						isResume = false;
 						mMainView.enter(true);
 					}	//跳到文档开头

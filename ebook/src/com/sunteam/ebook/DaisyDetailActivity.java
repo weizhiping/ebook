@@ -48,7 +48,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	private boolean isResume = true;
 	private BookmarkInfo mBookmarkInfo = null;
 	private UpdateRemFileReceiver fileReceiver;
-
+	private boolean isToBookStart = false;	//是否是自动跳到文件开头播放
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +69,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				"file_list");
 		isAuto = intent.getBooleanExtra("isAuto", false);
 		isAutoPrePart = intent.getBooleanExtra("isAutoPrePart", false);
+		isToBookStart = intent.getBooleanExtra("isToBookStart", false);
+		
 		if( ( null == diasList ) || ( null == fileInfoList ) || ( 0 == diasList.size() ) || ( 0 == fileInfoList.size() ) )
 		{
 			PublicUtils.showToast(this, this.getString(R.string.ebook_file_does_not_exist), new PromptListener() {
@@ -209,6 +212,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 		mMainView = new MainView(this, this, name, mMenuList);
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
+		if( isToBookStart )
+		{
+			position = 0;
+		}	//如果是跳到文件开头，则需要将反显置为第一项。
 		mMainView.setSelection(position, isAuto);
 	}
 
