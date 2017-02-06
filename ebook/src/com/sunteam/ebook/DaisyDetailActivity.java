@@ -85,6 +85,8 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			
 			if( mBookmarkInfo != null )
 			{
+				position = 0;
+				mMainView.setSelection(position, isAuto);
 				if( diasList != null && diasList.size() > 0 )
 				{
 					for( int i = 0; i < diasList.size(); i++ )
