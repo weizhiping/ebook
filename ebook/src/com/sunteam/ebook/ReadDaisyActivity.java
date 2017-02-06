@@ -60,6 +60,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private boolean isReadPage = false;	//是否朗读页码
 	private SharedPreferences shared;
 	private BookmarkInfo mBookmarkInfo = null;
+	private boolean isAuto = false;	//是否是自动朗读
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		mDiasyNode = (DiasyNode) getIntent().getSerializableExtra("node");
 		mBookmarkInfo = (BookmarkInfo) this.getIntent().getSerializableExtra("bookmark");
+		isAuto = this.getIntent().getBooleanExtra("isAuto", false);
 		
 		fileInfo.isDaisy = true;
 		diaPath = getIntent().getStringExtra("path");
@@ -127,9 +129,32 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				break;
 		}
     	
-    	int line = fileInfo.line;
-    	int start = fileInfo.startPos;
-    	int len = fileInfo.len;
+    	int seq = 0;
+    	if( fileInfo.diasyFlag != null )
+    	{
+    		String[] split = fileInfo.diasyFlag.split("_");
+    		if( split != null && split.length >= 2 )
+    		{
+    			try
+    			{
+    				seq = Integer.parseInt(split[1]);
+    			}
+    			catch( Exception e )
+    			{
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    	int line = 0;
+    	int start = 0;
+    	int len = 0;
+    	if( !isAuto && seq == mDiasyNode.seq )
+    	{
+    		line = fileInfo.line;
+        	start = fileInfo.startPos;
+        	len = fileInfo.len;
+    	}	//如果是自动朗读，则从头开始，否则从断点记忆开始。
+    	
     	if( mBookmarkInfo != null )
     	{
     		line = mBookmarkInfo.line;

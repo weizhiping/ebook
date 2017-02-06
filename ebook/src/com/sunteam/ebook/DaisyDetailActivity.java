@@ -340,6 +340,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 			intent.putExtra("node", dias);
 			intent.putExtra("fileinfo", fileInfo);
 			intent.putExtra("file_list", fileInfoList);
+			intent.putExtra("isAuto", isAuto);
 			if( mBookmarkInfo != null )
 			{
 				intent.putExtra("bookmark", mBookmarkInfo);

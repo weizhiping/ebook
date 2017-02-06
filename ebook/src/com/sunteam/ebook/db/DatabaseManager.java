@@ -237,6 +237,8 @@ public class DatabaseManager {
 										.getColumnIndex(EbookConstants.BOOK_CHECKSUM));
 								info.part = cursor.getInt(cursor
 										.getColumnIndex(EbookConstants.BOOK_PART));
+								info.diasyFlag = cursor.getString(cursor
+										.getColumnIndex(EbookConstants.BOOK_DIASY_FLAG));
 						}else{
 							info.startPos = 0;
 							info.line = 0;
