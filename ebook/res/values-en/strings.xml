@@ -63,6 +63,7 @@
 	<string name="ebook_file_does_not_exist">文件不存在</string>
 	<string name="ebook_to_chapter_top">已经到章节开头</string>
 	<string name="ebook_to_chapter_bottom">已经到章节结尾</string>
+	<string name="ebook_audio_file_is_null">没有音频数据，不播放</string>
 	
     <string-array name="ebook_array_menu">
         <item>书签管理</item>

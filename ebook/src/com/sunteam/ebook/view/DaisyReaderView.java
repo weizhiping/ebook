@@ -1,5 +1,6 @@
 package com.sunteam.ebook.view;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1370,7 +1371,15 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 MediaPlayerUtils.getInstance().play(node.audioFile, node.startTime, node.endTime);
+			 File file = new File( node.audioFile );
+			 if( file.exists() )
+			 {
+				 MediaPlayerUtils.getInstance().play(node.audioFile, node.startTime, node.endTime);
+			 }
+			 else
+			 {
+				 TTSUtils.getInstance().speakTips(mContext.getResources().getString(R.string.ebook_audio_file_is_null));
+			 }
 		 }
 	 }
 	 
