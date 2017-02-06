@@ -31,12 +31,12 @@ public class MainListAdapter extends BaseAdapter implements OnClickListener
 {
 	private Context mContext = null;
 	private ListView mLv = null;
-	private ArrayList<String> gListData = null;
+	private ArrayList<String> gListData = null;//数据源
 	private int selectItem = 0;	//当前选中的项，默认是第一项
-	private OnEnterListener mOnEnterListener = null;
-	private TTSSpeakMode mode;
-	private Tools mTools;
-	private float mScale = 1.0f;
+	private OnEnterListener mOnEnterListener = null;//点击确定监听
+	private TTSSpeakMode mode;//TTS朗读模式
+	private Tools mTools; 
+	private float mScale = 1.0f;//计算相对于ldpi的倍数
 	
 	public interface OnEnterListener 
 	{

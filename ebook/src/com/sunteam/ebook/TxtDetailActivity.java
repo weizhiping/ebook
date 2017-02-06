@@ -40,25 +40,24 @@ import com.sunteam.ebook.word.WordParseUtils;
  */
 public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private static final String TAG = "TxtDetailActivity";
-	private static final int[] keyCodeList = { KeyEvent.KEYCODE_MENU };
-	private static final int MENU_DATA = 10;
-
-	private Context mContext = null;
-	private FrameLayout mFlContainer = null;
-	private MainView mMainView = null;
-	private ArrayList<String> mMenuList = null;
-	private ArrayList<FileInfo> fileInfoList = null;
+	private static final int[] keyCodeList = { KeyEvent.KEYCODE_MENU };//按键
+	private static final int MENU_DATA = 10;//回执参数
+	private Context mContext = null;//全局上下文
+	private FrameLayout mFlContainer = null;//布局Layout
+	private MainView mMainView = null;//显示数据的View
+	private ArrayList<String> mMenuList = null;//数据源
+	private ArrayList<FileInfo> fileInfoList = null;//文件数据源
 	private String rootPath; // 查找文件根路径
-	private DatabaseManager manager;
+	private DatabaseManager manager;//数据库操作类
 	private int flag;// 0为目录浏览，1为我的收藏，2为最近使用，3为目录浏览中文件
-	private int flagType;
+	private int flagType;// 0为目录浏览，1为我的收藏，2为最近使用
 	private int storage;// 0为内部存储，1为外部存储
 	private int catalog;// 0为txt,2为word,1为disay
 	private FileInfo remberFile;// 路径记忆传递
 	private int position;// 路径记忆位置
-	private boolean isResume = true;
-	private BookmarkInfo mBookmarkInfo = null;
-	private UpdateRemFileReceiver fileReceiver;
+	private boolean isResume = true;//是否是resume
+	private BookmarkInfo mBookmarkInfo = null;//书签信息
+	private UpdateRemFileReceiver fileReceiver;//更新路径记忆实体类广播
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +69,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		initViews();
 		registerReceiver();
 	}
-
+	//初始化布局并根据路径记忆文件来判断显示的位置
 	private void initViews() {
 		mContext = this;
 		Intent intent = getIntent();
@@ -190,7 +189,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		return mMainView.onKeyUp(keyCode, event);
 	}
 
-	// 回调
+	// 菜单键回调，用于保存到我的收藏
 	private CallbackBundle mCallbackBundle = new CallbackBundle() {
 		@Override
 		public void callback(final Bundle bundle) {

@@ -46,19 +46,19 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
 public class ReadTxtActivity extends Activity implements OnPageFlingListener
 {
 	private static final String TAG = "ReadTxtActivity";
-	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
-	private TextView mTvTitle = null;
-	private TextView mTvPageCount = null;
-	private TextView mTvCurPage = null;
-	private View mLine = null;
-	private TextReaderView mTextReaderView = null;
-	private FileInfo fileInfo;
-	private ArrayList<FileInfo> fileInfoList = null;
-	private static final int MENU_CODE = 10;
-	private MenuBroadcastReceiver menuReceiver;
-	private ShutdownBroadcastReceiver shutReceiver;
-	private SharedPreferences shared;
-	private boolean isAuto = false;
+	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  //关机广播参数
+	private TextView mTvTitle = null;//标题
+	private TextView mTvPageCount = null;//总页数
+	private TextView mTvCurPage = null;//当前页
+	private View mLine = null;//分割线
+	private TextReaderView mTextReaderView = null;//阅读View
+	private FileInfo fileInfo;//当前文档
+	private ArrayList<FileInfo> fileInfoList = null;//文档列表
+	private static final int MENU_CODE = 10;//回调参数
+	private MenuBroadcastReceiver menuReceiver;//菜单广播
+	private ShutdownBroadcastReceiver shutReceiver;//关机广播
+	private SharedPreferences shared;//保存模式
+	private boolean isAuto = false;//是否自动阅读
 	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
 	

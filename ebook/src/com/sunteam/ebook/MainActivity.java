@@ -33,12 +33,12 @@ import com.sunteam.ebook.view.MainView;
  */
 public class MainActivity extends Activity implements OnEnterListener
 {
-	private FrameLayout mFlContainer = null;
-	private MainView mMainView = null;
-	private ArrayList<String> mMenuList = null;
-	private FileInfo remberFile;
-	private DatabaseManager manager;
-	private UpdateRemFileReceiver fileReceiver;
+	private FrameLayout mFlContainer = null;//布局Layout
+	private MainView mMainView = null;//显示数据的View
+	private ArrayList<String> mMenuList = null;//数据源
+	private FileInfo remberFile;//路径记忆实体
+	private DatabaseManager manager;//数据库操作类
+	private UpdateRemFileReceiver fileReceiver;//更新路径记忆实体类广播
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) 

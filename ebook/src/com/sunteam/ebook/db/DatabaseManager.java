@@ -19,8 +19,8 @@ import com.sunteam.ebook.util.EbookConstants;
  */
 public class DatabaseManager {
 	private Context context;
-	private SQLHelper helper;
-	private SQLiteDatabase db;
+	private SQLHelper helper;//系统数据库帮助类
+	private SQLiteDatabase db; //数据库操作类
 
 	public DatabaseManager(Context c) {
 		this.context = c;
