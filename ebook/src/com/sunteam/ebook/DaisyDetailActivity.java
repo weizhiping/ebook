@@ -509,7 +509,10 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(fileReceiver);
+		if( fileReceiver != null )
+		{
+			unregisterReceiver(fileReceiver);
+		}
 	}
 	
 	private class UpdateRemFileReceiver extends BroadcastReceiver {
