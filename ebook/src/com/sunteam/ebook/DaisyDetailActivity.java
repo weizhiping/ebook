@@ -404,8 +404,21 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				case EbookConstants.TO_PRE_PART: // 到上一个部分
 					isResume = false;
 					if (-1 == seq) {
-						mMainView.enter(true);
-					} else {
+						int selectItem = mMainView.getSelectItem();
+						DiasyNode dias = diasList.get(selectItem);
+						ArrayList<DiasySentenceNode> list = DaisyFileReaderUtils.getInstance().getDiasySentenceNodeList(path, dias.seq);
+						if( ( null == list ) || ( 0 == list.size() ) )	//此节点只有标题，没有内容。
+						{
+							//继续执行以下代码。
+						}
+						else
+						{
+							mMainView.enter(true);
+							break;
+						}
+					}
+					
+					{
 						if (mMainView.isUp()) {
 							mMainView.up(true);
 							
