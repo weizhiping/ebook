@@ -393,6 +393,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		String tips = this.getString(R.string.ebook_to_top);
 		PublicUtils.showToast(this, tips);
 		*/
+		isFinish = true;
 		CustomToast.showToast(this, this.getString(R.string.ebook_to_top), Toast.LENGTH_SHORT);
 	}
 
