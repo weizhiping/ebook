@@ -27,6 +27,7 @@ public class DaisyFileReaderUtils
 	private static final String TAG_H_END = "</h";
 	private static final String TAG_A_START = "href=\"";
 	private static final String TAG_A_END = "</a>";
+	private static final String TAG_SPAN_END = "</span>";
 	
 	//以下TAG主要在*.smil文件中使用
 	private static final String TAG_TEXT_START = "<text";
@@ -733,21 +734,44 @@ public class DaisyFileReaderUtils
 					
 					start += lableName.length();
 					
-					start = data.indexOf(TAG_A_START, start);
-					end = data.indexOf(TAG_A_END, start);
-					if( ( -1 == start ) || ( -1 == end ) )
-					{
-						return	"";
-					}
+					int seq1 = data.indexOf(TAG_SPAN_END, start);
+					int seq2 = data.indexOf(TAG_A_START, start);
 					
-					String sentenceItem = data.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
-					String[] splitSentenceItem = sentenceItem.split(">");
-					if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
+					if( ( -1 == seq1 ) || ( seq2 < seq1 ) )
 					{
-						return	"";
+						start = seq2;
+						end = data.indexOf(TAG_A_END, start);
+						if( ( -1 == start ) || ( -1 == end ) )
+						{
+							return	"";
+						}
+						
+						String sentenceItem = data.substring(start+TAG_A_START.length(), end);	//取得一个sentence item
+						String[] splitSentenceItem = sentenceItem.split(">");
+						if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
+						{
+							return	"";
+						}
+						
+						return	splitSentenceItem[1];
 					}
-					
-					return	splitSentenceItem[1];
+					else
+					{
+						end = seq1;
+						if( ( -1 == start ) || ( -1 == end ) )
+						{
+							return	"";
+						}
+						
+						String sentenceItem = data.substring(start, end);	//取得一个sentence item
+						String[] splitSentenceItem = sentenceItem.split(">");
+						if( ( null == splitSentenceItem ) || ( 2 != splitSentenceItem.length ) )
+						{
+							return	"";
+						}
+						
+						return	splitSentenceItem[1];
+					}
 				}
 			}
 			else	//Daisy3.0

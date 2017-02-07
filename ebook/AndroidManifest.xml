@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sunteam.ebook"
-    android:versionCode="13"
-    android:versionName="1.2.1.161225" 
+    android:versionCode="14"
+    android:versionName="1.2.2.170207" 
     >
 
     <uses-sdk
