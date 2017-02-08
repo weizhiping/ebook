@@ -2612,10 +2612,12 @@ import android.view.View;
 					 continue;
 				 }
 			 }
+			 /*
 			 else if( 0x20 == mMbBuf[i] )	//跳过空格
 			 {
 				 continue;
 			 }
+			 */
 			 else
 			 {
 				 ReverseInfo ri = new ReverseInfo(i, 1);
