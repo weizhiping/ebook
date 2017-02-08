@@ -2284,7 +2284,7 @@ import android.view.View;
 						 return;
 					 }	//跳过空行
 					 
-					 mIsPlayParagraph = false;
+					 mIsPlayParagraph = isSpeakPage;
 					 nextSentence( isSpeakPage, false, false );
 					 return;
 				 }
