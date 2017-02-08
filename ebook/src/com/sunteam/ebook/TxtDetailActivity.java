@@ -684,8 +684,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			
 			try 
 			{
-				str1 = Pinyin4jUtils.converterToSpell( entity1.name );
-				str2 = Pinyin4jUtils.converterToSpell( entity2.name );
+				str1 = sort(Pinyin4jUtils.converterToSpell( entity1.name ));
+				str2 = sort(Pinyin4jUtils.converterToSpell( entity2.name ));
 				
 				for( int i = 0; i < str1.length(); i++ )
 				{
@@ -755,6 +755,53 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 			
 			return	false;
+		}
+		
+		//对多音字排序
+		private String sort( String pinyin )
+		{
+			if( ( null == pinyin ) || ( TextUtils.isEmpty(pinyin) ) )
+			{
+				return	pinyin;
+			}
+			
+			String[] strSplit = pinyin.split(",");
+			if( ( null == strSplit ) || ( 0 == strSplit.length ) )
+			{
+				return	pinyin;
+			}
+			
+			ArrayList<String> list = new ArrayList<String>();
+			for( int i = 0; i < strSplit.length; i++ )
+			{
+				boolean isInsert = false;
+				for( int j = 0; j < list.size(); j++ )
+				{
+					if( strSplit[i].compareToIgnoreCase(list.get(j)) < 0 )
+					{
+						isInsert = true;
+						list.add(j, strSplit[i]);
+						break;
+					}
+				}
+				
+				if( !isInsert )
+				{
+					list.add(strSplit[i]);
+				}
+			}
+			
+			String result = "";
+			for( int i = 0; i < list.size(); i++ )
+			{
+				if( i > 0 )
+				{
+					result += ",";
+				}
+				result += list.get(i);
+			}
+			
+			return	result;
 		}
 	}
 }
