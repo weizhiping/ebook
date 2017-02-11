@@ -128,6 +128,7 @@ public class TTSUtils
 	{
 		if(mTtsUtils != null)
 		{
+			mTtsUtils.destroy();
 		}
 	}
 

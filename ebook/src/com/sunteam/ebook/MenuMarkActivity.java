@@ -2,16 +2,20 @@ package com.sunteam.ebook;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.common.utils.ConfirmDialog;
 import com.sunteam.common.utils.dialog.ConfirmListener;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.db.DatabaseManager;
 import com.sunteam.ebook.entity.FileInfo;
@@ -155,18 +159,48 @@ public class MenuMarkActivity extends Activity implements OnEnterListener {
 			
 			@Override
 			public void doConfirm() {
-				manager.deleteMarkFile(fileInfo, true);
-				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.ebook_dialog_clear_su),true);
+				/*manager.deleteMarkFile(fileInfo, true);
+				PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.ebook_dialog_clear_su),true);*/
+				mHandle.sendEmptyMessage(0);
 			}
 			
 			@Override
 			public void doCancel() {
-				if( mMainView != null ){
+				/*if( mMainView != null ){
 		    		mMainView.onResume();
-		    	}
+		    	}*/
+				mHandle.sendEmptyMessage(1);
 			}
 		});
 		mConfirmDialog.show();
 
 	}
+
+	private void doConfirmPositive() {
+		manager.deleteMarkFile(fileInfo, true);
+		PublicUtils.showToast(MenuMarkActivity.this, getString(R.string.ebook_dialog_clear_su),true);
+	}
+
+	private void doConfirmNegative() {
+		if( mMainView != null ){
+    		mMainView.onResume();
+    	}
+	}
+
+	@SuppressLint("HandlerLeak")
+	Handler mHandle = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0: // 确认
+				doConfirmPositive();
+				break;
+			case 1: // 否
+				doConfirmNegative();
+				break;
+			default:
+				break;
+			}
+		}
+	};
 }

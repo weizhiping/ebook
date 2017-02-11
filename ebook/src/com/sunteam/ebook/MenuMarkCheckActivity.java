@@ -2,9 +2,12 @@ package com.sunteam.ebook;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -120,7 +123,7 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 			
 			@Override
 			public void doConfirm() {
-				FileInfo info = fileInfos.get(position);
+				/*FileInfo info = fileInfos.get(position);
 				manager.deleteMarkFile(info,false);
 				final boolean islast = position == (mMenuList.size() - 1)?true:false;
 				mMenuList.remove(position);
@@ -142,17 +145,68 @@ public class MenuMarkCheckActivity extends Activity implements OnEnterListener {
 						}
 						
 					}
-				});
+				});*/
+				mHandle.sendEmptyMessage(0);
 			}
 			
 			@Override
 			public void doCancel() {
-				if( mMainView != null ){
+				/*if( mMainView != null ){
 		    		mMainView.onResume();
-		    	}
+		    	}*/
+				mHandle.sendEmptyMessage(1);
 			}
 		});
 		mConfirmDialog.show();
 
 	}
+
+	private void doConfirmPositive() {
+		FileInfo info = fileInfos.get(position);
+		manager.deleteMarkFile(info,false);
+		final boolean islast = position == (mMenuList.size() - 1)?true:false;
+		mMenuList.remove(position);
+		mMainView.updateAdapter();
+		fileInfos.remove(position);
+		PublicUtils.showToast(MenuMarkCheckActivity.this, getString(R.string.ebook_dialog_delete_su),new PromptListener() {
+			
+			@Override
+			public void onComplete() {
+				if(0 == mMenuList.size()){
+					PublicUtils.showToast(MenuMarkCheckActivity.this, getResources().getString(R.string.ebook_menu_mark_null),true);
+				}else{
+					if( mMainView != null ){
+						if(islast){
+							mMainView.setSelection(0);
+						}
+			    		mMainView.onResume();
+			    	}
+				}
+				
+			}
+		});
+	}
+
+	private void doConfirmNegative() {
+		if( mMainView != null ){
+    		mMainView.onResume();
+    	}
+	}
+
+	@SuppressLint("HandlerLeak")
+	Handler mHandle = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0: // 确认
+				doConfirmPositive();
+				break;
+			case 1: // 否
+				doConfirmNegative();
+				break;
+			default:
+				break;
+			}
+		}
+	};
 }

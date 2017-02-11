@@ -2,9 +2,12 @@ package com.sunteam.ebook;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -128,7 +131,7 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 			
 			@Override
 			public void doConfirm() {
-				String content = getResources().getString(R.string.ebook_dialog_delete_su);
+				/*String content = getResources().getString(R.string.ebook_dialog_delete_su);
 				if(1 == item){
 					content = getResources().getString(R.string.ebook_dialog_clear_su);
 				}
@@ -139,17 +142,58 @@ public class MenuDatabaseActivity extends Activity implements OnEnterListener {
 						intent.putExtra("data_item", item);
 						setResult(RESULT_OK, intent);
 						finish();
-					}});
+					}});*/
+				mHandle.sendEmptyMessage(0);
 			}
 			
 			@Override
 			public void doCancel() {
-				if( mMainView != null ){
+				/*if( mMainView != null ){
 		    		mMainView.onResume();
-		    	}
+		    	}*/
+				mHandle.sendEmptyMessage(1);
 			}
 		});
 		mConfirmDialog.show();
 
 	}
+
+	private void doConfirmPositive() {
+		String content = getResources().getString(R.string.ebook_dialog_delete_su);
+		if (1 == item) {
+			content = getResources().getString(R.string.ebook_dialog_clear_su);
+		}
+		PublicUtils.showToast(MenuDatabaseActivity.this, content, new PromptListener() {
+			@Override
+			public void onComplete() {
+				Intent intent = new Intent();
+				intent.putExtra("data_item", item);
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+		});
+	}
+
+	private void doConfirmNegative() {
+		if( mMainView != null ){
+    		mMainView.onResume();
+    	}
+	}
+
+	@SuppressLint("HandlerLeak")
+	Handler mHandle = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0: // 确认
+				doConfirmPositive();
+				break;
+			case 1: // 否
+				doConfirmNegative();
+				break;
+			default:
+				break;
+			}
+		}
+	};
 }
