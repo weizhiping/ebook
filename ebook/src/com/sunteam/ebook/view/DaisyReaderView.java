@@ -1371,14 +1371,21 @@ import android.view.View;
 		 }
 		 else
 		 {
-			 File file = new File( node.audioFile );
-			 if( file.exists() )
+			 if( ( null == node ) || ( null == node.audioFile ) )
 			 {
-				 MediaPlayerUtils.getInstance().play(node.audioFile, node.startTime, node.endTime);
+				 TTSUtils.getInstance().speakTips(mContext.getResources().getString(R.string.ebook_audio_file_is_null));
 			 }
 			 else
 			 {
-				 TTSUtils.getInstance().speakTips(mContext.getResources().getString(R.string.ebook_audio_file_is_null));
+				 File file = new File( node.audioFile );
+				 if( file.exists() )
+				 {
+					 MediaPlayerUtils.getInstance().play(node.audioFile, node.startTime, node.endTime);
+				 }
+				 else
+				 {
+					 TTSUtils.getInstance().speakTips(mContext.getResources().getString(R.string.ebook_audio_file_is_null));
+				 }
 			 }
 		 }
 	 }
