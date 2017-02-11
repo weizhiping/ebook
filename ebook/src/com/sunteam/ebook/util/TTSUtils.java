@@ -426,14 +426,14 @@ public class TTSUtils
 	//测试语速
 	public void testSpeed( int speed, final String text )
 	{
-		speakTest( text, SpeechConstant.SPEED, (speed*5)+"" );
+		speakTest( text, SpeechConstant.SPEED, (speed*10)+"" );
 	}
 		
 	//设置语速
 	public void setSpeed( Context context, int speed, PromptListener listener )
 	{
 		Editor editor = mSharedPreferences.edit();
-		editor.putString( SpeechConstant.SPEED, (speed*5)+"" );
+		editor.putString( SpeechConstant.SPEED, (speed*10)+"" );
 		editor.commit();
 		
 		PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
@@ -443,7 +443,7 @@ public class TTSUtils
 	public int getSpeed()
 	{
 		String speed = mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED);
-		return	Integer.parseInt(speed)/5;
+		return	Integer.parseInt(speed)/10;
 	}
 	
 	//测试语调
