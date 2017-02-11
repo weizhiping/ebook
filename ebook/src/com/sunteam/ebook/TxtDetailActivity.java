@@ -59,6 +59,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	private BookmarkInfo mBookmarkInfo = null;//书签信息
 	private UpdateRemFileReceiver fileReceiver;//更新路径记忆实体类广播
 	private boolean isToBookStart = false;	//是否是自动跳到文件开头播放
+	private boolean isLock = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +150,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onResume() {
+		isLock = false;
 		if (isResume) {
 			if (mMainView != null) {
 				mMainView.onResume();
@@ -174,6 +176,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			finish();
 		}
 
 		super.onResume();
@@ -219,6 +222,11 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
+		if( isLock )
+		{
+			return;
+		}
+		isLock = true;
 		TtsUtils.getInstance().stop();
 		if (flag == 0) {
 			String path;
@@ -251,6 +259,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 				});
 			}
+			isLock = false;
 			return;
 		}
 		// 进入到selectItem对应的界面

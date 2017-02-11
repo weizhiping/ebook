@@ -32,6 +32,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	private FileInfo remberFile;
 	private UpdateRemFileReceiver fileReceiver;
 	private DatabaseManager manager;
+	private boolean isLock = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class TxtActivity extends Activity implements OnEnterListener {
     @Override
     public void onResume()
     {
+    	isLock = false;
     	if( mMainView != null )
     	{
     		mMainView.onResume();
@@ -113,6 +115,11 @@ public class TxtActivity extends Activity implements OnEnterListener {
 	@Override
 	public void onEnterCompleted(int selectItem, String menu, boolean isAuto) {
 		// TODO Auto-generated method stub
+		if( isLock )
+		{
+			return;
+		}
+		isLock = true;
 		TtsUtils.getInstance().stop();
 		String name = menu;
 		Intent intent = new Intent(this, TxtDetailActivity.class);
