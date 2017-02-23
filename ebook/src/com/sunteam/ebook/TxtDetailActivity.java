@@ -459,6 +459,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		isLock = false;
 		if (RESULT_OK == resultCode) {
 			switch (requestCode) {
 			case EbookConstants.REQUEST_CODE: // 阅读器返回

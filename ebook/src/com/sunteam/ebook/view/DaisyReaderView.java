@@ -645,7 +645,14 @@ import android.view.View;
 			 }
 		 }
 		 
-		 mCurPage = pi.page;
+		 if( pi != null )
+		 {
+			 mCurPage = pi.page;
+		 }
+		 else
+		 {
+			 mCurPage = 1;
+		 }
 	 }
 	 
 	 //得到当前页

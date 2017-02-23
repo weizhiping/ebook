@@ -127,6 +127,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 							intent2.putExtra("bookmark", mBookmarkInfo);
 							startActivityForResult(intent2,
 									EbookConstants.REQUEST_CODE);
+							mBookmarkInfo = null;
 							return;
 						}
 						
@@ -329,7 +330,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 						intent.putExtra("bookmark", mBookmarkInfo);
 					}
 					startActivityForResult(intent, EbookConstants.REQUEST_CODE);
-					
+					mBookmarkInfo = null;
 					return;
 				}	//有些父节点本身没有句子，则需要进入子节点列表。
 			}
@@ -346,6 +347,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("bookmark", mBookmarkInfo);
 			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+			mBookmarkInfo = null;
 		} else {
 			Intent intent = new Intent(this, DaisyDetailActivity.class);
 			intent.putExtra("name", menu);
@@ -362,6 +364,7 @@ public class DaisyDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("bookmark", mBookmarkInfo);
 			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+			mBookmarkInfo = null;
 		}
 	}
 
