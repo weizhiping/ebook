@@ -318,6 +318,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("bookmark", mBookmarkInfo);
 			}
 			startActivityForResult(intent, EbookConstants.REQUEST_CODE);
+			mBookmarkInfo = null;
 		}
 	}
 
