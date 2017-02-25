@@ -110,6 +110,35 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	
     	registerReceiver();
     	
+    	if( this.getIntent().getBooleanExtra("isException", false) )	//如果文件异常
+    	{
+    		TTSUtils.getInstance().stop();
+			TTSUtils.getInstance().OnTTSListener(null);
+			PublicUtils.showToast( this, this.getString(R.string.ebook_word_parse_fail), new PromptListener() {
+				@Override
+				public void onComplete() 
+				{
+					// TODO Auto-generated method stub
+					
+					if( ( fileInfo.item+1 < fileInfoList.size() ) && !fileInfoList.get(fileInfo.item+1).isFolder )	//还有下一本书需要朗读
+					{
+						RefreshScreenUtils.disableRefreshScreen();
+						isFinish = true;
+						Intent intent = new Intent();
+	        			intent.putExtra("next", EbookConstants.TO_NEXT_BOOK);
+	        			setResult(RESULT_OK, intent);
+	        			back(false);
+					}
+					else
+					{
+						back(true);
+					}
+				}
+			});
+			
+			return;
+    	}
+    	
     	if (0 == fileInfo.count) // 文件为空
 		{
     		TTSUtils.getInstance().stop();

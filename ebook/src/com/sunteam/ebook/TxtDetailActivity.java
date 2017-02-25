@@ -283,7 +283,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						|| name.equalsIgnoreCase(EbookConstants.BOOK_WORDX)) {
 					new WordAsyncTask(isAuto).execute(fileInfo);
 				} else {
-					showFiles(fileInfo, fileInfo.path, isAuto);
+					showFiles(fileInfo, fileInfo.path, isAuto, false);
 				}
 			}
 		} else if (fileInfo.hasDaisy == 1) {
@@ -324,9 +324,8 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 	}
 
 	// 显示文件内容
-	private void showFiles(FileInfo fileInfo, final String fullpath,
-			boolean isAuto) {
-		new InitTxtAsyncAccessTask(fileInfo, fullpath, isAuto)
+	private void showFiles(FileInfo fileInfo, final String fullpath, boolean isAuto, boolean isException) {
+		new InitTxtAsyncAccessTask(fileInfo, fullpath, isAuto, isException)
 				.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
@@ -439,8 +438,10 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 
 			PublicUtils.cancelProgress();
 			if (!TextUtils.isEmpty(result)) {
-				showFiles(fileInfo, result, isAuto);
+				showFiles(fileInfo, result, isAuto, false);
 			} else {
+				showFiles(fileInfo, WordParseUtils.getHideTxtFilePath(fileInfo.path), isAuto, true);
+				/*
 				String tips = TxtDetailActivity.this
 						.getString(R.string.ebook_word_parse_fail);
 				PublicUtils.showToast(TxtDetailActivity.this, tips,
@@ -456,6 +457,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 							}
 
 						});
+				*/
 			}
 		}
 	}
@@ -573,12 +575,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 		private FileInfo fileInfo;
 		private String fullpath;
 		private boolean isAuto;
+		private boolean isException;
 
-		public InitTxtAsyncAccessTask(FileInfo fileInfo, final String fullpath,
-				boolean isAuto) {
+		public InitTxtAsyncAccessTask(FileInfo fileInfo, final String fullpath, boolean isAuto, boolean isException) {
 			this.fileInfo = fileInfo;
 			this.fullpath = fullpath;
 			this.isAuto = isAuto;
+			this.isException = isException;
 		}
 
 		@Override
@@ -641,6 +644,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 				intent.putExtra("file", fileInfo);
 				intent.putExtra("file_list", fileInfoList);
 				intent.putExtra("isAuto", isAuto);
+				intent.putExtra("isException", isException);
 				startActivityForResult(intent, EbookConstants.REQUEST_CODE);
 				// manager.insertBookToDb(fileInfo, 2);
 			} else {

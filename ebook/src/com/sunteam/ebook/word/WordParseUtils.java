@@ -27,7 +27,7 @@ import android.util.Xml;
 public class WordParseUtils 
 {
 	//得到隐藏txt临时文件路径
-	private static String getHideTxtFilePath( String path )
+	public static String getHideTxtFilePath( String path )
 	{
 		String fullpath = "";
 		
