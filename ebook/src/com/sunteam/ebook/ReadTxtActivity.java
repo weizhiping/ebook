@@ -109,7 +109,6 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
     	//mTextReaderView.setTextSize(tools.getFontSize());
     	
     	registerReceiver();
-    	playMusic();
     	
     	if (0 == fileInfo.count) // 文件为空
 		{
@@ -227,6 +226,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			mTextReaderView.readPage();		//朗读页码
 		}
 		isReadPage = true;
+		playMusic();
 	}
 	
 	@Override
@@ -298,6 +298,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
 				return	true;
 			case KeyEvent.KEYCODE_MENU:
+				MediaPlayerUtils.getInstance().stop();
 				fileInfo.line = mTextReaderView.getLineNumber();
 				fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;
 				fileInfo.len = mTextReaderView.getReverseInfo().len;
@@ -468,10 +469,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 					mTextReaderView.setCurPage(curPage);
 					break;
 				case 1://背景音乐开关
-					playMusic();
 					break;
 				case 2://背景音乐选择
-					playMusic();
 					break;
 				case 3:
 					isReadPage = false;
