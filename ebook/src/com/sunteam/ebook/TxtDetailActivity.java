@@ -254,12 +254,13 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 						// TODO 自动生成的方法存根
 						if (mMainView != null) {
 							mMainView.onResume();
+							isLock = false;
 						} // 播放一下当前的title和item
 					}
 
 				});
 			}
-			isLock = false;
+			
 			return;
 		}
 		// 进入到selectItem对应的界面
@@ -450,6 +451,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 								// TODO Auto-generated method stub
 								if (mMainView != null) {
 									mMainView.onResume();
+									isLock = false;
 								}
 							}
 
@@ -614,6 +616,7 @@ public class TxtDetailActivity extends Activity implements OnEnterListener {
 								// TODO 自动生成的方法存根
 								if (mMainView != null) {
 									mMainView.onResume();
+									isLock = false;
 								}
 							}
 						});
