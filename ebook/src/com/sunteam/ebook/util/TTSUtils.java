@@ -597,7 +597,7 @@ public class TTSUtils
 		// 设置合成音量; 使用语记中的默认音量即可
 		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME));
 
-		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_MUSIC); // 为何不是TTS类型?
+		mTtsUtils.setParameter(SpeechConstant.STREAM_TYPE, ""+android.media.AudioManager.STREAM_VOICE_CALL); // 为何不是TTS类型?
 
 		// mTtsUtils.setParameter(SpeechConstant.KEY_REQUEST_FOCUS, "false"); // 设置播放合成音频打断音乐播放，默认为true;
 		
