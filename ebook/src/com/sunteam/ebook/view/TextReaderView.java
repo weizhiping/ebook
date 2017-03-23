@@ -1905,9 +1905,17 @@ import android.view.View;
 	 {
 		 TTSUtils.getInstance().stop();
 		 
+		 ReadMode rm = getReadMode();	//保存旧的朗读模式
 		 setReadMode(ReadMode.READ_MODE_CHARACTER);
 		 
-		 ReverseInfo ri = getNextReverseCharacterInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 int start = mReverseInfo.startPos;
+		 
+		 if( ReadMode.READ_MODE_CHARACTER == rm )
+		 {
+			 start += mReverseInfo.len;
+		 }	//如果是从其他朗读模式切换到逐字模式，则从句首开始，如果以前的朗读模式就是逐字模式，则从反显结束开始。
+		 
+		 ReverseInfo ri = getNextReverseCharacterInfo( start );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
@@ -2097,9 +2105,16 @@ import android.view.View;
 	 {
 		 TTSUtils.getInstance().stop();
 		 
+		 ReadMode rm = getReadMode();	//保存旧的朗读模式
 		 setReadMode(ReadMode.READ_MODE_WORD);
 		 
-		 ReverseInfo ri = getNextReverseWordInfo( mReverseInfo.startPos+mReverseInfo.len );
+		 int start = mReverseInfo.startPos;
+		 if( ReadMode.READ_MODE_WORD == rm )
+		 {
+			 start += mReverseInfo.len;
+		 }	//如果是从其他朗读模式切换到逐词模式，则从句首开始，如果以前的朗读模式就是逐词模式，则从反显结束开始。
+		 
+		 ReverseInfo ri = getNextReverseWordInfo( start );
 		 if( null == ri )
 		 {
 			 if( mOnPageFlingListener != null )
