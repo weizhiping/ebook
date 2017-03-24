@@ -81,7 +81,7 @@ public class MenuNumEditActivity extends Activity {
 		if(2 == flage){
 			musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
 			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_ALARM );
-			number = (int)(currentMusic/1.5);
+			number = (int)(currentMusic/*/1.5*/);
 			playMusic();
 		}
 		numView.setText(number + "");
@@ -124,10 +124,10 @@ public class MenuNumEditActivity extends Activity {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:// 返回
 			if(2 == flage){
-				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
-				if(!isMusic){
+				//boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
+				//if(!isMusic){
 					MediaPlayerUtils.getInstance().stop();
-				}
+				//}
 				mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume, 1);
 			}
 			return super.onKeyDown(keyCode, event);
@@ -164,7 +164,7 @@ public class MenuNumEditActivity extends Activity {
 					
 				});
 			}else if(2 == flage){
-				int volume = (int)(number * 1.5);
+				int volume = (int)(number/* * 1.5*/);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
 				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
 				if(!isMusic){
@@ -188,7 +188,7 @@ public class MenuNumEditActivity extends Activity {
 			TTSUtils.getInstance().testPitch(number,number+"");
 		}else{
 			TTSUtils.getInstance().speakMenu(number +"");
-			int volume = (int)(number * 1.5);
+			int volume = (int)(number/* * 1.5*/);
 			mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
 		}
 		return super.onKeyDown(keyCode, event);

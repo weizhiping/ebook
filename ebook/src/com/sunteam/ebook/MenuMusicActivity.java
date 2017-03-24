@@ -93,7 +93,7 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 		case 2:
 			Intent intent = new Intent(this,MenuNumEditActivity.class);
 			intent.putExtra("edit_name", title);
-			intent.putExtra("edit_max", 10);
+			intent.putExtra("edit_max", 7);
 			intent.putExtra("edit_flage", 2);
 			startActivity(intent);
 			break;
