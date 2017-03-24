@@ -48,7 +48,7 @@ public class MenuNumEditActivity extends Activity {
 		setContentView(R.layout.ebook_activity_num_edit);
 		ScreenManager.getScreenManager().pushActivity(this);
 		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
 		initViews();
 	}
 
@@ -80,7 +80,7 @@ public class MenuNumEditActivity extends Activity {
 		
 		if(2 == flage){
 			musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
-			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_MUSIC );
+			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_ALARM );
 			number = (int)(currentMusic/1.5);
 			playMusic();
 		}
@@ -128,7 +128,7 @@ public class MenuNumEditActivity extends Activity {
 				if(!isMusic){
 					MediaPlayerUtils.getInstance().stop();
 				}
-				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 1);
+				mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume, 1);
 			}
 			return super.onKeyDown(keyCode, event);
 		case KeyEvent.KEYCODE_DPAD_UP: // 上
@@ -165,7 +165,7 @@ public class MenuNumEditActivity extends Activity {
 				});
 			}else if(2 == flage){
 				int volume = (int)(number * 1.5);
-				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
+				mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
 				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
 				if(!isMusic){
 					MediaPlayerUtils.getInstance().stop();
@@ -189,7 +189,7 @@ public class MenuNumEditActivity extends Activity {
 		}else{
 			TTSUtils.getInstance().speakMenu(number +"");
 			int volume = (int)(number * 1.5);
-			mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 1);
+			mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
