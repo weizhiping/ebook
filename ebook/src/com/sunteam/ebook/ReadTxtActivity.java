@@ -61,6 +61,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private boolean isAuto = false;//是否自动阅读
 	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
+	private boolean isEntryMenu = false;	//是否进入了功能菜单。
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -256,6 +257,12 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		}
 		isReadPage = true;
 		playMusic();
+		
+		if( isEntryMenu )
+		{
+			isEntryMenu = false;		//是否进入了功能菜单。
+			mTextReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+		}
 	}
 	
 	@Override
@@ -327,6 +334,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
 				return	true;
 			case KeyEvent.KEYCODE_MENU:
+				isEntryMenu = true;	//是否进入了功能菜单。
 				MediaPlayerUtils.getInstance().stop();
 				fileInfo.line = mTextReaderView.getLineNumber();
 				fileInfo.startPos = mTextReaderView.getReverseInfo().startPos;

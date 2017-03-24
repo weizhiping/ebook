@@ -61,6 +61,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private SharedPreferences shared;
 	private BookmarkInfo mBookmarkInfo = null;
 	private boolean isAuto = false;	//是否是自动朗读
+	private boolean isEntryMenu = false;	//是否进入了功能菜单。
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +197,12 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 			mDaisyReaderView.readPage();		//朗读页码
 		}
 		isReadPage = true;
+		
+		if( isEntryMenu )
+		{
+			isEntryMenu = false;		//是否进入了功能菜单。
+			mDaisyReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+		}
 	}
 	
 	@Override
@@ -223,6 +230,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 //				insertToDb();
 //				break;
 			case KeyEvent.KEYCODE_MENU:
+				isEntryMenu = true;	//是否进入了功能菜单。
 				MediaPlayerUtils.getInstance().pause();		//暂停播放
 				
 				fileInfo.line = mDaisyReaderView.getLineNumber();
