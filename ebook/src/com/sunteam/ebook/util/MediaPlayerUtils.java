@@ -266,6 +266,7 @@ public class MediaPlayerUtils
 			try 
 			{
 				mMediaPlayer.reset();
+				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
 				mMediaPlayer.setLooping(true);
