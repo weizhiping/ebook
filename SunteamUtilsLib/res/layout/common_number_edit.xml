@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- 在语速语调设置中，所有文字字号统一用大字号: 40px -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/common_number_edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textSize="@dimen/text_big_size" />
+
+        <View
+            android:id="@+id/common_number_edit_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_gravity="bottom"
+            android:background="@android:color/black" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/common_number_edit_digit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textSize="@dimen/text_big_size" />
+
+</LinearLayout>

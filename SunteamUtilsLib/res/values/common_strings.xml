@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="all">
+
+    <string name="speech_app_id" tools:ignore="MissingTranslation">577ddcf7</string>
+
+    <string-array name="langtype_list" tools:ignore="MissingTranslation">
+        <item>zh_cn</item>
+        <item>zh_big5</item>
+        <item>en_us</item>
+    </string-array>
+
+</resources>

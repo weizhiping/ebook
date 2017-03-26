@@ -13,6 +13,8 @@ interface SunteamTtsManage {
 	void stop();
 	boolean getState();
 	void setState(boolean state);
+	int getSunteamParameter();
+	void setSunteamParameter(int value);
 
 	// 用来注册回调的对象
 	void registerCallback(TtsServiceCallback cb);
