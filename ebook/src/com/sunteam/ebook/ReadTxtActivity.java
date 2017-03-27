@@ -255,14 +255,18 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		{
 			mTextReaderView.readPage();		//朗读页码
 		}
-		isReadPage = true;
-		playMusic();
-		
 		if( isEntryMenu )
 		{
 			isEntryMenu = false;		//是否进入了功能菜单。
-			mTextReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+			if( isReadPage )
+			{
+				mTextReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+			}
 		}
+		
+		isReadPage = true;
+		playMusic();
+		
 	}
 	
 	@Override

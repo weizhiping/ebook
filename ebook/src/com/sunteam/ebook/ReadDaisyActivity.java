@@ -194,15 +194,17 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		super.onResume();
 		if( isReadPage )
 		{
-			mDaisyReaderView.readPage();		//朗读页码
+			mDaisyReaderView.readPage();	//朗读页码
 		}
-		isReadPage = true;
-		
 		if( isEntryMenu )
 		{
-			isEntryMenu = false;		//是否进入了功能菜单。
-			mDaisyReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+			isEntryMenu = false;			//是否进入了功能菜单。
+			if( isReadPage )
+			{
+				mDaisyReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+			}
 		}
+		isReadPage = true;
 	}
 	
 	@Override
