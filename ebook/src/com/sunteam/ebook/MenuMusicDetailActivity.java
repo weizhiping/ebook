@@ -38,6 +38,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 	private int flag;// 0开关 1 音乐选择
 	private SharedPreferences shared;
 	private int musicPosition = 0;
+	private int selectItem = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,11 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		fileList = new ArrayList<FileInfo>();
 		mMenuList = new ArrayList<String>();
 		initViews();
-		MediaPlayerUtils.getInstance().stop();
+		if(1 == flag){
+			MediaPlayerUtils.getInstance().stop();
+			selectItem = mMainView.getSelectItem();
+			MediaPlayerUtils.getInstance().play(fileList.get(selectItem).path);
+		}
 	}
 
 	private void initViews() {
@@ -176,9 +181,13 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 	@Override
 	public void onCompleted() {
 		if(1 == flag){
-			MediaPlayerUtils.getInstance().stop();
 			int position = mMainView.getSelectItem();
-			MediaPlayerUtils.getInstance().play(fileList.get(position).path);
+			if( selectItem != position )
+			{
+				selectItem = position;
+				MediaPlayerUtils.getInstance().stop();
+				MediaPlayerUtils.getInstance().play(fileList.get(selectItem).path);
+			}
 		}
 	}
 }
