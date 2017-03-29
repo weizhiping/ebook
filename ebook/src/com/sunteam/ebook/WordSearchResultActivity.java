@@ -34,6 +34,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	private TextReaderView mTextReaderView = null;
 	private String word = null;
 	private String explain = null;
+	private boolean isFinish;//是否读完
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,8 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
 	{
+		isFinish = false;
+		mTextReaderView.setIsPlayParagraph(!isFinish, false);
 		switch( keyCode )
 		{
 			case KeyEvent.KEYCODE_DPAD_UP:		//上
@@ -130,11 +133,17 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				return	true;
 			case KeyEvent.KEYCODE_1:
 			case KeyEvent.KEYCODE_NUMPAD_1:		//开始选词
-				mTextReaderView.startSelect();
+				if( mTextReaderView.startSelect() )
+				{
+					PublicUtils.showToast(this, this.getString(R.string.ebook_select_start));
+				}
 				return	true;
 			case KeyEvent.KEYCODE_3:
 			case KeyEvent.KEYCODE_NUMPAD_3:		//结束选词
-				mTextReaderView.endSelect();
+				if( mTextReaderView.endSelect() )
+				{
+					PublicUtils.showToast(this, this.getString(R.string.ebook_select_end));
+				}
 				return	true;
 			case KeyEvent.KEYCODE_0:
 			case KeyEvent.KEYCODE_NUMPAD_0:		//百科查询
@@ -155,6 +164,25 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 		return super.onKeyDown(keyCode, event);
 	}
 	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) 
+	{
+		switch( keyCode )
+		{
+			case KeyEvent.KEYCODE_2:
+			case KeyEvent.KEYCODE_NUMPAD_2:		//朗读上一个段落
+				mTextReaderView.setIsPlayParagraph(!isFinish, true);
+				return	true;
+			case KeyEvent.KEYCODE_8:
+			case KeyEvent.KEYCODE_NUMPAD_8:		//朗读下一个段落
+				mTextReaderView.setIsPlayParagraph(!isFinish, true);
+				return	true;
+			default:
+				break;
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+		
 	private void saveWord()
 	{
 		String filePath = null;
@@ -207,6 +235,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	public void onPageFlingToTop() 
 	{
 		// TODO Auto-generated method stub
+		isFinish = true;
 		String tips = this.getString(R.string.ebook_to_top);
 		PublicUtils.showToast(this, tips);
 	}
@@ -215,6 +244,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	public void onPageFlingToBottom( boolean isContinue ) 
 	{
 		// TODO Auto-generated method stub
+		isFinish = true;
 		String tips = this.getString(R.string.ebook_to_bottom);
 		PublicUtils.showToast(this, tips);
 	}
