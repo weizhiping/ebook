@@ -614,6 +614,11 @@ import android.view.View;
 			 e.printStackTrace();
 		 }
 		 
+		 if( 0x0a == mMbBuf[mOffset] )
+		 {
+			 mOffset++;
+		 }	//去掉一开始的空格。
+		 
 		 mMbBufLen = getEffectiveLength(mMbBuf);
 		 if( mMbBufLen-mOffset <= 0 )
 		 {
