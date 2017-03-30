@@ -35,6 +35,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	private TextReaderView mTextReaderView = null;
 	private String word = null;
 	private String explain = null;
+	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
 	
 	@Override
@@ -79,6 +80,17 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     		PublicUtils.showToast(this, this.getString(R.string.ebook_checksum_error));
     		back();
     	}
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if( isReadPage )
+		{
+			mTextReaderView.readPage();		//朗读页码
+		}
+		isReadPage = true;
 	}
 	
 	@Override
