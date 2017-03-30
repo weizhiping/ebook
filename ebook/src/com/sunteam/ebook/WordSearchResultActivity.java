@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.sunteam.common.utils.Tools;
+import com.sunteam.common.utils.dialog.PromptListener;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
@@ -213,7 +214,13 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				saveFile.createNewFile();
 				*/
 				
-				PublicUtils.showToast( this, this.getString(R.string.ebook_file_already_exist) );
+				PublicUtils.showToast( this, this.getString(R.string.ebook_file_already_exist), new PromptListener() 
+				{
+					public void onComplete() 
+					{
+						mTextReaderView.enter();	//需要恢复全文朗读
+					}
+				});
 				
 				return;	//如果已经存在，提示即可
 			}
@@ -222,12 +229,24 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 			outStream.write(explain.getBytes());
 			outStream.close();
 			
-			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_success) );
+			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_success), new PromptListener() 
+			{
+				public void onComplete() 
+				{
+					mTextReaderView.enter();	//需要恢复全文朗读
+				}
+			});
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_fail) );
+			PublicUtils.showToast( this, this.getString(R.string.ebook_save_newword_fail), new PromptListener() 
+			{
+				public void onComplete() 
+				{
+					mTextReaderView.enter();	//需要恢复全文朗读
+				}
+			});
 		}
 	}
 	

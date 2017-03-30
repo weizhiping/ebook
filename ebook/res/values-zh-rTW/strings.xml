@@ -56,7 +56,7 @@
 	<string name="ebook_has_finished_reading_the_last_book">已经读完最后一本书</string>
 	<string name="ebook_select_start">选定起点</string>
 	<string name="ebook_select_end">选定终点</string>
-	<string name="ebook_file_already_exist">文件已存在</string>
+	<string name="ebook_file_already_exist">添加生词本失败，文件已存在。</string>
 	<string name="ebook_save_newword_success">成功保存到生词本</string>
 	<string name="ebook_save_newword_fail">保存到生词本失败</string>
 	<string name="ebook_open_file_fail">文件已损坏！</string>
