@@ -12,6 +12,9 @@ import com.sunteam.ebook.entity.ReadMode;
 import com.sunteam.ebook.entity.ReverseInfo;
 import com.sunteam.ebook.entity.SplitInfo;
 import com.sunteam.ebook.util.CodeTableUtils;
+import com.sunteam.ebook.util.EbookConstants;
+import com.sunteam.ebook.util.MediaPlayerUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.util.TTSUtils.OnTTSListener;
@@ -19,6 +22,7 @@ import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.util.WordExplainUtils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -1652,16 +1656,27 @@ import android.view.View;
 	 //确定
 	 public void enter()
 	 {
+		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
+		 boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
 		 
 		 if( status == SpeakStatus.SPEAK )
 		 {
 			 TTSUtils.getInstance().pause();
+			 if( isMusic )
+			 {
+				 MediaPlayerUtils.getInstance().pause();
+			 }
 		 }
 		 else if( status == SpeakStatus.PAUSE )
 		 {
 			 TTSUtils.getInstance().resume();
+			 if( isMusic )
+			 {
+				 MediaPlayerUtils.getInstance().resume();
+			 }
 		 }
 		 else if( status == SpeakStatus.STOP )
 		 {
@@ -1672,14 +1687,25 @@ import android.view.View;
 	 //精读
 	 public void intensiveReading()
 	 {
+		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
+		 boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		 
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();	//当前朗读状态
 		 if( SpeakStatus.SPEAK == status )	//如果当前正在朗读
 		 {
 			 TTSUtils.getInstance().pause();
+			 if( isMusic )
+			 {
+				 MediaPlayerUtils.getInstance().pause();
+			 }
 		 }
 		 else if( status == SpeakStatus.PAUSE )
 		 {
 			 TTSUtils.getInstance().resume();
+			 if( isMusic )
+			 {
+				 MediaPlayerUtils.getInstance().resume();
+			 }
 		 }
 		 else if( status == SpeakStatus.STOP )
 		 {
@@ -3505,6 +3531,31 @@ import android.view.View;
 		mPercent = 0;
 		mSpeakText = text;
 		TTSUtils.getInstance().speakContent(text);
+		SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
+		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		if( isMusic )
+		{
+			PlayStatus status = MediaPlayerUtils.getInstance().getPlayStatus();
+			switch( status )
+			{
+				case PLAY:
+					break;
+				case PAUSE:
+					MediaPlayerUtils.getInstance().resume();
+					break;
+				case STOP:
+					{
+						String audioPath = shared.getString(EbookConstants.MUSICE_PATH, null);
+						if( ( audioPath != null ) && !TextUtils.isEmpty(audioPath) )
+						{
+							MediaPlayerUtils.getInstance().play(audioPath);
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
     }
 	
 	/**
