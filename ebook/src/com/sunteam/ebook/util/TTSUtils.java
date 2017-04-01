@@ -1,5 +1,7 @@
 package com.sunteam.ebook.util;
 
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,10 +23,11 @@ import com.sunteam.ebook.R;
 public class TTSUtils
 {
     private static final String TAG = "TTSUtils";
+    private static final String ROLE_CN = "VOICE_CN";
 	private static final String ROLE_EN = "VOICE_EN";
 
     private static final String DEFAULT_ROLE_CN = "xiaofeng";	//默认中文发音人
-    private static final String DEFAULT_ROLE_EN = "catherine";	//默认英文发音人
+    private static final String DEFAULT_ROLE_EN = "john";		//默认英文发音人
     private static final String DEFAULT_SPEED = "65";	//默认语速
     private static final String DEFAULT_TONE = "65";	//默认语调
     private static final String DEFAULT_VOLUME = "80";	//默认音量
@@ -269,7 +272,7 @@ public class TTSUtils
 		{
 			if( ttsRoleCn[i].equals(role) )
 			{
-				speakTest( text, SpeechConstant.VOICE_NAME, mRoleCn[i] ); // 暂时未区分中文发音人和英文发音人
+				speakTest( text, ROLE_CN, mRoleCn[i] ); // 暂时未区分中文发音人和英文发音人
 				
 				return	true;
 			}
@@ -289,7 +292,7 @@ public class TTSUtils
 			if( ttsRoleCn[i].equals(role) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putString( SpeechConstant.VOICE_NAME, mRoleCn[i]+"" );
+				editor.putString( ROLE_CN, mRoleCn[i]+"" );
 				editor.commit();
 				
 				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
@@ -307,7 +310,7 @@ public class TTSUtils
 		Resources res = mContext.getResources();
 		String[] ttsRoleCn = res.getStringArray(R.array.ebook_array_menu_voice_china);
 		
-		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+"");
+		String role = mSharedPreferences.getString(ROLE_CN, DEFAULT_ROLE_CN+"");
 		for( int i = 0; i < mRoleCn.length; i++ )
 		{
 			if( role.equals(mRoleCn[i]+"") )
@@ -322,7 +325,7 @@ public class TTSUtils
 	//得到当前中文发音人序号
 	public int getCurRoleCnIndex()
 	{
-		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN+"");
+		String role = mSharedPreferences.getString(ROLE_CN, DEFAULT_ROLE_CN+"");
 		for( int i = 0; i < mRoleCn.length; i++ )
 		{
 			if( role.equals(mRoleCn[i]+"") )
@@ -351,7 +354,7 @@ public class TTSUtils
 		{
 			if( ttsRoleEn[i].equals(role) )
 			{
-				speakTest( text, SpeechConstant.VOICE_NAME, mRoleEn[i] );
+				speakTest( text, ROLE_EN, mRoleEn[i] );
 				
 				return	true;
 			}
@@ -371,7 +374,7 @@ public class TTSUtils
 			if( ttsRoleEn[i].equals(role) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putString( SpeechConstant.VOICE_NAME, mRoleEn[i]+"" );
+				editor.putString( ROLE_EN, mRoleEn[i]+"" );
 				editor.commit();
 				
 				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
@@ -389,7 +392,7 @@ public class TTSUtils
 		Resources res = mContext.getResources();
 		String[] ttsRoleEn = res.getStringArray(R.array.ebook_array_menu_voice_english);
 		
-		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_EN+"");
+		String role = mSharedPreferences.getString(ROLE_EN, DEFAULT_ROLE_EN+"");
 		for( int i = 0; i < mRoleEn.length; i++ )
 		{
 			if( role.equals(mRoleEn[i]+"") )
@@ -404,7 +407,7 @@ public class TTSUtils
 	//得到当前英文发音人序号
 	public int getCurRoleEnIndex()
 	{
-		String role = mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_EN+"");
+		String role = mSharedPreferences.getString(ROLE_EN, DEFAULT_ROLE_EN+"");
 		for( int i = 0; i < mRoleEn.length; i++ )
 		{
 			if( role.equals(mRoleEn[i]+"") )
@@ -582,11 +585,22 @@ public class TTSUtils
      * @return
      */
     private void setContentParam() 
-    {	
+    { 
     	mTtsUtils.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_LOCAL);
 
-		// 设置发音人
-    	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN));
+    	Locale locale = mContext.getResources().getConfiguration().locale;
+    	String language = locale.getLanguage();
+		 
+    	if( "en".equalsIgnoreCase(language) )	//英文
+    	{
+    		// 设置发音人
+        	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(ROLE_EN, DEFAULT_ROLE_EN));
+    	}
+    	else
+    	{
+    		// 设置发音人
+        	mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(ROLE_CN, DEFAULT_ROLE_CN));
+    	}
 
 		// 设置合成语速
     	mTtsUtils.setParameter(SpeechConstant.SPEED, mSharedPreferences.getString(SpeechConstant.SPEED, DEFAULT_SPEED));
@@ -629,12 +643,8 @@ public class TTSUtils
      * @return
      */
     private void setTestParam( String key, String value ) {
-		// TTS中文发音人参数
-		if (SpeechConstant.VOICE_NAME.equals(key)) {
-			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, value);
-		} else {
-			mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, mSharedPreferences.getString(SpeechConstant.VOICE_NAME, DEFAULT_ROLE_CN + ""));
-		}
+		// TTS发音人参数
+		mTtsUtils.setParameter(SpeechConstant.VOICE_NAME, value);
     	
     	// 设置合成语速
 		if (SpeechConstant.SPEED.equals(key)) {
