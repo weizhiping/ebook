@@ -6,8 +6,10 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import com.sunteam.ebook.entity.SplitInfo;
+import com.sunteam.ebook.word.WordParseUtils;
 
 import android.os.Environment;
+import android.os.MemoryFile;
 
 /**
  * 文本文件读取工具类。
@@ -22,6 +24,7 @@ public class TextFileReaderUtils
 	private String mStrCharsetName = "GB18030";		//编码格式，默认为GB18030
 	private int mMbBufLen = 0; 						//图书总长度
 	private ArrayList<SplitInfo> mSplitInfoList  = null;	//分段信息
+	private boolean isMemoryFile = false;				//是否是MemoryFile
 	private boolean isInsideSDPath = true;				//是否内部SD卡路径
 	
 	public static TextFileReaderUtils getInstance()
@@ -66,30 +69,54 @@ public class TextFileReaderUtils
 	//初始化
 	public void init( final String fullpath ) throws Exception
 	{
-		String insideSDPath = Environment.getExternalStorageDirectory().getPath();	//得到内置SD卡路径
-		if( ( fullpath != null ) && ( insideSDPath != null ) && ( fullpath.indexOf(insideSDPath) == 0 ) )
+		if( WordParseUtils.WORD_MEMORY_FILE.equals(fullpath) )
 		{
+			isMemoryFile = true;
 			isInsideSDPath = true;
+			
+			destroy();	//先清除上次保存的信息
+			
+			MemoryFile mf = WordParseUtils.getMemoryFile();
+			IdentifyEncoding ie = new IdentifyEncoding();
+			mStrCharsetName = ie.GetEncodingName( mf );	//得到文本编码
+			
+			long lLen = mf.length();
+			mMbBufLen = (int)lLen;
+			int begin = 0;
+			
+			while( begin >= 0 )
+			{
+				begin = paragraph( begin );
+			}	//得到分段信息
 		}
 		else
 		{
-			isInsideSDPath = false;
+			isMemoryFile = false;
+			String insideSDPath = Environment.getExternalStorageDirectory().getPath();	//得到内置SD卡路径
+			if( ( fullpath != null ) && ( insideSDPath != null ) && ( fullpath.indexOf(insideSDPath) == 0 ) )
+			{
+				isInsideSDPath = true;
+			}
+			else
+			{
+				isInsideSDPath = false;
+			}
+			destroy();	//先清除上次保存的信息
+			
+			IdentifyEncoding ie = new IdentifyEncoding();
+			mStrCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
+			
+			mBookFile = new File(fullpath);
+			mRandomAccessFile = new RandomAccessFile( mBookFile, "r");
+			long lLen = mBookFile.length();
+			mMbBufLen = (int)lLen;
+			int begin = 0;
+			
+			while( begin >= 0 )
+			{
+				begin = paragraph( begin );
+			}	//得到分段信息
 		}
-		destroy();	//先清除上次保存的信息
-		
-		IdentifyEncoding ie = new IdentifyEncoding();
-		mStrCharsetName = ie.GetEncodingName( fullpath );	//得到文本编码
-		
-		mBookFile = new File(fullpath);
-		mRandomAccessFile = new RandomAccessFile( mBookFile, "r");
-		long lLen = mBookFile.length();
-		mMbBufLen = (int)lLen;
-		int begin = 0;
-		
-		while( begin >= 0 )
-		{
-			begin = paragraph( begin );
-		}	//得到分段信息
 	}
 	
 	/**
@@ -111,14 +138,30 @@ public class TextFileReaderUtils
 		}
 		
 		byte[] buffer = new byte[mSplitInfoList.get(part).len];		//分段buf
-		try
+		
+		if( isMemoryFile )
 		{
-			mRandomAccessFile.seek(mSplitInfoList.get(part).startPos);	//先移动到开始位置
-			mRandomAccessFile.read( buffer, 0, mSplitInfoList.get(part).len );		//读入物理内存
+			MemoryFile mf = WordParseUtils.getMemoryFile();
+			try
+			{
+				mf.readBytes(buffer, mSplitInfoList.get(part).startPos, 0, mSplitInfoList.get(part).len);	//读入物理内存
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
-		catch( Exception e )
+		else
 		{
-			e.printStackTrace();
+			try
+			{
+				mRandomAccessFile.seek(mSplitInfoList.get(part).startPos);	//先移动到开始位置
+				mRandomAccessFile.read( buffer, 0, mSplitInfoList.get(part).len );		//读入物理内存
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		return	buffer;
@@ -156,14 +199,29 @@ public class TextFileReaderUtils
 		}
 		
 		byte[] buffer = new byte[len];		//分段buf
-		try
+		if( isMemoryFile )
 		{
-			mRandomAccessFile.seek(begin);	//先移动到开始位置
-			mRandomAccessFile.read( buffer, 0, len );		//读入物理内存
+			MemoryFile mf = WordParseUtils.getMemoryFile();
+			try
+			{
+				mf.readBytes(buffer, begin, 0, len);	//读入物理内存
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
-		catch( Exception e )
+		else
 		{
-			e.printStackTrace();
+			try
+			{
+				mRandomAccessFile.seek(begin);	//先移动到开始位置
+				mRandomAccessFile.read( buffer, 0, len );		//读入物理内存
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		int paragraphLen = len;		//段落的长度

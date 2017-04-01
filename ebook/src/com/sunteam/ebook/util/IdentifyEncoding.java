@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
+import android.os.MemoryFile;
 import android.util.Log;
 
 /**
@@ -112,6 +114,57 @@ public class IdentifyEncoding
 			
 			return	"utf-8";
 		}
+	}
+	
+	public String GetEncodingName( MemoryFile mf )	//判断文件编码类型
+	{
+		String code = null;
+        try {
+        		InputStream instream = mf.getInputStream();
+                BufferedInputStream in = new BufferedInputStream(instream);
+                in.mark(1025);
+                byte[] first1kbytes = new byte[1025];
+                in.read(first1kbytes);//找到文档的前三个字节并自动判断文档类型。
+                in.reset();
+                if (first1kbytes[0] == (byte) 0xEF && first1kbytes[1] == (byte) 0xBB && first1kbytes[2] == (byte) 0xBF)	// utf-8 
+                {
+                	code = "utf-8";
+                } 
+                else if (first1kbytes[0] == (byte) 0xFF && first1kbytes[1] == (byte) 0xFE) 
+                {
+                	code = "utf-16le";
+                } 
+                else if (first1kbytes[0] == (byte) 0xFE && first1kbytes[1] == (byte) 0xFF) 
+                {
+                	code = "utf-16be";
+                }
+                else 
+                {
+                	if( isUft8(first1kbytes) )
+                	{
+                		code = "utf-8";
+                	}
+                	else
+                	{
+                		code = GetEncodingName(first1kbytes);
+                	}
+                }
+                in.close();
+                instream.close();
+        } 
+        catch (FileNotFoundException e) 
+        {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+        } 
+        catch (IOException e) 
+        {
+                e.printStackTrace();
+        }
+        
+        Log.v( TAG, "wzp debug ========= GetEncodingName = " + code );
+        
+        return code;
 	}
 	
 	public String GetEncodingName( String str_filepath )	//判断文件编码类型

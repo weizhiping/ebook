@@ -24,6 +24,7 @@ import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 import com.sunteam.ebook.view.MainView;
+import com.sunteam.ebook.word.WordParseUtils;
 
 /**
  * 主界面
@@ -164,6 +165,7 @@ public class MainActivity extends Activity implements OnEnterListener
 	{
 		super.onDestroy();
 		
+		WordParseUtils.closeMemoryFile();	//关闭内存文件
 		TTSUtils.getInstance().destroy();
 		MediaPlayerUtils.getInstance().destroy();
 		unregisterReceiver(fileReceiver);
