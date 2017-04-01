@@ -47,7 +47,7 @@ public class TTSUtils
 	};	//中文发音人
 	
 	private static final String[] mRoleEn = {
-		"catherine",	//John，英语男声
+		"john",			//John，英语男声
 		"catherine",	//凯瑟琳，英语女声
 	};	//英文发音人
 	
