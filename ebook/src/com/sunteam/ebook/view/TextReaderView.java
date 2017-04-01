@@ -36,7 +36,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -510,8 +509,9 @@ import android.view.View;
 	 }
 	 
 	 //得到有效的长度，去除结尾的换行或者空格
-	 private int getEffectiveLength( byte[] buf )
+	 private int getEffectiveLength()
 	 {
+		 byte[] buf = mMbBuf;
 		 int len = mMbBuf.length;
 		 for( int i = mMbBuf.length-1; i >= 0; i-- )
 		 {
@@ -545,7 +545,34 @@ import android.view.View;
 		 
 		 return	len;
 	 }
-	 
+		
+	 //判断一个文件是否为纯文本文件
+	 private boolean checkIsTextFile()
+	 {
+		 boolean isTextFile = true;
+	        
+		 try
+		 {
+			 int i = 0;
+			 int length = mMbBufLen;
+			 byte data;
+			 while( ( i >= 0 ) && ( i < length ) && isTextFile )
+			 {
+				 data = (byte)mMbBuf[i];
+				 isTextFile = (data != 0);
+				 i++;
+			 }
+			 
+			 return isTextFile;
+		 }
+		 catch (Exception e)
+		 {
+			 e.printStackTrace();
+	            
+			 return	false;
+		 }
+	 }
+	    
 	 public boolean openBook( String content ) 
 	 {
 		 byte[] buf = null;
@@ -623,7 +650,7 @@ import android.view.View;
 			 mOffset++;
 		 }	//去掉一开始的空格。
 		 
-		 mMbBufLen = getEffectiveLength(mMbBuf);
+		 mMbBufLen = getEffectiveLength();
 		 if( mMbBufLen-mOffset <= 0 )
 		 {
 			 return	false;
@@ -644,7 +671,7 @@ import android.view.View;
 		 
 		 mSplitInfoList.clear();
 		 
-		 if( !PublicUtils.checkIsTextFile(mMbBuf) )
+		 if( !checkIsTextFile() )
 		 {
 			 mIsTextFile = false;
 			 return	false;
