@@ -36,7 +36,13 @@ public class WordParseUtils
 	{
 		try 
 		{
-			return	new MemoryFile(filename, length);
+			MemoryFile memoryFile = new MemoryFile(filename, length);
+			if( memoryFile != null )
+			{
+				memoryFile.allowPurging(false);
+			}
+			
+			return	memoryFile;
 		} 
 		catch (IOException e) 
 		{
