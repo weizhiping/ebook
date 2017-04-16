@@ -56,7 +56,10 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		if(1 == flag){
 			MediaPlayerUtils.getInstance().stop();
 			selectItem = mMainView.getSelectItem();
-			MediaPlayerUtils.getInstance().play(fileList.get(selectItem).path);
+			if( ( selectItem >= 0 ) && ( selectItem < fileList.size() ) )
+			{
+				MediaPlayerUtils.getInstance().play(fileList.get(selectItem).path);
+			}
 		}
 	}
 
