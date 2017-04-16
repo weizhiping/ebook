@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="all">
 
-    <string name="speech_app_id" tools:ignore="MissingTranslation">577ddcf7</string>
+    <string name="common_functionmenu">功能菜单</string>
+    <string name="common_delete">删除</string>
+    <string name="common_dialog_confirm_ok">确认</string>
+    <string name="common_dialog_confirm_cancel">取消</string>
+    <string name="common_dialog_confirm_yes">是</string>
+    <string name="common_dialog_confirm_no">否</string>
+    <string name="common_dialog_confirm_return_title">确认退出</string>
+    <string name="common_tts_command_speak">请说话</string>
 
-    <string-array name="langtype_list" tools:ignore="MissingTranslation">
-        <item>zh_cn</item>
-        <item>zh_big5</item>
-        <item>en_us</item>
+    <string-array name="commoncmd_list">
+        <item>上</item>
+        <item>下</item>
+        <item>确定</item>
+        <item>退出</item>
+    </string-array>
+    <string-array name="escape_character_maplist">
+        <item>点</item>
+        <item>逗号</item>
+        <item>问号</item>
+        <item>冒号</item>
     </string-array>
 
 </resources>
