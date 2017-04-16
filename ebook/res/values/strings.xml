@@ -124,6 +124,12 @@
         <item>开启</item>
         <item>关闭</item>
     </string-array>
+	<string-array name="ebook_array_menu_music_intensity">
+        <item>很弱</item>
+        <item>适中</item>
+        <item>较强</item>
+        <item>很强</item>
+    </string-array>
     <string-array name="ebook_array_menu_daisy">
         <item>书签管理</item>
         <item>朗读模式</item>

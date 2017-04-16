@@ -84,6 +84,7 @@ public class EbookConstants
 	public static final String SETTINGS_TABLE = "settings";
 	public static final String MUSICE_STATE = "music_state";//背景音乐开关状态
 	public static final String MUSICE_PATH = "music_path";//背景音乐路径
+	public static final String MUSIC_INTENSITY = "music_intensity";//背景音乐强度
 	public static final String READ_MODE = "read_mode";//朗读模式
 	
 	//广播ACTION
@@ -101,7 +102,7 @@ public class EbookConstants
 	public static final int TO_BOOK_START = 3;			//到一本书的开头
 	public static final int TO_BOOK_MARK = 4;			//到一本书的某个书签
 	
-	public static final String MUSIC_DIR = "/book/背景音乐/";
+	public static final String MUSIC_DIR = "/背景音乐/";
 	public static final String NEW_WORD_BOOK = "生词本";
 	
 	public static final int LINE_SPACE = 2;

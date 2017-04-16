@@ -1683,8 +1683,10 @@ import android.view.View;
 	 //确定
 	 public void enter()
 	 {
-		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
-		 boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		@SuppressWarnings("deprecation")
+		int mode = Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS;
+		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE, mode);
+		boolean isMusic = shared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 		 
 		 setReadMode(ReadMode.READ_MODE_ALL);
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();
@@ -1714,8 +1716,10 @@ import android.view.View;
 	 //精读
 	 public void intensiveReading()
 	 {
-		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
-		 boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		@SuppressWarnings("deprecation")
+		int mode = Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS;
+		 SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE, mode);
+		 boolean isMusic = shared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 		 
 		 SpeakStatus status = TTSUtils.getInstance().getSpeakStatus();	//当前朗读状态
 		 if( SpeakStatus.SPEAK == status )	//如果当前正在朗读
@@ -3558,8 +3562,9 @@ import android.view.View;
 		mPercent = 0;
 		mSpeakText = text;
 		TTSUtils.getInstance().speakContent(text);
-		SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
-		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		@SuppressWarnings("deprecation")
+		SharedPreferences shared = mContext.getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS);
+		boolean isMusic = shared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 		if( isMusic )
 		{
 			PlayStatus status = MediaPlayerUtils.getInstance().getPlayStatus();

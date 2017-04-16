@@ -2,21 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sunteam.ebook"
     android:versionCode="17"
-    android:versionName="1.2.5.170224" 
+    android:versionName="1.2.5.170415" 
     >
 
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="21" 
         />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 	<uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     
     <application
         android:name=".InitApplication"
@@ -126,11 +126,15 @@
         <activity
             android:name=".WordSearchResultActivity"
             android:screenOrientation="landscape" >
+        </activity> 
+        <activity
+            android:name=".activity.MusicVolume"
+            android:screenOrientation="landscape" >
         </activity>
-        <provider
+        <!-- <provider
             android:name="com.iflytek.business.speech.SharedProvider"
             android:authorities="com.sunteam.ebook" 
-			/>
+			/> -->
     </application>
 
 </manifest>

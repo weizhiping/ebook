@@ -79,7 +79,9 @@ public class MenuNumEditActivity extends Activity {
 		titleView.setHeight((int)fontSize); // 设置控件高度
 		
 		if(2 == flage){
-			musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
+			@SuppressWarnings("deprecation")
+			int mode = Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS;
+			musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE, mode);
 			int currentMusic = mAudioManager.getStreamVolume( AudioManager.STREAM_ALARM );
 			number = (int)(currentMusic/*/1.5*/);
 			playMusic();
@@ -166,7 +168,7 @@ public class MenuNumEditActivity extends Activity {
 			}else if(2 == flage){
 				int volume = (int)(number/* * 1.5*/);
 				mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
-				boolean isMusic = musicShared.getBoolean(EbookConstants.MUSICE_STATE, false);
+				boolean isMusic = musicShared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 				if(!isMusic){
 					MediaPlayerUtils.getInstance().stop();
 				}

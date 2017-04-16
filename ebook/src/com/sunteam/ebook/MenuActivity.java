@@ -44,6 +44,17 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		initViews();
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (Activity.RESULT_OK == resultCode) { // 在子菜单中回传的标志
+			// 设置成功后，销毁当前界面，返回到父窗口
+			setResult(Activity.RESULT_OK, data);
+			finish();
+		}
+	}
+
 	private void initViews() {
 		Resources res = getResources();
 		
@@ -127,7 +138,7 @@ public class MenuActivity extends Activity implements OnEnterListener {
 		case 4:
 			intent.setClass(this, MenuMusicActivity.class);
 			intent.putExtra("title", title);
-			startActivity(intent);
+			startActivityForResult(intent, selectItem);
 			break;
 		}
 	}

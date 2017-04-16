@@ -115,7 +115,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
     	
     	registerReceiver();
     	
-    	shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE, Context.MODE_PRIVATE);
+    	shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE, Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS);
     	int select = shared.getInt(EbookConstants.READ_MODE, 2);
     	switch(select)
     	{

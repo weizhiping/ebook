@@ -75,7 +75,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		CallbackUtils.registerCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
 		
 		isAuto = this.getIntent().getBooleanExtra("isAuto", false);
-		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_PRIVATE);
+		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS);
 		fileInfo = (FileInfo) getIntent().getSerializableExtra("file");
 		fileInfoList = (ArrayList<FileInfo>) getIntent().getSerializableExtra("file_list");
 		int part = fileInfo.part;
@@ -228,7 +228,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	}
 	
 	private void playMusic(){
-		boolean isMusic = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+		boolean isMusic = shared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 		if(isMusic){
 			String path = shared.getString(EbookConstants.MUSICE_PATH, null);
 			if(null == path){

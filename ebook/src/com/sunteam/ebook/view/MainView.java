@@ -124,6 +124,7 @@ public class MainView extends View implements OnTTSListener
 	public void onResume()
 	{
 		TTSUtils.getInstance().OnTTSListener(this);
+		TTSUtils.getInstance().init(mContext.getApplicationContext());	//初始化TTS
 		if( mAdapter != null )
 		{
 			String str = mTvTitle.getText()+"，"+mAdapter.getSelectItemContent();

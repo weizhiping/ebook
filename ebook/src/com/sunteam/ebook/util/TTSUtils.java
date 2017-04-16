@@ -711,7 +711,11 @@ public class TTSUtils
 			{
 				return;
 			}
-			
+
+			// 如果上次是暂停，则收到结束回调说明是后台有朗读。并不是前台的朗读状态
+			if (SpeakStatus.PAUSE == TTSUtils.getInstance().getSpeakStatus()) {
+				return;
+			}
 			mSpeakStatus = SpeakStatus.STOP;
 			
 			switch( mSpeakForm )

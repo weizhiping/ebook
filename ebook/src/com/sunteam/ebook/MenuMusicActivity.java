@@ -10,6 +10,8 @@ import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.sunteam.common.menu.MenuConstant;
+import com.sunteam.ebook.activity.MusicVolume;
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
 import com.sunteam.ebook.entity.ScreenManager;
 import com.sunteam.ebook.view.MainView;
@@ -69,6 +71,17 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
     	}
     	super.onResume();
     }
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (Activity.RESULT_OK == resultCode) { // 在子菜单中回传的标志
+			// 设置成功后，销毁当前界面，返回到父窗口
+			setResult(Activity.RESULT_OK, data);
+			finish();
+		}
+	}
  
     @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) 
@@ -91,11 +104,9 @@ public class MenuMusicActivity extends Activity implements OnEnterListener {
 			startToDetail(title,selectItem);
 			break;
 		case 2:
-			Intent intent = new Intent(this,MenuNumEditActivity.class);
-			intent.putExtra("edit_name", title);
-			intent.putExtra("edit_max", 7);
-			intent.putExtra("edit_flage", 2);
-			startActivity(intent);
+			Intent intent = new Intent(this, MusicVolume.class);
+			intent.putExtra(MenuConstant.INTENT_KEY_TITLE, title); // 菜单名称
+			startActivityForResult(intent, selectItem);
 			break;
 		}
 	}

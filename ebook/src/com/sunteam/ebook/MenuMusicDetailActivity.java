@@ -48,7 +48,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,
-				Context.MODE_PRIVATE);
+				Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS);
 		flag = getIntent().getIntExtra("music_flag", 0);
 		fileList = new ArrayList<FileInfo>();
 		mMenuList = new ArrayList<String>();
@@ -72,7 +72,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		mFlContainer.removeAllViews();
 		mFlContainer.addView(mMainView.getView());
 		if(0 == flag){
-			boolean isOpen = shared.getBoolean(EbookConstants.MUSICE_STATE, false);
+			boolean isOpen = shared.getInt(EbookConstants.MUSICE_STATE, 0) == 0 ? true : false;
 			if(isOpen){
 				mMainView.setSelection(0);
 			}else{
@@ -135,11 +135,7 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 		Editor edit = shared.edit();
 		if (0 == flag) {
 			intent.putExtra("result_flag", 1);
-			if (0 == selectItem) {
-				edit.putBoolean(EbookConstants.MUSICE_STATE, true);
-			} else {
-				edit.putBoolean(EbookConstants.MUSICE_STATE, false);
-			}
+			edit.putInt(EbookConstants.MUSICE_STATE, selectItem);
 		} else {
 			intent.putExtra("result_flag", 2);
 			edit.putString(EbookConstants.MUSICE_PATH,

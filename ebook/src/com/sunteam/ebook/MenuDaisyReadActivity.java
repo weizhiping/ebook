@@ -35,7 +35,7 @@ public class MenuDaisyReadActivity extends Activity implements OnEnterListener {
 		setContentView(R.layout.ebook_activity_main);
 		ScreenManager.getScreenManager().pushActivity(this);
 		shared = getSharedPreferences(EbookConstants.SETTINGS_TABLE,
-				Context.MODE_PRIVATE);
+				Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS);
 		initViews();
 	}
 
