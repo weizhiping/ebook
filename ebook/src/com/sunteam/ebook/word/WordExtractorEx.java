@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.poi.hwpf.model.CHPBinTable;
 import org.apache.poi.hwpf.model.CHPX;
 import org.apache.poi.hwpf.model.ComplexFileTable;
@@ -19,8 +18,72 @@ import org.textmining.text.extraction.PasswordProtectedException;
 import org.textmining.text.extraction.sprm.SprmIterator;
 import org.textmining.text.extraction.sprm.SprmOperation;
 
+import android.text.TextUtils;
+
 public class WordExtractorEx 
 {
+	private String foramt( String str )
+	{
+		if( TextUtils.isEmpty(str) )
+		{
+			return	"";
+		}
+		str = str.replaceAll("\r\n", "\n");	// 0x0d0a
+		str = str.replaceAll("\r", "\n");	// 0x0d
+		str = str.replaceAll("\u0001", "");
+		str = str.replaceAll("\u0002", "");
+		str = str.replaceAll("\u0003", "");
+		str = str.replaceAll("\u0004", "");
+		str = str.replaceAll("\u0005", "");
+		str = str.replaceAll("\u0006", "");
+		str = str.replaceAll("\u0007", " ");
+		str = str.replaceAll("\u0008", "");	// \b
+		str = str.replaceAll("\u0009", "");
+		str = str.replaceAll("\u000b", "");
+		str = str.replaceAll("\u000c", "");
+		str = str.replaceAll("\u000e", "");
+		str = str.replaceAll("\u000f", "");
+		str = str.replaceAll("\u0010", "");
+		str = str.replaceAll("\u0011", "");
+		str = str.replaceAll("\u0012", "");
+		str = str.replaceAll("\u0015", "");
+		str = str.replaceAll("\u0016", "");
+		str = str.replaceAll("\u0017", "");
+		str = str.replaceAll("\u0018", "");
+		str = str.replaceAll("\u0019", "");
+		str = str.replaceAll("\u001a", "");
+		str = str.replaceAll("\u001b", "");
+		str = str.replaceAll("\u001c", "");
+		str = str.replaceAll("\u001d", "");
+		str = str.replaceAll("\u001e", "");
+		str = str.replaceAll("\u001f", "");
+		
+		return	str;
+	}
+	
+	private String format2( String str )
+	{
+		if( TextUtils.isEmpty(str) )
+		{
+			return	"";
+		}
+		
+		int position = str.indexOf("\u0013");
+		if( -1 == position )
+		{
+			return	str;
+		}
+		
+		String tempStr = str.substring(0, position);
+		position = str.indexOf("\u0014", position+1);
+		if( -1 == position )
+		{
+			return	str;
+		}
+		
+		return	(tempStr+format2(str.substring(position+1)));
+	}
+	
 	public boolean extractText( InputStream paramInputStream, OutputStreamWriter out ) throws Exception
 	{
 	    POIFSFileSystem localPOIFSFileSystem = new POIFSFileSystem(paramInputStream);
@@ -97,6 +160,8 @@ public class WordExtractorEx
 	    TextPiece localTextPiece = (TextPiece)localIterator2.next();
 	    int i3 = localTextPiece.getStart();
 	    int i4 = localTextPiece.getEnd();
+	    
+	    String tempStr = "";
 
 	    while (localIterator1.hasNext())
 	    {
@@ -117,19 +182,26 @@ public class WordExtractorEx
 	    		if (i6 < i4)
 	    		{
 	    			str2 = localTextPiece.substring(i5 - i3, i6 - i3);
-	    			str2 = str2.replaceAll("\r\n", "\n");
-					str2 = str2.replaceAll("\r", "\n");
-					out.write(str2);
+	    			tempStr += foramt(str2);
+	    			if( !TextUtils.isEmpty(tempStr) && "\n".equals(tempStr.substring(tempStr.length()-1)) )
+	    			{
+	    				tempStr = format2(tempStr);
+	    				out.write(tempStr);
+	    				tempStr = "";
+	    			}
 	    		}
 	    		else if (i6 > i4)
 	    		{
 	    			while (i6 > i4)
 	    			{
 	    				str2 = localTextPiece.substring(i5 - i3, i4 - i3);
-
-	    				str2 = str2.replaceAll("\r\n", "\n");
-						str2 = str2.replaceAll("\r", "\n");
-						out.write(str2);
+	    				tempStr += foramt(str2);
+	    				if( !TextUtils.isEmpty(tempStr) && "\n".equals(tempStr.substring(tempStr.length()-1)) )
+		    			{
+		    				tempStr = format2(tempStr);
+		    				out.write(tempStr);
+		    				tempStr = "";
+		    			}
 	    				if (localIterator2.hasNext())
 	    				{
 	    					localTextPiece = (TextPiece)localIterator2.next();
@@ -143,9 +215,13 @@ public class WordExtractorEx
 	    				}
 	    			}
 	    			str2 = localTextPiece.substring(0, i6 - i3);
-	    			str2 = str2.replaceAll("\r\n", "\n");
-					str2 = str2.replaceAll("\r", "\n");
-					out.write(str2);
+	    			tempStr += foramt(str2);
+	    			if( !TextUtils.isEmpty(tempStr) && "\n".equals(tempStr.substring(tempStr.length()-1)) )
+	    			{
+	    				tempStr = format2(tempStr);
+	    				out.write(tempStr);
+	    				tempStr = "";
+	    			}
 	    		}
 	    		else
 	    		{
@@ -156,9 +232,13 @@ public class WordExtractorEx
 	    				i3 = localTextPiece.getStart();
 	    				i4 = localTextPiece.getEnd();
 	    			}
-	    			str2 = str2.replaceAll("\r\n", "\n");
-					str2 = str2.replaceAll("\r", "\n");
-					out.write(str2);
+	    			tempStr += foramt(str2);
+	    			if( !TextUtils.isEmpty(tempStr) && "\n".equals(tempStr.substring(tempStr.length()-1)) )
+	    			{
+	    				tempStr = format2(tempStr);
+	    				out.write(tempStr);
+	    				tempStr = "";
+	    			}
 	    		}
 	    	}
 	    }

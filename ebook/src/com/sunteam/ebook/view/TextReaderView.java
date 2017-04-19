@@ -645,10 +645,9 @@ import android.view.View;
 			 e.printStackTrace();
 		 }
 		 
-
 		 while( true )
 		 {
-			 if( mMbBuf[mOffset] < 0x20 )
+			 if( ( mMbBuf[mOffset] >=0 ) && ( mMbBuf[mOffset] < 0x20 ) )
 			 {
 				 mOffset++;
 			 }	//去掉一开始无用的数据。
