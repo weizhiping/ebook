@@ -645,10 +645,18 @@ import android.view.View;
 			 e.printStackTrace();
 		 }
 		 
-		 if( 0x0a == mMbBuf[mOffset] )
+
+		 while( true )
 		 {
-			 mOffset++;
-		 }	//去掉一开始的空格。
+			 if( mMbBuf[mOffset] < 0x20 )
+			 {
+				 mOffset++;
+			 }	//去掉一开始无用的数据。
+			 else
+			 {
+				 break;
+			 }
+		 }
 		 
 		 mMbBufLen = getEffectiveLength();
 		 if( mMbBufLen-mOffset <= 0 )
