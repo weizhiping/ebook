@@ -206,10 +206,14 @@ public class WordParseUtils
 	        		{
 	        			case XmlPullParser.START_TAG:
 	        				String tag = xmlParser.getName();
-	                        if (tag.equalsIgnoreCase("t")) 
+	                        if( "t".equalsIgnoreCase(tag) ) 
 	                        {
-	                        	String str = xmlParser.nextText()+"\n";
+	                        	String str = xmlParser.nextText();
 	            				out.write(str);
+	                        }
+	                        else if( "spacing".equalsIgnoreCase(tag) )
+	                        {
+	                        	out.write("\n");
 	                        }
 	                        break;
 	        			case XmlPullParser.END_TAG:
@@ -273,10 +277,14 @@ public class WordParseUtils
 	        		{
 	        			case XmlPullParser.START_TAG:
 	        				String tag = xmlParser.getName();
-	                        if (tag.equalsIgnoreCase("t")) 
+	                        if( "t".equalsIgnoreCase(tag) ) 
 	                        {
-	                        	String str = xmlParser.nextText()+"\n";
+	                        	String str = xmlParser.nextText();
 	            				out.write(str);
+	                        }
+	                        else if( "spacing".equalsIgnoreCase(tag) )
+	                        {
+	                        	out.write("\n");
 	                        }
 	                        break;
 	        			case XmlPullParser.END_TAG:
