@@ -46,7 +46,7 @@ import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
 public class ReadTxtActivity extends Activity implements OnPageFlingListener
 {
 	private static final String TAG = "ReadTxtActivity";
-	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  //关机广播参数
+	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_CUSTOM_SHUTDOWN";  //关机广播参数
 	private TextView mTvTitle = null;//标题
 	private TextView mTvPageCount = null;//总页数
 	private TextView mTvCurPage = null;//当前页

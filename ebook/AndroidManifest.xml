@@ -32,6 +32,13 @@
 				　　<data android:scheme="file"/>	
 		　　</intent-filter>	
 	　　</receiver>
+		<receiver 
+            android:name=".receiver.ShutDownBroadcastReceiver"
+            > 
+            <intent-filter> 
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" /> 
+            </intent-filter> 
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:label="@string/ebook_app_name" 

@@ -44,7 +44,7 @@ import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
 public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 {
 	private static final String TAG = "ReadDaisyActivity";
-	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";  
+	private static final String ACTION_SHUTDOWN = "android.intent.action.ACTION_CUSTOM_SHUTDOWN";  
 	private TextView mTvTitle = null;
 	private TextView mTvPageCount = null;
 	private TextView mTvCurPage = null;
