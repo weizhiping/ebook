@@ -12,9 +12,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sunteam.common.utils.Tools;
 import com.sunteam.common.utils.dialog.PromptListener;
+import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
@@ -278,8 +280,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	{
 		// TODO Auto-generated method stub
 		isFinish = true;
-		String tips = this.getString(R.string.ebook_to_top);
-		PublicUtils.showToast(this, tips);
+		CustomToast.showToast(this, this.getString(R.string.ebook_to_top), Toast.LENGTH_SHORT);
 	}
 
 	@Override
