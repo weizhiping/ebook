@@ -137,13 +137,25 @@ public class MediaPlayerUtils
      *
      * @param text
      */
-	public void play( final String audioPath,  final long startTime,  final long endTime ) 
+	public void play( final String audioPath, long start, long end ) 
 	{
-		if( ( null == audioPath ) || ( ( endTime - startTime ) <= 0 ) )
+		if( ( null == audioPath ) || ( ( end - start ) <= 0 ) )
 		{
 			//mHandler.sendEmptyMessage(MSG_PLAY_COMPLETION);
 			return;
 		}
+	
+		if( audioPath.contains(".mp2") )
+		{
+			if( 0 == start )
+			{
+				start = 1;
+			}
+			end += 100;
+		}
+	
+		final long startTime = start;
+		final long endTime = end;
 		
 		stop();	//先停止当前播放
 		if( mMediaPlayer != null )
@@ -159,7 +171,7 @@ public class MediaPlayerUtils
 					@Override
 					public void onPrepared(MediaPlayer m) {
 						// TODO Auto-generated method stub
-						mMediaPlayer.seekTo((int)startTime+1);	//多seek 1毫秒，否则有些文件不能播放。
+						mMediaPlayer.seekTo((int)startTime);
 					}
 				});
 				
