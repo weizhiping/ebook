@@ -37,6 +37,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	private String explain = null;
 	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
+	private boolean isEntryMenu = false;	//是否进入了功能菜单。
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,15 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 		{
 			mTextReaderView.readPage();		//朗读页码
 		}
+		if( isEntryMenu )
+		{
+			isEntryMenu = false;		//是否进入了功能菜单。
+			if( isReadPage )
+			{
+				mTextReaderView.enter();	//如果是从功能菜单退出的，则自动全文播放。
+			}
+		}
+		
 		isReadPage = true;
 	}
 	
@@ -165,6 +175,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 				saveWord();
 				return	true;
 			case KeyEvent.KEYCODE_STAR:			//反查
+				isEntryMenu = true;
 				String content = mTextReaderView.getReverseText();	//得到当前反显内容
 				PublicUtils.jumpFanCha(this, content);
 				break;

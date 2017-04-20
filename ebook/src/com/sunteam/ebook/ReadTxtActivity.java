@@ -351,6 +351,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 				startActivityForResult(intent, MENU_CODE);
 				break;
 			case KeyEvent.KEYCODE_STAR:			//反查
+				isEntryMenu = true;
 				String content = mTextReaderView.getReverseText();	//得到当前反显内容
 				PublicUtils.jumpFanCha(this, content);
 				break;
