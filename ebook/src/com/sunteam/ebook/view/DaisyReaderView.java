@@ -1207,6 +1207,7 @@ import android.view.View;
 				 }
 				 else if( status == PlayStatus.STOP )
 				 {
+					 TTSUtils.getInstance().stop();
 					 curSentence(false);
 				 }
 				 break;
@@ -1221,6 +1222,7 @@ import android.view.View;
 				 }
 				 else if( status == PlayStatus.STOP )
 				 {
+					 TTSUtils.getInstance().stop();
 					 curSentence(false);
 				 }
 				 break;

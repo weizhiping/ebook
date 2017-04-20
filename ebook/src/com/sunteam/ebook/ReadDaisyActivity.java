@@ -192,7 +192,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	public void onResume()
 	{
 		super.onResume();
-		if( isReadPage )
+		if( isReadPage && !isEntryMenu )
 		{
 			mDaisyReaderView.readPage();	//朗读页码
 		}
