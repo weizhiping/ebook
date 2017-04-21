@@ -502,7 +502,13 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		else
 		{
 			String tips = this.getString(R.string.ebook_has_finished_reading_the_last_book);
-			PublicUtils.showToast(this, tips);
+			PublicUtils.showToast(this, tips, new PromptListener() {
+				@Override
+				public void onComplete() {
+					// TODO Auto-generated method stub
+					back(true);
+				}
+			});
 		}
 	}
 
