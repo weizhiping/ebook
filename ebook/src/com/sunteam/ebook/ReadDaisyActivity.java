@@ -31,8 +31,10 @@ import com.sunteam.ebook.util.CallbackUtils;
 import com.sunteam.ebook.util.DaisyFileReaderUtils;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.MediaPlayerUtils;
+import com.sunteam.ebook.util.MediaPlayerUtils.PlayStatus;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.view.DaisyReaderView;
 import com.sunteam.ebook.view.DaisyReaderView.OnPageFlingListener;
 
@@ -62,6 +64,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	private BookmarkInfo mBookmarkInfo = null;
 	private boolean isAuto = false;	//是否是自动朗读
 	private boolean isEntryMenu = false;	//是否进入了功能菜单。
+	private boolean isRunThead = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 		
 		RefreshScreenUtils.enableRefreshScreen();
 		
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
+		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_daisy);
 		
 		CallbackUtils.registerCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
@@ -174,6 +177,27 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 				}
     		});
     	}
+    	
+    	new Thread() {
+			@Override
+			public void run() {
+				while( isRunThead )
+				{
+					if( MediaPlayerUtils.getInstance().getPlayStatus() == PlayStatus.PLAY )
+					{
+						PublicUtils.execShellCmd("input tap 0 0");		//不断发送模拟点击消息，不让系统进入休眠状态。
+					}
+					try 
+					{
+						Thread.sleep(5000);
+					} 
+					catch (InterruptedException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
 	}
 	
 	private void registerReceiver(){
@@ -521,6 +545,7 @@ public class ReadDaisyActivity extends Activity implements OnPageFlingListener
 	@Override
 	public void onDestroy()
 	{
+		isRunThead = false;
 		CallbackUtils.unRegisterCallback(TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT);
 		super.onDestroy();
 	}

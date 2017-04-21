@@ -34,6 +34,7 @@ import com.sunteam.ebook.util.FileOperateUtils;
 import com.sunteam.ebook.util.MediaPlayerUtils;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.util.TextFileReaderUtils;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
@@ -62,6 +63,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
 	private boolean isEntryMenu = false;	//是否进入了功能菜单。
+	private boolean isRunThead = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 		
 		RefreshScreenUtils.enableRefreshScreen();
 		
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
+		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);	//禁止休眠
 		setContentView(R.layout.ebook_activity_read_txt);
 		
 		CallbackUtils.registerCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT, mCallbackBundle);
@@ -212,6 +214,27 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			}
 		});
 		*/
+    	
+    	new Thread() {
+			@Override
+			public void run() {
+				while( isRunThead )
+				{
+					if( TTSUtils.getInstance().getSpeakStatus() == SpeakStatus.SPEAK )
+					{
+						PublicUtils.execShellCmd("input tap 0 0");		//不断发送模拟点击消息，不让系统进入休眠状态。
+					}
+					try 
+					{
+						Thread.sleep(5000);
+					} 
+					catch (InterruptedException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
 	}
 	
 	private void registerReceiver(){
@@ -422,6 +445,7 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 	@Override
 	public void onDestroy()
 	{
+		isRunThead = false;
 		CallbackUtils.unRegisterCallback(ReadTxtActivity.TAG, CallbackBundleType.CALLBACK_SDCARD_UNMOUNT);
 		unregisterReceiver(menuReceiver);
 		unregisterReceiver(shutReceiver);

@@ -1,5 +1,9 @@
 package com.sunteam.ebook.util;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -234,4 +238,22 @@ public class PublicUtils
 			}
 		}
 	}
+	
+	/** 
+	 * 执行shell命令 
+	 *  
+	 * @param cmd 
+	 */  
+	public static void execShellCmd(String cmd) 
+	{
+		try 
+		{
+			Runtime.getRuntime().exec( cmd );
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}	
 }	
