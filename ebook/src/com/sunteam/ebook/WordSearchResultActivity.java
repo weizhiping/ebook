@@ -20,6 +20,7 @@ import com.sunteam.ebook.util.CustomToast;
 import com.sunteam.ebook.util.EbookConstants;
 import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
+import com.sunteam.ebook.util.TTSUtils.SpeakStatus;
 import com.sunteam.ebook.view.TextReaderView;
 import com.sunteam.ebook.view.TextReaderView.OnPageFlingListener;
 
@@ -40,6 +41,7 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 	private boolean isReadPage = false;	//是否朗读页码
 	private boolean isFinish;//是否读完
 	private boolean isEntryMenu = false;	//是否进入了功能菜单。
+	private boolean isRunThead = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,27 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
     		PublicUtils.showToast(this, this.getString(R.string.ebook_checksum_error));
     		back();
     	}
+    	
+    	new Thread() {
+			@Override
+			public void run() {
+				while( isRunThead )
+				{
+					if( TTSUtils.getInstance().getSpeakStatus() == SpeakStatus.SPEAK )
+					{
+						PublicUtils.execShellCmd("input tap 0 0");		//不断发送模拟点击消息，不让系统进入休眠状态。
+					}
+					try 
+					{
+						Thread.sleep(5000);
+					} 
+					catch (InterruptedException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
 	}
 	
 	@Override
@@ -103,6 +126,13 @@ public class WordSearchResultActivity extends Activity implements OnPageFlingLis
 		}
 		
 		isReadPage = true;
+	}
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		isRunThead = false;
 	}
 	
 	@Override
