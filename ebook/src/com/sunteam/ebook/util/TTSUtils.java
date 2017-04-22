@@ -706,14 +706,14 @@ public class TTSUtils
 
 		// 发音结束
 		public void onCompleted(String error) {
-			Log.d(TAG, "onPlayCompletedCallBack----error= " + error);
+			Log.d(TAG, "onPlayCompletedCallBack----error= " + error + " status = "+TTSUtils.getInstance().getSpeakStatus() );
 			if( error != null )
 			{
 				return;
 			}
 
-			// 如果上次是暂停，则收到结束回调说明是后台有朗读。并不是前台的朗读状态
-			if (SpeakStatus.PAUSE == TTSUtils.getInstance().getSpeakStatus()) {
+			// 如果上次不是，则收到结束回调说明是后台有朗读。并不是前台的朗读状态
+			if (SpeakStatus.SPEAK != TTSUtils.getInstance().getSpeakStatus()) {
 				return;
 			}
 			mSpeakStatus = SpeakStatus.STOP;
