@@ -23,6 +23,7 @@ public class MediaPlayerUtils
 	private OnMediaPlayerListener mOnMediaPlayerListener = null;
 	private PlayStatus mPlayStatus = PlayStatus.STOP;
 	private AdvancedCountdownTimer mCountDownTimer = null;
+	private float[] volumeScale = {0.25F, 0.5F, 0.75F, 1.0F}; // 背景音强度:很弱、适当、较强、最强
 	
 	public interface OnMediaPlayerListener 
 	{
@@ -278,7 +279,7 @@ public class MediaPlayerUtils
 			try 
 			{
 				mMediaPlayer.reset();
-				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 				mMediaPlayer.setDataSource(audioPath);
 				mMediaPlayer.prepare();
 				mMediaPlayer.setLooping(true);
@@ -332,7 +333,17 @@ public class MediaPlayerUtils
 				e.printStackTrace();
 			}
 		}
-    }
+	}
+
+	public void setBackgroundVolume(int index) {
+		if (mMediaPlayer != null) {
+			try {
+				mMediaPlayer.setVolume(volumeScale[index], volumeScale[index]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override

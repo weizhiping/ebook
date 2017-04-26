@@ -264,6 +264,8 @@ public class ReadTxtActivity extends Activity implements OnPageFlingListener
 			}
 			if(null != path){
 				MediaPlayerUtils.getInstance().play(path);
+				int index = shared.getInt(EbookConstants.MUSIC_INTENSITY, EbookConstants.DEFAULT_MUSICE_INTENSITY);
+				MediaPlayerUtils.getInstance().setBackgroundVolume(index);
 			}
 		}else{
 			MediaPlayerUtils.getInstance().stop();

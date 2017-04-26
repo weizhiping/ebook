@@ -59,6 +59,8 @@ public class MenuMusicDetailActivity extends Activity implements OnTTSSpeakListe
 			if( ( selectItem >= 0 ) && ( selectItem < fileList.size() ) )
 			{
 				MediaPlayerUtils.getInstance().play(fileList.get(selectItem).path);
+				int index = shared.getInt(EbookConstants.MUSIC_INTENSITY, EbookConstants.DEFAULT_MUSICE_INTENSITY);
+				MediaPlayerUtils.getInstance().setBackgroundVolume(index);
 			}
 		}
 	}

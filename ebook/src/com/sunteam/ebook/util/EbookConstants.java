@@ -87,6 +87,9 @@ public class EbookConstants
 	public static final String MUSIC_INTENSITY = "music_intensity";//背景音乐强度
 	public static final String READ_MODE = "read_mode";//朗读模式
 	
+	// 设置默认值
+	public static final int DEFAULT_MUSICE_INTENSITY = 1; // 默认背景音强度:很弱、适当、较强、最强
+	
 	//广播ACTION
 	public static final String MENU_PAGE_EDIT = "page_edit";
 	public static final String ACTION_UPDATE_FILE = "update_rember_file";  

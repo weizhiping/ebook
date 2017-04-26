@@ -4,18 +4,14 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.sunteam.common.menu.MenuActivity;
 import com.sunteam.common.menu.MenuConstant;
-import com.sunteam.common.menu.MenuGlobal;
 import com.sunteam.common.utils.ArrayUtils;
 import com.sunteam.common.utils.SharedPrefUtils;
 import com.sunteam.common.utils.dialog.PromptListener;
@@ -27,29 +23,27 @@ import com.sunteam.ebook.util.PublicUtils;
 import com.sunteam.ebook.util.TTSUtils;
 
 /**
- * @Destryption 音乐强度设置，已经把背景音STREAM_TYPE由STRAM_MUSIC改为STREAM_ALARM,以便与TTS区分开。
+ * @Destryption 音乐强度设置，已经把背景音STREAM_TYPE由STREAM_ALARM改回STRAM_MUSIC，以便与TTS保持一致。
  * @Author Jerry
  * @Date 2017-2-8 上午10:12:27
- * @Note STREAM_ALARM已经在固件中设置为STRAM_MUSIC的4倍。背景音强度设置为:很强-较强-适中-很弱, 分别是STRAM_MUSIC音的4倍、3倍、2倍和1倍。
+ * @Note 背景音强度设置为:很弱-适中-较强-很强, 分别是STRAM_MUSIC音的0.25倍、0.5倍、0.75倍和1倍。
  */
 public class MusicVolume extends MenuActivity {
 	private SharedPreferences musicShared;
-	private AudioManager mAudioManager;
-	private byte[] volumeScale = {1, 2, 3, 4}; // 音量强度
-	private VolumeReceiver mVolumeReceiver;
+//	private VolumeReceiver mVolumeReceiver;
 	private int lastKey = 0; // 这是因为在公用菜单中【确认】键是抬起有效，而电子书中都是按下有效，导致进入该界面后就收到了【确认】键
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		initView();
 		super.onCreate(savedInstanceState);
-		registerVolumeReceiver();
+//		registerVolumeReceiver();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterVolumeReceiver();
+//		unregisterVolumeReceiver();
 		TTSUtils.getInstance().init(this);	//恢复电子书中TTS回调; 因为在公用菜单中设置了自己的TtsListener实例
 	}
 
@@ -61,19 +55,13 @@ public class MusicVolume extends MenuActivity {
 		MediaPlayerUtils.getInstance().stop();
 		
 		// 恢复上次音量
-		int index = musicShared.getInt(EbookConstants.MUSIC_INTENSITY, 0);
+		int index = musicShared.getInt(EbookConstants.MUSIC_INTENSITY, EbookConstants.DEFAULT_MUSICE_INTENSITY);
 		setMusicVlolume(index);
 	}		
 
 	// 保存背景音乐强度设置
-	public void setMusicVlolume(int index) {
-		int volume = getMusicVlolume() * volumeScale[index]; 
-		mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 1);
-	}
-
-	// 获取背景音乐强度设置
-	public int getMusicVlolume() {
-		return mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+	private void setMusicVlolume(int index) {
+		MediaPlayerUtils.getInstance().setBackgroundVolume(index);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -90,6 +78,8 @@ public class MusicVolume extends MenuActivity {
 		}
 		if (null != path) {
 			MediaPlayerUtils.getInstance().play(path);
+			int index = SharedPrefUtils.getSharedPrefInt(this, EbookConstants.SETTINGS_TABLE, mode, EbookConstants.MUSIC_INTENSITY, EbookConstants.DEFAULT_MUSICE_INTENSITY);
+			MediaPlayerUtils.getInstance().setBackgroundVolume(index);
 		}
 	}
 
@@ -128,8 +118,7 @@ public class MusicVolume extends MenuActivity {
 		mMenuList = ArrayUtils.strArray2List(list);
 		int mode = Context.MODE_WORLD_READABLE + Context.MODE_MULTI_PROCESS;
 		musicShared = getSharedPreferences(EbookConstants.SETTINGS_TABLE, mode);
-		selectItem = musicShared.getInt(EbookConstants.MUSIC_INTENSITY, 0);
-		mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		selectItem = musicShared.getInt(EbookConstants.MUSIC_INTENSITY, EbookConstants.DEFAULT_MUSICE_INTENSITY);
 		setMusicVlolume(selectItem);
 		playMusic();
 	}
@@ -150,6 +139,7 @@ public class MusicVolume extends MenuActivity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if ((KeyEvent.KEYCODE_DPAD_CENTER == keyCode || KeyEvent.KEYCODE_ENTER == keyCode) && lastKey != keyCode) {
+			// 如果【确认】键没有按下，在不处理，可能是上一个界面遗留的抬起事件未处理。因为在公用菜单中，【确认】键在抬起时处理。
 			return true;
 		}
 
@@ -158,12 +148,12 @@ public class MusicVolume extends MenuActivity {
 
 	// 不能直接返回，需要等发音结束后再返回，否则发音被中断了。
 	private void returnFatherActivity() {
-		selectItem = getSelectItem();
-		String menuItem = getSelectItemContent();
-		MusicVolume.super.setResultCode(Activity.RESULT_OK, selectItem, menuItem);
+		MediaPlayerUtils.getInstance().stop();
+		setResult(Activity.RESULT_OK);
+		finish();
 	}
 
-	private void registerVolumeReceiver() {
+	/*private void registerVolumeReceiver() {
 		if (null == mVolumeReceiver) {
 			mVolumeReceiver = new VolumeReceiver();
 			IntentFilter filter = new IntentFilter();
@@ -195,6 +185,6 @@ public class MusicVolume extends MenuActivity {
 				MenuGlobal.debug("[MusicVolume][VolumeReceiver] action = VOLUME_CHANGED_ACTION, streamType = " + streamType + ", newVolume = " + newVolume + ", oldVolume = " + oldVolume);
 			}
 		}
-	}
+	}*/
 
 }
