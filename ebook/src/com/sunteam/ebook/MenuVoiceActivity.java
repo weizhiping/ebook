@@ -58,6 +58,7 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 		}
 		mMenuList.set(1, mMenuList.get(1) + COLON + TTSUtils.getInstance().getSpeed() );
 		mMenuList.set(2, mMenuList.get(2) + COLON + TTSUtils.getInstance().getPitch() );
+		mMenuList.set(3, mMenuList.get(3) + COLON + TTSUtils.getInstance().getCurEffect() );
 		
 		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);

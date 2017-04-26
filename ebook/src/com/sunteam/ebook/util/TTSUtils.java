@@ -31,6 +31,7 @@ public class TTSUtils
     private static final String DEFAULT_SPEED = "65";	//默认语速
     private static final String DEFAULT_TONE = "65";	//默认语调
     private static final String DEFAULT_VOLUME = "80";	//默认音量
+    private static final int DEFAULT_EFFECT = 0;	//默认音效
     
 	private static TTSUtils instance = null;
 	private Context mContext;
@@ -295,7 +296,7 @@ public class TTSUtils
 				editor.putString( ROLE_CN, mRoleCn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
+				PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
 				
 				return	true;
 			}
@@ -377,7 +378,7 @@ public class TTSUtils
 				editor.putString( ROLE_EN, mRoleEn[i]+"" );
 				editor.commit();
 				
-				PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success), listener);
+				PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
 				
 				return	true;
 			}
@@ -485,7 +486,7 @@ public class TTSUtils
 		editor.putString( SpeechConstant.VOLUME, (volume*5)+"" );
 		editor.commit();
 		
-		PublicUtils.showToast(context, mContext.getString(R.string.ebook_setting_success));
+		PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success));
 	}
 	
 	//得到音量
@@ -498,18 +499,18 @@ public class TTSUtils
 	//测试音效
 	public boolean testEffect( String effect, final String text )
 	{
-		/*Resources res = mContext.getResources();
+		Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
 		{
 			if( ttsEffect[i].equals(effect) )
 			{
-				speakTest( text, TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
+				speakTest( text, "effect", "" + mEffect[i] );
 
 				return	true;
 			}
-		}*/
+		}
 		
 		return	false;
 	}
@@ -517,7 +518,7 @@ public class TTSUtils
 	//设置音效
 	public boolean setEffect( Context context, String effect, PromptListener listener )
 	{
-		/*Resources res = mContext.getResources();
+		Resources res = context.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
 		for( int i = 0; i < ttsEffect.length; i++ )
@@ -525,14 +526,14 @@ public class TTSUtils
 			if( ttsEffect[i].equals(effect) )
 			{
 				Editor editor = mSharedPreferences.edit();
-				editor.putInt( TextToSpeech.KEY_PARAM_EFFECT, mEffect[i] );
+				editor.putInt( "effect", mEffect[i] );
 				editor.commit();
 				
-				PublicUtils.showToastEx(mContext, mContext.getString(R.string.ebook_setting_success));
+				PublicUtils.showToast(context, context.getString(R.string.ebook_setting_success), listener);
 				
 				return	true;
 			}
-		}*/
+		}
 		
 		return	false;
 	}
@@ -540,10 +541,10 @@ public class TTSUtils
 	//得到当前音效
 	public String getCurEffect()
 	{
-		/*Resources res = mContext.getResources();
+		Resources res = mContext.getResources();
 		String[] ttsEffect = res.getStringArray(R.array.ebook_array_menu_voice_effect);
 		
-		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
+		int effect = mSharedPreferences.getInt("effect", DEFAULT_EFFECT);
 		for( int i = 0; i < mEffect.length; i++ )
 		{
 			if( effect == mEffect[i] )
@@ -552,15 +553,14 @@ public class TTSUtils
 			}
 		}
 		
-		return	ttsEffect[0];*/
-		return "";
+		return	ttsEffect[0];
 	}
 	
 	//得到当前音效序号
 	public int getCurEffectIndex()
 	{
-		/*
-		int effect = mSharedPreferences.getInt(TextToSpeech.KEY_PARAM_EFFECT, TextToSpeech.DEFAULT_EFFECT);
+		
+		int effect = mSharedPreferences.getInt("effect", DEFAULT_EFFECT);
 		for( int i = 0; i < mEffect.length; i++ )
 		{
 			if( effect == mEffect[i] )
@@ -568,7 +568,7 @@ public class TTSUtils
 				return	i;
 			}
 		}
-		*/
+		
 		return	0;
 	}
 	
@@ -607,6 +607,9 @@ public class TTSUtils
 
 		// 设置合成音调
     	mTtsUtils.setParameter(SpeechConstant.PITCH, mSharedPreferences.getString(SpeechConstant.PITCH, DEFAULT_TONE));
+
+		// 设置合成音效; 使用原声
+		mTtsUtils.setParameter("effect", "" + mSharedPreferences.getInt("effect", DEFAULT_EFFECT));
 
 		// 设置合成音量; 使用语记中的默认音量即可
 		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME));
@@ -666,6 +669,13 @@ public class TTSUtils
 		} else {
     		mTtsUtils.setParameter(SpeechConstant.VOLUME, mSharedPreferences.getString(SpeechConstant.VOLUME, DEFAULT_VOLUME)+"");
     	}
+    	
+		// 设置合成音效
+		if ("effect".equals(key)) {
+			mTtsUtils.setParameter("effect", value);
+		} else {
+			mTtsUtils.setParameter("effect", "" + mSharedPreferences.getInt("effect", DEFAULT_EFFECT));
+		}
     }
       
     private TtsListener ttsListener = new TtsListener() {
