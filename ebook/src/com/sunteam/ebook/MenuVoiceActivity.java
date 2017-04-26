@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.sunteam.ebook.adapter.MainListAdapter.OnEnterListener;
@@ -22,6 +21,7 @@ import com.sunteam.ebook.view.MainView;
  * @author sylar
  */
 public class MenuVoiceActivity extends Activity implements OnEnterListener {
+	private static final String COLON = "：";
 	private FrameLayout mFlContainer = null;
 	private MainView mMainView = null;
 	private ArrayList<String> mMenuList = null;
@@ -45,6 +45,20 @@ public class MenuVoiceActivity extends Activity implements OnEnterListener {
 		for (int i = 0; i < length; i++) {
 			mMenuList.add(menus[i]);
 		}
+		
+		Locale locale = this.getResources().getConfiguration().locale;
+		String language = locale.getLanguage();
+		if( "en".equalsIgnoreCase(language) )	//英文
+		{
+			mMenuList.set(0, mMenuList.get(0) + COLON + TTSUtils.getInstance().getCurRoleEn() );
+		}
+		else
+		{
+			mMenuList.set(0, mMenuList.get(0) + COLON + TTSUtils.getInstance().getCurRoleCn() );
+		}
+		mMenuList.set(1, mMenuList.get(1) + COLON + TTSUtils.getInstance().getSpeed() );
+		mMenuList.set(2, mMenuList.get(2) + COLON + TTSUtils.getInstance().getPitch() );
+		
 		String title = getIntent().getStringExtra("title");
 		mFlContainer = (FrameLayout) this.findViewById(R.id.ebook_fl_container);
 		mMainView = new MainView(this, this, title, mMenuList);
